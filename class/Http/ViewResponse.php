@@ -91,7 +91,7 @@ class ViewResponse extends Response {
         }
 
         // Teste si la vue existe dans le plugin
-        $path = Docalist::get($plugin)->directory() . "/views/$view";
+        $path = WP_PLUGIN_DIR . "/$plugin/views/$view";
         if (file_exists($path)) {
             return $path;
         }
