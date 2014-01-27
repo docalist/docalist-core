@@ -15,7 +15,6 @@
 
 namespace Docalist\Core;
 
-use Docalist\AbstractPlugin;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInfo;
