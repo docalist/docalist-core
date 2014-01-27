@@ -61,5 +61,11 @@ function docalist($service = null) {
  * Charge les plugins Docalist
  */
 add_action('plugins_loaded', function() {
+    // Si aucun plugin ne dépend de docalist core, on ne fait rien
+    if (! has_action('docalist_loaded')) {
+        return;
+    }
+
+    // Initialise docalist-core (1er appel à docalist()) et charge les plugins
     do_action('docalist_loaded', docalist());
 });
