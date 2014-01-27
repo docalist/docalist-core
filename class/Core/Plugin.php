@@ -117,6 +117,9 @@ class Plugin {
      * {@inheritdoc}
      */
     public function __construct() {
+        // Charge les fichiers de traduction du plugin
+        load_plugin_textdomain('docalist-core', false, 'docalist-core/languages');
+
         // Charge la configuration du plugin
         $this->settings = new Settings('docalist-core');
 
