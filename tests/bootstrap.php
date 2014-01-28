@@ -2,7 +2,7 @@
 // Environnement de test
 $GLOBALS['wp_tests_options'] = array(
     'active_plugins' => array(
-        'docalist-0core/docalist-core.php'
+        'docalist-core/docalist-core.php'
     ),
 );
 

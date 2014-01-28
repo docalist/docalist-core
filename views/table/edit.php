@@ -33,7 +33,7 @@ use Docalist\Table\TableInfo;
 $id = "table-$tableName";
 
 // Url du répertoire "home" de handsontable
-$base = plugins_url('docalist-0core/lib/jquery-handsontable');
+$base = plugins_url('docalist-core/lib/jquery-handsontable');
 
 // Enqueue la CSS de HandsOnTable
 wp_enqueue_style('handsontable-css', "$base/jquery.handsontable.full.css", false, '0.9.19');
