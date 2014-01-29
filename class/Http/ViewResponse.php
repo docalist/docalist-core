@@ -29,11 +29,7 @@ use Exception;
  * en créant une vue du même nom dans le répertoire "views" de son thème
  * (cf getViewPath()).
  */
-class ViewResponse extends Response {
-    protected $defaultHeaders = [
-        'Content-Type' => 'text/html; charset=UTF-8',
-    ];
-
+class ViewResponse extends HtmlResponse {
     protected $view;
     protected $viewArgs;
 
