@@ -22,4 +22,12 @@ class JsonResponse extends Response {
     public function setContent($content) {
         $this->content = json_encode($content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
+
+    public function adminPage($adminPage = null) {
+        if (is_null($adminPage)) {
+            return $this->adminPage;
+        }
+
+        throw new \Exception('JsonResponse::adminPage is read-only');
+    }
 }

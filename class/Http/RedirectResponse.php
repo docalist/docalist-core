@@ -44,4 +44,12 @@ class RedirectResponse extends HtmlResponse {
 
         return parent::setContent($content);
     }
+
+    public function adminPage($adminPage = null) {
+        if (is_null($adminPage)) {
+            return $this->adminPage;
+        }
+
+        throw new \Exception('RedirectResponse::adminPage is read-only');
+    }
 }
