@@ -18,6 +18,7 @@ namespace Docalist\Core;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInfo;
+use Closure;
 
 /**
  * Plugin core de Docalist.
