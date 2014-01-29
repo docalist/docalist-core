@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2014 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -16,9 +16,8 @@
 namespace Docalist;
 
 use Docalist\Http\Response;
-use Docalist\Http\AdminViewResponse;
-
-use ReflectionObject, ReflectionMethod;
+use Docalist\Http\TextResponse;
+use Docalist\Http\CallbackResponse;
 
 /**
  * Une page d'administration dans le back-office.
@@ -73,7 +72,7 @@ class AdminPage extends Controller {
          * pas d'avoir un titre statique qui sera le même pour toutes les
          * actions.
          * A la place, nous générons dynamiquement le titre (quand la réponse
-         * retournée est une AdminViewResponse) en récupérant le premier <h2>
+         * retournée est une adminPage) en récupérant le premier <h2>
          * généré par l'action (cf. plus bas add_filter 'admin_title').
          * Si jamais la page n'a pas généré de h2, il faut quand même avoir un
          * titre. Dans ce cas, c'est le libellé utilisé pour le menu qui sera
@@ -98,8 +97,8 @@ class AdminPage extends Controller {
             On exécute l'action demandée (run) et on examine le type de
             la réponse générée par l'action.
 
-            Cas 1. Si la réponse est une page d'admin (i.e. une réponse de type
-            AdminViewResponse), on se contente d'envoyer les entêtes http et
+            Cas 1. Si la réponse est une page d'admin (i.e. une réponse qui a
+            adminPage === true), on se contente d'envoyer les entêtes http et
             on exécute la vue en bufferisant la sortie générée ($body).
             La vue peut ainsi faire des appels à wp_enqueue_*, génèrer des
             écrans d'aide, etc.
@@ -155,7 +154,7 @@ class AdminPage extends Controller {
             }
 
             // L'action a généré une réponse de type "page d'admin"
-            elseif ($response instanceof AdminViewResponse) {
+            elseif ($response instanceof TextResponse && $response->adminPage()) {
                 // Envoie les entêtes de la réponse
                 // wp ne pourra pas envoyer les siens (cf. admin-header.php)
                 $response->sendHeaders();
@@ -195,6 +194,16 @@ class AdminPage extends Controller {
                 // Laisse wp générer le footer
             }
 
+            elseif ($response instanceof CallbackResponse && $response->adminPage()) {
+                // contrairement au cas précédent, pas de bufferisation (exemple réindexation)
+                // on ne peut pas faire des enqueue (il faut le faire avant de retourner l'objet Response)
+                // et on ne peut pas mettre le titre exact dans la balise <title>
+                $response->sendHeaders();
+                add_action($page, function() use($response) {
+                    $response->sendContent();
+                });
+            }
+
             // L'action a généré un autre type de réponse (redirect, json...)
             else {
                 // Génère et envoie la réponse
@@ -207,8 +216,7 @@ class AdminPage extends Controller {
     }
 
     protected function view($view, array $viewArgs = array(), $status = 200, $headers = array()){
-        !isset($viewArgs['this']) && $viewArgs['this'] = $this;
-        return new AdminViewResponse($view, $viewArgs, $status, $headers);
+        return parent::view($view, $viewArgs, $status, $headers)->adminPage(true);
     }
 
     /**
