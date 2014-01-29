@@ -31,6 +31,14 @@ class Response extends SymfonyResponse {
      */
     protected $defaultHeaders;
 
+    /**
+     * Si la réponse est affichée depuis le back-office, indique s'il faut ou
+     * non générer les entêtes et les menus de wordpress.
+     *
+     * @var bool
+     */
+    protected $adminPage = false;
+
     public function __construct($content = '', $status = 200, $headers = array()) {
         $this->defaultHeaders && $headers += $this->defaultHeaders;
 
@@ -39,5 +47,15 @@ class Response extends SymfonyResponse {
 
     public function prepare(SymfonyRequest $request = null) {
         return parent::prepare($request ?: Request::createFromGlobals());
+    }
+
+    public function adminPage($adminPage = null) {
+        if (is_null($adminPage)) {
+            return $this->adminPage;
+        }
+
+        $this->adminPage = (bool) $adminPage;
+
+        return $this;
     }
 }
