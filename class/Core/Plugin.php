@@ -33,15 +33,6 @@ class Plugin {
     protected $settings;
 
     /**
-     * Le cache de fichier de Docalist.
-     *
-     * Initialisé lors du premier appel à {@link fileCache()}.
-     *
-     * @var FileCache
-     */
-    protected $fileCache;
-
-    /**
      * Le gestionnaire de tables d'autorité de Docalist.
      *
      * Initialisé lors du premier appel à {@link tableManager()}.
@@ -124,8 +115,22 @@ class Plugin {
         // Charge la configuration du plugin
         $this->settings = new Settings('docalist-core');
 
-        // Crée le filtre docalist_get_file_cache
-        add_filter('docalist_get_file_cache', array($this, 'fileCache'));
+        // WordPress n'offre aucun moyen simple d'obtenir la racine du site :
+        // - ABSPATH ne fonctionne pas si wp est dans un sous-répertoire
+        // - get_home_path() ne fonctionne que dans le back-office
+        // Pour y remédier on définit le service à la demande "site-root"
+        // qui retourne le path absolu, sans slash final, du site.
+        $this->add('site-root', function() {
+            return substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['PHP_SELF']));
+        });
+
+        // Crée le service "file-cache"
+        $this->add('file-cache', function() {
+            $root = dirname(dirname(dirname(dirname(__DIR__)))); // répertoire parent de /plugins
+            $dir = get_temp_dir() . 'docalist-cache';
+            $this->fileCache = new FileCache(docalist('site-root'), $dir);
+
+        });
 
         // Crée le filtre docalist_get_table_manager
         add_filter('docalist_get_table_manager', array($this, 'tableManager'));
@@ -149,30 +154,6 @@ class Plugin {
 //         add_action('admin_notices', function(){
 //             $this->showAdminNotices();
 //         });
-    }
-
-    /**
-     * Retourne le cache de fichiers de Docalist.
-     *
-     * L'instance est initialisée lors du premier appel.
-     *
-     * @return FileCache
-     */
-    public function fileCache() {
-        if (is_null($this->fileCache)) {
-            // Fait chier wordpress !
-            // Impossible de récupérer le home directory de façon fiable.
-            // ABSPATH : ne marche pas si wp dans un sous répertoire
-            // get_home_path(), get_real_file_to_edit() : uniquement en admin
-            // utiliser directement WP_PLUGIN_DIR  est déconseillé
-            // plugin_dir_path() ne fait pas ce qu'on croit
-            // etc...
-            $root = dirname(dirname(dirname(dirname(__DIR__)))); // répertoire parent de /plugins
-            $dir = get_temp_dir() . 'docalist-cache';
-            $this->fileCache = new FileCache($root, $dir);
-        }
-
-        return $this->fileCache;
     }
 
     /**

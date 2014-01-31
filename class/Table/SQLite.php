@@ -146,32 +146,6 @@ class SQLite implements TableInterface {
     }
 
     /**
-     * Retourne le cache à utiliser pour les tables compilées.
-     *
-     * Utilise le filtre <code>docalist_get_file_cache</code> pour récupérer
-     * le cache en cours.
-     *
-     * @return FileCache
-     *
-     * @throws Exception Si aucun cache n'est disponible ou si l'objet retourné
-     * n'est pas un objet FileCache.
-     */
-    protected function fileCache() {
-        $cache = apply_filters('docalist_get_file_cache', null);
-        if (is_null($cache)) {
-            $msg = __('Aucun FileCache disponible', 'docalist-core');
-            throw new Exception($msg);
-        }
-
-        if (! $cache instanceof FileCache) {
-            $msg = __('Type de cache incorrect', 'docalist-core');
-            throw new Exception($msg);
-        }
-
-        return $cache;
-    }
-
-    /**
      * Compile la table.
      *
      * Crée dans le cache une base de données SQLite contenant une copie des
