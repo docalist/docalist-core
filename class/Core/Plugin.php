@@ -119,17 +119,20 @@ class Plugin {
         // - ABSPATH ne fonctionne pas si wp est dans un sous-répertoire
         // - get_home_path() ne fonctionne que dans le back-office
         // Pour y remédier on définit le service à la demande "site-root"
-        // qui retourne le path absolu, sans slash final, du site.
+        // qui retourne le path absolu du site avec un slash final.
         $this->add('site-root', function() {
-            return substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['PHP_SELF']));
+            $root = substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['PHP_SELF']));
+
+            $root = strtr($root, '/\\', DIRECTORY_SEPARATOR);
+            $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+            return $root;
         });
 
         // Crée le service "file-cache"
         $this->add('file-cache', function() {
-            $root = dirname(dirname(dirname(dirname(__DIR__)))); // répertoire parent de /plugins
             $dir = get_temp_dir() . 'docalist-cache';
-            $this->fileCache = new FileCache(docalist('site-root'), $dir);
-
+            return new FileCache(docalist('site-root'), $dir);
         });
 
         // Crée le filtre docalist_get_table_manager
