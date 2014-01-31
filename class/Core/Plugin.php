@@ -33,15 +33,6 @@ class Plugin {
     protected $settings;
 
     /**
-     * Le gestionnaire de tables d'autorité de Docalist.
-     *
-     * Initialisé lors du premier appel à {@link tableManager()}.
-     *
-     * @var TableManager
-     */
-    protected $tableManager;
-
-    /**
      * Liste des services.
      *
      * @var object[]
@@ -135,12 +126,9 @@ class Plugin {
             return new FileCache(docalist('site-root'), $dir);
         });
 
-        // Crée le filtre docalist_get_table_manager
-        add_filter('docalist_get_table_manager', array($this, 'tableManager'));
-
-        // Crée le filtre docalist_get_table
-        add_filter('docalist_get_table', function($table) {
-            return $this->tableManager()->get($table);
+        // Crée le service "table-manager"
+        $this->add('table-manager', function() {
+            return new TableManager($this->settings);
         });
 
         // Enregistre nos propres tables quand c'est nécessaire
@@ -157,24 +145,6 @@ class Plugin {
 //         add_action('admin_notices', function(){
 //             $this->showAdminNotices();
 //         });
-    }
-
-    /**
-     * Retourne le gestionnaire de table de Docalist.
-     *
-     * L'instance est initialisée lors du premier appel.
-     *
-     * L'action 'docalist_register_tables' est déclenchée pour permettre aux
-     * plugins d'enregistrer leurs tables prédéfinies.
-     *
-     * @return TableManager
-     */
-    public function tableManager() {
-        if (is_null($this->tableManager)) {
-            $this->tableManager = new TableManager($this->settings);
-        }
-
-        return $this->tableManager;
     }
 
     /**

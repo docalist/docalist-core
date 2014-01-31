@@ -46,15 +46,6 @@ class AdminTables extends AdminPage {
     }
 
     /**
-     * Retourne le gestionnaire de tables.
-     *
-     * @return TableManager
-     */
-    protected function tableManager() {
-        return apply_filters('docalist_get_table_manager', null);
-    }
-
-    /**
      * Retourne l'objet TableInfo d'une table.
      *
      * @param string $tableName
@@ -62,7 +53,7 @@ class AdminTables extends AdminPage {
      * @return false|TableInfo
      */
     protected function tableInfo($tableName) {
-        if ($info = $this->tableManager()->info($tableName)) {
+        if ($info = docalist('table-manager')->info($tableName)) {
             return $info;
         }
 
@@ -76,7 +67,7 @@ class AdminTables extends AdminPage {
      */
     public function actionTablesList() {
         return $this->view('docalist-core:table/list', [
-            'tables' => $this->tableManager()->info(),
+            'tables' => docalist('table-manager')->info(),
         ]);
     }
 
@@ -88,7 +79,7 @@ class AdminTables extends AdminPage {
         $tableInfo = $this->tableInfo($tableName);
 
         // Ouvre la table
-        $table = $this->tableManager()->get($tableName);
+        $table = docalist('table-manager')->get($tableName);
 
         // Gère la sauvegarde
         if ($this->isPost()) {
@@ -106,7 +97,7 @@ class AdminTables extends AdminPage {
             empty($data) && $data = [];
 
             try {
-                $this->tableManager()->update($tableName, null, null, $data);
+                docalist('table-manager')->update($tableName, null, null, $data);
             } catch (Exception $e) {
                 return $this->json([
                     'success' => false,
@@ -154,7 +145,7 @@ class AdminTables extends AdminPage {
             $nodata = (bool) $_POST['nodata'];
 
             try {
-                $this->tableManager()->copy($tableName, $name, $label, $nodata);
+                docalist('table-manager')->copy($tableName, $name, $label, $nodata);
 
                 return $this->redirect($this->url('TablesList'), 303);
             } catch (Exception $e) {
@@ -165,7 +156,7 @@ class AdminTables extends AdminPage {
         // Suggère un nouveau nom pour la table
         for($i=2; ; $i++) {
             $name = "$tableName-$i";
-            if (is_null($this->tableManager()->info($name))) {
+            if (is_null(docalist('table-manager')->info($name))) {
                 break;
             }
         }
@@ -193,7 +184,7 @@ class AdminTables extends AdminPage {
             $label = $_POST['label'];
 
             try {
-                $this->tableManager()->update($tableName, $name, $label);
+                docalist('table-manager')->update($tableName, $name, $label);
 
                 return $this->redirect($this->url('TablesList'), 303);
             } catch (Exception $e) {
@@ -232,7 +223,7 @@ class AdminTables extends AdminPage {
 
         // Essaie de supprimer la table
         try {
-            $this->tableManager()->delete($tableName);
+            docalist('table-manager')->delete($tableName);
 
             return $this->redirect($this->url('TablesList'), 303);
         } catch (Exception $e) {
