@@ -67,8 +67,13 @@ class FileCache {
      * @param string $directory Path du répertoire cache.
      */
     public function __construct($root, $directory) {
-        $this->root = rtrim($root,'/\\') . DIRECTORY_SEPARATOR;
-        $this->directory = rtrim($directory,'/\\') . DIRECTORY_SEPARATOR;
+        $root = strtr($root, '/\\', DIRECTORY_SEPARATOR);
+        $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $this->root = $root;
+
+        $directory = strtr($directory, '/\\', DIRECTORY_SEPARATOR);
+        $directory = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $this->directory = $directory;
     }
 
     /**
