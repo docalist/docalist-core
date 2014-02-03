@@ -18,7 +18,9 @@ namespace Docalist\Core;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInfo;
+use Docalist\Http\JsonResponse;
 use Closure;
+use Exception;
 
 /**
  * Plugin core de Docalist.
@@ -134,6 +136,10 @@ class Plugin {
         // Enregistre nos propres tables quand c'est nécessaire
         add_action('docalist_register_tables', array($this, 'registerTables'));
 
+        // Crée l'action ajax "docalist-table-lookup"
+        add_action('wp_ajax_docalist-table-lookup', array($this, 'tableLookup'));
+        add_action('wp_ajax_nopriv_docalist-table-lookup', array($this, 'tableLookup'));
+
         // Back office
         add_action('admin_menu', function () {
 
@@ -145,6 +151,30 @@ class Plugin {
 //         add_action('admin_notices', function(){
 //             $this->showAdminNotices();
 //         });
+    }
+
+    /**
+     * Action ajax permettant de faire des lookups sur une table.
+     */
+    public function tableLookup() {
+        if (empty($_REQUEST['table'])) {
+            throw new Exception('table is required');
+        }
+        $table = $_REQUEST['table'];
+        $what = empty($_REQUEST['what']) ? 'code,label' : wp_unslash($_REQUEST['what']);
+        $where = empty($_REQUEST['where']) ? '' : wp_unslash($_REQUEST['where']);
+        $order = empty($_REQUEST['order']) ? '' : wp_unslash($_REQUEST['order']);
+        $limit = empty($_REQUEST['limit']) ? null : wp_unslash($_REQUEST['limit']);
+        $offset = empty($_REQUEST['offset']) ? null : wp_unslash($_REQUEST['offset']);
+
+        /* @var $tableManager TableManager */
+        $tableManager = docalist('table-manager');
+        $table = $tableManager->get($table);
+        $result = $table->search($what, $where, $order, $limit, $offset);
+
+        $json = new JsonResponse($result);
+        $json->send();
+        exit(); // nécessaire sinon, wp génère le exit code
     }
 
     /**
