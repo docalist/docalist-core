@@ -20,7 +20,9 @@ class JsonResponse extends Response {
     ];
 
     public function setContent($content) {
-        $this->content = json_encode($content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+        WP_DEBUG && $options |= JSON_PRETTY_PRINT;
+        $this->content = json_encode($content, $options);
     }
 
     public function adminPage($adminPage = null) {
