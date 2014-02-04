@@ -151,6 +151,31 @@ class Plugin {
 //         add_action('admin_notices', function(){
 //             $this->showAdminNotices();
 //         });
+
+        // Déclare les JS et les CSS prédéfinis inclus dans docalist-core
+        add_action('init', function() { // TODO : wp_enqueue_scripts ne marche pas ?
+            $js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? 'js' : 'min.js';
+
+            $url = plugins_url('docalist-core');
+
+            wp_register_script(
+                'selectize.js',
+                "$url/lib/selectize/js/standalone/selectize.$js",
+                array('jquery'),
+                '0.8.5',
+                false // TODO: Passer à true (position top)
+            );
+
+            wp_register_style(
+                'selectize.css',
+                "$url/lib/selectize/css/selectize.default.css",
+                false,
+                '0.8.5'
+            );
+
+            // Todo : handsontable
+        });
+
     }
 
     /**
