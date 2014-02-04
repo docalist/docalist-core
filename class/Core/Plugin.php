@@ -192,12 +192,14 @@ class Plugin {
         $limit = empty($_REQUEST['limit']) ? null : wp_unslash($_REQUEST['limit']);
         $offset = empty($_REQUEST['offset']) ? null : wp_unslash($_REQUEST['offset']);
 
+        $what = 'ROWID,'.$what;
+
         /* @var $tableManager TableManager */
         $tableManager = docalist('table-manager');
         $table = $tableManager->get($table);
         $result = $table->search($what, $where, $order, $limit, $offset);
 
-        $json = new JsonResponse($result);
+        $json = new JsonResponse(array_values($result));
         $json->send();
         exit(); // nécessaire sinon, wp génère le exit code
     }
