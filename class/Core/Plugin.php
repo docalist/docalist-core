@@ -182,6 +182,11 @@ class Plugin {
      * Action ajax permettant de faire des lookups sur une table.
      */
     public function tableLookup() {
+        // admin_ajax.php génère des entêtes "no-cache" avant qu'on ait la main
+        // comme on veut que les requêtes soient mises en cache, on les supprime
+        header_remove();
+
+        // Vérifie les paramètres
         if (empty($_REQUEST['table'])) {
             throw new Exception('table is required');
         }
@@ -194,14 +199,25 @@ class Plugin {
 
         $what = 'ROWID,'.$what;
 
+        // Recherche les entrées de la table qui correspondent aux critères indiqués
         /* @var $tableManager TableManager */
         $tableManager = docalist('table-manager');
         $table = $tableManager->get($table);
         $result = $table->search($what, $where, $order, $limit, $offset);
 
+        // Crée la réponse JSON
         $json = new JsonResponse(array_values($result));
+
+        // Paramètre la réponse pour que la navigateur la mettre en cache 10 minutes
+        $json->setProtocolVersion('1.1'); // 1.0 par défaut dans SF
+        $json->setPublic()->setMaxAge(600)->setSharedMaxAge(600);
+        // TODO: mettre la durée de cache en config
+
+        // Envoie la réponse au navigateur
         $json->send();
-        exit(); // nécessaire sinon, wp génère le exit code
+
+        // Termine la requête et empêche WP de générer un exit code (cf. fin de admin-ajax.php)
+        exit();
     }
 
     /**
