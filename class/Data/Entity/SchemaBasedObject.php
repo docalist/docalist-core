@@ -102,7 +102,7 @@ abstract class SchemaBasedObject implements SchemaBasedObjectInterface {
     }
 
     public function jsonSerialize() {
-        return $this->fields;
+        return $this->toArray();
     }
 
     public function getIterator() {
@@ -118,7 +118,13 @@ abstract class SchemaBasedObject implements SchemaBasedObjectInterface {
     }
 
     public function toArray() {
-        return json_decode(json_encode($this), true);
+        $result = [];
+        foreach($this->fields as $key => $item) {
+            is_object($item) && $item = $item->toArray();
+            !empty($item) && $result[$key] = $item;
+        }
+
+        return $result;
     }
 
     public function __toString() {

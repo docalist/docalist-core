@@ -73,7 +73,7 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
     }
 
     public function jsonSerialize() {
-        return $this->items;
+        return $this->toArray();
     }
 
     public function offsetExists($offset) {
@@ -105,9 +105,13 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
     }
 
     public function toArray() {
-        return array_map(function($item) {
-            return is_scalar($item) ? $item : $item->toArray();
-        }, $this->items);
+        $result = [];
+        foreach($this->items as $item) {
+            is_object($item) && $item = $item->toArray();
+            !empty($item) && $result[] = $item;
+        }
+
+        return $result;
     }
 
     public function __toString() {
