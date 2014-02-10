@@ -357,7 +357,7 @@ class PostTypeRepository extends AbstractRepository {
         // @see http://stackoverflow.com/a/10081527
         $sql = "INSERT INTO `$wpdb->options` (`option_name`, `option_value`, `autoload`) "
              . "VALUES('$name', $value, 'no') "
-             . "ON DUPLICATE KEY UPDATE `option_value` = GREATEST(`option_value`, VALUES(`option_value`))";
+             . "ON DUPLICATE KEY UPDATE `option_value` = GREATEST(CAST(`option_value` AS SIGNED), VALUES(`option_value`))";
 
         // Exécute la requête (pas de prepare car on contrôle les paramètres)
         return $wpdb->query($sql);
