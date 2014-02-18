@@ -366,7 +366,7 @@ class TableManager {
 
             // Supprime l'ancienne table du cache
             /* @var $cache FileCache */
-            $cache = apply_filters('docalist_get_file_cache', null);
+            $cache = docalist('file-cache');
             $cache->has($path) && $cache->clear($path);
         }
 
@@ -433,7 +433,7 @@ class TableManager {
 
         // Supprime l'ancienne table du cache
         /* @var $cache FileCache */
-        $cache = apply_filters('docalist_get_file_cache', null);
+        $cache = docalist('file-cache');
         $cache->has($path) && $cache->clear($path);
 
         // Met à jour les settings
