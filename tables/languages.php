@@ -25,7 +25,7 @@
  */
 
 return [
-    ['code', 'alpha3', __('label', 'docalist-core')],
+    ['code', 'alpha3', 'label'],
 
     ['aa', 'aar', __('afar', 'docalist-core')],
     ['ab', 'abk', __('abkhaze', 'docalist-core')],
