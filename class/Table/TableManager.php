@@ -426,9 +426,11 @@ class TableManager {
         unset($this->opened[$name]);
 
         // Supprime le fichier CSV
-        if (! @unlink($path)) {
-            $msg = __('Impossible de supprimer la table "%s".', 'docalist-core');
-            throw new Exception(sprintf($msg, $name));
+        if (file_exists($path)) {
+            if (! @unlink($path)) {
+                $msg = __('Impossible de supprimer la table "%s".', 'docalist-core');
+                throw new Exception(sprintf($msg, $name));
+            }
         }
 
         // Supprime l'ancienne table du cache
