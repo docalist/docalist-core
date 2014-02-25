@@ -91,11 +91,25 @@ class AdminTables extends AdminPage {
                 ]);
             }
             $data = wp_unslash($_POST['data']);
+            $data = json_decode($data);
 
-            // On ne peut pas envoyer un tableau vide en jquery. A la place,
-            // la vue nous envoie une chaine vide qui signifie [].
-            empty($data) && $data = [];
+            // Vérifie le nombre que le nombre d'entrées est correct
+            if (! isset($_POST['count'])) {
+                return $this->json([
+                    'success' => false,
+                    'error' => __('count non transmis', 'docalist-core')
+                ]);
+            }
+            $count = $_POST['count'];
+            if ($count != count($data)) {
+                return $this->json([
+                    'success' => false,
+                    'error' => 'count error : reçu : ' . count($data) . ', attendu : ' . $count
+                ]);
 
+            }
+
+            // Enregistre les onnées de la table
             try {
                 docalist('table-manager')->update($tableName, null, null, $data);
             } catch (Exception $e) {

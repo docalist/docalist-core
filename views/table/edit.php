@@ -180,13 +180,29 @@ wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'
         // Sélectionne la première cellule une fois la grille construite
         .handsontable("selectCell", 0, 0);
 
+        // sanity check ie < 8
+        if (typeof JSON === 'undefined') {
+            alert("Votre navigateur ne dispose pas de l'objet JSON : la table ne pourra pas être enregistrée");
+        }
+
         /**
          * Enregistrer les modifications
          */
         $('#editForm').submit(function() {
-            // jquery ne peut pas poster un tableau vide (non transmis).
-            // à la place on envoie '' qui est détcté par le contrôleur.
-            $.post('', {data: table.length ? table : ''}, function(result) {
+            var post = {
+                // On ne peut pas envoyer la table directement comme des données
+                // $_POST car php a une limite (max_input_vars) sur le nombre de
+                // variables qu'on peut passer dans une requête et chaque
+                // cellule compte comme une variable (cf prisme#66).
+                // Du coup on sérialise en ajax.
+                data: JSON.stringify(table),
+
+                // En envoie également le nombre d'entrées présentes dans la
+                // table pour permettre au controlleur de faire une vérif.
+                count: table.length
+            }
+
+            $.post('', post, function(result) {
                 // Le contrôleur nous retourne :
                 // soit {success: true, url:'location'} -> rediriger vers l'url indiquée
                 // soit {success: false, error: 'erreur'} -> afficher l'erreur
