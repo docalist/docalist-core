@@ -74,8 +74,15 @@ class CsvTable extends SQLite {
             $allvalues = $values;
             foreach($values as $i => $value)
             {
-                if (isset($index['_' . $this->fields[$i]])) {
-                    $allvalues[] = implode(' ', Tokenizer::tokenize($value));
+                if (trim($value) === '') {
+                    $allvalues[$i] = null;
+                    if (isset($index['_' . $this->fields[$i]])) {
+                        $allvalues[] = null;
+                    }
+                } else {
+                    if (isset($index['_' . $this->fields[$i]])) {
+                        $allvalues[] = implode(' ', Tokenizer::tokenize($value));
+                    }
                 }
             }
             $statement->execute($allvalues);
