@@ -196,7 +196,7 @@ class SQLite implements TableInterface {
                 $parms = trim(substr($field, $pt + 1), ' )');
             } else {
                 $name = $field;
-                $parms = 'INDEX, COLLATE NOCASE';
+                $parms = 'INDEX, COLLATE BINARY';
             }
 
             // Analyse les paramètres indiqués
@@ -262,8 +262,8 @@ class SQLite implements TableInterface {
 
             $_names[] = "_$name";
             $def = "\"_$name\" $type";
-            if ($_constraints) {
-                $def .= ' ' . implode(' ', $_constraints);
+            if ($constraints) {
+                $def .= ' ' . implode(' ', $constraints);
             }
 
             $_defs[] = $def;
