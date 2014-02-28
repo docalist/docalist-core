@@ -59,9 +59,17 @@ class PhpTable extends SQLite {
         $index = array_flip($this->fields);
         foreach ($data as $values) {
             $allvalues = $values;
-            foreach($values as $i => $value) {
-                if (isset($index['_' . $this->fields[$i]])) {
-                    $allvalues[] = implode(' ', Tokenizer::tokenize($value));
+            foreach($values as $i => $value)
+            {
+                if (trim($value) === '') {
+                    $allvalues[$i] = null;
+                    if (isset($index['_' . $this->fields[$i]])) {
+                        $allvalues[] = null;
+                    }
+                } else {
+                    if (isset($index['_' . $this->fields[$i]])) {
+                        $allvalues[] = implode(' ', Tokenizer::tokenize($value));
+                    }
                 }
             }
             $statement->execute($allvalues);
