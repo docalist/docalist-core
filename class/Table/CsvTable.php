@@ -37,7 +37,7 @@ class CsvTable extends SQLite {
         $path = $cache->path($this->path);
 
         // Ouvre le fichier texte
-        $file = fopen($this->path, 'r');
+        $file = fopen($this->path, 'rb');
 
         // Charge les entêtes de colonne
         // On peut avoir des lignes de commentaires (#xxx) avant les entêtes

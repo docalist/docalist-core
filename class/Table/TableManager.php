@@ -335,7 +335,7 @@ class TableManager {
             unset($this->opened[$name]);
 
             // Génère le fichier CSV de la nouvelle table
-            $file = fopen($path, 'w');
+            $file = fopen($path, 'wb');
             fputcsv($file, $fields, ';', '"');
             foreach($data as $entry) {
                 fputcsv($file, (array) $entry, ';', '"');
