@@ -136,9 +136,18 @@ class Plugin {
         // Enregistre nos propres tables quand c'est nécessaire
         add_action('docalist_register_tables', array($this, 'registerTables'));
 
-        // Crée l'action ajax "docalist-table-lookup"
-        add_action('wp_ajax_docalist-table-lookup', array($this, 'tableLookup'));
-        add_action('wp_ajax_nopriv_docalist-table-lookup', array($this, 'tableLookup'));
+        // Crée le service "lookup"
+        $this->add('lookup', new Lookup());
+
+        // Définit les lookups de type "table"
+        add_filter('docalist_table_lookup', function($value, $source, $search) {
+            return $this->get('table-manager')->lookup($source, $search, false);
+        }, 10, 3);
+
+        // Définit les lookups de type "thesaurus"
+        add_filter('docalist_thesaurus_lookup', function($value, $source, $search) {
+            return $this->get('table-manager')->lookup($source, $search, true);
+        }, 10, 3);
 
         // Back office
         add_action('admin_menu', function () {
@@ -176,48 +185,6 @@ class Plugin {
             // Todo : handsontable
         });
 
-    }
-
-    /**
-     * Action ajax permettant de faire des lookups sur une table.
-     */
-    public function tableLookup() {
-        // admin_ajax.php génère des entêtes "no-cache" avant qu'on ait la main
-        // comme on veut que les requêtes soient mises en cache, on les supprime
-        header_remove();
-
-        // Vérifie les paramètres
-        if (empty($_REQUEST['table'])) {
-            throw new Exception('table is required');
-        }
-        $table = $_REQUEST['table'];
-        $what = empty($_REQUEST['what']) ? 'code,label' : wp_unslash($_REQUEST['what']);
-        $where = empty($_REQUEST['where']) ? '' : wp_unslash($_REQUEST['where']);
-        $order = empty($_REQUEST['order']) ? '' : wp_unslash($_REQUEST['order']);
-        $limit = empty($_REQUEST['limit']) ? null : wp_unslash($_REQUEST['limit']);
-        $offset = empty($_REQUEST['offset']) ? null : wp_unslash($_REQUEST['offset']);
-
-        $what = 'ROWID,'.$what;
-
-        // Recherche les entrées de la table qui correspondent aux critères indiqués
-        /* @var $tableManager TableManager */
-        $tableManager = docalist('table-manager');
-        $table = $tableManager->get($table);
-        $result = $table->search($what, $where, $order, $limit, $offset);
-
-        // Crée la réponse JSON
-        $json = new JsonResponse(array_values($result));
-
-        // Paramètre la réponse pour que la navigateur la mettre en cache 10 minutes
-        $json->setProtocolVersion('1.1'); // 1.0 par défaut dans SF
-        $json->setPublic()->setMaxAge(600)->setSharedMaxAge(600);
-        // TODO: mettre la durée de cache en config
-
-        // Envoie la réponse au navigateur
-        $json->send();
-
-        // Termine la requête et empêche WP de générer un exit code (cf. fin de admin-ajax.php)
-        exit();
     }
 
     /**
