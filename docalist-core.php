@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012 Daniel Ménard
+ * Copyright (C) 2012-2014 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -10,7 +10,7 @@
  * Plugin Name: Docalist Core
  * Plugin URI:  http://docalist.org
  * Description: Docalist: socle de base.
- * Version:     0.2.2
+ * Version:     0.3
  * Author:      Daniel Ménard
  * Author URI:  http://docalist.org/
  * Text Domain: docalist-core
@@ -24,37 +24,43 @@
 
 // pas de namespace, la fonction docalist() est globale.
 
+use Docalist\Autoloader;
+use Docalist\Services;
+use Docalist\Core\Plugin;
+
 /**
- * Retourne l'instance du plugin Docalist Core ou un service de Docalist si
- * un paramètre est passé.
+ * Retourne un service docalist.
  *
- * @param string $service L'identifiant du service à retourner ou null pour
- * obtenir l'instance de Docalist.
+ * @param string $service L'identifiant du service à retourner.
  *
- * @return Docalist\Core\Plugin
+ * @return mixed
  */
-function docalist($service = null) {
-    static $docalist;
+function docalist($service) {
+    /* @var $services Services */
+    static $services;
 
     // Au premier appel, on initialise l'instance
-    if (is_null($docalist)) {
+    if (is_null($services)) {
         // Initialise l'autoloader
         require_once __DIR__ . '/class/Autoloader.php';
-        $autoloader = new Docalist\Autoloader([
+        $autoloader = new Autoloader([
             'Docalist' => __DIR__ . '/class',
             'Docalist\Forms' => __DIR__ . '/lib/docalist-forms/class',
             'Symfony' => __DIR__ . '/lib/Symfony'
         ]);
 
-        // Initialise le plugin
-        $docalist = new Docalist\Core\Plugin();
-        $docalist->add('autoloader', $autoloader);
+        // Initialise le gestionnaire de services
+        $services = new Services();
 
-        // La classe Docalist est un alias global de Docalist\Core\Plugin
-        class_alias('Docalist\Core\Plugin', 'Docalist');
+        // Le gestionnaire de services est lui-même un service
+        $services->add('services', $services);
+
+        // Ajoute l'autoloader dans la liste des services disponibles
+        $services->add('autoloader', $autoloader);
     }
 
-    return $service ? $docalist->get($service) : $docalist;
+    // Retourne le service demandé
+    return $services->get($service);
 }
 
 /**
@@ -66,6 +72,9 @@ add_action('plugins_loaded', function() {
         return;
     }
 
-    // Initialise docalist-core (1er appel à docalist()) et charge les plugins
-    do_action('docalist_loaded', docalist());
+    // Charge le plugin docalist-core
+    docalist('services')->add('docalist-core', new Plugin());
+
+    //  Charge tous les autres plugins docalist
+    do_action('docalist_loaded');
 });
