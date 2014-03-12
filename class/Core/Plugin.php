@@ -18,9 +18,6 @@ namespace Docalist\Core;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInfo;
-use Docalist\Http\JsonResponse;
-use Closure;
-use Exception;
 
 /**
  * Plugin core de Docalist.
@@ -33,70 +30,6 @@ class Plugin {
      * @var Settings
      */
     protected $settings;
-
-    /**
-     * Liste des services.
-     *
-     * @var object[]
-     */
-    protected $services = array();
-
-    /**
-     * Ajoute un service dans le container.
-     *
-     * @param string $id identifiant unique de l'objet.
-     * @param mixed $service le service à ajouter. Cela peut être un scalaire (un
-     * paramètre de configuration, par exemple), un objet (par exemple un plugin)
-     * ou une closure qui sera invoquée lors du premier appel.
-     *
-     * @throws Exception S'il existe déjà un service avec l'identifiant indiqué.
-     *
-     * @return self
-     */
-    public function add($id, $service) {
-        if (isset($this->services[$id])) {
-            $message = __('%s existe déjà.', 'docalist-core');
-            throw new Exception(sprintf($message, $id));
-        }
-
-        $this->services[$id] = $service;
-
-        return $this;
-    }
-
-    /**
-     * Indique si le container contient un service avec l'identifiant indiqué.
-     *
-     * @param unknown $id l'identifiant du service recherché.
-     *
-     * @return bool
-     */
-    public function has($id) {
-        return isset($this->services[$id]);
-    }
-
-    /**
-     * Retourne le service ayant l'identifiant indiqué.
-     *
-     * @param string $id l'identifiant de l'objet à retourner
-     *
-     * @throws Exception Si l'identifiant indiqué n'existe pas.
-     *
-     * @return mixed
-     */
-    public function get($id) {
-        if (! isset($this->services[$id])) {
-            $message = __('%s non trouvé.', 'docalist-core');
-            throw new Exception(sprintf($message, $id));
-        }
-
-        $service = $this->services[$id];
-        if ($service instanceof Closure) {
-            return $this->services[$id] = $service($this);
-        }
-
-        return $service;
-    }
 
     /**
      * {@inheritdoc}
@@ -113,7 +46,7 @@ class Plugin {
         // - get_home_path() ne fonctionne que dans le back-office
         // Pour y remédier on définit le service à la demande "site-root"
         // qui retourne le path absolu du site avec un slash final.
-        $this->add('site-root', function() {
+        docalist('services')->add('site-root', function() {
             $root = substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['PHP_SELF']));
 
             $root = strtr($root, '/\\', DIRECTORY_SEPARATOR);
@@ -123,13 +56,13 @@ class Plugin {
         });
 
         // Crée le service "file-cache"
-        $this->add('file-cache', function() {
+        docalist('services')->add('file-cache', function() {
             $dir = get_temp_dir() . 'docalist-cache';
             return new FileCache(docalist('site-root'), $dir);
         });
 
         // Crée le service "table-manager"
-        $this->add('table-manager', function() {
+        docalist('services')->add('table-manager', function() {
             return new TableManager($this->settings);
         });
 
@@ -137,7 +70,7 @@ class Plugin {
         add_action('docalist_register_tables', array($this, 'registerTables'));
 
         // Crée le service "lookup"
-        $this->add('lookup', new Lookup());
+        docalist('services')->add('lookup', new Lookup());
 
         // Définit les lookups de type "table"
         add_filter('docalist_table_lookup', function($value, $source, $search) {
