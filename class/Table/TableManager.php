@@ -16,6 +16,7 @@ namespace Docalist\Table;
 
 use Docalist\Core\Settings;
 use Docalist\Cache\FileCache;
+use Docalist\Tokenizer;
 use Exception;
 
 /**
@@ -452,5 +453,129 @@ class TableManager {
 
         // Ré-enregistre toutes les tables (cf. copy()).
         $this->registerTables();
+    }
+
+    /**
+     * Lookup sur une table d'autorité ou sur un thesaurus.
+     *
+     * @param string $table La table source.
+     *
+     * @param string $search le préfixe recherché
+     *
+     * @param bool $thesaurus indique s'il faut faire une recherche en mode
+     * thesaurus ou en mode table.
+     *
+     * @return array La méthode retourne toujours un tableau (éventuellement
+     * vide).
+     */
+    public function lookup($table, $search, $thesaurus = false) {
+        // Par défaut, retourne les 10 premières réponses obtenues
+        $limit = 10;
+
+        // Détermine les champs à retourner
+        if ($thesaurus) {
+            $what = 'code,label,MT,USE,' .
+                    "(SELECT group_concat(label,'¤') FROM data d WHERE USE=data.code) AS UF," .
+                    'BT,' .
+                    "(SELECT group_concat(code, '¤') FROM data d WHERE BT=data.code) AS NT," .
+                    'RT,description,sn';
+        } else {
+            $what = 'code,label,description';
+        }
+
+        // Recherche par code
+        if (strlen($search) >= 2 && $search[0] === '[' && substr($search, -1) === ']') {
+            // Supprime les crochets
+            $search = substr($search, 1, -1);
+
+            // Cas particulier chaine vide/null
+            if ($search === '') {
+                // Inutile de faire du "like"
+                $where = '_code IS NULL';
+
+                // On peut avoir plusieurs entrées sans code (non descripteurs)
+                // $limit = 10; // par défaut
+
+                // Tri par libellé
+                $order = '_label';
+            }
+
+            // Cas général, on a un préfixe
+            else {
+                // Tokenize la chaine pour être insensible aux accents, etc.
+                $search = implode(' ', Tokenizer::tokenize($search));
+
+                // Comme on a tokenizé, pas besoin d'escape (search=[a-z0-9]+)
+                $where = "_code = '$search'";
+
+                // Les codes sont censés être uniques, donc une seule réponse
+                $limit = 1;
+
+                // Et pas de tri
+                $order = null;
+            }
+        }
+
+        // Recherche sur code et libellé
+        else {
+            // Tokenize la chaine pour être insensible aux accents, etc.
+            $search = implode(' ', Tokenizer::tokenize($search));
+
+            // Comme on a tokenizé, pas besoin d'escape (search=[a-z0-9]+)
+            if ($search) {
+                $where = "_code like '$search%' OR _label LIKE '$search%'";
+            } else {
+                $where = null;
+            }
+
+            // Tri par label insensible à la casse
+            $order = '_label';
+        }
+
+        // On veut un tableau d'objet, pas un tableau associatif code=>label
+        $what = 'ROWID,'.$what;
+
+        // Lance la recherche
+        $result = $this->get($table)->search($what, $where, $order, $limit);
+
+        // En mode "thesaurus", traduit les codes par leur libellé
+        if ($thesaurus && $result) {
+            $codes = [];
+            foreach($result as $term) {
+                foreach(['USE', 'MT', 'BT','NT' ,'RT'] as $rel) {
+                    if ($term->$rel) {
+                        foreach(explode('¤', $term->$rel) as $code) {
+                            $codes[$code] = "'" . strtr($code, ["'" => "''"]) . "'"; // TODO: bad, utiliser PDO->quote()
+                        }
+                    }
+                }
+                if ($term->UF) {
+                    $term->UF = explode('¤', $term->UF);
+                }
+            }
+
+            if ($codes) {
+                $where = 'code IN (' . implode(',', $codes) . ')';
+                $codes = $this->get($table)->search('code,label', $where);
+                foreach($result as $term) {
+                    foreach(['USE', 'MT', 'BT','NT', 'RT'] as $rel) {
+                        if ($term->$rel) {
+                            $t = [];
+                            foreach(explode('¤', $term->$rel) as $code) {
+                                if (isset($codes[$code])) {
+                                    $t[$code] = $codes[$code];
+                                } else {
+                                    $t[$code] = 'DESC-ERROR:' . $code;
+                                }
+                            }
+                            $term->$rel = $t;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Supprime ROWID, pour que json_encode génère bien un tableau
+        return array_values($result);
     }
 }
