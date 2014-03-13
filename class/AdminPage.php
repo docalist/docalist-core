@@ -168,7 +168,7 @@ class AdminPage extends Controller {
                 // Récupère le titre (h2) de la page et le fournit à wp pour
                 // qu'on ait le bon titre dans la balise <title> de la page
                 if (preg_match('~<h2>(.*?)</h2>~', $body, $matches)) {
-                    $title = $matches[1];
+                    $title = strip_tags($matches[1]);
                     // @see admin-header.php:36
                     add_filter('admin_title', function() use ($title) {
                         return $title;
