@@ -1,0 +1,276 @@
+# ------------------------------------------------------------------------------
+# This file is part of the "Docalist Core" plugin.
+#
+# Copyright (C) 2012-2014 Daniel Ménard
+#
+# For copyright and license information, please view the
+# LICENSE.txt file that was distributed with this source code.
+#
+# @package     Docalist
+# @subpackage  Tables
+# @author      Daniel Ménard <daniel.menard@laposte.net>
+# @version     SVN: $Id$
+# ------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------
+# ISO-3166-1_alpha3_TO_alpha2.txt
+#
+# Table de conversion "alpha3 -> alpha2" des codes pays de la norme ISO-3166-1.
+# 
+# Source : 
+# - Wikipedia (copier/coller du tableau sous libreoffice, extraction et tri)
+# - http://en.wikipedia.org/wiki/ISO_3166-1#Officially_assigned_code_elements
+# 
+# Historique :
+# - 2014-03-13 Version initiale. 249 codes.
+# ------------------------------------------------------------------------------
+from;to;description
+ABW;AW;Aruba
+AFG;AF;Afghanistan
+AGO;AO;Angola
+AIA;AI;Anguilla
+ALA;AX;Îles Åland
+ALB;AL;Albanie
+AND;AD;Andorre
+ARE;AE;Émirats arabes unis
+ARG;AR;Argentine
+ARM;AM;Arménie
+ASM;AS;Samoa américaines
+ATA;AQ;Antarctique
+ATF;TF;Terres australes et antarctiques françaises
+ATG;AG;Antigua-et-Barbuda
+AUS;AU;Australie
+AUT;AT;Autriche
+AZE;AZ;Azerbaïdjan
+BDI;BI;Burundi
+BEL;BE;Belgique
+BEN;BJ;Bénin
+BES;BQ;Pays-Bas caribéens
+BFA;BF;Burkina Faso
+BGD;BD;Bangladesh
+BGR;BG;Bulgarie
+BHR;BH;Bahreïn
+BHS;BS;Bahamas
+BIH;BA;Bosnie-Herzégovine
+BLM;BL;Saint-Barthélemy
+BLR;BY;Biélorussie
+BLZ;BZ;Belize
+BMU;BM;Bermudes
+BOL;BO;Bolivie
+BRA;BR;Brésil
+BRB;BB;Barbade
+BRN;BN;Brunei
+BTN;BT;Bhoutan
+BVT;BV;Île Bouvet
+BWA;BW;Botswana
+CAF;CF;République centrafricaine
+CAN;CA;Canada
+CCK;CC;Îles Cocos
+CHE;CH;Suisse
+CHL;CL;Chili
+CHN;CN;Chine
+CIV;CI;Côte d'Ivoire
+CMR;CM;Cameroun
+COD;CD;République démocratique du Congo
+COG;CG;République du Congo
+COK;CK;Îles Cook
+COL;CO;Colombie
+COM;KM;Comores
+CPV;CV;Cap-Vert
+CRI;CR;Costa Rica
+CUB;CU;Cuba
+CUW;CW;Curaçao
+CXR;CX;Île Christmas
+CYM;KY;Îles Caïmans
+CYP;CY;Chypre
+CZE;CZ;République tchèque
+DEU;DE;Allemagne
+DJI;DJ;Djibouti
+DMA;DM;Dominique
+DNK;DK;Danemark
+DOM;DO;République dominicaine
+DZA;DZ;Algérie
+ECU;EC;Équateur
+EGY;EG;Égypte
+ERI;ER;Érythrée
+ESH;EH;République arabe sahraouie démocratique
+ESP;ES;Espagne
+EST;EE;Estonie
+ETH;ET;Éthiopie
+FIN;FI;Finlande
+FJI;FJ;Fidji
+FLK;FK;Malouines
+FRA;FR;France
+FRO;FO;Îles Féroé
+FSM;FM;Micronésie
+GAB;GA;Gabon
+GBR;GB;Royaume-Uni
+GEO;GE;Géorgie
+GGY;GG;Guernesey
+GHA;GH;Ghana
+GIB;GI;Gibraltar
+GIN;GN;Guinée
+GLP;GP;Guadeloupe
+GMB;GM;Gambie
+GNB;GW;Guinée-Bissau
+GNQ;GQ;Guinée équatoriale
+GRC;GR;Grèce
+GRD;GD;Grenade
+GRL;GL;Groenland
+GTM;GT;Guatemala
+GUF;GF;Guyane
+GUM;GU;Guam
+GUY;GY;Guyana
+HKG;HK;Hong Kong
+HMD;HM;Îles Heard-et-MacDonald
+HND;HN;Honduras
+HRV;HR;Croatie
+HTI;HT;Haïti
+HUN;HU;Hongrie
+IDN;ID;Indonésie
+IMN;IM;Île de Man
+IND;IN;Inde
+IOT;IO;Territoire britannique de l'océan Indien
+IRL;IE;Irlande
+IRN;IR;Iran
+IRQ;IQ;Irak
+ISL;IS;Islande
+ISR;IL;Israël
+ITA;IT;Italie
+JAM;JM;Jamaïque
+JEY;JE;Jersey
+JOR;JO;Jordanie
+JPN;JP;Japon
+KAZ;KZ;Kazakhstan
+KEN;KE;Kenya
+KGZ;KG;Kirghizistan
+KHM;KH;Cambodge
+KIR;KI;Kiribati
+KNA;KN;Saint-Christophe-et-Niévès
+KOR;KR;Corée du Sud
+KWT;KW;Koweït
+LAO;LA;Laos
+LBN;LB;Liban
+LBR;LR;Liberia
+LBY;LY;Libye
+LCA;LC;Sainte-Lucie
+LIE;LI;Liechtenstein
+LKA;LK;Sri Lanka
+LSO;LS;Lesotho
+LTU;LT;Lituanie
+LUX;LU;Luxembourg
+LVA;LV;Lettonie
+MAC;MO;Macao
+MAF;MF;Saint-Martin
+MAR;MA;Maroc
+MCO;MC;Monaco
+MDA;MD;Moldavie
+MDG;MG;Madagascar
+MDV;MV;Maldives
+MEX;MX;Mexique
+MHL;MH;Marshall
+MKD;MK;Macédoine
+MLI;ML;Mali
+MLT;MT;Malte
+MMR;MM;Birmanie
+MNE;ME;Monténégro
+MNG;MN;Mongolie
+MNP;MP;Îles Mariannes du Nord
+MOZ;MZ;Mozambique
+MRT;MR;Mauritanie
+MSR;MS;Montserrat
+MTQ;MQ;Martinique
+MUS;MU;Maurice
+MWI;MW;Malawi
+MYS;MY;Malaisie
+MYT;YT;Mayotte
+NAM;NA;Namibie
+NCL;NC;Nouvelle-Calédonie
+NER;NE;Niger
+NFK;NF;Île Norfolk
+NGA;NG;Nigeria
+NIC;NI;Nicaragua
+NIU;NU;Niue
+NLD;NL;Pays-Bas
+NOR;NO;Norvège
+NPL;NP;Népal
+NRU;NR;Nauru
+NZL;NZ;Nouvelle-Zélande
+OMN;OM;Oman
+PAK;PK;Pakistan
+PAN;PA;Panama
+PCN;PN;Îles Pitcairn
+PER;PE;Pérou
+PHL;PH;Philippines
+PLW;PW;Palaos
+PNG;PG;Papouasie-Nouvelle-Guinée
+POL;PL;Pologne
+PRI;PR;Porto Rico
+PRK;KP;Corée du Nord
+PRT;PT;Portugal
+PRY;PY;Paraguay
+PSE;PS;Palestine
+PYF;PF;Polynésie française
+QAT;QA;Qatar
+REU;RE;La Réunion
+ROU;RO;Roumanie
+RUS;RU;Russie
+RWA;RW;Rwanda
+SAU;SA;Arabie saoudite
+SDN;SD;Soudan
+SEN;SN;Sénégal
+SGP;SG;Singapour
+SGS;GS;Géorgie du Sud-et-les Îles Sandwich du Sud
+SHN;SH;Sainte-Hélène, Ascension et Tristan da Cunha
+SJM;SJ;Svalbard et île Jan Mayen
+SLB;SB;Salomon
+SLE;SL;Sierra Leone
+SLV;SV;Salvador
+SMR;SM;Saint-Marin
+SOM;SO;Somalie
+SPM;PM;Saint-Pierre-et-Miquelon
+SRB;RS;Serbie
+SSD;SS;Soudan du Sud
+STP;ST;Sao Tomé-et-Principe
+SUR;SR;Suriname
+SVK;SK;Slovaquie
+SVN;SI;Slovénie
+SWE;SE;Suède
+SWZ;SZ;Swaziland
+SXM;SX;Sint Maarten
+SYC;SC;Seychelles
+SYR;SY;Syrie
+TCA;TC;Îles Turques-et-Caïques
+TCD;TD;Tchad
+TGO;TG;Togo
+THA;TH;Thaïlande
+TJK;TJ;Tadjikistan
+TKL;TK;Tokelau
+TKM;TM;Turkménistan
+TLS;TL;Timor oriental
+TON;TO;Tonga
+TTO;TT;Trinité-et-Tobago
+TUN;TN;Tunisie
+TUR;TR;Turquie
+TUV;TV;Tuvalu
+TWN;TW;Taïwan
+TZA;TZ;Tanzanie
+UGA;UG;Ouganda
+UKR;UA;Ukraine
+UMI;UM;Îles mineures éloignées des États-Unis
+URY;UY;Uruguay
+USA;US;États-Unis
+UZB;UZ;Ouzbékistan
+VAT;VA;Vatican
+VCT;VC;Saint-Vincent-et-les-Grenadines
+VEN;VE;Venezuela
+VGB;VG;Îles Vierges britanniques
+VIR;VI;Îles Vierges des États-Unis
+VNM;VN;Viêt Nam
+VUT;VU;Vanuatu
+WLF;WF;Wallis-et-Futuna
+WSM;WS;Samoa
+YEM;YE;Yémen
+ZAF;ZA;Afrique du Sud
+ZMB;ZM;Zambie
+ZWE;ZW;Zimbabwe
