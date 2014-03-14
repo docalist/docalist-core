@@ -45,10 +45,14 @@ class TableInfo extends AbstractEntity {
                 'description' => __('Libellé de la table', 'docalist-core'),
             ),
 
+            'format' => array(
+                'label' => __('Format', 'docalist-core'),
+                'description' => __('Format de la table (table, thesaurus, conversion, etc.)', 'docalist-core'),
+            ),
+
             'type' => array(
-                //'default' => $this->name,
                 'label' => __('Type', 'docalist-core'),
-                'description' => __('Type de table.', 'docalist-core'),
+                'description' => __('Type de table (pays, langues, etc.)', 'docalist-core'),
             ),
 
             'user' => array(
