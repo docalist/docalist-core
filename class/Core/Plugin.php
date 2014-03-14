@@ -151,17 +151,59 @@ class Plugin {
     public function registerTables(TableManager $tableManager) {
         $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'tables'  . DIRECTORY_SEPARATOR;
 
+        // Tables des langues
         $tableManager->register(new TableInfo([
-            'name' => 'countries',
-            'path' => $dir . 'countries.php',
-            'label' => __('Table des pays', 'docalist-core'),
+            'name' => 'ISO-639-2_alpha3_fr',
+            'path' => $dir . 'languages/ISO-639-2_alpha3_fr.txt',
+            'label' => __('Codes langues 3 lettres en français (ISO-639-2)', 'docalist-core'),
+            'format' => 'table',
+            'type' => 'languages',
             'user' => false,
         ]));
 
         $tableManager->register(new TableInfo([
-            'name' => 'languages',
-            'path' => $dir . 'languages.php',
-            'label' => __('Table des langues', 'docalist-core'),
+            'name' => 'ISO-639-2_alpha3_en',
+            'path' => $dir . 'languages/ISO-639-2_alpha3_en.txt',
+            'label' => __('Codes langues 3 lettres en anglais (ISO-639-2)', 'docalist-core'),
+            'format' => 'table',
+            'type' => 'languages',
+            'user' => false,
+        ]));
+
+        $tableManager->register(new TableInfo([
+            'name' => 'ISO-639-2_alpha2-to-alpha3',
+            'path' => $dir . 'languages/ISO-639-2_alpha2-to-alpha3.txt',
+            'label' => __('Table de conversion "alpha2 -> alpha3" pour les codes langues (ISO-639-2)', 'docalist-core'),
+            'format' => 'conversion',
+            'type' => 'languages',
+            'user' => false,
+        ]));
+
+        // Tables des pays
+        $tableManager->register(new TableInfo([
+            'name' => 'ISO-3166-1-alpha2_FR',
+            'path' => $dir . 'countries/ISO-3166-1_alpha2_fr.txt',
+            'label' => __('Codes pays 2 lettres en français (ISO-3166-1)', 'docalist-core'),
+            'format' => 'table',
+            'type' => 'countries',
+            'user' => false,
+        ]));
+
+        $tableManager->register(new TableInfo([
+            'name' => 'ISO-3166-1-alpha2_EN',
+            'path' => $dir . 'countries/ISO-3166-1_alpha2_en.txt',
+            'label' => __('Codes pays 2 lettres en anglais (ISO-3166-1)', 'docalist-core'),
+            'format' => 'table',
+            'type' => 'countries',
+            'user' => false,
+        ]));
+
+        $tableManager->register(new TableInfo([
+            'name' => 'ISO-3166-1_alpha3-to-alpha2',
+            'path' => $dir . 'countries/ISO-3166-1_alpha3-to-alpha2.txt',
+            'label' => __('Table de conversion "alpha3 -> alpha2" pour les codes pays (ISO-3166-1)', 'docalist-core'),
+            'format' => 'conversion',
+            'type' => 'countries',
             'user' => false,
         ]));
     }
