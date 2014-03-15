@@ -281,6 +281,7 @@ class TableManager {
         $table->name = $newName;
         $table->path = $path;
         $table->label = $label;
+        $table->format = $this->tables[$name]->format;
         $table->type = $this->tables[$name]->type;
         $table->user = true;
 
