@@ -1,0 +1,55 @@
+# ------------------------------------------------------------------------------
+# This file is part of the "Docalist Core" plugin.
+#
+# Copyright (C) 2012-2014 Daniel Ménard
+#
+# For copyright and license information, please view the
+# LICENSE.txt file that was distributed with this source code.
+#
+# @package     Docalist
+# @subpackage  Tables
+# @author      Daniel Ménard <daniel.menard@laposte.net>
+# @version     SVN: $Id$
+# ------------------------------------------------------------------------------
+#
+# ------------------------------------------------------------------------------
+# ISO-639-2-alpha3_EU_fr.txt
+#
+# Codes langues 3 lettres en français issus de la norme ISO-639-2.
+# Liste limitée aux langues officielles de l'Union Européenne.
+#
+# Certains libellés ont été simplifiés (gre, spa, dut, rum). La table est
+# triée par codes.
+#
+# Source :
+# - http://fr.wikipedia.org/wiki/Langues_officielles_de_l'Union_europ%C3%A9enne
+#
+# Historique :
+# - 2014-03-15 Création, à partir de la table complète (ISO-639-2_alpha3_fr.txt)
+#   24 langues.
+# ------------------------------------------------------------------------------
+code;label;description
+bul;bulgare;
+cze;tchèque;
+dan;danois;
+dut;néerlandais;
+eng;anglais;
+est;estonien;
+fin;finnois;
+fre;français;
+ger;allemand;
+gle;irlandais;
+gre;grec;
+hrv;croate;
+hun;hongrois;
+ita;italien;
+lav;letton;
+lit;lituanien;
+mlt;maltais;
+pol;polonais;
+por;portugais;
+rum;roumain;
+slo;slovaque;
+slv;slovène;
+spa;espagnol;
+swe;suédois;
