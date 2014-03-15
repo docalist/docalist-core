@@ -151,11 +151,11 @@ class Plugin {
     public function registerTables(TableManager $tableManager) {
         $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'tables'  . DIRECTORY_SEPARATOR;
 
-        // Tables des langues
+        // Tables des langues complète
         $tableManager->register(new TableInfo([
             'name' => 'ISO-639-2_alpha3_fr',
             'path' => $dir . 'languages/ISO-639-2_alpha3_fr.txt',
-            'label' => __('Codes langues 3 lettres en français (ISO-639-2)', 'docalist-core'),
+            'label' => __('Liste complète des codes langues 3 lettres en français (ISO-639-2)', 'docalist-core'),
             'format' => 'table',
             'type' => 'languages',
             'user' => false,
@@ -164,12 +164,32 @@ class Plugin {
         $tableManager->register(new TableInfo([
             'name' => 'ISO-639-2_alpha3_en',
             'path' => $dir . 'languages/ISO-639-2_alpha3_en.txt',
-            'label' => __('Codes langues 3 lettres en anglais (ISO-639-2)', 'docalist-core'),
+            'label' => __('Liste complète des codes langues 3 lettres en anglais (ISO-639-2)', 'docalist-core'),
             'format' => 'table',
             'type' => 'languages',
             'user' => false,
         ]));
 
+        // Tables des langues simpifiée (langues officielles de l'union européenne)
+        $tableManager->register(new TableInfo([
+            'name' => 'ISO-639-2_alpha3_EU_fr',
+            'path' => $dir . 'languages/ISO-639-2_alpha3_fr.txt',
+            'label' => __('Codes 3 lettres en français des langues officielles de l\'Union Européenne (ISO-639-2)', 'docalist-core'),
+            'format' => 'table',
+            'type' => 'languages',
+            'user' => false,
+        ]));
+
+        $tableManager->register(new TableInfo([
+            'name' => 'ISO-639-2_alpha3_EU_en',
+            'path' => $dir . 'languages/ISO-639-2_alpha3_en.txt',
+            'label' => __('Codes 3 lettres en anglais des langues officielles de l\'Union Européenne (ISO-639-2)', 'docalist-core'),
+            'format' => 'table',
+            'type' => 'languages',
+            'user' => false,
+        ]));
+
+        // Tables de conversion des codes langues
         $tableManager->register(new TableInfo([
             'name' => 'ISO-639-2_alpha2-to-alpha3',
             'path' => $dir . 'languages/ISO-639-2_alpha2-to-alpha3.txt',
