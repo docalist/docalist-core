@@ -60,8 +60,8 @@ use Docalist\Table\TableInfo;
             <tr>
                 <th><?= __('Nom', 'docalist-core') ?></th>
                 <th><?= __('Libellé', 'docalist-core') ?></th>
-                <th><?= __('Format', 'docalist-core') ?></th>
                 <th><?= __('Type', 'docalist-core') ?></th>
+                <th><?= __('Format', 'docalist-core') ?></th>
             </tr>
         </thead>
 
@@ -124,8 +124,8 @@ use Docalist\Table\TableInfo;
                 </td>
 
                 <td><?= $table->label ?></td>
-                <td><?= $table->format ?></td>
                 <td><?= $table->type ?></td>
+                <td><?= $table->format ?></td>
             </tr>
         <?php endforeach ?>
 
