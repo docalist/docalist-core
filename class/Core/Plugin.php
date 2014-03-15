@@ -170,10 +170,10 @@ class Plugin {
             'user' => false,
         ]));
 
-        // Tables des langues simpifiée (langues officielles de l'union européenne)
+        // Tables des langues simplifiées (langues officielles de l'union européenne)
         $tableManager->register(new TableInfo([
             'name' => 'ISO-639-2_alpha3_EU_fr',
-            'path' => $dir . 'languages/ISO-639-2_alpha3_fr.txt',
+            'path' => $dir . 'languages/ISO-639-2_alpha3_EU_fr.txt',
             'label' => __('Codes 3 lettres en français des langues officielles de l\'Union Européenne (ISO-639-2)', 'docalist-core'),
             'format' => 'table',
             'type' => 'languages',
@@ -182,7 +182,7 @@ class Plugin {
 
         $tableManager->register(new TableInfo([
             'name' => 'ISO-639-2_alpha3_EU_en',
-            'path' => $dir . 'languages/ISO-639-2_alpha3_en.txt',
+            'path' => $dir . 'languages/ISO-639-2_alpha3_EU_en.txt',
             'label' => __('Codes 3 lettres en anglais des langues officielles de l\'Union Européenne (ISO-639-2)', 'docalist-core'),
             'format' => 'table',
             'type' => 'languages',
