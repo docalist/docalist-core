@@ -181,7 +181,7 @@ class Plugin {
 
         // Tables des pays
         $tableManager->register(new TableInfo([
-            'name' => 'ISO-3166-1-alpha2_FR',
+            'name' => 'ISO-3166-1_alpha2_fr',
             'path' => $dir . 'countries/ISO-3166-1_alpha2_fr.txt',
             'label' => __('Codes pays 2 lettres en français (ISO-3166-1)', 'docalist-core'),
             'format' => 'table',
@@ -190,7 +190,7 @@ class Plugin {
         ]));
 
         $tableManager->register(new TableInfo([
-            'name' => 'ISO-3166-1-alpha2_EN',
+            'name' => 'ISO-3166-1_alpha2_EN',
             'path' => $dir . 'countries/ISO-3166-1_alpha2_en.txt',
             'label' => __('Codes pays 2 lettres en anglais (ISO-3166-1)', 'docalist-core'),
             'format' => 'table',
