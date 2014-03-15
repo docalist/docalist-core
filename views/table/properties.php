@@ -45,8 +45,8 @@ use Docalist\Forms\Form;
         $form->input('name')->attribute('class', 'regular-text');
         $form->input('label')->attribute('class', 'large-text');
 
-        $form->div('format')->tag('span.description', $tableInfo->format);
         $form->div('type')->tag('span.description', $tableInfo->type);
+        $form->div('format')->tag('span.description', $tableInfo->format);
         $form->div('path')->tag('span.description', $tableInfo->path);
 
         $form->submit(__('Enregistrer les modifications', 'docalist-search'));
