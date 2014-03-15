@@ -74,12 +74,12 @@ class Plugin {
 
         // Définit les lookups de type "table"
         add_filter('docalist_table_lookup', function($value, $source, $search) {
-            return $this->get('table-manager')->lookup($source, $search, false);
+            return docalist('table-manager')->lookup($source, $search, false);
         }, 10, 3);
 
         // Définit les lookups de type "thesaurus"
         add_filter('docalist_thesaurus_lookup', function($value, $source, $search) {
-            return $this->get('table-manager')->lookup($source, $search, true);
+            return docalist('table-manager')->lookup($source, $search, true);
         }, 10, 3);
 
         // Back office
