@@ -22,7 +22,8 @@ use Docalist\Data\Entity\AbstractEntity;
  * @property string $name Nom de la table
  * @property string $path Path (absolu) de la table
  * @property string $label Libellé de la table
- * @property string $type Type de la table
+ * @property string $format Format de la table (structure)
+ * @property string $type Type de la table (nature)
  * @property bool $user true : table utilisateur, false : table prédéfinie
  */
 class TableInfo extends AbstractEntity {
