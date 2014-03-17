@@ -355,15 +355,6 @@ class SQLite implements TableInterface {
      * dépend de $fetchMode (cf. doc de PDO).
      */
     protected function query($what = '*', $where = '', $order = '', $limit = null, $offset = null, $fetchMode = PDO::FETCH_OBJ) {
-        // Ajoute des guillemets autour des noms de champs
-        $fields = explode(',', $what);
-        $fields = array_map(function($field) {
-            $field = trim($field);
-            if ($field !== '*') $field = '"' . $field . '"';
-            return $field;
-        }, $fields);
-        $what = implode(',', $fields);
-
         // Construit la requête sql
         $sql = "SELECT $what FROM data";
         $where && $sql .= " WHERE $where";
