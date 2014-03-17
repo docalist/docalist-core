@@ -24,7 +24,7 @@
 # Historique :
 # - 2014-03-13 Version initiale. 184 codes.
 # ------------------------------------------------------------------------------
-from;to;description
+src;dst;description
 aa;aar;afar
 ab;abk;abkhaze
 ae;ave;avestique

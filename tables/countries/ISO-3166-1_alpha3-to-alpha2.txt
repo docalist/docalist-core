@@ -24,7 +24,7 @@
 # Historique :
 # - 2014-03-13 Version initiale. 249 codes.
 # ------------------------------------------------------------------------------
-from;to;description
+src;dst;description
 ABW;AW;Aruba
 AFG;AF;Afghanistan
 AGO;AO;Angola
