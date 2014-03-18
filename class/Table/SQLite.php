@@ -398,7 +398,7 @@ class SQLite implements TableInterface {
 
     public function find($what = '*', $where = '') {
         $result = $this->search($what, $where, '', 1);
-        return empty($result) ? null : reset($result);
+        return empty($result) ? false : reset($result);
     }
 
     public function lookup($what = '*', $prefix, $limit = null) {
