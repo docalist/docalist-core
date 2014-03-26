@@ -471,7 +471,7 @@ class TableManager {
      */
     public function lookup($table, $search, $thesaurus = false) {
         // Par défaut, retourne les 10 premières réponses obtenues
-        $limit = 10;
+        $limit = 100;
 
         // Détermine les champs à retourner
         if ($thesaurus) {
