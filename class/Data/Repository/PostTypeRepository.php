@@ -111,30 +111,32 @@ class PostTypeRepository extends AbstractRepository {
         $entity = new $type($data);
         $entity->primaryKey($primaryKey);
 
+        $this->synchronize($post, $entity, false);
+
         return $entity;
     }
 
     /**
-     * Synchronise le post WordPress à partir des données de l'entité.
+     * Synchronise les données de l'entité et du post WordPress.
      *
-     * @param WP_Post $post
-     * @param EntityInterface $entity
+     * Cette méthode permet d'avoir dans l'entité des "champs virtuels" qui
+     * sont "mappés" vers des champs existants du post WordPress.
+     *
+     * @param WP_Post $post Le post
+     * @param EntityInterface $entity l'entité
+     * @param bool $save Sens de la synchronisation.
+     * - Si save est à false, les données du post sont transférées vers
+     *   l'entité (i.e. synchronisation lors du chargement d'une notice).
+     * - Si save est à true, les données de l'entité sont transférées vers le
+     *   post (i.e. synchronisation du post avant enregistrement dans la base).
      */
-    protected function synchronizePost(WP_Post & $post, EntityInterface $entity) {
-        global $user_ID;
+    protected function synchronize(WP_Post $post, EntityInterface $entity, $save = false) {
+        // Recopier ref dans post
+        if ($save) {
+            $post->post_type = $this->postType();
+        }
 
-        $post->post_type = $this->postType();
-        $post->post_status = 'publish'; // TODO: config
-        $post->post_author = $user_ID; // TODO: config
-
-        $post->post_date = $post->post_modified = current_time('mysql');
-        $post->post_date_gmt = $post->post_modified_gmt = current_time('mysql', true);
-
-        $post->comment_status = 'closed'; // TODO: config ?
-        $post->ping_status = 'closed'; // TODO: config ?
-        $post->guid = 'http://' . Utils::uuid();
-        // le guid wp doit obligatoirement commencer par http://
-        // cf. http://alexking.org/blog/2011/08/13/wordpress-guid-format
+        // else recopier post dans ref
     }
 
     public function store(EntityInterface $entity) {
@@ -160,7 +162,7 @@ class PostTypeRepository extends AbstractRepository {
         // Synchronise le post wp à partir des données de l'entité
         // Permet également de modifier l'entité avant enregistrement (par
         // exemple, affecter une valeur au champ Ref).
-        $this->synchronizePost($post, $entity);
+        $this->synchronize($post, $entity, true);
 
         // Encode les données de l'entité en JSON
         $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
