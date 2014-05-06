@@ -33,8 +33,6 @@ use Docalist\Data\Entity\AbstractSettingsEntity;
 class SettingsRepository extends AbstractRepository {
     /**
      * Crée un nouveau dépôt.
-     *
-     * @param string $postType Le nom du custom post type.
      */
     public function __construct() {
         parent::__construct('Docalist\Data\Entity\AbstractSettingsEntity');
