@@ -45,7 +45,6 @@ function docalist($service) {
         require_once __DIR__ . '/class/Autoloader.php';
         $autoloader = new Autoloader([
             'Docalist' => __DIR__ . '/class',
-            'Docalist\Forms' => __DIR__ . '/lib/docalist-forms/class',
             'Symfony' => __DIR__ . '/lib/Symfony'
         ]);
 
