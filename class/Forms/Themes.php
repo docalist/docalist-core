@@ -93,7 +93,7 @@ class Themes {
      */
     public static function registerDefaultThemes() {
         // Répertoire de base des thèmes
-        $dir = dirname(__DIR__) . '/themes/';
+        $dir = dirname(dirname(__DIR__)) . '/views/forms/';
 
         // Thèmes standard
         self::$themes = array(
