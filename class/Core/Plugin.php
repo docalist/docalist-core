@@ -95,29 +95,77 @@ class Plugin {
 //         });
 
         // Déclare les JS et les CSS prédéfinis inclus dans docalist-core
-        add_action('init', function() { // TODO : wp_enqueue_scripts ne marche pas ?
-            $js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? 'js' : 'min.js';
-
-            $url = plugins_url('docalist-core');
-
-            wp_register_script(
-                'selectize.js',
-                "$url/lib/selectize/js/standalone/selectize.$js",
-                array('jquery'),
-                '0.8.5',
-                false // TODO: Passer à true (position top)
-            );
-
-            wp_register_style(
-                'selectize.css',
-                "$url/lib/selectize/css/selectize.default.css",
-                false,
-                '0.8.5'
-            );
-
-            // Todo : handsontable
+        add_action('init', function() {
+            $this->registerAssets();
         });
+    }
 
+    /**
+     * Déclare les scripts et styles standard de docalist-core.
+     */
+    protected function registerAssets() {
+        $js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? 'js' : 'min.js';
+
+        $url = plugins_url('docalist-core');
+
+        // Bootstrap
+        wp_register_style(
+            'bootstrap',
+            '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css',
+            [],
+            '2.3.0'
+        );
+
+        // Selectize
+        wp_register_script(
+            'selectize',
+            "$url/lib/selectize/js/standalone/selectize.$js",
+            ['jquery'],
+            '0.8.5',
+            false // TODO: Passer à true (position top)
+        );
+
+        wp_register_style(
+            'selectize',
+            "$url/lib/selectize/css/selectize.default.css",
+            [],
+            '0.8.5'
+        );
+
+        // Todo : handsontable
+
+        // docalist-forms
+        wp_register_script(
+            'docalist-forms',
+            "$url/views/forms/docalist-forms.js", // TODO: version min.js
+            ['jquery','selectize'],
+            '140512',
+            false // TODO: Passer à true (position top)
+        );
+
+        // Thème par défaut des formulaires
+        wp_register_style(
+            'docalist-forms-default',
+            "$url/views/forms/default/default.css",
+            [],
+            '140318'
+        );
+
+        // Thème bootstrap des formulaires
+        wp_register_style(
+            'docalist-forms-bootstrap',
+            "$url/views/forms/bootstrap/bootstrap-theme.css",
+            ['bootstrap'],
+            '140318'
+        );
+
+        // Thème wordpress des formulaires
+        wp_register_style(
+            'docalist-forms-wordpress',
+            "$url/views/forms/wordpress/wordpress-theme.css",
+            [],
+            '140326'
+        );
     }
 
     /**
