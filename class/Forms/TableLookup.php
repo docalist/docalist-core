@@ -76,11 +76,11 @@ class TableLookup extends Select {
         return [
             [
                 'type' => 'js',
-                'name' => 'selectize.js',
+                'name' => 'selectize',
             ],
             [
                 'type' => 'css',
-                'name' => 'selectize.css',
+                'name' => 'selectize',
             ],
 
         ];
