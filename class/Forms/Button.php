@@ -36,5 +36,4 @@ class Button extends Field {
     public function __construct($label = null) {
         if ($label) $this->label($label);
     }
-
 }
