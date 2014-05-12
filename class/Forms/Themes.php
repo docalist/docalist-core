@@ -101,30 +101,10 @@ class Themes {
                 'path' => $dir . 'base/',
                 'extends' => false,
                 'assets' => array(
-                    array('name' => 'jquery'),
                     array(
                         'name' => 'docalist-forms',
-                        'src' => 'docalist-forms.js?260318',
-                        'position' => 'top',
                     ),
                 ),
-            ),
-
-            'bootstrap' => array(
-                'path' => $dir . 'bootstrap/',
-                'extends' => 'base',
-                'assets' => array(
-                    array(
-                        'type' => 'css',
-                        'name' => 'bootstrap-css',
-                        'src' => '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css',
-                    ),
-                    array(
-                        'type' => 'css',
-                        'name' => 'bootstrap-theme',
-                        'src' => 'bootstrap/bootstrap-theme.css?140318',
-                    ),
-                )
             ),
 
             'default' => array(
@@ -133,8 +113,18 @@ class Themes {
                 'assets' => array(
                     array(
                         'type' => 'css',
-                        'name' => 'default-theme',
-                        'src' => 'default/default.css?140318',
+                        'name' => 'docalist-forms-default',
+                    ),
+                )
+            ),
+
+            'bootstrap' => array(
+                'path' => $dir . 'bootstrap/',
+                'extends' => 'base',
+                'assets' => array(
+                    array(
+                        'type' => 'css',
+                        'name' => 'docalist-forms-bootstrap',
                     ),
                 )
             ),
@@ -145,8 +135,7 @@ class Themes {
                 'assets' => array(
                     array(
                         'type' => 'css',
-                        'name' => 'wordpress-theme',
-                        'src' => 'wordpress/wordpress-theme.css?260318',
+                        'name' => 'docalist-forms-wordpress',
                     ),
                 )
             ),
