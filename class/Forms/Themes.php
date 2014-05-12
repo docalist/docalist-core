@@ -104,7 +104,7 @@ class Themes {
                     array('name' => 'jquery'),
                     array(
                         'name' => 'docalist-forms',
-                        'src' => 'assets/docalist-forms.js?260318',
+                        'src' => 'docalist-forms.js?260318',
                         'position' => 'top',
                     ),
                 ),
@@ -122,7 +122,7 @@ class Themes {
                     array(
                         'type' => 'css',
                         'name' => 'bootstrap-theme',
-                        'src' => 'themes/bootstrap/bootstrap-theme.css?140318',
+                        'src' => 'bootstrap/bootstrap-theme.css?140318',
                     ),
                 )
             ),
@@ -134,7 +134,7 @@ class Themes {
                     array(
                         'type' => 'css',
                         'name' => 'default-theme',
-                        'src' => 'themes/default/default.css?140318',
+                        'src' => 'default/default.css?140318',
                     ),
                 )
             ),
@@ -146,7 +146,7 @@ class Themes {
                     array(
                         'type' => 'css',
                         'name' => 'wordpress-theme',
-                        'src' => 'themes/wordpress/wordpress-theme.css?260318',
+                        'src' => 'wordpress/wordpress-theme.css?260318',
                     ),
                 )
             ),
