@@ -114,7 +114,7 @@ class Views {
      *
      * @param string $view Nom symbolique de la vue recherchée.
      *
-     * @return string|null Le path de la vue ou null si la vue n'existe pas.
+     * @return string|false Le path de la vue ou false si la vue n'existe pas.
      */
     public function path($view) {
         static $themeDir = null;
@@ -145,6 +145,6 @@ class Views {
         }
 
         // Vue non trouvée
-        return null;
+        return false;
     }
 }
