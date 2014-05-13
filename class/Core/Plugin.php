@@ -15,6 +15,7 @@
 
 namespace Docalist\Core;
 
+use Docalist\Views;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInfo;
@@ -53,6 +54,11 @@ class Plugin {
             $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
             return $root;
+        });
+
+        // Crée le service "views"
+        docalist('services')->add('views', function() {
+            return new Views();
         });
 
         // Crée le service "file-cache"
