@@ -147,4 +147,15 @@ class Views {
         // Vue non trouvée
         return false;
     }
+
+    /**
+     * Détermine si une vue existe
+     *
+     * @param string $view Le nom de la vue à tester
+     *
+     * @return bool
+     */
+    public function has($view) {
+        return false !== $this->path($view);
+    }
 }
