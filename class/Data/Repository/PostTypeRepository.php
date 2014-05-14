@@ -24,14 +24,6 @@ use StdClass;
  */
 class PostTypeRepository extends AbstractRepository {
     /**
-     * Le nom du meta (custom field) utilisé pour stocker les données
-     * sérialisées de l'entité au sein de la table wp_post_meta.
-     *
-     * @var string
-     */
-    const META_KEY = 'dcl_data';
-
-    /**
      * Le nom du custom post type, c'est-à-dire la valeur qui sera stockée dans
      * le champ post_type de la table wp_posts pour chacun des documents créés.
      *
