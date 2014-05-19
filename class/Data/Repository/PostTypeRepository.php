@@ -32,6 +32,16 @@ class PostTypeRepository extends AbstractRepository {
     protected $postType;
 
     /**
+     * Liste des champs wordpress qui sont mappés vers un champ de l'entité.
+     *
+     * Les classes descendantes doivent surcharger la propriété en fonction
+     * des champs définis dans l'entité.
+     *
+     * @var array Un tableau de la forme "champ wordpress" => "champ entité".
+     */
+    protected static $fieldMap = [];
+
+    /**
      * Crée un nouveau dépôt.
      *
      * @param string $type le nom complet de la classe Entité utilisée pour
@@ -58,31 +68,18 @@ class PostTypeRepository extends AbstractRepository {
     }
 
     public function load($entity, $type = null) {
-        // Vérifie qu'on a une clé primaire
+        // Vérifie qu'on a un ID
         $primaryKey = $this->checkPrimaryKey($entity, true);
 
         // Charge le post
-        $post = WP_Post::get_instance($primaryKey);
-
-        // Récupère les données de l'entité, stockées dans post_excerpt
-        $data = $post->post_excerpt;
-
-        // Si c'est un nouveau post, post_excerpt est vide
-        if ($data === '') {
-            $data = array();
+        if (false === $post = WP_Post::get_instance($primaryKey)) {
+            $msg = "La référence %s n'existe pas";
+            $msg = sprintf($msg, $primaryKey);
+            throw new RuntimeException($msg);
         }
 
-        // Sinon, post_excerpt doit contenir du JSON valide
-        else {
-            $data = json_decode($post->post_excerpt, true);
-
-            // On doit obtenir un tableau (éventuellement vide), sinon c'est une erreur
-            if (! is_array($data)) {
-                $msg = 'JSON error %s while decoding field post_excerpt of post %s: %s';
-                $msg = sprintf($msg, json_last_error(), $primaryKey, var_export($post->post_excerpt, true));
-                throw new RuntimeException($msg);
-            }
-        }
+        // Convertit le post en données d'entité
+        $data = $this->postToEntity($post);
 
         // Type = false permet de récupérer les données brutes
         if ($type === false) {
@@ -103,42 +100,15 @@ class PostTypeRepository extends AbstractRepository {
         $entity = new $type($data);
         $entity->primaryKey($primaryKey);
 
-        $this->synchronize($post, $entity, false);
-
+        // Terminé
         return $entity;
-    }
-
-    /**
-     * Synchronise les données de l'entité et du post WordPress.
-     *
-     * Cette méthode permet d'avoir dans l'entité des "champs virtuels" qui
-     * sont "mappés" vers des champs existants du post WordPress.
-     *
-     * @param WP_Post $post Le post
-     * @param EntityInterface $entity l'entité
-     * @param bool $save Sens de la synchronisation.
-     * - Si save est à false, les données du post sont transférées vers
-     *   l'entité (i.e. synchronisation lors du chargement d'une notice).
-     * - Si save est à true, les données de l'entité sont transférées vers le
-     *   post (i.e. synchronisation du post avant enregistrement dans la base).
-     */
-    protected function synchronize(WP_Post $post, EntityInterface $entity, $save = false) {
-        // Recopier ref dans post
-        if ($save) {
-            $post->post_type = $this->postType();
-        }
-
-        // else recopier post dans ref
     }
 
     public function store(EntityInterface $entity) {
         global $wpdb;
 
-        // Vérifie que l'entité est du bon type
-        $this->checkType($entity);
-
-        // Récupère la clé de l'entité
-        $primaryKey = $entity->primaryKey();
+        // Récupère la clé de l'entité et vérifie son type
+        $primaryKey = $this->checkPrimaryKey($entity, false);
 
         // Charge le post existant si on a une clé, créée un nouveau post sinon
         if ($primaryKey) {
@@ -151,21 +121,11 @@ class PostTypeRepository extends AbstractRepository {
             $post = new WP_Post(new StdClass());
         }
 
-        // Synchronise le post wp à partir des données de l'entité
-        // Permet également de modifier l'entité avant enregistrement (par
-        // exemple, affecter une valeur au champ Ref).
-        $this->synchronize($post, $entity, true);
-
-        // Encode les données de l'entité en JSON
-        $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-        WP_DEBUG && $options |= JSON_PRETTY_PRINT;
-        $data = json_encode($entity, $options);
-
-        // Stocke le JSON dans le champ post_excerpt
-        $post->post_excerpt = $data;
-
-        // Pour wpdb, il faut maintenant un tableau et non plus un WP_Post
+        // Crée le post wp à partir des données de l'entité
         $post = (array) $post;
+        $this->entityToPost($entity, $post);
+
+        // Supprime les champ sen trop
         unset($post['filter']);
         unset($post['format_content']);
 
@@ -215,5 +175,78 @@ class PostTypeRepository extends AbstractRepository {
 
         // Retourne le nombre de notices supprimées
         return $nb;
+    }
+
+    /**
+     * Convertit les données d'un post wordpress dans le format de données
+     * attendu par les entités de ce dépôt.
+     *
+     * Cette méthode est appellée par load() pour convertir un post wordpress
+     * en entité.
+     *
+     * - Décode post_excerpt (on récupère les champs spécifiques)
+     * - Copie les champs wordpress qui sont mappés vers des champs de l'entité
+     *   en utilisant la propriété self::$fieldMap.
+     *
+     * @param array|WP_Post $post
+     *
+     * @return array Les données de l'entité
+     */
+    public function postToEntity($post) {
+        is_object($post) && $post = (array) $post;
+
+        // Si c'est un nouveau post, il se peut que post_excerpt soit vide
+        if (empty($post['post_excerpt'])) {
+            $data = [];
+        }
+
+        // Sinon, post_excerpt doit contenir du JSON valide
+        else {
+            $data = json_decode($post['post_excerpt'], true);
+
+            // On doit obtenir un tableau (éventuellement vide), sinon erreur
+            if (! is_array($data)) {
+                $msg = 'JSON error %s while decoding field post_excerpt of post %s';
+                $msg = sprintf($msg, json_last_error(), var_export($post, true));
+                throw new RuntimeException($msg);
+            }
+        }
+
+        // Initialise les champs virtuels de la notice à partir des champs wordpress
+        foreach(self::$fieldMap as $src => $dst) {
+            if (isset($post[$src])) {
+                $data[$dst] = $post[$src];
+            }
+        }
+
+        // Terminé
+        return $data;
+    }
+
+    /**
+     * Convertit les données d'une entité en post wordpress.
+     *
+     * @param array $entity
+     * @param array Un post wordpress sous la forme d'un tableau
+     */
+    public function entityToPost(EntityInterface $entity, array & $post) {
+        // Transfère les champs virtuels de la notice dans le post wordpress
+        foreach(self::$fieldMap as $dst => $src) {
+            if (isset($entity->$src)) {
+                $post[$dst] = $entity->$src;
+                unset($entity->$src);
+            }
+        }
+
+        // Encode les données de l'entité en JSON
+        $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+        WP_DEBUG && $options |= JSON_PRETTY_PRINT;
+        $data = json_encode($entity, $options);
+
+        // Stocke le JSON dans le champ post_excerpt
+        $post['post_excerpt'] = $data;
+
+        // Terminé
+        return $post;
     }
 }
