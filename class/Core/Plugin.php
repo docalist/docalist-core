@@ -19,6 +19,7 @@ use Docalist\Views;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInfo;
+use Docalist\Sequences;
 
 /**
  * Plugin core de Docalist.
@@ -70,6 +71,11 @@ class Plugin {
         // Crée le service "table-manager"
         docalist('services')->add('table-manager', function() {
             return new TableManager($this->settings);
+        });
+
+        // Crée le service "sequences"
+        docalist('services')->add('sequences', function() {
+            return new Sequences();
         });
 
         // Enregistre nos propres tables quand c'est nécessaire
