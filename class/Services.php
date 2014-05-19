@@ -79,7 +79,7 @@ class Services {
      */
     public function get($id) {
         if (! isset($this->services[$id])) {
-            $message = __('%s non trouvé.', 'docalist-core');
+            $message = __('Service "%s" non trouvé.', 'docalist-core');
             throw new Exception(sprintf($message, $id));
         }
 
