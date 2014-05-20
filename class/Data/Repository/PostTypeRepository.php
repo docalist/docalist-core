@@ -39,7 +39,30 @@ class PostTypeRepository extends AbstractRepository {
      *
      * @var array Un tableau de la forme "champ wordpress" => "champ entité".
      */
-    protected static $fieldMap = [];
+    protected static $fieldMap = [
+     // 'post_author'           => '',
+     // 'post_date'             => '',
+     // 'post_date_gmt'         => '',
+     // 'post_content'          => '',
+     // 'post_title'            => '',
+     // 'post_excerpt'          => '',
+     // 'post_status'           => '',
+     // 'comment_status'        => '',
+     // 'ping_status'           => '',
+     // 'post_password'         => '',
+     // 'post_name'             => '',
+     // 'to_ping'               => '',
+     // 'pinged'                => '',
+     // 'post_modified'         => '',
+     // 'post_modified_gmt'     => '',
+     // 'post_content_filtered' => '',
+     // 'post_parent'           => '',
+     // 'guid'                  => '',
+     // 'menu_order'            => '',
+     // 'post_type'             => '',
+     // 'post_mime_type'        => '',
+     // 'comment_count'         => '',
+    ];
 
     /**
      * Crée un nouveau dépôt.
@@ -79,7 +102,7 @@ class PostTypeRepository extends AbstractRepository {
         }
 
         // Convertit le post en données d'entité
-        $data = $this->postToEntity($post);
+        $data = $this->postToEntity((array) $post);
 
         // Type = false permet de récupérer les données brutes
         if ($type === false) {
@@ -110,24 +133,8 @@ class PostTypeRepository extends AbstractRepository {
         // Récupère la clé de l'entité et vérifie son type
         $primaryKey = $this->checkPrimaryKey($entity, false);
 
-        // Charge le post existant si on a une clé, créée un nouveau post sinon
-        if ($primaryKey) {
-            if (false === $post = WP_Post::get_instance($primaryKey)) {
-                $msg = 'Post %s not found';
-                throw new RuntimeException(sprintf($msg, $primaryKey));
-            }
-        } else {
-            // wp nous oblige à passer un objet vide...
-            $post = new WP_Post(new StdClass());
-        }
-
         // Crée le post wp à partir des données de l'entité
-        $post = (array) $post;
-        $this->entityToPost($entity, $post);
-
-        // Supprime les champ sen trop
-        unset($post['filter']);
-        unset($post['format_content']);
+        $post = $this->entityToPost($entity);
 
         // Met à jour le post si on a une clé
         if ($primaryKey) {
@@ -135,7 +142,7 @@ class PostTypeRepository extends AbstractRepository {
                 throw new RuntimeException($wpdb->last_error);
             }
 
-            // Vide le cache pour ce post (Important, cf WP_Post::get_instance)
+            // Vide le cache pour ce post
             wp_cache_delete($primaryKey, 'posts');
         }
 
@@ -144,8 +151,7 @@ class PostTypeRepository extends AbstractRepository {
             if (false === $wpdb->insert($wpdb->posts, $post)) {
                 throw new RuntimeException($wpdb->last_error);
             }
-            $primaryKey = (int) $wpdb->insert_id;
-            $entity->primaryKey($primaryKey);
+            $entity->primaryKey((int) $wpdb->insert_id);
         }
     }
 
@@ -184,17 +190,15 @@ class PostTypeRepository extends AbstractRepository {
      * Cette méthode est appellée par load() pour convertir un post wordpress
      * en entité.
      *
-     * - Décode post_excerpt (on récupère les champs spécifiques)
-     * - Copie les champs wordpress qui sont mappés vers des champs de l'entité
-     *   en utilisant la propriété self::$fieldMap.
+     * Par défaut, elle décode post_excerpt (récupère les champs spécifiques) et
+     * copie les champs wordpress qui sont mappés vers des champs de l'entité
+     * en utilisant la propriété self::$fieldMap.
      *
-     * @param array|WP_Post $post
+     * @param array $post
      *
      * @return array Les données de l'entité
      */
-    public function postToEntity($post) {
-        is_object($post) && $post = (array) $post;
-
+    public function postToEntity(array $post) {
         // Si c'est un nouveau post, il se peut que post_excerpt soit vide
         if (empty($post['post_excerpt'])) {
             $data = [];
@@ -213,7 +217,7 @@ class PostTypeRepository extends AbstractRepository {
         }
 
         // Initialise les champs virtuels de la notice à partir des champs wordpress
-        foreach(self::$fieldMap as $src => $dst) {
+        foreach(static::$fieldMap as $src => $dst) {
             if (isset($post[$src])) {
                 $data[$dst] = $post[$src];
             }
@@ -226,25 +230,56 @@ class PostTypeRepository extends AbstractRepository {
     /**
      * Convertit les données d'une entité en post wordpress.
      *
-     * @param array $entity
-     * @param array Un post wordpress sous la forme d'un tableau
+     * @param EntityInterface $entity
+     *
+     * @return array Un post wordpress sous la forme d'un tableau
      */
-    public function entityToPost(EntityInterface $entity, array & $post) {
+    public function entityToPost(EntityInterface $entity) {
+        // Valeurs par défaut du post (champs dans l'ordre de la table wp_posts)
+        $now = current_time('mysql');
+        $nowGmt = current_time('mysql', true);
+        $post = [
+            'post_author'           => get_current_user_id(),
+            'post_date'             => $now,
+         // 'post_date_gmt'         => fait plus bas
+            'post_content'          => '',
+            'post_title'            => 'ref sans title',
+            'post_excerpt'          => '',
+            'post_status'           => 'publish',
+            'comment_status'        => 'open',
+            'ping_status'           => 'open',
+            'post_password'         => '',
+            'post_name'             => '',
+            'to_ping'               => '',
+            'pinged'                => '',
+            'post_modified'         => $now,
+            'post_modified_gmt'     => $nowGmt,
+            'post_content_filtered' => '',
+            'post_parent'           => 0,
+            'guid'                  => '',
+            'menu_order'            => 0,
+            'post_type'             => $this->postType,
+            'post_mime_type'        => '',
+            'comment_count'         => 0,
+        ];
+
         // Transfère les champs virtuels de la notice dans le post wordpress
-        foreach(self::$fieldMap as $dst => $src) {
+        foreach(static::$fieldMap as $dst => $src) {
             if (isset($entity->$src)) {
                 $post[$dst] = $entity->$src;
                 unset($entity->$src);
             }
         }
 
-        // Encode les données de l'entité en JSON
+        // Encode le reste des données en json dans post_excerpt
         $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
         WP_DEBUG && $options |= JSON_PRETTY_PRINT;
-        $data = json_encode($entity, $options);
+        $post['post_excerpt'] = json_encode($entity, $options);
 
-        // Stocke le JSON dans le champ post_excerpt
-        $post['post_excerpt'] = $data;
+        // Valeur par défaut des champs dont le contenu dépend d'autres champs
+        if (! isset($post['post_date_gmt'])) {
+            $post['post_date_gmt'] = get_gmt_from_date($post['post_date']);
+        }
 
         // Terminé
         return $post;
