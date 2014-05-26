@@ -239,6 +239,40 @@ class AdminPage extends Controller {
     }
 
     /**
+     * Retourne une ViewResponse affichant un message d'information.
+     *
+     * Le lien généré par le bouton "Annuler" fait un history.back().
+     *
+     * @param string $message Le message à afficher.
+     * @param string $title Le titre (optionnel).
+     *
+     * @return ViewResponse
+     */
+    protected function info($message = null, $title = null) {
+        return $this->view(
+            'docalist-core:info',
+            [ 'h2' => $title, 'message' => $message ]
+        );
+    }
+
+    /**
+     * Retourne une ViewResponse affichant un message d'erreur.
+     *
+     * Le lien généré par le bouton "Annuler" fait un history.back().
+     *
+     * @param string $message Le message à afficher.
+     * @param string $title Le titre (optionnel).
+     *
+     * @return ViewResponse
+     */
+    protected function error($message = null, $title = null) {
+        return $this->view(
+            'docalist-core:error',
+            [ 'h2' => $title, 'message' => $message ]
+        );
+    }
+
+    /**
      * Liste des outils disponibles
      *
      * Liste toutes les actions publiques du module.
