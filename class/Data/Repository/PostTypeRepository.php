@@ -170,17 +170,134 @@ class PostTypeRepository extends AbstractRepository {
         }
     }
 
+    /**
+     * Indique si la base est vide.
+     *
+     * @return boolean
+     */
+    public function isEmpty() {
+        global $wpdb;
+
+        $type = $this->postType();
+        $sql = "SELECT ID FROM $wpdb->posts WHERE post_type='$type' LIMIT 1";
+        $count = $wpdb->query($sql); // false=error, 0=vide, 1=non vide
+        if ($count === false) {
+            die("ERREUR SQL : <code>$sql</code>");
+        }
+
+        return $count ? false : true; // ! $count
+    }
+
+    /**
+     * Retourne le nombre de notices dans la base.
+     *
+     * @return int
+     */
+    public function count() {
+        global $wpdb;
+
+        $type = $this->postType();
+        $sql = "SELECT count(*) FROM $wpdb->posts WHERE post_type='$type'";
+
+        return (int) $wpdb->get_var($sql);
+    }
+
+    /**
+     * Méthode utilitaire utilisée par deleteAll().
+     *
+     * @param string $sql Requête sql à exécuter.
+     * @param string $msg Message à afficher.
+     */
+    private function sql($sql, $msg) {
+        global $wpdb;
+
+        $wpdb->query($sql);
+        if ($wpdb->last_error) {
+            $msg .= ". Erreur dans la requête SQL <code>$sql</code>";
+            do_action('docalist_biblio_deleteall_progress', $msg);
+        }
+        else {
+            $msg .= ' (' . $wpdb->rows_affected . ')';
+            do_action('docalist_biblio_deleteall_progress', $msg);
+        }
+    }
+
+    /**
+     * Vide la base
+     */
     public function deleteAll() {
         global $wpdb;
 
-        // Supprime tous les enregs
-        $nb = $wpdb->delete($wpdb->posts, array('post_type' => $this->postType));
+        $type = $this->postType();
+        $count = $this->count();
 
-        // Réinitialise les séquences éventuelles utilisées par cette base
-        docalist('sequences')->clear($this->postType);
+        // Début de la suppression
+        do_action('docalist_biblio_deleteall_start', $this, $count);
 
-        // Retourne le nombre de notices supprimées
-        return $nb;
+        // Toutes les notices
+        $posts = "SELECT ID FROM $wpdb->posts WHERE post_type='$type'";
+
+        // Révisions et autosaves de ces notices
+        $revisions = "SELECT ID FROM $wpdb->posts WHERE post_type='revision' AND post_parent IN ($posts)";
+
+        // Commentaires sur les notices et les révisions
+        $comments = "SELECT comment_id FROM $wpdb->comments WHERE comment_post_id IN ($posts) OR comment_post_id IN ($revisions)";
+
+        // Supprime les termes de taxonomies et des révisions
+        $sql = "DELETE FROM $wpdb->term_relationships WHERE object_id IN ($posts) OR object_id IN ($revisions)";
+        $msg = __('Suppression des termes', 'docalist-biblio');
+        $this->sql($sql, $msg);
+
+        // TODO : mettre à jour wp_term_taxonomy.count pour chacun des termes supprimés
+
+        // Supprime les métas des notices et des révisions
+        $sql = "DELETE FROM $wpdb->postmeta WHERE post_id IN ($posts) OR post_id IN ($revisions)";
+        $msg = __('Suppression des méta-données des notices', 'docalist-biblio');
+        $this->sql($sql, $msg);
+
+        // Supprime les metas des commentaires (statut akismet, trash status, etc.)
+        $sql = "DELETE FROM $wpdb->commentmeta WHERE comment_id IN ($comments)";
+        $msg = __('Suppression des méta-données des commentaires', 'docalist-biblio');
+        $this->sql($sql, $msg);
+
+        // Supprime les commentaires des notices et des révisions
+        $sql = "DELETE FROM $wpdb->comments WHERE comment_post_id IN ($posts) OR comment_post_id IN ($revisions)";
+        $msg = __('Suppression des commentaires', 'docalist-biblio');
+        $this->sql($sql, $msg);
+
+        // Supprime les révisions et les autosaves
+
+        // $sql = "DELETE FROM $wpdb->posts WHERE post_type='revision' AND post_parent IN ($posts)";
+
+        // La requête ci-dessus ne fonctionne pas, on obtient une ERROR 1093
+        // "You can't specify target table 'wp_posts' for update in FROM clause"
+        // On ne peut pas utiliser une subquery qui porte sur la table dans
+        // laquelle on supprime.
+        // Pour que cela fonctionne, il faut passer par une table intermédiaire.
+        // source : http://stackoverflow.com/a/12508381
+
+        $sql = "DELETE FROM $wpdb->posts WHERE post_type='revision' AND post_parent IN (SELECT ID FROM ($posts) AS tmp)";
+        $msg = __('Suppression des révisions', 'docalist-biblio');
+        $this->sql($sql, $msg);
+
+        // Mise à jour dans les autres bases des notices filles dont le parent est l'une des notices supprimées
+        // $sql = "UPDATE $wpdb->posts SET post_parent=0 WHERE post_parent IN ($posts)"; // ERROR 1093
+        $sql = "UPDATE $wpdb->posts SET post_parent=0 WHERE post_type!='$type' AND post_parent IN (SELECT ID FROM ($posts) AS tmp)";
+        $msg = __('Mise à jour des notices filles', 'docalist-biblio');
+        $this->sql($sql, $msg);
+
+        // Supprime les notices
+        $sql = "DELETE FROM $wpdb->posts WHERE post_type='$type'";
+        $msg = __('Suppression des notices', 'docalist-biblio');
+        $this->sql($sql, $msg);
+
+        // Réinitialise la totalité du cache wordpress
+        wp_cache_init();
+        $msg = __('Réinitialisation du cache WordPress', 'docalist-biblio');
+        do_action('docalist_biblio_deleteall_progress', $msg);
+
+        // Fin de la suppression
+        do_action('docalist_biblio_deleteall_done', $this, $count);
     }
 
     /**
