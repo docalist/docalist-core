@@ -340,15 +340,18 @@ class Controller {
      * @param ReflectionMethod $method
      * @param array $args
      * @param bool $checkTooManyArgs Génère une exception si $args contient des
-     * paramètres qui ne firgurent pas dans la méthode.
+     * paramètres qui ne figurent pas dans la méthode.
+     * @param bool $checkMissing Génère une exception si $args ne contient pas
+     * tous les paramètres requis.
      *
      * @return array
      *
      * @throws Exception
      * - si un paramètre obligatoire est absent
      * - s'il y a trop de paramètres et que $checkTooManyArgs est à true
+     * - s'il n'y a pas assez de paramètres et que $checkMissing est à true
      */
-    protected function matchParameters(ReflectionMethod $method, array $args, $checkTooManyArgs = false) {
+    protected function matchParameters(ReflectionMethod $method, array $args, $checkTooManyArgs = false, $checkMissing = true) {
         $params = $method->getParameters();
         $result = [];
         foreach ($params as $i => $param) {
@@ -377,8 +380,11 @@ class Controller {
 
             // Paramètre non fourni : utilise la valeur par défaut s'il y en a une
             if (!$param->isDefaultValueAvailable()) {
-                $msg = __("Paramètre requis : %s.", 'docalist-core');
-                throw new Exception(sprintf($msg, $name));
+                if ($checkMissing) {
+                    $msg = __("Paramètre requis : %s.", 'docalist-core');
+                    throw new Exception(sprintf($msg, $name));
+                }
+                continue;
             }
 
             // Ok
@@ -450,7 +456,7 @@ class Controller {
 
         // Construit la liste des paramètres
         try {
-            $args = $this->matchParameters($method, $_REQUEST, false);
+            $args = $this->matchParameters($method, $_REQUEST, false, true);
         } catch (Exception $e) {
             return $this->view(
                 'docalist-core:controller/bad-request',
@@ -527,7 +533,7 @@ class Controller {
         $args = func_get_args();
         array_shift($args);
         count($args) === 1 && is_array($args[0]) && $args = $args[0]; // // Appel de la forme "action, array(args)"
-        $args = $this->matchParameters($method, $args, true);
+        $args = $this->matchParameters($method, $args, true, false);
 
         // Ajoute les paramètres du contrôleur
         $t = [$this->controllerParameter => $this->id()];
