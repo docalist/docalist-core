@@ -151,7 +151,7 @@ class Plugin {
             'docalist-forms',
             "$url/views/forms/docalist-forms.js", // TODO: version min.js
             ['jquery','selectize'],
-            '140512',
+            '140610',
             false // TODO: Passer à true (position top)
         );
 
