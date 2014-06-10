@@ -426,17 +426,19 @@ jQuery.fn.tableLookup = function() {
                     
                     // Cas d'un non-descripteur
                     if (item.USE) {
-                        html = '<div class="nondes" rel="' + escape(item.USE) + '">';
+                        // USE est de la forme { "code" : "label }
+                        var code = Object.keys(item.USE)[0];
+                        html = '<div class="nondes" rel="' + escape(code) + '">';
+                        html += '<span class="term" rel="' + escape(code) + '">' + escape(item.label) + '</span>';
                     } 
                     
                     // Cas d'un descripteur
                     else {
                         html = '<div class="des">';
+                        html += '<span class="term">' + escape(item.label) + '</span>';
                     }
                     
-                    // Libellé du terme
-                    html += '<span class="term">' + escape(item.label) + '</span>';
-/*                    
+                    /*                    
                     // Description
                     if (item.description) {
                         html += '<span class="title" title="' + escape(item.description) + '">?</span>';
