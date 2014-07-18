@@ -42,7 +42,7 @@ use Exception;
  */
 class Views {
     /**
-     * Exécute une vue.
+     * Exécute une vue et affiche le résultat.
      *
      * @param string $view Le nom de la vue à exécuter.
      *
@@ -74,14 +74,14 @@ class Views {
      * Dans une vue, $view est pratique pour le débogage mais aussi pour
      * transmettre les données à une autre vue :
      *
-     * docalist('views')->render('autre:vue', $view['data']);
+     * docalist('views')->display('autre:vue', $view['data']);
      *
      * @return mixed La méthode retourne ce que retourne la vue (rien en
      * général).
      *
      * @throws Exception si la vue n'existe pas.
      */
-    public function render($view, array $data = []) {
+    public function display($view, array $data = []) {
         // Détermine le path de la vue
         if (false === $path = $this->path($view)) {
             $msg = __('Vue non trouvée "%s"', 'docalist-core');
@@ -102,6 +102,25 @@ class Views {
 
         // Exécute le template
         return $render($data);
+    }
+
+    /**
+     * Exécute une vue et retourne le résultat.
+     *
+     * @param string $view Le nom de la vue à exécuter.
+     *
+     * @param array $data Un tableau contenant les données à transmettre
+     * à la vue (cf. display()).
+     *
+     * @return mixed La méthode retourne ce que retourne la vue (rien en
+     * général).
+     *
+     * @throws Exception si la vue n'existe pas.
+     */
+    public function render($view, array $data = []) {
+        ob_start();
+        $this->display($view, $data);
+        return ob_get_clean();
     }
 
     /**
