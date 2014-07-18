@@ -29,12 +29,12 @@ class ViewResponse extends HtmlResponse {
     }
 
     public function sendContent() {
-        docalist('views')->render($this->view, $this->data);
+        docalist('views')->display($this->view, $this->data);
 
         return $this;
     }
 
     public function getContent() {
-        return 'View: ' . $this->view . "\nData: " . var_export($this->data, true);
+        return docalist('views')->render($this->view, $this->data);
     }
 }
