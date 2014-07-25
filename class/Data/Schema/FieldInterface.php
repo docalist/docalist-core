@@ -24,6 +24,14 @@ interface FieldInterface extends SchemaInterface {
     public function repeatable();
 
     /**
+     * Pour une collection d'entités, indique le sous-champ utilisé comme clé
+     * pour les entrées de la collection.
+     *
+     * @return string|null
+     */
+    public function key();
+
+    /**
      * Retourne la valeur par défaut du champ.
      *
      * @return mixed

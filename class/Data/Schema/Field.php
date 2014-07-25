@@ -27,6 +27,7 @@ class Field extends Schema implements FieldInterface {
     protected $default;
     protected $label;
     protected $description;
+    protected $key;
 
     /**
      * Liste des types de champs reconnus et valeur par défaut.
@@ -68,6 +69,9 @@ class Field extends Schema implements FieldInterface {
 
         // Entity
         $this->setEntity(isset($data['entity']) ? $data['entity'] : null, $rootEntityClass);
+
+        // Key
+        $this->setKey(isset($data['key']) ? $data['key'] : null);
 
         // Label
         $this->setLabel(isset($data['label']) ? $data['label'] : null);
@@ -129,6 +133,25 @@ class Field extends Schema implements FieldInterface {
 
     public function repeatable() {
         return $this->repeatable;
+    }
+
+    protected function setKey($key) {
+        if (! is_null($key)) {
+            if (! $this->repeatable) {
+                $msg = 'property "key" is not allowed for field "%s" (field is not repeatable)';
+                throw new InvalidArgumentException(sprintf($msg, $this->name));
+            }
+
+            if (! $this->entity) {
+                $msg = 'property "key" is not allowed for field "%s" (field is not an entity)';
+                throw new InvalidArgumentException(sprintf($msg, $this->name));
+            }
+        }
+        $this->key = $key;
+    }
+
+    public function key() {
+        return $this->key;
     }
 
     protected function setDefaultValue($default) {
@@ -228,12 +251,12 @@ class Field extends Schema implements FieldInterface {
         return $this->label ?: $this->name;
     }
 
-    public function description() {
-        return $this->description;
-    }
-
     protected function setDescription($description) {
         $this->description = $description;
+    }
+
+    public function description() {
+        return $this->description;
     }
 
     protected function setFields(array $fields = null, $rootEntityClass) {
@@ -322,7 +345,7 @@ class Field extends Schema implements FieldInterface {
                     $class = get_class($value);
                     if (! is_a($this->entity, $class, true)) {
                         $msg = 'Invalid value "%s" for field "%s": expected "%s"';
-                        throw new InvalidArgumentException(sprintf($class, $this->name, $this->entity));
+                        throw new InvalidArgumentException(sprintf($msg, $class, $this->name, $this->entity));
                     }
                 }
 
