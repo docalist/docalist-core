@@ -64,8 +64,9 @@ interface FieldInterface extends SchemaInterface {
      * Crée une nouvelle instance du champ.
      *
      * @param scalar|array $value
+     * @param boolean $single
      *
      * @return scalar|Property
      */
-    public function instantiate($value);
+    public function instantiate($value, $single = false);
 }
