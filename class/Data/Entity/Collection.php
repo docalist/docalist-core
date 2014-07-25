@@ -150,4 +150,51 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
         return implode(' ¤ ', $this->items);
     }
 
+    /**
+     * Retourne le premier élément de la collection et positionne l'itérateur
+     * interne au début.
+     *
+     * @return mixed
+     */
+    public function first() {
+        return reset($this->items);
+    }
+
+    /**
+     * Retourne le dernier élément de la collection et positionne l'itérateur
+     * interne à la fin.
+     *
+     * @return mixed
+     */
+    public function last() {
+        return end($this->items);
+    }
+
+    /**
+     * Retourne la clé ou l'index de l'élément en cours.
+     *
+     * @return int|string
+     */
+
+    public function key() {
+        return key($this->items);
+    }
+
+    /**
+     * Retourne l'élément en cours.
+     *
+     * @return mixed
+     */
+    public function current() {
+        return current($this->items);
+    }
+
+    /**
+     * Avance l'itérateur interne à l'élément suivant.
+     *
+     * @return mixed
+     */
+    public function next() {
+        return next($this->items);
+    }
 }
