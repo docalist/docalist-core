@@ -123,7 +123,6 @@ abstract class SchemaBasedObject implements SchemaBasedObjectInterface {
             is_object($item) && $item = $item->toArray();
             !empty($item) && $result[$key] = $item;
         }
-
         return $result;
     }
 
@@ -136,5 +135,12 @@ abstract class SchemaBasedObject implements SchemaBasedObjectInterface {
             $result .= ' ';
         }
         return $result;
+    }
+
+    public function refresh() {
+        foreach($this->fields as $field) {
+            is_object($field) && $field->refresh();
+        }
+        return $this;
     }
 }
