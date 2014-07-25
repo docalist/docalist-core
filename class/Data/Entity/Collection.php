@@ -85,10 +85,20 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
     }
 
     public function offsetSet ($offset, $value) {
-        if (is_null($offset)) {
-            $this->items[] = $this->schema->instantiate($value, true);
-        } else {
-            $this->items[$offset] = $this->schema->instantiate($value, true);
+        $item = $this->schema->instantiate($value, true);
+
+        // Si c'est une collection à clé, ignore offset et utilise le sous-champ
+        if ($key = $this->schema->key()) {
+            $this->items[$item->$key] = $item;
+        }
+
+        // Collection sans clés
+        else {
+            if (is_null($offset)) {
+                $this->items[] = $item;
+            } else {
+                $this->items[$offset] = $item;
+            }
         }
     }
 
@@ -97,21 +107,37 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
     }
 
     public function fromArray(array $data) {
-        $this->items = array();
+        $this->items = [];
 
         foreach($data as $item) {
-            $this->items[] = $this->schema->instantiate($item, true);
+            $this->offsetSet(null, $item);
         }
     }
 
     public function toArray() {
         $result = [];
-        foreach($this->items as $item) {
+        foreach($this->items as $key => $item) {
             is_object($item) && $item = $item->toArray();
-            !empty($item) && $result[] = $item;
+            !empty($item) && $result[$key] = $item;
+        }
+        return $result;
+    }
+
+    public function refresh() {
+        // Si c'est une collection sans clés, rien à faire
+        if (! $key = $this->schema->key()) {
+            return;
         }
 
-        return $result;
+        // Reconstruit les clés
+        $result = [];
+        foreach($this->items as $item) {
+            is_object($item) && $item->refresh();
+            $result[$item->$key] = $item;
+        }
+        $this->items = $result;
+
+        return $this;
     }
 
     public function __toString() {
