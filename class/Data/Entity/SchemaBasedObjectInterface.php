@@ -59,6 +59,8 @@ interface SchemaBasedObjectInterface extends Countable, IteratorAggregate, Seria
      * La méthode retourne le nombre de champs qui sont renseignés au sein de
      * l'objet (contrairement à la méthode count de la classe {@link Schema}
      * qui retourne le nombre de champs définis).
+     *
+     * @return int
      */
     public function count();
 
@@ -123,4 +125,14 @@ interface SchemaBasedObjectInterface extends Countable, IteratorAggregate, Seria
      * @return string
      */
     public function __toString();
+
+    /**
+     * Actualise la représentation en mémoire de l'entité.
+     *
+     * Actuellement, cela consiste uniquement à rafraichir les clés des
+     * collections pour lesquelles 'key' est définie.
+     *
+     * @return self $this
+     */
+    public function refresh();
 }
