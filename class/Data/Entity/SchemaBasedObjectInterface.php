@@ -135,4 +135,24 @@ interface SchemaBasedObjectInterface extends Countable, IteratorAggregate, Seria
      * @return self $this
      */
     public function refresh();
+
+    /**
+     * Teste si l'objet est vide.
+     *
+     * @eturn boolean
+     */
+    public function isEmpty();
+
+    /**
+     * Formatte un champ
+     *
+     * @param string $format Format à utiliser (dépend du champ).
+     * @param string $separator Uniquement pour les collections, séparateur
+     * utilisé entre les différents éléments de la collection.
+     *
+     * @return string Une chaine contenant la version formattée du champ ou
+     * une chaine vide si le champ n'est pas renseigné.
+     */
+    public function format($format = null, $separator = ', ');
+
 }
