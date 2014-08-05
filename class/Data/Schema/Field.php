@@ -14,7 +14,6 @@
  */
 namespace Docalist\Data\Schema;
 
-use Docalist\Data\Entity\Property;
 use Docalist\Data\Entity\Collection;
 use InvalidArgumentException;
 
@@ -126,10 +125,6 @@ class Field {
 
         // Description
         $this->setDescription(isset($data['description']) ? $data['description'] : null);
-
-        // Fields
-        $this->setFields(isset($data['fields']) ? $data['fields'] : null);
-
     }
 
     /**
@@ -389,37 +384,6 @@ class Field {
         return $this->description;
     }
 
-    protected function setFields(array $fields = null) {
-        // Seuls les objets peuvent avoir des champs
-        if ($this->type !== 'object') {
-            return;
-        }
-
-        // On ne peut pas avoir à la fois une entité et une liste de champs
-        if ($this->entity) {
-            // le champ est un objet, on a une entité, pas de champs, c'est ok
-            $instance=new $this->entity();
-            $this->fields = $instance->schema()->fields();
-
-            return;
-        }
-    }
-/*
-    public function fields() {
-        return $this->fields;
-    }
-
-    public function field($field) {
-        if (!isset($this->fields[$field])) {
-            $msg = 'Field "%s" does not exist';
-            throw new InvalidArgumentException(sprintf($msg, $field));
-        }
-
-        // @todo : vérifier que type = object ou document
-
-        return $this->fields[$field];
-    }
-*/
     /**
      * Convertit le schéma en tableau.
      *
@@ -440,7 +404,7 @@ class Field {
      * @param scalar|array $value
      * @param boolean $single
      *
-     * @return scalar|Property
+     * @return Collection|EntityInterface|scalar
      */
     public function instantiate($value = null, $single = false) {
         is_null($value) && $value = $this->defaultValue();
@@ -449,28 +413,20 @@ class Field {
             return new Collection($this, $value);
         }
 
+        // Une entité
         if ($this->type === 'object') {
-            // Une entité
-            if ($this->entity) {
-
-                // Value est déjà un objet. Vérifie que c'est le bon type
-                if (is_object($value)) {
-                    $class = get_class($value);
-                    if (! is_a($this->entity, $class, true)) {
-                        $msg = 'Invalid value "%s" for field "%s": expected "%s"';
-                        throw new InvalidArgumentException(sprintf($msg, $class, $this->name, $this->entity));
-                    }
-                }
-
-                // Value doit être un tableau
-                else {
-                    $value = new $this->entity($value);
+            // Value est déjà un objet. Vérifie que c'est le bon type
+            if (is_object($value)) {
+                $class = get_class($value);
+                if (! is_a($this->entity, $class, true)) {
+                    $msg = 'Invalid value "%s" for field "%s": expected "%s"';
+                    throw new InvalidArgumentException(sprintf($msg, $class, $this->name, $this->entity));
                 }
             }
 
-            // Un objet anonyme
+            // Value doit être un tableau
             else {
-                $value = new Property($this, $value);
+                $value = new $this->entity($value);
             }
         }
 
