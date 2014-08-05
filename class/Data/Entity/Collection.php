@@ -33,9 +33,9 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
     /**
      * Les données de la collection
      *
-     * @var scalar|Property
+     * @var AbstractEntity[]
      */
-    protected $items = array();
+    protected $items = [];
 
     /**
      * Construit une nouvelle collection.
@@ -49,7 +49,7 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
         $this->schema = $schema;
 
         // Stocke les données
-        ! is_null($data) && $this->fromArray($data);
+        $data && $this->fromArray($data);
     }
 
     public function schema($field = null) {
@@ -196,5 +196,18 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
      */
     public function next() {
         return next($this->items);
+    }
+
+    public function isEmpty() {
+        return !$this->items;
+    }
+
+    public function format($format = null, $separator = ', ') {
+        $t = [];
+        foreach($this->items as $item) {
+            $t[] = is_object($item) ? $item->format($format, $separator) : (string) $item;
+        }
+
+        return implode($separator, $t);
     }
 }
