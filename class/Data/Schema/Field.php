@@ -46,7 +46,7 @@ class Field extends Schema implements FieldInterface {
 
     // @formatter:on
 
-    public function __construct(array $data, $rootEntityClass) {
+    public function __construct(array $data) {
         // Teste si le champ contient des propriétés qu'on ne connait pas
         if ($unknown = array_diff_key($data, get_object_vars($this))) {
             $msg = 'Unknown field property(es) in field "%s": "%s"';
@@ -59,7 +59,7 @@ class Field extends Schema implements FieldInterface {
 
         // Type
         $default = isset($data['fields']) ? 'object' : 'string';
-        $this->setType(isset($data['type']) ? $data['type'] : $default, $rootEntityClass);
+        $this->setType(isset($data['type']) ? $data['type'] : $default);
 
         // Repeatable
         $this->setRepeatable(isset($data['repeatable']) ? $data['repeatable'] : $this->repeatable);
@@ -68,7 +68,7 @@ class Field extends Schema implements FieldInterface {
         $this->setDefaultValue(isset($data['default']) ? $data['default'] : null);
 
         // Entity
-        $this->setEntity(isset($data['entity']) ? $data['entity'] : null, $rootEntityClass);
+        $this->setEntity(isset($data['entity']) ? $data['entity'] : null);
 
         // Key
         $this->setKey(isset($data['key']) ? $data['key'] : null);
@@ -80,7 +80,7 @@ class Field extends Schema implements FieldInterface {
         $this->setDescription(isset($data['description']) ? $data['description'] : null);
 
         // Fields
-        $this->setFields(isset($data['fields']) ? $data['fields'] : null, $rootEntityClass);
+        $this->setFields(isset($data['fields']) ? $data['fields'] : null);
 
     }
 
@@ -104,7 +104,7 @@ class Field extends Schema implements FieldInterface {
         return $this->name;
     }
 
-    protected function setType($type, $rootEntityClass) {
+    protected function setType($type) {
         // type='xx*' équivaut à type='xx' + repeatable=true
         if (substr($type, -1) === '*') {
             $type = substr($type, 0, -1);
@@ -120,7 +120,7 @@ class Field extends Schema implements FieldInterface {
 
         // Type est une entité
         $this->type = 'object';
-        $this->setEntity($type, $rootEntityClass);
+        $this->setEntity($type);
     }
 
     public function type() {
@@ -205,7 +205,7 @@ class Field extends Schema implements FieldInterface {
         return $this->repeatable ? array() : self::$fieldTypes[$this->type];
     }
 
-    protected function setEntity($entity, $rootEntityClass) {
+    protected function setEntity($entity) {
         if (empty($entity)) {
             if ($this->type === 'object') {
                 $entity = 'Docalist\Data\Object';
@@ -221,13 +221,8 @@ class Field extends Schema implements FieldInterface {
 
         // Vérifie que la classe indiquée existe
         if (! class_exists($entity)) {
-            // Nom de classe relatif au namespace en cours ?
-            $class = Utils::ns($rootEntityClass) . '\\' . $entity;
-            if (! class_exists($class)) {
                 $msg = 'Invalid entity type "%s" for field "%s": class not found';
                 throw new InvalidArgumentException(sprintf($msg, $entity, $this->name));
-            }
-            $entity = $class;
         }
 
         // Vérifie que la classe est une entité
@@ -259,7 +254,7 @@ class Field extends Schema implements FieldInterface {
         return $this->description;
     }
 
-    protected function setFields(array $fields = null, $rootEntityClass) {
+    protected function setFields(array $fields = null) {
         // Seuls les objets peuvent avoir des champs
         if ($this->type !== 'object') {
             if ($fields) {
@@ -289,7 +284,7 @@ class Field extends Schema implements FieldInterface {
             $msg = 'No fields defined for field "%s"';
             throw new InvalidArgumentException(sprintf($msg, $this->name));
         }
-        parent::setFields($fields, $rootEntityClass);
+        parent::setFields($fields);
     }
 
     public function fields() {

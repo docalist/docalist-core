@@ -110,7 +110,7 @@ abstract class AbstractEntity extends SchemaBasedObject implements EntityInterfa
 
                 // Si loadSchema nous a retourné un tableau, on le compile
                 if (is_array($schema)) {
-                    $schema = new Schema($schema, get_class($this));
+                    $schema = new Schema($schema);
                 }
 
                 // Stocke le schéma en cache pour la prochaine fois

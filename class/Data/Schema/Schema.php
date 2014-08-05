@@ -26,20 +26,16 @@ class Schema implements SchemaInterface {
      *
      * @param array $data La liste des champs du schéma.
      *
-     * @param string $entity Nom complet de la classe de l'entité à laquelle
-     * s'applique ce schéma.
-     *
      * @throws InvalidArgumentException Si le schéma contient des erreurs.
      */
-    public function __construct(array $fields = array(), $entity) {
-        $this->name = $entity;
-        $this->setFields($fields, $entity);
+    public function __construct(array $fields = array()) {
+        $this->setFields($fields);
     }
 
-    protected function setFields(array $fields = null, $entity) {
+    protected function setFields(array $fields = null) {
         if (empty($fields)) {
-            $msg = 'No fields defined in schema "%s"';
-            throw new InvalidArgumentException(sprintf($msg, $entity));
+            $msg = 'No fields defined in schema';
+            throw new InvalidArgumentException($msg);
         }
         $this->fields = array();
         foreach ($fields as $key => $field) {
@@ -66,7 +62,7 @@ class Schema implements SchemaInterface {
             }
 
             // Compile
-            $field = new Field($field, $entity);
+            $field = new Field($field);
 
             // Vérifie que le nom du champ est unique
             if (isset($this->fields[$field->name])) {
