@@ -2,32 +2,81 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
+ * Copyright (C) 2012-2014 Daniel Ménard
+ *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
  *
- * @package Docalist
- * @subpackage Core
- * @author Daniel Ménard <daniel.menard@laposte.net>
- * @version SVN: $Id$
+ * @package     Docalist
+ * @subpackage  Core
+ * @author      Daniel Ménard <daniel.menard@laposte.net>
+ * @version     SVN: $Id$
  */
 namespace Docalist\Data\Schema;
 
-use Docalist\Utils;
 use Docalist\Data\Entity\Property;
 use Docalist\Data\Entity\Collection;
 use InvalidArgumentException;
 
 /**
- * Implémentation standard de l'interface FieldInterface.
+ * Descrit les propriétés d'un champ au sein d'un schéma.
  */
-class Field implements FieldInterface {
+class Field {
+    /**
+     * Nom du champ.
+     *
+     * @var string
+     */
     protected $name;
+
+    /**
+     * Type du champ
+     *
+     * @var string
+     */
     protected $type;
+
+    /**
+     * Nom de classe complet de l'entité.
+     *
+     * @var string
+     */
     protected $entity;
+
+    /**
+     * Indique si le champ est répétable.
+     *
+     * @var boolean
+     */
     protected $repeatable;
+
+    /**
+     * Valeur par défaut du champ.
+     *
+     * @var mixed
+     */
     protected $default;
+
+    /**
+     * Libellé du champ.
+     *
+     * @var string
+     */
     protected $label;
+
+    /**
+     * Description du champ.
+     *
+     * @var string
+     */
     protected $description;
+
+    /**
+     * Nom du sous-champ utilisé comme clé si le champ est une collection
+     * d'entités,
+     *
+     * @var string
+     */
     protected $key;
 
     /**
@@ -36,15 +85,14 @@ class Field implements FieldInterface {
      * @var array
      */
     // @formatter:off
-    protected static $fieldTypes = array(
+    protected static $fieldTypes = [
         'string' => '',
         'int' => 0,
         'long' => 0,
         'bool' => false,
         'float' => 0.0,
         'object' => array(),
-    );
-
+    ];
     // @formatter:on
 
     public function __construct(array $data) {
@@ -59,8 +107,7 @@ class Field implements FieldInterface {
         $this->setName(isset($data['name']) ? $data['name'] : null);
 
         // Type
-        $default = isset($data['fields']) ? 'object' : 'string';
-        $this->setType(isset($data['type']) ? $data['type'] : $default);
+        $this->setType(isset($data['type']) ? $data['type'] : 'string');
 
         // Repeatable
         $this->setRepeatable(isset($data['repeatable']) ? $data['repeatable'] : $this->repeatable);
@@ -85,6 +132,13 @@ class Field implements FieldInterface {
 
     }
 
+    /**
+     * Initialise le nom du champ.
+     *
+     * @param string $name
+     *
+     * @throws InvalidArgumentException
+     */
     protected function setName($name) {
         // Le nom du champ est obligatoire
         if (empty($name)) {
@@ -101,10 +155,20 @@ class Field implements FieldInterface {
         $this->name = $name;
     }
 
+    /**
+     * Retourne le nom du champ.
+     *
+     * @return string
+     */
     public function name() {
         return $this->name;
     }
 
+    /**
+     * Initialise le type du champ.
+     *
+     * @param string $type
+     */
     protected function setType($type) {
         // type='xx*' équivaut à type='xx' + repeatable=true
         if (substr($type, -1) === '*') {
@@ -124,18 +188,39 @@ class Field implements FieldInterface {
         $this->setEntity($type);
     }
 
+    /**
+     * Retourne le type du champ.
+     *
+     * @return string
+     */
     public function type() {
         return $this->type;
     }
 
+    /**
+     * Définit si le champ est répétable.
+     *
+     * @param bool $repeatable
+     */
     protected function setRepeatable($repeatable) {
         $this->repeatable = (bool) $repeatable;
     }
 
+    /**
+     * Indique si le champ est répétable.
+     *
+     * @return bool
+     */
     public function repeatable() {
         return $this->repeatable;
     }
 
+    /**
+     * Définit le sous-champ utilisé comme clé dans la collection.
+     *
+     * @param string $key
+     * @throws InvalidArgumentException
+     */
     protected function setKey($key) {
         if (! is_null($key)) {
             if (! $this->repeatable) {
@@ -151,10 +236,22 @@ class Field implements FieldInterface {
         $this->key = $key;
     }
 
+    /**
+     * Pour une collection d'entités, indique le sous-champ utilisé comme clé
+     * pour les entrées de la collection.
+     *
+     * @return string|null
+     */
     public function key() {
         return $this->key;
     }
 
+    /**
+     * Définit la valeur par défaut du champ.
+     *
+     * @param mixed $default
+     * @throws InvalidArgumentException
+     */
     protected function setDefaultValue($default) {
         if (! is_null($default)) {
             if ($this->type === 'object') {
@@ -198,6 +295,11 @@ class Field implements FieldInterface {
         $this->default = $default;
     }
 
+    /**
+     * Retourne la valeur par défaut du champ.
+     *
+     * @return mixed
+     */
     public function defaultValue() {
         if (!is_null($this->default)) {
             return $this->default;
@@ -206,6 +308,12 @@ class Field implements FieldInterface {
         return $this->repeatable ? array() : self::$fieldTypes[$this->type];
     }
 
+    /**
+     * Définit l'entité du champ.
+     *
+     * @param string $entity
+     * @throws InvalidArgumentException
+     */
     protected function setEntity($entity) {
         if (empty($entity)) {
             if ($this->type === 'object') {
@@ -235,22 +343,48 @@ class Field implements FieldInterface {
         $this->entity = $entity;
     }
 
+    /**
+     * Indique le nom de la classe à utiliser pour représenter les données du
+     * champ.
+     *
+     * @return string
+     */
     public function entity() {
         return $this->entity;
     }
 
+    /**
+     * Définit le libellé du champ.
+     *
+     * @param string $label
+     */
     protected function setLabel($label) {
         $this->label = $label;
     }
 
+    /**
+     * Retourne le libellé du champ, ou son nom si le champ n'a pas de libellé.
+     *
+     * @return string
+     */
     public function label() {
         return $this->label ?: $this->name;
     }
 
+    /**
+     * Définit la description du champ.
+     *
+     * @param string $description
+     */
     protected function setDescription($description) {
         $this->description = $description;
     }
 
+    /**
+     * Retourne la description du champ.
+     *
+     * @return string
+     */
     public function description() {
         return $this->description;
     }
@@ -258,36 +392,19 @@ class Field implements FieldInterface {
     protected function setFields(array $fields = null) {
         // Seuls les objets peuvent avoir des champs
         if ($this->type !== 'object') {
-            if ($fields) {
-                $msg = 'Field "%s" can not have fields: not an object';
-                throw new InvalidArgumentException(sprintf($msg, $this->name));
-            }
             return;
         }
 
         // On ne peut pas avoir à la fois une entité et une liste de champs
         if ($this->entity) {
-            if ($fields) {
-                $msg = 'Field "%s" can not have fields: fields are already defined by entity type';
-                throw new InvalidArgumentException(sprintf($msg, $this->name));
-            }
-
             // le champ est un objet, on a une entité, pas de champs, c'est ok
-            // echo "Schema champ ", $this->name(), '. entité=', $this->entity(), '<br />';
             $instance=new $this->entity();
             $this->fields = $instance->schema()->fields();
 
             return;
         }
-
-        // le champ est un objet, on n'a pas d'entité, on DOIT avoir des champs
-        if (empty($fields)) {
-            $msg = 'No fields defined for field "%s"';
-            throw new InvalidArgumentException(sprintf($msg, $this->name));
-        }
-        parent::setFields($fields);
     }
-
+/*
     public function fields() {
         return $this->fields;
     }
@@ -302,29 +419,29 @@ class Field implements FieldInterface {
 
         return $this->fields[$field];
     }
-
+*/
+    /**
+     * Convertit le schéma en tableau.
+     *
+     * @return array
+     */
     public function toArray() {
-        $result = array();
+        $result = [];
         foreach ($this as $name => $value) {
-            if (is_null($value) || $value === false) {
-                continue;
-            }
-
-            if ($name === 'fields') {
-                if ($value) {
-                    $result['fields'] = array();
-                    foreach ($value as $field) {
-                        $result['fields'][] = $field->toArray();
-                    }
-                }
-            } else {
-                $result[$name] = $value;
-            }
+            $value && $result[$name] = $value;
         }
 
         return $result;
     }
 
+    /**
+     * Crée une nouvelle instance du champ.
+     *
+     * @param scalar|array $value
+     * @param boolean $single
+     *
+     * @return scalar|Property
+     */
     public function instantiate($value = null, $single = false) {
         is_null($value) && $value = $this->defaultValue();
 
