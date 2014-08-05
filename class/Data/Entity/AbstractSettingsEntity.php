@@ -18,34 +18,33 @@ use Docalist\Data\Repository\SettingsRepository;
  * Classe de base des entités stockées dans un dépôt SettingsRepository.
  */
 abstract class AbstractSettingsEntity extends AbstractEntity {
-    protected static $repository;
+    protected static $settingsRepository;
 
     public function __construct($primaryKey) {
         // Stocke la clé primaire du settings
         $this->primarykey = $primaryKey;
 
         // Initialise le dépôt si nécessaire
-        if (is_null(self::$repository)) {
-            self::$repository = new SettingsRepository();
+        if (is_null(self::$settingsRepository)) {
+            self::$settingsRepository = new SettingsRepository();
         }
 
         // Charge les données brutes du settings
-        $data = self::$repository->load($primaryKey, false);
+        $data = self::$settingsRepository->load($primaryKey, false);
 
         // Initialise l'instance
         parent::__construct($data);
     }
 
     public function save() {
-        self::$repository->store($this);
-        $this->reload(); // pour renuméroter les collections
+        self::$settingsRepository->store($this);
     }
 
     public function reload() {
-        $this->fromArray(self::$repository->load($this->primarykey, false));
+        $this->fromArray(self::$settingsRepository->load($this->primarykey, false));
     }
 
     public function reset() {
-        self::$repository->delete($this);
+        self::$settingsRepository->delete($this);
     }
 }
