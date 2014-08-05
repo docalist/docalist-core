@@ -57,7 +57,7 @@ abstract class SchemaBasedObject implements SchemaBasedObjectInterface {
         // Vérifie que le champ existe et récupère son schéma
         $field = $this->schema($name);
 
-        // Intialise le champ avec sa valeur par défaut
+        // Initialise le champ avec sa valeur par défaut
         return $this->fields[$name] = $field->instantiate($field->defaultValue());
     }
 
@@ -117,6 +117,34 @@ abstract class SchemaBasedObject implements SchemaBasedObjectInterface {
         }
     }
 
+    public function isEmpty() {
+        foreach($this->fields as $key => $item) {
+            if ($this->has($key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function has($name) {
+        if (! isset($this->fields[$name])) {
+            return false;
+        }
+
+        $item = $this->fields[$name];
+
+        if (is_object($item) && $item->isEmpty()) {
+            return false;
+        }
+
+        if (is_null($item) || $item === '') {
+            return false;
+        }
+
+        return true;
+    }
+
     public function toArray() {
         $result = [];
         foreach($this->fields as $key => $item) {
@@ -142,5 +170,40 @@ abstract class SchemaBasedObject implements SchemaBasedObjectInterface {
             is_object($field) && $field->refresh();
         }
         return $this;
+    }
+
+    public function formatField($name, $format = null, $separator = ', ') {
+        // Chaque champ peut avoir une méthode de la forme formatChamp()
+        $formatter = 'format' . $name;
+
+        // Si elle existe, c'est elle qui fait le boulot (appellée même si champ vide)
+        if (method_exists($this, $formatter)) {
+            return $this->$formatter($format);
+        }
+
+        // Retourne une chaine vide si le champ n'existe pas
+        if (! isset($this->fields[$name])) {
+            return '';
+        }
+
+        // Formatte les entités et les collections
+        $field = $this->fields[$name];
+        if (is_object($field)) {
+            return $field->format($format, $separator);
+        }
+
+        // Caste les champs simples en chaine
+        return (string) $field;
+    }
+
+    public function format($format = null, $separator = ', ') {
+        $result = '';
+        foreach($this->fields as $name => $field) {
+            if ($this->has($name)) {
+                $result .= $this->formatField($name);
+            }
+        }
+
+        return $result;
     }
 }
