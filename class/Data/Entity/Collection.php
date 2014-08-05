@@ -12,7 +12,7 @@
  */
 namespace Docalist\Data\Entity;
 
-use Docalist\Data\Schema\FieldInterface;
+use Docalist\Data\Schema\Field;
 use ArrayObject;
 use InvalidArgumentException;
 use Docalist\Utils;
@@ -26,7 +26,7 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
     /**
      * Le schéma des éléments de la collection.
      *
-     * @var FieldInterface
+     * @var Field
      */
     protected $schema;
 
@@ -40,11 +40,11 @@ class Collection implements SchemaBasedObjectInterface, ArrayAccess {
     /**
      * Construit une nouvelle collection.
      *
-     * @param FieldInterface $schema Le schéma de la collection.
+     * @param Field $schema Le schéma de la collection.
      *
      * @param array $data Les données initiales de la collection.
      */
-    public function __construct(FieldInterface $schema, array $data = null) {
+    public function __construct(Field $schema, array $data = null) {
         // Stocke le schéma
         $this->schema = $schema;
 
