@@ -12,8 +12,8 @@
  */
 namespace Docalist\Data\Entity;
 
-use Docalist\Data\Schema\SchemaInterface;
-use Docalist\Data\Schema\FieldInterface;
+use Docalist\Data\Schema\Schema;
+use Docalist\Data\Schema\Field;
 use Countable, ArrayAccess, IteratorAggregate, Serializable, JsonSerializable;
 use InvalidArgumentException;
 
