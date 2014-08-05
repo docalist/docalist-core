@@ -13,8 +13,8 @@
 namespace Docalist\Data\Entity;
 
 use Docalist\Data\Schema\Schema;
-use ArrayObject;
-use LogicException, Exception;
+use Docalist\Data\Repository\AbstractRepository;
+use LogicException;
 
 /**
  * Classe de base des entités.
@@ -32,11 +32,28 @@ abstract class AbstractEntity extends SchemaBasedObject implements EntityInterfa
     protected static $schemaCache;
 
     /**
+     * Le dépôt dans lequel est stocké cette entité.
+     *
+     * @var AbstractRepository
+     */
+    protected $repository;
+
+    /**
      * La clé primaire de l'entité.
      *
      * @var int
      */
     protected $primarykey;
+
+    public function repository(AbstractRepository $repository = null) {
+        // Setter
+        if (! is_null($repository)) {
+            $this->repository = $repository;
+        }
+
+        // Getter
+        return $this->repository;
+    }
 
     public function primarykey($primarykey = null) {
         // Setter
@@ -88,7 +105,7 @@ abstract class AbstractEntity extends SchemaBasedObject implements EntityInterfa
                 // Si on n'a toujours pas de schéma, erreur
                 if (! $schema) {
                     $msg = 'No schema défined for entity %s. You must override loadSchema()';
-                    throw new Exception(sprintf($msg, get_class($this)));
+                    throw new LogicException(sprintf($msg, get_class($this)));
                 }
 
                 // Si loadSchema nous a retourné un tableau, on le compile
