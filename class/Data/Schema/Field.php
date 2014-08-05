@@ -20,7 +20,8 @@ use InvalidArgumentException;
 /**
  * Implémentation standard de l'interface FieldInterface.
  */
-class Field extends Schema implements FieldInterface {
+class Field implements FieldInterface {
+    protected $name;
     protected $type;
     protected $entity;
     protected $repeatable;
@@ -221,8 +222,8 @@ class Field extends Schema implements FieldInterface {
 
         // Vérifie que la classe indiquée existe
         if (! class_exists($entity)) {
-                $msg = 'Invalid entity type "%s" for field "%s": class not found';
-                throw new InvalidArgumentException(sprintf($msg, $entity, $this->name));
+            $msg = 'Invalid entity type "%s" for field "%s": class not found';
+            throw new InvalidArgumentException(sprintf($msg, $entity, $this->name));
         }
 
         // Vérifie que la classe est une entité

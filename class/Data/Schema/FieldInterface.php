@@ -15,7 +15,7 @@ namespace Docalist\Data\Schema;
 /**
  * Description d'un champ au sein d'un schéma.
  */
-interface FieldInterface extends SchemaInterface {
+interface FieldInterface {
     /**
      * Indique si le champ est répétable.
      *

@@ -65,7 +65,7 @@ class Schema implements SchemaInterface {
             $field = new Field($field);
 
             // Vérifie que le nom du champ est unique
-            if (isset($this->fields[$field->name])) {
+            if (isset($this->fields[$field->name()])) {
                 $msg = 'Field %s defined twice';
                 throw new InvalidArgumentException(sprintf($msg, $field->name));
             }
