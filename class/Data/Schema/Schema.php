@@ -2,6 +2,8 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
+ * Copyright (C) 2012-2014 Daniel Ménard
+ *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
  *
@@ -15,10 +17,15 @@ namespace Docalist\Data\Schema;
 use InvalidArgumentException;
 
 /**
- * Implémentation standard de l'interface SchemaInterface.
+ * Un schéma permet de décrire la liste des champs qui composent une structure
+ * de données.
  */
-class Schema implements SchemaInterface {
-    protected $name;
+class Schema {
+    /**
+     * La liste des champs du schéma.
+     *
+     * @var Field[]
+     */
     protected $fields;
 
     /**
@@ -28,27 +35,23 @@ class Schema implements SchemaInterface {
      *
      * @throws InvalidArgumentException Si le schéma contient des erreurs.
      */
-    public function __construct(array $fields = array()) {
-        $this->setFields($fields);
-    }
-
-    protected function setFields(array $fields = null) {
+    public function __construct(array $fields = []) {
         if (empty($fields)) {
             $msg = 'No fields defined in schema';
             throw new InvalidArgumentException($msg);
         }
-        $this->fields = array();
+        $this->fields = [];
         foreach ($fields as $key => $field) {
             // Gère les raccourcis autorisés si $field est une chaine
             if (is_string($field)) {
                 // Champ de la forme entier => nom
                 if (is_int($key)) {
-                    $field = array('name' => $field);
+                    $field = ['name' => $field];
                 }
 
                 // Champ de la forme nom => type
                 else {
-                    $field = array('name' => $key, 'type' => $field);
+                    $field = ['name' => $key, 'type' => $field];
                 }
             }
 
@@ -65,20 +68,36 @@ class Schema implements SchemaInterface {
             $field = new Field($field);
 
             // Vérifie que le nom du champ est unique
-            if (isset($this->fields[$field->name()])) {
+            $name = $field->name();
+            if (isset($this->fields[$name])) {
                 $msg = 'Field %s defined twice';
-                throw new InvalidArgumentException(sprintf($msg, $field->name));
+                throw new InvalidArgumentException(sprintf($msg, $name));
             }
 
             // Stocke le champ
-            $this->fields[$field->name()] = $field;
+            $this->fields[$name] = $field;
         }
     }
 
+    /**
+     * Retourne la liste des champs.
+     *
+     * @return Field[]
+     */
     public function fields() {
         return $this->fields;
     }
 
+    /**
+     * Retourne le schéma du champ indiqué.
+     *
+     * @param string $field Le nom du champ.
+     *
+     * @throws Exception Une exception est générée si le champ indiqué n'existe
+     * pas.
+     *
+     * @return Field
+     */
     public function field($field) {
         if (!isset($this->fields[$field])) {
             $msg = 'Field %s does not exist';
@@ -88,27 +107,26 @@ class Schema implements SchemaInterface {
         return $this->fields[$field];
     }
 
-    public function hasField($field) {
+    /**
+     * Indique si le schéma contient le champ indiqué.
+     *
+     * @param string $field Le nom du champ à tester.
+     *
+     * @return bool
+     */
+    public function has($field) {
         return isset($this->fields[$field]);
     }
 
+    /**
+     * Convertit le schéma en tableau.
+     *
+     * @return array
+     */
     public function toArray() {
-        $result = array();
-        foreach ($this as $name => $value) {
-            if (is_null($value) || $value === false) {
-                continue;
-            }
-
-            if ($name === 'fields') {
-                if ($value) {
-                    $result['fields'] = array();
-                    foreach ($value as $field) {
-                        $result['fields'][] = $field->toArray();
-                    }
-                }
-            } else {
-                $result[$name] = $value;
-            }
+        $result = [];
+        foreach ($this->fields as $field) {
+            $result['fields'][] = $field->toArray();
         }
 
         return $result;
