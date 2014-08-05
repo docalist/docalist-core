@@ -121,6 +121,7 @@ class PostTypeRepository extends AbstractRepository {
 
         // Crée une entité du type demandé
         $entity = new $type($data);
+        $entity->repository($this);
         $entity->primaryKey($primaryKey);
 
         // Terminé
