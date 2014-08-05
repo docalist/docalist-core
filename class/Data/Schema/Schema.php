@@ -75,14 +75,6 @@ class Schema implements SchemaInterface {
         }
     }
 
-    public function name() {
-        return $this->name;
-    }
-
-    public function type() {
-        return 'schema';
-    }
-
     public function fields() {
         return $this->fields;
     }

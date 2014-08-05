@@ -19,20 +19,6 @@ namespace Docalist\Data\Schema;
 interface SchemaInterface {
 
     /**
-     * Retourne le nom.
-     *
-     * @return string
-     */
-    public function name();
-
-    /**
-     * Retourne le type.
-     *
-     * @return string
-     */
-    public function type();
-
-    /**
      * Retourne la liste des champs.
      *
      * @return FieldInterface[]
