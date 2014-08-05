@@ -18,7 +18,7 @@ use Docalist\Data\Entity\Collection;
 use InvalidArgumentException;
 
 /**
- * Descrit les propriétés d'un champ au sein d'un schéma.
+ * Décrit les propriétés d'un champ au sein d'un schéma.
  */
 class Field {
     /**
