@@ -14,55 +14,56 @@
  */
 namespace Docalist\Table;
 
-use Docalist\Data\Entity\AbstractEntity;
+use Docalist\Type\Object;
+use Docalist\Type\String;
+use Docalist\Type\Boolean;
 
 /**
  * Paramètres d'une table d'autorité.
  *
- * @property string $name Nom de la table
- * @property string $path Path (absolu) de la table
- * @property string $label Libellé de la table
- * @property string $format Format de la table (structure)
- * @property string $type Type de la table (nature)
- * @property bool $user true : table utilisateur, false : table prédéfinie
+ * @property String $name Nom de la table
+ * @property String $path Path (absolu) de la table
+ * @property String $label Libellé de la table
+ * @property String $format Format de la table (structure)
+ * @property String $type Type de la table (nature)
+ * @property Boolean $user true : table utilisateur, false : table prédéfinie
  */
-class TableInfo extends AbstractEntity {
-
-    protected function loadSchema() {
+class TableInfo extends Object {
+    protected static function loadSchema() {
         // @formatter:off
-        return array(
-            'name' => array(
+        return [
+            'name' => [
                 'label' => __('Nom', 'docalist-core'),
                 'description' => __('Nom de code de la table (doit être unique)', 'docalist-core'),
-            ),
+            ],
 
-            'path' => array(
+            'path' => [
                 'label' => __('Path', 'docalist-core'),
                 'description' => __('Path (absolu) de la table.', 'docalist-core'),
-            ),
+            ],
 
-            'label' => array(
+            'label' => [
                 'label' => __('Libellé', 'docalist-core'),
                 'description' => __('Libellé de la table', 'docalist-core'),
-            ),
+            ],
 
-            'format' => array(
+            'format' => [
                 'label' => __('Format', 'docalist-core'),
                 'description' => __('Format de la table (table, thesaurus, conversion, etc.)', 'docalist-core'),
-            ),
+            ],
 
-            'type' => array(
+            'type' => [
                 'label' => __('Type', 'docalist-core'),
                 'description' => __('Type de table (pays, langues, etc.)', 'docalist-core'),
-            ),
+            ],
 
-            'user' => array(
+            'user' => [
                 'type' => 'bool',
                 'default' => true,
                 'label' => __('Table utilisateur', 'docalist-core'),
                 'description' => __("Indique s'il s'agit d'une table utilisateur ou d'une table prédéfinie.", 'docalist-core'),
-            ),
-        );
+            ],
+        ];
         // @formatter:on
     }
 }
