@@ -14,7 +14,6 @@
  */
 namespace Docalist\Schema;
 
-use Docalist\Data\Entity\Collection;
 use InvalidArgumentException;
 
 /**
@@ -314,40 +313,5 @@ class Field extends Schema {
         $this->fields && $field['fields'] = parent::toArray();
 
         return $field;
-    }
-
-    /**
-     * Crée une nouvelle instance du champ.
-     *
-     * @param scalar|array $value
-     * @param boolean $single
-     *
-     * @return Collection|EntityInterface|scalar
-     */
-    public function instantiate($value = null, $single = false) {
-        is_null($value) && $value = $this->defaultValue();
-
-        if (! $single && $this->repeatable) {
-            return new Collection($this, $value);
-        }
-
-        // Une entité
-        if ($this->type === 'object') {
-            // Value est déjà un objet. Vérifie que c'est le bon type
-            if (is_object($value)) {
-                $class = get_class($value);
-                if (! is_a($this->entity, $class, true)) {
-                    $msg = 'Invalid value "%s" for field "%s": expected "%s"';
-                    throw new InvalidArgumentException(sprintf($msg, $class, $this->name, $this->entity));
-                }
-            }
-
-            // Value doit être un tableau
-            else {
-                $value = new $this->entity($value);
-            }
-        }
-
-        return $value;
     }
 }
