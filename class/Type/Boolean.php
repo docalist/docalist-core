@@ -23,6 +23,7 @@ class Boolean extends Scalar {
     static protected $default = true;
 
     public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
         if (! is_bool($value)){
             throw new InvalidTypeException('boolean');
         }

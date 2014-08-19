@@ -25,6 +25,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     static protected $default = [];
 
     public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
         if (! is_array($value)){
             throw new InvalidTypeException('array');
         }
@@ -89,9 +90,18 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * @param mixed $value Les données de l'élément.
      */
     public function offsetSet ($offset, $value) {
-        // Instancie l'élément
+        // Détermine le type des éléments de cette collection
         $type = $this->schema ? $this->schema->className() : 'Docalist\Type\Any';
-        $item = new $type($value, $this->schema);
+
+        // Si value est un objet du bon type, ok
+        if ($value instanceof $type) {
+            $item = $value;
+        }
+
+        // Sinon instancie l'élément
+        else {
+            $item = new $type($value, $this->schema);
+        }
 
         // Si c'est une collection à clé, ignore offset et utilise le sous-champ
         if ($this->schema && $key = $this->schema->key()) {

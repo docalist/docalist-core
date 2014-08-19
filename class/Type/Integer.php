@@ -23,6 +23,7 @@ class Integer extends Scalar {
     static protected $default = 0;
 
     public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
         if (! is_int($value)){
             throw new InvalidTypeException('int');
         }

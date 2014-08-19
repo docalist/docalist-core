@@ -118,6 +118,7 @@ class Object extends Any {
     }
 
     public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
         if (! is_array($value)){
             throw new InvalidTypeException('array');
         }
@@ -139,7 +140,8 @@ class Object extends Any {
         $result = [];
         foreach($fields as $name) {
             if (isset($this->value[$name])) {
-                $result[$name] = $this->value[$name]->value();
+                $value = $this->value[$name]->value();
+                !empty($value) && $result[$name] = $value;
             }
         }
         return $result;
@@ -154,20 +156,22 @@ class Object extends Any {
      * @return self $this
      */
     public function __set($name, $value) {
+        // return $this->__get($name)->assign($value);
+
         // Attribuer null à un champ équivaut à faire unset()
         if (is_null($value)) {
             unset($this->value[$name]);
             return $this;
         }
 
-        // Vérifie que le champ existe et récupère son schéma
-        $field = $this->schema ? $this->schema->field($name) : null;
-
         // Si la propriété existe déjà, on change simplement sa valeur
         if (isset($this->value[$name])) {
             $this->value[$name]->assign($value);
             return $this;
         }
+
+        // Vérifie que le champ existe et récupère son schéma
+        $field = $this->schema ? $this->schema->field($name) : null;
 
         // Sinon, on l'initialise
         if ($field && $field->repeatable()) {
@@ -240,20 +244,24 @@ class Object extends Any {
      *
      * @param string $name
      *
-     * @return mixed
+     * @return Any
      *
      * @throws InvalidArgumentException Si la propriété n'existe pas dans le schéma.
      */
     public function __get($name) {
-        // Si le champ est déjà défini, on le retourne directement
-        if (isset($this->value[$name])) {
-            return $this->value[$name];
+        // Initialise le champ s'il n'existe pas encore
+        if (! isset($this->value[$name])) {
+            if ($this->schema) {
+                $field = $this->schema->field($name);
+                $type = $field->repeatable() ? 'Docalist\Type\Collection' : $field->className();
+                $this->value[$name] = new $type($field->defaultValue(true));
+            } else {
+                $this->value[$name] = new Any();
+            }
         }
 
-        // Vérifie que le champ existe
-        $this->schema && $this->schema->field($name);
-
-        return null;
+        // Retourne l'objet Type
+        return $this->value[$name];
 
 /*
         static $defaults = [
@@ -316,7 +324,36 @@ class Object extends Any {
      * permettre le chainage de méthodes.
      */
     public function __call($name, $arguments) {
-        return $arguments ? $this->__set($name, $arguments[0]) : $this->__get($name);
+        // $object->property($x) permet de modifier la valeur d'un champ
+        if ($arguments) {
+            return $this->__set($name, $arguments[0]);
+        }
+
+        // Appel de la forme : $object->property($x)
+
+        // Le champ existe déjà, retourne sa valeur
+        if (isset($this->value[$name])) {
+            return $this->value[$name]->value();
+        }
+
+        // Le champ n'existe pas encore, retourne la valeur par défaut
+        if ($this->schema) {
+            return $this->schema->field($name)->defaultValue(true);
+            // génère une exception si le champ n'existe pas dans le schéma
+        }
+
+        // Le champ n'existe pas et on n'a pas de schéma
+        return null;
+
+        /*
+            Type d'accès                La propriété déjà créée     Propriété pas encore créée
+
+            $object->property;          Retourne l'objet Type       Retourne null
+            $object->property = 'x';    Assigne la valeur           Crée la propriété
+            $object->property();        Retourne la valeur          Retourne la valeur par défaut de la propriété
+            $object->property($x);
+        */
+
     }
 
     public function __toString() {

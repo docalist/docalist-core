@@ -23,6 +23,7 @@ class String extends Scalar {
     static protected $default = '';
 
     public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
         if (! is_string($value)){
             throw new InvalidTypeException('string');
         }

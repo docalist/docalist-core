@@ -23,6 +23,7 @@ class Scalar extends Any {
     static protected $default = ''; // null ? false ?
 
     public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
         if (! is_scalar($value)){
             throw new InvalidTypeException('scalar');
         }

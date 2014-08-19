@@ -23,6 +23,7 @@ class Float extends Scalar {
     static protected $default = 0.0;
 
     public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
         if (! is_float($value)){
             if (is_int($value)) {
                 $value = (float) $value;

@@ -88,6 +88,7 @@ class Any implements Serializable, JsonSerializable {
      * @return self $this
      */
     public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
         $this->value = $value;
 
         return $this;
