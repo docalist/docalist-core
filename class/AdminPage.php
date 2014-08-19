@@ -183,7 +183,7 @@ class AdminPage extends Controller {
                         $h3 = sprintf($h3, $this->action());
 
                         $msg = __("La méthode <code>%s()</code> a généré le contenu suivant en plus de sa réponse :<pre>%s</pre>", 'docalist-core');
-                        $msg = sprintf($msg, $this->method(), var_export($garbage,true));
+                        $msg = sprintf($msg, $this->method(), $garbage);
                         printf('<div class="error"><h3>%s</h3><p>%s</p></div>', $h3, $msg);
                     }
 
