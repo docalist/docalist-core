@@ -16,7 +16,7 @@
 namespace Docalist\Forms;
 
 use ReflectionClass;
-use Docalist\Data\Entity\SchemaBasedObjectInterface;
+use Docalist\Type\Object;
 
 /**
  * Représente une liste de champs.
@@ -32,7 +32,7 @@ abstract class Fields extends Field {
     /**
      * Retourne les champs que contient cette liste de champs.
      *
-     * @return array Un tableau de {@link Field champs}.
+     * @return Field[] Un tableau de {@link Field champs}.
      */
     public function fields() {
         return $this->fields;
@@ -100,8 +100,8 @@ abstract class Fields extends Field {
 
         if($debug) echo '&rArr;Fields ', $this->type(), '.', ($this->name() ?: $this->label()), '::bind()<br />';
 
-        if (is_null($this->schema) && is_object($data) && ($data instanceof SchemaBasedObjectInterface)) {
-            if($debug) echo "data est un SchemaBasedObjectInterface<br />";
+        if (is_null($this->schema) && $data instanceof Object) {
+            if($debug) echo "data est un Object<br />";
             $this->schema = $data->schema();
             if($debug) echo "this.schema initialisé<br />";
         }
@@ -128,13 +128,14 @@ abstract class Fields extends Field {
         foreach ($this->fields as $field) {
 
             if ($this->schema) {
-                $name = $field->name();
-                if ($this->schema->hasField($name)) {
-                    $schema = $this->schema->field($name);
-                    if($debug) echo "Le schema a un champ qui s'appelle ", $name, "<br />";
-                    if($debug) echo "Schéma du champ <b>$name</b> : <pre>", json_encode($schema->toArray(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), '</pre>';
-                    $field->schema($schema);
-                } else if($debug) echo "Le champ $name n'existe pas dans le schéma<br />";
+                if ($name = $field->name()) {
+                    if ($this->schema->has($name)) {
+                        $schema = $this->schema->field($name);
+                        if($debug) echo "Le schema a un champ qui s'appelle ", $name, "<br />";
+                        if($debug) echo "Schéma du champ <b>$name</b> : <pre>", json_encode($schema->toArray(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), '</pre>';
+                        $field->schema($schema);
+                    } else if($debug) echo "Le champ $name n'existe pas dans le schéma<br />";
+                }
             }
             $field->bind($this->data);
         }

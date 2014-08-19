@@ -17,7 +17,7 @@
 namespace Docalist\Forms;
 
 use ArrayAccess, Exception, XmlWriter;
-use Docalist\Data\Schema\FieldInterface;
+use Docalist\Schema\Field as FieldSchema;
 
 /**
  * Un champ de formulaire.
@@ -154,7 +154,7 @@ abstract class Field {
 
     /**
      *
-     * @var FieldInterface
+     * @var FieldSchema
      */
     protected $schema;
 
@@ -434,7 +434,7 @@ abstract class Field {
                 return $this->label;
             }
 
-            if ($this->schema instanceof FieldInterface) {
+            if ($this->schema instanceof FieldSchema) {
                 return $this->schema->label();
             }
 
@@ -465,7 +465,7 @@ abstract class Field {
                 return $this->description;
             }
 
-            if ($this->schema instanceof FieldInterface) {
+            if ($this->schema instanceof FieldSchema) {
                 return $this->schema->description();
             }
 
@@ -512,7 +512,7 @@ abstract class Field {
                 return $this->repeatable;
             }
 
-            if ($this->schema instanceof FieldInterface) {
+            if ($this->schema instanceof FieldSchema) {
                 return $this->schema->repeatable();
             }
 
@@ -543,7 +543,7 @@ abstract class Field {
         return $level;
     }
 
-    public function schema(FieldInterface $schema = null) {
+    public function schema(FieldSchema $schema = null) {
         if (is_null($schema)) {
             return $this->schema;
         }
@@ -565,7 +565,7 @@ abstract class Field {
         if ($this->name) {
             if($debug) echo '&rArr;Field ', $this->type(), '.', $this->name, '::bind()<br />';
             if (is_object($data)) {
-                $data = isset($data->{$this->name}) ? $data->{$this->name} : null;
+                $data = isset($data->{$this->name}) ? $data->{$this->name}->value() : null;
             } elseif (is_array($data)) {
                 $data = isset($data[$this->name]) ? $data[$this->name] : null;
             } elseif (is_scalar($data)) {
