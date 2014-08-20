@@ -20,19 +20,12 @@ use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInfo;
 use Docalist\Sequences;
+use Docalist\Repository\SettingsRepository;
 
 /**
  * Plugin core de Docalist.
  */
 class Plugin {
-
-    /**
-     * La configuration du plugin.
-     *
-     * @var Settings
-     */
-    protected $settings;
-
     /**
      * {@inheritdoc}
      */
@@ -40,8 +33,15 @@ class Plugin {
         // Charge les fichiers de traduction du plugin
         load_plugin_textdomain('docalist-core', false, 'docalist-core/languages');
 
+        // Crée le service 'settings-repository'
+        docalist('services')->add('settings-repository', function() {
+            return new SettingsRepository();
+        });
+
         // Charge la configuration du plugin
-        $this->settings = new Settings('docalist-core');
+        docalist('services')->add('docalist-core-settings', function() {
+            return new Settings(docalist('settings-repository'));
+        });
 
         // WordPress n'offre aucun moyen simple d'obtenir la racine du site :
         // - ABSPATH ne fonctionne pas si wp est dans un sous-répertoire
@@ -49,6 +49,9 @@ class Plugin {
         // Pour y remédier on définit le service à la demande "site-root"
         // qui retourne le path absolu du site avec un slash final.
         docalist('services')->add('site-root', function() {
+            if (PHP_SAPI === 'cli' || PHP_SAPI === 'cli-server') {
+                throw new \Exception('site-root is not avalable with CLI SAPI');
+            }
             $root = substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['PHP_SELF']));
 
             $root = strtr($root, '/\\', DIRECTORY_SEPARATOR);
@@ -70,7 +73,7 @@ class Plugin {
 
         // Crée le service "table-manager"
         docalist('services')->add('table-manager', function() {
-            return new TableManager($this->settings);
+            return new TableManager(docalist('docalist-core-settings'));
         });
 
         // Crée le service "sequences"
