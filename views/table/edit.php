@@ -43,7 +43,7 @@ wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'
 ?>
 <div class="wrap">
     <?= screen_icon() ?>
-    <h2><?= $tableInfo->label ?: $tableName ?></h2>
+    <h2><?= $tableInfo->label() ?: $tableName ?></h2>
 
     <p class="description">
         <?php if ($readonly): ?>

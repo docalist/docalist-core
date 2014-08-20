@@ -69,7 +69,7 @@ use Docalist\Table\TableInfo;
         $nb = 0;
         /* @var $table TableInfo */
         foreach($tables as $tableName => $table) :
-            if ($table->user != $user) continue;
+            if ($table->user() != $user) continue;
             ++$nb;
 
             $edit = esc_url($this->url('TableEdit', $tableName));
@@ -123,9 +123,9 @@ use Docalist\Table\TableInfo;
                     </div>
                 </td>
 
-                <td><?= $table->label ?></td>
-                <td><?= $table->type ?></td>
-                <td><?= $table->format ?></td>
+                <td><?= $table->label() ?></td>
+                <td><?= $table->type() ?></td>
+                <td><?= $table->format() ?></td>
             </tr>
         <?php endforeach ?>
 
