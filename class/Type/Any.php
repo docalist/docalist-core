@@ -55,7 +55,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @var string
      */
-    static protected $indent ='';
+    static protected $indent = '';
 
     /**
      * Crée un nouveau type.
@@ -72,7 +72,23 @@ class Any implements Serializable, JsonSerializable {
     }
 
     /**
-     * Retourne la valeur par défaut du type.
+     * Retourne la valeur par défaut de la classe.
+     *
+     * Cette méthode est statique, elle indique la valeur par défaut de cette
+     * classe de type.
+     *
+     * @return mixed
+     */
+    static public final function classDefault() {
+        return static::$default;
+    }
+
+    /**
+     * Retourne la valeur par défaut de l'objet.
+     *
+     * Si le type a un schéma associé, la méthode retourne la valeur par défaut
+     * indiquée dans le schéma, sinon, elle retourne la valeur par défaut de la
+     * classe (classDefault)
      *
      * @return mixed
      */
