@@ -215,7 +215,8 @@ class AdminTables extends AdminPage {
      * Supprime une table d'autorité.
      */
     public function actionTableDelete($tableName, $confirm = false) {
-        $tableInfo = $this->tableInfo($tableName);
+        // Vérifie que la table existe
+        $this->tableInfo($tableName);
 
         // Demande confirmation
         if (! $confirm) {
