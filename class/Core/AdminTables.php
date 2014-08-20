@@ -31,10 +31,6 @@ class AdminTables extends AdminPage {
         'default' => 'manage_options',
     ];
 
-    /**
-     *
-     * @param Settings $settings
-     */
     public function __construct() {
         // @formatter:off
         parent::__construct(
@@ -93,7 +89,7 @@ class AdminTables extends AdminPage {
             $data = wp_unslash($_POST['data']);
             $data = json_decode($data);
 
-            // Vérifie le nombre que le nombre d'entrées est correct
+            // Vérifie que le nombre d'entrées est correct
             if (! isset($_POST['count'])) {
                 return $this->json([
                     'success' => false,
@@ -109,7 +105,7 @@ class AdminTables extends AdminPage {
 
             }
 
-            // Enregistre les onnées de la table
+            // Enregistre les données de la table
             try {
                 docalist('table-manager')->update($tableName, null, null, $data);
             } catch (Exception $e) {
@@ -175,7 +171,7 @@ class AdminTables extends AdminPage {
             }
         }
         $tableInfo->name = $name;
-        $tableInfo->label = sprintf(__('Copie de %s', 'docalist-core'), $tableInfo->label);
+        $tableInfo->label = sprintf(__('Copie de %s', 'docalist-core'), $tableInfo->label());
 
         return $this->view('docalist-core:table/copy', [
             'tableName' => $tableName,
