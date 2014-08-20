@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2014 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -85,13 +85,13 @@ class TableManager {
      * @throws Exception Si la table est déjà déclarée.
      */
     public function register(TableInfo $tableInfo) {
-        $name = $tableInfo->name;
+        $name = $tableInfo->name();
 
         if (isset($this->tables[$name])) {
             $msg = __('La table "%s" existe déjà', 'docalist-core');
             throw new Exception(sprintf($msg, $name));
         }
-        empty($tableInfo->type) && $tableInfo->type = $name;
+        !isset($tableInfo->type) && $tableInfo->type = $name;
         $this->tables[$name] = $tableInfo;
     }
 
@@ -119,7 +119,7 @@ class TableManager {
             // Ne garde que les tables du type indiqué
             $tables = $this->tables;
             foreach($tables as $name => $tableInfo) {
-                if ($tableInfo->type !== $type) {
+                if ($tableInfo->type() !== $type) {
                     unset($tables[$name]);
                 }
             }
@@ -161,7 +161,7 @@ class TableManager {
         }
 
         // Ouvre la table
-        $path = $this->tables[$name]->path;
+        $path = $this->tables[$name]->path();
         $extension = pathinfo($path, PATHINFO_EXTENSION);
         switch($extension) {
             case 'sqlite':
@@ -281,8 +281,8 @@ class TableManager {
         $table->name = $newName;
         $table->path = $path;
         $table->label = $label;
-        $table->format = $this->tables[$name]->format;
-        $table->type = $this->tables[$name]->type;
+        $table->format = $this->tables[$name]->format();
+        $table->type = $this->tables[$name]->type();
         $table->user = true;
 
         // Enregistre la nouvelle table dans les settings
@@ -319,14 +319,14 @@ class TableManager {
         $tableInfo = $this->tables[$name];
 
         // Vérifie qu'il s'agit d'une table personnalisée
-        if (! $tableInfo->user) {
+        if (! $tableInfo->user()) {
             $msg = __('La table "%s" est une table prédéfinie, elle ne peut pas être modifiée.', 'docalist-core');
             throw new Exception(sprintf($msg, $name));
         }
 
-        $path = $tableInfo->path;
+        $path = $tableInfo->path();
         ($newName === $name) && $newName = null;
-        ($label === $tableInfo->label) && $label = null;
+        ($label === $tableInfo->label()) && $label = null;
 
         // Mise à jour du contenu de la table
         if (! is_null($data)) {
@@ -376,7 +376,7 @@ class TableManager {
         if (! is_null($newName) || ! is_null($label)) {
             /* @var $tableInfo TableInfo */
             foreach($this->settings->tables as $tableInfo) {
-                if ($tableInfo->name === $name) {
+                if ($tableInfo->name() === $name) {
                     if (! is_null($newName)) {
                         $tableInfo->name = $newName;
                         $tableInfo->path = $newPath;
@@ -417,12 +417,12 @@ class TableManager {
         $tableInfo = $this->tables[$name];
 
         // Vérifie qu'il s'agit d'une table personnalisée
-        if (! $tableInfo->user) {
+        if (! $tableInfo->user()) {
             $msg = __('La table "%s" est une table prédéfinie, elle ne peut pas être supprimée.', 'docalist-core');
             throw new Exception(sprintf($msg, $name));
         }
 
-        $path = $tableInfo->path;
+        $path = $tableInfo->path();
 
         // Ferme la table
         unset($this->opened[$name]);
@@ -443,7 +443,7 @@ class TableManager {
         // Met à jour les settings
         /* @var $tableInfo TableInfo */
         foreach($this->settings->tables as $i => $tableInfo) {
-            if ($tableInfo->name === $name) {
+            if ($tableInfo->name() === $name) {
                 unset($this->settings->tables[$i]);
                 break;
             }
