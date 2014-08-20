@@ -5,9 +5,9 @@
  */
 
 // Détermine les valeurs actuellement sélectionnées
-if ($this->data instanceof Docalist\Data\Entity\SchemaBasedObjectInterface) {
+if ($this->data instanceof Docalist\Type\Collection) {
     // par exemple si on a passé un objet "Settings" ou Property comme valeur actuelle du champ
-    $selected = array_flip($this->data->toArray());
+    $selected = array_flip($this->data->value());
 } else {
     $selected = array_flip((array)$this->data);
 }

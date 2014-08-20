@@ -14,9 +14,9 @@ $labelField = $this->labelField();
  */
 
 // 1. Récupère le contenu actuel du champ
-if ($this->data instanceof Docalist\Data\Entity\SchemaBasedObjectInterface) {
+if ($this->data instanceof Docalist\Type\Collection) {
     // par exemple si on a passé un objet "Settings" ou Property comme valeur actuelle du champ
-    $data = $this->data->toArray();
+    $data = $this->data->value()
 } else {
     $data = (array)$this->data;
 }
