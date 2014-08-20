@@ -51,11 +51,13 @@ class Any implements Serializable, JsonSerializable {
     static protected $default = null;
 
     /**
-     * Indentation en cours, utilisé uniquement pour __toString().
+     * Indentation en cours, utilisé uniquement pour __toString() dans les
+     * classes Object et Collection.
      *
      * @var string
      */
     static protected $indent = '';
+    // TODO A réfléchir : introduire une classe Composite pour Object et Collection ?
 
     /**
      * Crée un nouveau type.
@@ -92,7 +94,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return mixed
      */
-    public function defaultValue() {
+    public final function defaultValue() {
         return $this->schema ? $this->schema->defaultValue() : static::$default;
     }
 
@@ -126,7 +128,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return self $this
      */
-    public function reset() {
+    public final function reset() {
         return $this->assign($this->defaultValue());
     }
 
@@ -135,7 +137,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return Schema le schéma ou null si le type n'a pas de schéma associé.
      */
-    public function schema() {
+    public final function schema() {
         return $this->schema;
     }
 
@@ -168,7 +170,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return string
      */
-    public function serialize() {
+    public final function serialize() {
         return serialize($this->value());
     }
 
@@ -177,7 +179,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @param string $serialized
      */
-    public function unserialize($serialized) {
+    public final function unserialize($serialized) {
         $this->assign(unserialize($serialized));
     }
 
@@ -187,7 +189,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return mixed
      */
-    public function jsonSerialize () {
+    public final function jsonSerialize () {
         return $this->value();
     }
 //+is ?
@@ -201,7 +203,7 @@ class Any implements Serializable, JsonSerializable {
      * @return string Retourne le nom de classe complet (incluant le namespace)
      * si $namespaced est à true), le nom court (sans namespace) sinon.
      */
-    public static function className($namespaced = true) {
+    static public final function className($namespaced = true) {
         if ($namespaced) {
             return get_called_class();
         }
@@ -217,7 +219,7 @@ class Any implements Serializable, JsonSerializable {
      * @return string Le namespace de la classe ou une chaine vide s'il s'agit
      * d'une classe globale.
      */
-    public static function ns() {
+    static public final function ns() {
         $class = get_called_class();
         $pt = strrpos($class, '\\');
         return $pt === false ? '' : substr($class, 0, $pt);
