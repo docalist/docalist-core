@@ -195,22 +195,13 @@ class Any implements Serializable, JsonSerializable {
 //+is ?
 
     /**
-     * Retourne le nom de classe du type.
+     * Retourne le nom de la classe.
      *
-     * @param bool $namespaced Indique s'il faut ou non inclure le namespace
-     * (true par défaut).
-     *
-     * @return string Retourne le nom de classe complet (incluant le namespace)
-     * si $namespaced est à true), le nom court (sans namespace) sinon.
+     * @return string Retourne le nom de classe complet du type (incluant le
+     * namespace).
      */
-    static public final function className($namespaced = true) {
-        if ($namespaced) {
-            return get_called_class();
-        }
-
-        $class = get_called_class();
-        $pt = strrpos($class, '\\');
-        return $pt === false ? $class : substr($class, $pt + 1);
+    static public final function className() {
+        return get_called_class();
     }
 
     /**
