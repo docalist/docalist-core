@@ -90,17 +90,33 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * @param mixed $value Les données de l'élément.
      */
     public function offsetSet ($offset, $value) {
-        // Détermine le type des éléments de cette collection
-        $type = $this->schema ? $this->schema->className() : 'Docalist\Type\Any';
+        // Cas d'une collection typée (avec un schéma)
+        if ($this->schema) {
+            // Détermine le type des éléments de cette collection
+            $type = $this->schema->className();
 
-        // Si value est un objet du bon type, ok
-        if ($value instanceof $type) {
-            $item = $value;
+            // Si value est un objet du bon type, ok
+            if ($value instanceof $type) {
+                $item = $value;
+            }
+
+            // Sinon instancie l'élément
+            else {
+                $item = new $type($value, $this->schema);
+            }
         }
 
-        // Sinon instancie l'élément
+        // Cas d'une collection libre (sans schéma associé)
         else {
-            $item = new $type($value, $this->schema);
+            // Si value est déjà un Type, ok
+            if ($value instanceof Any) {
+                $item = $value;
+            }
+
+            // Sinon, essaie de créer un Type à partir de la valeur
+            else {
+                $item = self::guessType($value);
+            }
         }
 
         // Si c'est une collection à clé, ignore offset et utilise le sous-champ

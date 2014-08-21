@@ -138,17 +138,41 @@ class Object extends Any {
             is_null($value) && $value = $this->value[$name]->defaultValue();
             $this->value[$name]->assign($value);
             return $this;
+            // TODO : si $value est déjà un type du bon type
         }
 
-        // Vérifie que le champ existe et récupère son schéma
-        $field = $this->schema ? $this->schema->field($name) : null;
+        // Il faut initialiser le champ
 
-        // Sinon, on l'initialise
-        if ($field && $field->repeatable()) {
-            $this->value[$name] = new Collection($value, $field);
-        } else {
-            $type = $field ? $field->className() : 'Docalist\Type\Any';
-            $this->value[$name] = new $type($value, $field);
+        // Cas d'un objet typé (ayant un schéma)
+        if ($this->schema) {
+            // Vérifie que le champ existe et récupère son schéma
+            $field = $this->schema->field($name);
+
+            // Crée une collection si le champ est répétable
+            if ($field->repeatable()) {
+                // TODO : si $value est déjà une Collection
+                $this->value[$name] = new Collection($value, $field);
+            }
+
+            // Crée un type simple sinon
+            else {
+                $type = $field->className();
+                // TODO : si $value est déjà du type $type
+                $this->value[$name] = new $type($value, $field);
+            }
+        }
+
+        // Cas d'un objet libre (sans schéma associé)
+        else {
+            // Si value est déjà un Type, rien à faire
+            if ($value instanceof Any) {
+                $this->value[$name] = $value;
+            }
+
+            // Sinon, essaie de créer le Type le plus adapté
+            else {
+                $this->value[$name] = self::guessType($value);
+            }
         }
 
         return $this;
