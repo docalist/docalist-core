@@ -72,8 +72,8 @@ class Settings extends Entity {
         }                               // ID fixé en dur et non transmis
 
         // Si les settings ont déjà été enregistrés, on les charge
-        if ($this->repository->has($this->id)) {
-            parent::__construct($this->repository->load($this->id, false));
+        if ($repository->has($this->id)) {
+            parent::__construct($repository->load($this->id));
         }
 
         // Sinon on initialise avec la valeur par défaut
@@ -95,7 +95,7 @@ class Settings extends Entity {
      * Enregistre les settings.
      */
     public function save() {
-        $this->repository->store($this);
+        $this->repository->save($this);
     }
 
     /**
@@ -117,7 +117,7 @@ class Settings extends Entity {
      */
     public function delete() {
         if ($this->repository->has($this->id)) {
-            $this->repository->remove($this->id());
+            $this->repository->delete($this->id());
         }
         return $this->reset();
     }
