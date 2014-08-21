@@ -262,6 +262,10 @@ class Any implements Serializable, JsonSerializable {
             return new Integer($value);
         }
 
+        if (is_bool($value)) {
+            return new Boolean($value);
+        }
+
         if (is_float($value)) {
             return new Float($value);
         }
