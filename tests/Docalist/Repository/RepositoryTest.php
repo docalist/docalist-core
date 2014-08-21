@@ -40,7 +40,7 @@ class RepositoryTest extends WP_UnitTestCase {
     /**
      * @dataProvider repositoryProvider
      */
-    public function testStoreLoadRemove(Repository $repo, $id1, $id2) {
+    public function testSaveLoadDelete(Repository $repo, $id1, $id2) {
         // Vérifie qu'un ID est alloué si besoin
         $client = new Client(['name' => 'client without id']);
         $repo->save($client);
@@ -65,10 +65,10 @@ class RepositoryTest extends WP_UnitTestCase {
         /* Load */
 
         // Vérifie les données brutes
-        $data = $repo->load($client1->id());
+        $data = $repo->loadRaw($client1->id());
         $this->assertSame($client1->value(), $data);
 
-        $data = $repo->load($client2->id());
+        $data = $repo->loadRaw($client2->id());
         $this->assertSame($client2->value(), $data);
 
         // Entité
