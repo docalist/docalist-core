@@ -16,6 +16,7 @@ namespace Docalist\Type;
 
 use Docalist\Schema\Schema;
 use Serializable, JsonSerializable;
+use Docalist\Type\Exception\InvalidTypeException;
 
 /*
  * Inspiration : https://github.com/nicolopignatelli/valueobjects
@@ -113,6 +114,8 @@ class Any implements Serializable, JsonSerializable {
      * @param mixed $value La valeur à assigner.
      *
      * @return self $this
+     *
+     * @throws InvalidTypeException Si $value est invalide.
      */
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();
