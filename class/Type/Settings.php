@@ -71,9 +71,9 @@ class Settings extends Entity {
             $this->id = strtolower(strtr(get_class($this), '\\', '-'));
         }                               // ID fixé en dur et non transmis
 
-        // Si les settings ont déjà été enregistrés, on les charge
+        // Si les settings ont été enregistrés dans le dépôt, on les charge
         if ($repository->has($this->id)) {
-            parent::__construct($repository->load($this->id));
+            parent::__construct($repository->loadRaw($this->id));
         }
 
         // Sinon on initialise avec la valeur par défaut
