@@ -149,8 +149,6 @@ class Field extends Schema {
         // Default
         if (isset($data['default'])) {
             $this->default = $data['default'];
-        } elseif ($this->repeatable) {
-            $this->default = [];
         }
 
         // Key
@@ -173,12 +171,6 @@ class Field extends Schema {
             parent::__construct($data['fields']);
         } else {
             $this->fields = false; // cf. fields()
-        /*
-            $type = $this->type;
-
-            if (is_a($type, 'Docalist\Type\Object', true)) {
-                $this->fields = $type::defaultSchema()->fields;
-            }*/
         }
     }
 
