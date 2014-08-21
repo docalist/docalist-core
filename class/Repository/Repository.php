@@ -112,15 +112,21 @@ abstract class Repository {
      * @throws RepositoryException Si une erreur survient durant
      * l'enregistrement.
      */
-    public final function store(Entity $entity) {
+    public final function save(Entity $entity) {
         // Vérifie que l'ID de l'entité est correct
         ! is_null($id = $entity->id()) && $id = $this->checkId($id);
+
+        // Signale à l'entité qu'elle va être enregistrée
+        $entity->beforeSave();
 
         // Ecrit les données de l'entité
         $newId = $this->writeData($id, $this->encode($entity->value()));
 
         // Si un ID a été alloué, on l'indique à l'entité
         is_null($id) && $entity->id($newId);
+
+        // Signale à l'entité qu'elle a été enregistrée
+        $entity->afterSave();
 
         // Ok
         return $this;
@@ -153,7 +159,7 @@ abstract class Repository {
      *
      * @throws RepositoryException Si une erreur survient durant la suppression.
      */
-    public final function remove($id) {
+    public final function delete($id) {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
 
