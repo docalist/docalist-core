@@ -162,7 +162,7 @@ abstract class Repository {
         ! is_null($id = $entity->id()) && $id = $this->checkId($id);
 
         // Signale à l'entité qu'elle va être enregistrée
-        $entity->beforeSave();
+        $entity->beforeSave($this);
 
         // Ecrit les données de l'entité
         $newId = $this->saveData($id, $this->encode($entity->value()));
@@ -171,7 +171,7 @@ abstract class Repository {
         is_null($id) && $entity->id($newId);
 
         // Signale à l'entité qu'elle a été enregistrée
-        $entity->afterSave();
+        $entity->afterSave($this);
 
         // Ok
         return $this;

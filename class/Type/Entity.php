@@ -16,6 +16,7 @@ namespace Docalist\Type;
 
 use Docalist\Schema\Schema;
 use LogicException;
+use Docalist\Repository\Repository;
 
 /**
  * Classe de base pour les entités.
@@ -79,7 +80,7 @@ class Entity extends Object {
      * Cette méthode est appellée juste avant que l'entité ne soit enregistrée
      * dans un dépôt.
      */
-    public function beforeSave() {
+    public function beforeSave(Repository $repository) {
 
     }
 
@@ -87,7 +88,7 @@ class Entity extends Object {
      * Cette méthode est appellée juste après que l'entité a été enregistrée
      * dans un dépôt.
      */
-    public function afterSave() {
+    public function afterSave(Repository $repository) {
 
     }
 }
