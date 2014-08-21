@@ -158,6 +158,7 @@ class PostTypeRepository extends Repository {
      *
      * @return boolean
      */
+/*
     public function isEmpty() {
         global $wpdb;
 
@@ -169,12 +170,13 @@ class PostTypeRepository extends Repository {
 
         return $count ? false : true; // ! $count
     }
-
+*/
     /**
      * Retourne le nombre de notices dans la base.
      *
      * @return int
      */
+/*
     public function count() {
         global $wpdb;
 
@@ -185,13 +187,14 @@ class PostTypeRepository extends Repository {
         // à voir wp_count_posts() retourne un objet = count par post_status
         // faire la somme pour éviter la requête sql içi ?
     }
-
+*/
     /**
      * Méthode utilitaire utilisée par deleteAll().
      *
      * @param string $sql Requête sql à exécuter.
      * @param string $msg Message à afficher.
      */
+/*
     private function sql($sql, $msg) {
         global $wpdb;
 
@@ -205,10 +208,11 @@ class PostTypeRepository extends Repository {
             do_action('docalist_biblio_deleteall_progress', $msg);
         }
     }
-
+*/
     /**
      * Vide la base
      */
+/*
     public function deleteAll() {
         global $wpdb;
 
@@ -283,7 +287,7 @@ class PostTypeRepository extends Repository {
         // Fin de la suppression
         do_action('docalist_biblio_deleteall_done', $this, $count);
     }
-
+*/
     /**
      * Convertit les données d'une entité en post WordPress.
      *
