@@ -45,7 +45,7 @@ class RepositoryTest extends WP_UnitTestCase {
         $client = new Client(['name' => 'client without id']);
         $repo->store($client);
         $this->assertNotNull($client->id(), 'store() alloue un ID si besoin');
-var_dump($client->id());
+
         /* Store */
 
         // Création d'une entité
