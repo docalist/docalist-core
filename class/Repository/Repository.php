@@ -25,6 +25,33 @@ use Docalist\Repository\Exception\EntityNotFoundException;
 abstract class Repository {
 
     /**
+     * Le type par défaut des entités de ce dépôt.
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * Construit un nouveau dépôt.
+     *
+     * @param string $type Optionnel, le nom de classe complet des entités de
+     * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
+     * n'est indiqué lors de l'appel.
+     */
+    public function __construct($type = 'Docalist\Type\Entity') {
+        $this->type = $type;
+    }
+
+    /**
+     * Retourne le type par défaut des entités de ce dépôt.
+     *
+     * @return string Le nom de classe complet des entités.
+     */
+    public final function type() {
+        return $this->type;
+    }
+
+    /**
      * Vérifie que l'identifiant passé en paramètre est valide pour ce type
      * de dépôt et génère une exception si ce n'est pas le cas.
      *
@@ -63,10 +90,9 @@ abstract class Repository {
      * @param scalar $id L'identifiant de l'entité à charger.
      *
      * @param string $type Le type de l'entité à retourner (le nom complet de
-     * la classe de l'entité) ou vide pour retourner les données brutes.
+     * la classe de l'entité) ou vide pour utiliser le type par défaut du dépôt.
      *
-     * @return array|Entity Retourne un tableau contenant les données chargées
-     * (si $type est vide) ou une entité.
+     * @return Entity Retourne l'entité.
      *
      * @throws BadIdException Si l'identifiant indiqué est invalide (ID manquant
      * ou ayant un format invalide).
@@ -76,14 +102,33 @@ abstract class Repository {
      * @throws RepositoryException Si une erreur survient durant le chargement.
      */
     public final function load($id, $type = null) {
+        // Utilise le type par défaut si aucun type n'a été indiqué
+        empty($type) && $type = $this->type;
+
+        // Retourne une entité si on a un type, les données brutes sinon
+        return new $type($this->loadRaw($id), null, $id);
+    }
+
+    /**
+     * Retourne les données brutes d'un entité stockée dans le dépôt.
+     *
+     * @param scalar $id L'identifiant de l'entité à charger.
+     *
+     * @return array
+     *
+     * @throws BadIdException Si l'identifiant indiqué est invalide (ID manquant
+     * ou ayant un format invalide).
+     *
+     * @throws EntityNotFoundException Si l'entité n'existe pas dans le dépôt.
+     *
+     * @throws RepositoryException Si une erreur survient durant le chargement.
+     */
+    public final function loadRaw($id) {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
 
         // Charge les données de l'entité
-        $data = $this->decode($this->loadData($id), $id);
-
-        // Retourne une entité si on a un type, les données brutes sinon
-        return $type ? new $type($data, null, $id) : $data;
+        return $this->decode($this->loadData($id), $id);
     }
 
     /**
