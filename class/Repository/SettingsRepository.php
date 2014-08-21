@@ -27,6 +27,10 @@ use Docalist\Repository\Exception\EntityNotFoundException;
  *   clé (le nom de l'option dans la table wordpress)
  */
 class SettingsRepository extends Repository {
+    public function __construct($type = 'Docalist\Type\Settings') {
+        parent::__construct($type);
+    }
+
     protected function checkId($id) {
         // On n'accepte que des chaines de caractères
         if (!is_string($id)) {
