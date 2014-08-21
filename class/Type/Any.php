@@ -88,13 +88,22 @@ class Any implements Serializable, JsonSerializable {
     /**
      * Retourne la valeur par défaut de l'objet.
      *
-     * Si le type a un schéma associé, la méthode retourne la valeur par défaut
-     * indiquée dans le schéma, sinon, elle retourne la valeur par défaut de la
-     * classe (classDefault)
+     * La méthode retourne la valeur par défaut indiquée dans le schéma associé
+     * à l'objet ou la valeur par défaut du type (classDefault) si aucun schéma
+     * n'est associé ou s'il n'indique pas de valeur par défaut.
      *
      * @return mixed
      */
     public final function defaultValue() {
+        if ($this->schema) {
+            $default = $this->schema->defaultValue();
+            if (! is_null($default)) {
+                return $default;
+            }
+        }
+
+        return static::$default;
+
         return $this->schema ? $this->schema->defaultValue() : static::$default;
     }
 
