@@ -37,7 +37,7 @@ use Docalist\Core\Plugin;
  */
 function docalist($service) {
     /* @var $services Services */
-    static $services;
+    static $services = null;
 
     // Au premier appel, on initialise l'instance
     if (is_null($services)) {
@@ -47,6 +47,11 @@ function docalist($service) {
             'Docalist' => __DIR__ . '/class',
             'Symfony' => __DIR__ . '/lib/Symfony'
         ]);
+
+        // Si on est sous phpunit, ajoute le path des tests
+        if (defined('PHPUnit_MAIN_METHOD')) {
+            $autoloader->add('Docalist\Tests', __DIR__ . '/tests/Docalist');
+        }
 
         // Initialise le gestionnaire de services
         $services = new Services();
