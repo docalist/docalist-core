@@ -71,21 +71,21 @@ class Settings extends Entity {
             $this->id = strtolower(strtr(get_class($this), '\\', '-'));
         }                               // ID fixé en dur et non transmis
 
-        // Charge les données brutes du settings
-        try {
-            $value = $this->repository->load($this->id, false);
-        } catch (EntityNotFoundException $e) {
-            $value = null;
+        // Si les settings ont déjà été enregistrés, on les charge
+        if ($this->repository->has($this->id)) {
+            parent::__construct($this->repository->load($this->id, false));
         }
 
-        // Initialise l'entité
-        parent::__construct($value, $this::defaultSchema());
+        // Sinon on initialise avec la valeur par défaut
+        else {
+            parent::__construct();
+        }
     }
 
     /**
      * Retourne le dépôt associé aux settings.
      *
-     * @eturn Repository
+     * @return Repository
      */
     public function repository() {
         return $this->repository;
@@ -110,12 +110,15 @@ class Settings extends Entity {
     }
 
     /**
-     * Réinitialise les settings à leurs valeurs par défaut.
+     * Supprime les settings du dépôt et réinitialise les paramètres avec leurs
+     * valeurs par défaut.
      *
      * @return self $this
      */
-    public function reset() {
-        $this->repository->remove($this->id());
-        return parent::reset();
+    public function delete() {
+        if ($this->repository->has($this->id)) {
+            $this->repository->remove($this->id());
+        }
+        return $this->reset();
     }
 }
