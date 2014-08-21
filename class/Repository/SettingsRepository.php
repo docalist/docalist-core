@@ -76,7 +76,7 @@ class SettingsRepository extends Repository {
         return false !== get_option($this->key($id));
     }
 
-    protected function readData($id) {
+    protected function loadData($id) {
         // L'entité est stockée comme une option worpdress
         if (false === $data = get_option($this->key($id))) {
             throw new EntityNotFoundException($id);
@@ -86,7 +86,7 @@ class SettingsRepository extends Repository {
         return $data;
     }
 
-    protected function writeData($id, $data) {
+    protected function saveData($id, $data) {
         // Alloue un ID si nécessaire
         is_null($id) && $id = uniqid();
 
@@ -96,7 +96,7 @@ class SettingsRepository extends Repository {
         return $id;
     }
 
-    protected function removeData($id) {
+    protected function deleteData($id) {
         if (! delete_option($this->key($id))) {
             throw new EntityNotFoundException($id);
         }

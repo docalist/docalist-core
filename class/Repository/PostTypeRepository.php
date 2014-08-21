@@ -109,7 +109,7 @@ class PostTypeRepository extends Repository {
         return false !== WP_Post::get_instance($id);
     }
 
-    protected function readData($id) {
+    protected function loadData($id) {
         // Charge le post wordpress
         if (false === $post = WP_Post::get_instance($id)) {
             throw new EntityNotFoundException($id);
@@ -119,7 +119,7 @@ class PostTypeRepository extends Repository {
         return (array) $post;
     }
 
-    protected function writeData($id, $post) {
+    protected function saveData($id, $post) {
         global $wpdb;
 
         // Insère ou met à jour le post si l'entité a déjà un ID
@@ -147,7 +147,7 @@ class PostTypeRepository extends Repository {
         return $id;
     }
 
-    protected function removeData($id) {
+    protected function deleteData($id) {
         if (! wp_delete_post($id, true)) {
             throw new EntityNotFoundException($id);
         }

@@ -34,20 +34,20 @@ class MemoryRepository extends Repository {
         return isset($this->data[$this->checkId($id)]);
     }
 
-    protected function readData($id) {
+    protected function loadData($id) {
         if (! isset($this->data[$id])) {
             throw new EntityNotFoundException($id);
         }
         return $this->data[$id];
     }
 
-    protected function writeData($id, $data) {
+    protected function saveData($id, $data) {
         is_null($id) && $id = uniqid();
         $this->data[$id] = $data;
         return $id;
     }
 
-    protected function removeData($id) {
+    protected function deleteData($id) {
         if (! isset($this->data[$id])) {
             throw new EntityNotFoundException($id);
         }

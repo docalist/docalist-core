@@ -52,7 +52,7 @@ class DirectoryRepository extends Repository {
             throw new RepositoryException(sprintf($msg, $directory));
         }
 
-        // on ne teste pas is_writable() : ce sera détecté par writeData()
+        // on ne teste pas is_writable() : ce sera détecté par saveData()
 
         // Stocke le répertoire du dépôt
         $this->directory = $directory;
@@ -112,7 +112,7 @@ class DirectoryRepository extends Repository {
         return file_exists($this->path($id));
     }
 
-    protected function readData($id) {
+    protected function loadData($id) {
         // Vérifie que le fichier existe
         if (! file_exists($path = $this->path($id))) {
             throw new EntityNotFoundException($id);
@@ -128,7 +128,7 @@ class DirectoryRepository extends Repository {
         return $data;
     }
 
-    protected function writeData($id, $data) {
+    protected function saveData($id, $data) {
         // Alloue un ID si nécessaire
         is_null($id) && $id = uniqid();
 
@@ -150,7 +150,7 @@ class DirectoryRepository extends Repository {
         return $id;
     }
 
-    protected function removeData($id) {
+    protected function deleteData($id) {
         // Détermine le path du fichier
         $path = $this->path($id);
 

@@ -80,7 +80,7 @@ abstract class Repository {
         $id = $this->checkId($id);
 
         // Charge les données de l'entité
-        $data = $this->decode($this->readData($id), $id);
+        $data = $this->decode($this->loadData($id), $id);
 
         // Retourne une entité si on a un type, les données brutes sinon
         return $type ? new $type($data, null, $id) : $data;
@@ -93,7 +93,7 @@ abstract class Repository {
      *
      * @return array Les données brutes, non décodées, de l'entité.
      */
-    abstract protected function readData($id);
+    abstract protected function loadData($id);
 
     /**
      * Enregistre une entité dans le dépôt.
@@ -120,7 +120,7 @@ abstract class Repository {
         $entity->beforeSave();
 
         // Ecrit les données de l'entité
-        $newId = $this->writeData($id, $this->encode($entity->value()));
+        $newId = $this->saveData($id, $this->encode($entity->value()));
 
         // Si un ID a été alloué, on l'indique à l'entité
         is_null($id) && $entity->id($newId);
@@ -143,7 +143,7 @@ abstract class Repository {
      * avait déjà un identifiant, soit l'id alloué si l'entité n'existait pas
      * déjà).
      */
-    abstract protected function writeData($id, $data);
+    abstract protected function saveData($id, $data);
 
     /**
      * Supprime une entité du dépôt.
@@ -164,7 +164,7 @@ abstract class Repository {
         $id = $this->checkId($id);
 
         // Charge les données de l'entité
-        $this->removeData($id);
+        $this->deleteData($id);
 
         // Ok
         return $this;
@@ -175,7 +175,7 @@ abstract class Repository {
      *
      * @param scalar $id
      */
-    abstract protected function removeData($id);
+    abstract protected function deleteData($id);
 
     /**
      * Encode les données d'une entité.
