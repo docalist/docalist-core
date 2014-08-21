@@ -92,29 +92,6 @@ class Object extends Any {
     public function __construct(array $value = null, Schema $schema = null) {
         // Initialise le schéma (utilise le schéma par défaut si besoin)
         parent::__construct($value, $schema ?: $this::defaultSchema());
-
-//         // Si on n'a aucune données, initialise les champs avec leur valeur par défaut
-//         if (is_null($value)) {
-//             $this->value = [];
-//             foreach($this->schema->fields() as $name => $field) {
-//                 // Crée chaque champ avec la valeur fournie ou la valeur par défaut
-//                 if (isset($value[$name])) {
-//                     $value = $value[$name];
-//                 } elseif (! is_null($field->defaultValue())) {
-//                     $value = $field->defaultValue(true);
-//                 } else {
-//                     continue;
-//                 }
-
-//                 // Initialise le champ
-//                 if ($field->repeatable()) {
-//                     $this->value[$name] = new Collection($value, $field);
-//                 } else {
-//                     $type = $field->className();
-//                     $this->value[$name] = new $type($value, $field);
-//                 }
-//             }
-//         }
     }
 
     public function assign($value) {
@@ -130,7 +107,7 @@ class Object extends Any {
 
         return $this;
 
-        // ne pas réinitialiser le tablau à chaque assign ?
+        // TODO ne pas réinitialiser le tablau à chaque assign ?
         // (faire un array_diff + unset de ce qu'on avait et qu'on n'a plus)
     }
 
@@ -141,7 +118,7 @@ class Object extends Any {
         foreach($fields as $name) {
             if (isset($this->value[$name])) {
                 $value = $this->value[$name]->value();
-                !empty($value) && $result[$name] = $value;
+                $value !== [] && $result[$name] = $value;
             }
         }
         return $result;
@@ -156,16 +133,9 @@ class Object extends Any {
      * @return self $this
      */
     public function __set($name, $value) {
-        // return $this->__get($name)->assign($value);
-
-        // Attribuer null à un champ équivaut à faire unset()
-        if (is_null($value)) {
-            unset($this->value[$name]);
-            return $this;
-        }
-
         // Si la propriété existe déjà, on change simplement sa valeur
         if (isset($this->value[$name])) {
+            is_null($value) && $value = $this->value[$name]->defaultValue();
             $this->value[$name]->assign($value);
             return $this;
         }
@@ -202,41 +172,6 @@ class Object extends Any {
      */
     public function __unset($name) {
         unset($this->value[$name]);
-/*
-        return;
-
-        // Si le champ n'existe pas déjà, terminé
-        if (! isset($this->value[$name])) {
-            return;
-        }
-
-        // Récupère la valeur par défaut du champ
-        $field = $this->schema->field($name);
-        $default = $field->defaultValue();
-
-        // Si le champ n'a pas de valeur par défaut, on le supprime
-        if (is_null($default)) {
-            unset($this->value[$name]);
-            return;
-        }
-
-        // Initialise le champ avec sa valeur par défaut
-        $this->value[$name] = $this::create($field->className(), $field->defaultValue(true), $field);
-
-        // TODO le champ existe déjà, modifier sa valeur au lieu de supprimer/recréer l'objet ?
-        // Par exemple (beurk) :
-        // $this->fields[$name]->__construct($default, $field);
-
-        // dans ce cas, les types ne sont plus "immutables" ?
-        // On pourrait imaginer que toute l'arbo Scalar soit Immutable, mais pas Object
-        // dans ce cas on aurait dans Scalar :
-        // function modify($value) {
-        //     $new = clone $this;
-        //     $this->value = $value;
-        //
-        //     return $value ;
-        // }
-*/
     }
 
     /**
@@ -250,47 +185,10 @@ class Object extends Any {
      */
     public function __get($name) {
         // Initialise le champ s'il n'existe pas encore
-        if (! isset($this->value[$name])) {
-            if ($this->schema) {
-                $field = $this->schema->field($name);
-                $type = $field->repeatable() ? 'Docalist\Type\Collection' : $field->className();
-                $this->value[$name] = new $type($field->defaultValue(true));
-            } else {
-                $this->value[$name] = new Any();
-            }
-        }
+        ! isset($this->value[$name]) && $this->__set($name, null);
 
         // Retourne l'objet Type
         return $this->value[$name];
-
-/*
-        static $defaults = [
-            'string' => '',
-            'int'    => 0,
-            'float'  => 0.0,
-            'bool'   => true,
-        ];
-
-        // Initialise le champ s'il n'existe pas déjà
-        if (! isset($this->value[$name])) {
-
-            // Vérifie que le champ existe et récupère son schéma
-            $field = $this->schema->field($name);
-
-            // Détermine la valeur par défaut
-            if ($field->defaultValue()) {
-                $default = $field->defaultValue(true);
-            } else {
-                $type = $field->className();
-                $default = isset($defaults[$type]) ? $defaults[$type] : [];
-            }
-
-            // Initialise le champ avec sa valeur par défaut
-            $this->value[$name] = $this::create($field->className(), $default, $field);
-        }
-
-        return $this->value[$name];
-*/
     }
 
     /**
@@ -338,22 +236,16 @@ class Object extends Any {
 
         // Le champ n'existe pas encore, retourne la valeur par défaut
         if ($this->schema) {
-            return $this->schema->field($name)->defaultValue(true);
-            // génère une exception si le champ n'existe pas dans le schéma
+            $field = $this->schema->field($name);
+            if ($field->repeatable()) {
+                return Collection::classDefault();
+            }
+
+            $type = $field->className();
+            return $type::classDefault();
         }
 
-        // Le champ n'existe pas et on n'a pas de schéma
-        return null;
-
-        /*
-            Type d'accès                La propriété déjà créée     Propriété pas encore créée
-
-            $object->property;          Retourne l'objet Type       Retourne null
-            $object->property = 'x';    Assigne la valeur           Crée la propriété
-            $object->property();        Retourne la valeur          Retourne la valeur par défaut de la propriété
-            $object->property($x);
-        */
-
+        return Any::classDefault();
     }
 
     public function __toString() {
@@ -374,5 +266,4 @@ class Object extends Any {
 
         return $result;
     }
-
 }
