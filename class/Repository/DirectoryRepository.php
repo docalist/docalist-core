@@ -37,10 +37,17 @@ class DirectoryRepository extends Repository {
      * @param string $directory Le chemin complet du répertoire dans lequel
      * seront stockées les entités de ce dépôt.
      *
+     * @param string $type Optionnel, le nom de classe complet des entités de
+     * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
+     * n'est indiqué lors de l'appel.
+     *
      * @throws InvalidArgumentException Si le répertoire indiqué nest pas
      * valide.
      */
-    public function __construct($directory) {
+    public function __construct($directory, $type = 'Docalist\Type\Entity') {
+        // Initialise le dépôt
+        parent::__construct($type);
+
         // Normalise les séparateurs
         $directory = strtr($directory, '/\\', DIRECTORY_SEPARATOR);
         $directory = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;

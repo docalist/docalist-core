@@ -68,8 +68,16 @@ class PostTypeRepository extends Repository {
      * Crée un nouveau dépôt.
      *
      * @param string $postType Le nom du custom post type.
+     *
+     * @param string $type Optionnel, le nom de classe complet des entités de
+     * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
+     * n'est indiqué lors de l'appel.
      */
-    public function __construct($postType) {
+    public function __construct($postType, $type = 'Docalist\Type\Entity') {
+        // Initialise le dépôt
+        parent::__construct($type);
+
+        // Stocke le post type wordpress de ce dépôt
         $this->postType = $postType;
     }
 
