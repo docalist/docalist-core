@@ -33,14 +33,14 @@ class SettingsRepositoryTest extends RepositoryTest {
     /**
      * @depends testNew
      */
-//     public function testStore(MemoryRepository $repo) {
+//     public function testSave(MemoryRepository $repo) {
 //         $client = new Client(null, null, 'c1');
 
-//         $repo->store($client);
+//         $repo->save($client);
 //         $this->assertSame('{"name":"noname"}', $repo->data['c1']);
 
 //         $client->name = 'daniel';
-//         $repo->store($client);
+//         $repo->save($client);
 //         $this->assertSame('{"name":"daniel"}', $repo->data['c1']);
 
 //         return $repo;
@@ -64,7 +64,7 @@ class SettingsRepositoryTest extends RepositoryTest {
      * @depends testLoad
      */
 //     public function testRemove(MemoryRepository $repo) {
-//         $repo->remove('c1');
+//         $repo->delete('c1');
 //         $this->assertFalse(isset($repo->data['c1']));
 //     }
 

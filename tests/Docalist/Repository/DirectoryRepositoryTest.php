@@ -84,19 +84,19 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
 //         $this->markTestSkipped('unable to test is_writable');
 //     }
 
-    public function testStore() {
+    public function testSave() {
         $repo = new DirectoryRepository($this->dir);
 
         // teste avec une entité qui a déjà un ID
         $client = new Client(null, null, 'abc12');
-        $repo->store($client);
+        $repo->save($client);
         $path = $repo->path($client->id());
         $this->assertFileExists($path);
         $this->assertSame('{"name":"noname"}', file_get_contents($path));
 
         // teste avec une entité qui n'a pas d'ID
         $client = new Client();
-        $repo->store($client);
+        $repo->save($client);
         $this->assertNotNull($client->id());
         $path = $repo->path($client->id());
         $this->assertFileExists($path);
@@ -104,7 +104,7 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
 
         // teste avec une entité qui existe déjà
         $client->name = 'daniel';
-        $repo->store($client);
+        $repo->save($client);
         $this->assertSame('{"name":"daniel"}', file_get_contents($path));
     }
 
@@ -118,7 +118,7 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
 
         $path = $repo->path($client->id());
         mkdir($path, 0777, true);
-        $repo->store($client);
+        $repo->save($client);
     }
 
     public function testLoad() {
@@ -126,7 +126,7 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
 
         // test avec une entité qui a déjà un ID
         $client = new Client(['name' => 'daniel']);
-        $repo->store($client);
+        $repo->save($client);
         $client2 = $repo->load($client->id(), Client::className());
         $this->assertTrue($client2->equals($client));
     }
@@ -181,11 +181,11 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
         $repo = new DirectoryRepository($this->dir);
 
         $client = new Client(null, null, 'zz14');
-        $repo->store($client);
+        $repo->save($client);
         $path = $repo->path($client->id());
         $this->assertFileExists($path);
 
-        $repo->remove('zz14');
+        $repo->delete('zz14');
         $this->assertFileNotExists($path);
     }
 
@@ -194,7 +194,7 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
      */
     public function testRemoveInexistant() {
         $repo = new DirectoryRepository($this->dir);
-        $repo->remove('inexistant');
+        $repo->delete('inexistant');
     }
 
     /**
@@ -204,13 +204,13 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
         $repo = new DirectoryRepository($this->dir);
 
         $client = new Client();
-        $repo->store($client);
+        $repo->save($client);
         $path = $repo->path($client->id());
 
         unlink($path);
         mkdir($path);
 
-        $repo->remove($client->id());
+        $repo->delete($client->id());
     }
 
 }

@@ -43,24 +43,24 @@ class RepositoryTest extends WP_UnitTestCase {
     public function testStoreLoadRemove(Repository $repo, $id1, $id2) {
         // Vérifie qu'un ID est alloué si besoin
         $client = new Client(['name' => 'client without id']);
-        $repo->store($client);
-        $this->assertNotNull($client->id(), 'store() alloue un ID si besoin');
+        $repo->save($client);
+        $this->assertNotNull($client->id(), 'save() alloue un ID si besoin');
 
         /* Store */
 
         // Création d'une entité
         $client1 = new Client(['name' => "client with id $id1"]);
         $client1->id($id1);
-        $repo->store($client1);
-        $this->assertSame($id1, $client1->id(), "store() ne change pas l'ID existant (création)");
+        $repo->save($client1);
+        $this->assertSame($id1, $client1->id(), "save() ne change pas l'ID existant (création)");
 
         // Création puis mise à jour d'une entité
         $client2 = new Client(['name' => "client with id $id2"]);
         $client2->id($id2);
-        $repo->store($client2);
+        $repo->save($client2);
         $client2->name = "updated client with id $id2";
-        $repo->store($client2);
-        $this->assertSame($id2, $client2->id(), "store() ne change pas l'ID existant (maj)");
+        $repo->save($client2);
+        $this->assertSame($id2, $client2->id(), "save() ne change pas l'ID existant (maj)");
 
         /* Load */
 
@@ -79,7 +79,7 @@ class RepositoryTest extends WP_UnitTestCase {
         $this->assertTrue($client->equals($client2));
 
         /* Remove */
-        $repo->remove($client1->id());
+        $repo->delete($client1->id());
         $catched = false;
         try {
             $repo->load($client1->id());

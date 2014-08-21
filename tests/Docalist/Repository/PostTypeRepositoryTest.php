@@ -39,18 +39,18 @@ class PostTypeRepositoryTest extends RepositoryTest {
     /**
      * @depends testNew
      */
-//     public function testStore(PostTypeRepository $repo) {
+//     public function testSave(PostTypeRepository $repo) {
 //         $client = new Client();
 
-//         $repo->store($client);
+//         $repo->save($client);
 //         $this->assertNotNull($client->id());
 //         $this->assertSame('{"name":"noname"}', get_post_field('post_excerpt', $client->id()));
 
 //         $client->name = 'daniel';
-//         $repo->store($client);
+//         $repo->save($client);
 //         $this->assertSame('{"name":"daniel"}', get_post_field('post_excerpt', $client->id()));
 
-//         $repo->store(new Client(null, null, '546')); // un entier sous forme de chaine
+//         $repo->save(new Client(null, null, '546')); // un entier sous forme de chaine
 
 //         return $repo;
 //     }
@@ -60,7 +60,7 @@ class PostTypeRepositoryTest extends RepositoryTest {
      */
 //     public function testLoad(PostTypeRepository $repo) {
 //         $client = new Client(['name' => 'daniel']);
-//         $repo->store($client);
+//         $repo->save($client);
 
 //         $client2 = $repo->load($client->id(), Client::className());
 //         $this->assertTrue($client2->equals($client));
@@ -103,11 +103,11 @@ class PostTypeRepositoryTest extends RepositoryTest {
 //     public function testRemove(PostTypeRepository $repo) {
 //         $client = new Client();
 
-//         $repo->store($client);
+//         $repo->save($client);
 //         $this->assertNotNull($client->id());
 //         $this->assertSame('{"name":"noname"}', get_post_field('post_excerpt', $client->id()));
 
-//         $repo->remove($client->id());
+//         $repo->delete($client->id());
 //         $this->assertSame('', get_post_field('post_excerpt', $client->id()));
 //     }
 
@@ -116,7 +116,7 @@ class PostTypeRepositoryTest extends RepositoryTest {
      * @expectedException Docalist\Repository\Exception\EntityNotFoundException
      */
 //     public function testRemoveInexistant(PostTypeRepository $repo) {
-//         $repo->remove(123456789);
+//         $repo->delete(123456789);
 //     }
 
     /**
@@ -124,7 +124,7 @@ class PostTypeRepositoryTest extends RepositoryTest {
      */
 //     public function testStoreEntityWithourId() {
 //         $repo = new DirectoryRepository($this->dir);
-//         $repo->store(new Client());
+//         $repo->save(new Client());
 //     }
 
 }

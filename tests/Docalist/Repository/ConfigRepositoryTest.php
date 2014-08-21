@@ -44,7 +44,7 @@ class ConfigRepositoryTest extends WP_UnitTestCase {
         $dir = docalist('site-root') . 'config';
         $this->assertTrue(is_dir($dir));
 
-        $repo->store(new MySettings);
+        $repo->save(new MySettings);
 
         $this->assertFileExists($dir . 'docalist-tests-repository-mysettings.json');
     }
