@@ -361,7 +361,7 @@ class PostTypeRepository extends Repository {
 
         // Sinon, post_excerpt doit contenir du JSON valide
         else {
-            $data = parent::decode($post['post_excerpt'], $post['post_id']);
+            $data = parent::decode($post['post_excerpt'], $id);
         }
 
         // Initialise les champs virtuels de la notice à partir des champs wordpress
