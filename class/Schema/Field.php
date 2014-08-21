@@ -122,10 +122,12 @@ class Field extends Schema {
             // Le type indiqué doit être un nom de Type docalist
             else {
                 // On peut avoir soit un nom relatif au namespace en cours,
-                // soit un nom de classe complet. Si la classe existe à la fois
-                // dans le namespace par défaut et dans le namespace global,
+                // (juste un nom de classe sans namespace et sans antislashs),
+                // soit un nom de classe complet incluant le namespace.
+                // Si c'est un nom de classe court et que la classe existe à la
+                // fois dans le namespace en cours et dans le namespace global,
                 // c'est celle du namespace en cours qui est prise en compte.
-                if ($defaultNamespace) {
+                if ($defaultNamespace && false === strpos($this->type, '\\')) {
                     $class = $defaultNamespace . '\\' . $this->type;
                     if (class_exists($class, true)) {
                         $this->type = $class;
