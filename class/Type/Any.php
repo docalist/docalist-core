@@ -227,4 +227,49 @@ class Any implements Serializable, JsonSerializable {
         $pt = strrpos($class, '\\');
         return $pt === false ? '' : substr($class, 0, $pt);
     }
+
+    /**
+     * Essaie de créer un Type à partir de la valeur php passée en paramètre.
+     *
+     * La méthode essaie de déterminer la classe Type la plus adaptée en
+     * fonction du type php de la valeur indiquée.
+     *
+     * @param mixed $value
+     * @return Any
+     *
+     * @throws InvalidTypeException Si le type de la valeur passée en paramètre
+     * n'est pas reconnu.
+     */
+    static protected final function guessType($value) {
+        if (is_array($value)) {
+            // ça peut être une collection ou un tableau
+            // pour tester si les clés sont des int (0..n) on pourrait utiliser
+            // array_values($value) === $value
+            // cf. https://gist.github.com/Thinkscape/1965669
+            // mais dans notre cas, il suffit de tester la clé du 1er élément
+            if (is_int(key($value))) { // tableau numérique
+                return new Collection($value);
+            } else {
+                return new Object($value); // tableau associatif
+            }
+        }
+
+        if (is_string($value)) {
+            return new String($value);
+        }
+
+        if (is_int($value)) {
+            return new Integer($value);
+        }
+
+        if (is_float($value)) {
+            return new Float($value);
+        }
+
+        if (is_null($value)) {
+            return new Any();
+        }
+
+        throw new InvalidTypeException('a php type that I can guess');
+    }
 }
