@@ -74,4 +74,20 @@ class Entity extends Object {
 
         return $this;
     }
+
+    /**
+     * Cette méthode est appellée juste avant que l'entité ne soit enregistrée
+     * dans un dépôt.
+     */
+    public function beforeSave() {
+
+    }
+
+    /**
+     * Cette méthode est appellée juste après que l'entité a été enregistrée
+     * dans un dépôt.
+     */
+    public function afterSave() {
+
+    }
 }
