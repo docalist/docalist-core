@@ -256,7 +256,9 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $result = '[';
         self::$indent .= '    ';
         foreach($this->value as $key => $item) {
-            $result .= PHP_EOL . self::$indent . var_export($key,true) . ': ' . $item->__toString();
+            $result .= PHP_EOL . self::$indent;
+            is_string($key) && $result .= var_export($key, true) . ': ' ;
+            $result .= $item->__toString();
         }
         self::$indent = substr(self::$indent, 0, -4);
         $result .= PHP_EOL . self::$indent . ']';
