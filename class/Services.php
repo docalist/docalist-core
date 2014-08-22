@@ -27,7 +27,16 @@ class Services {
      *
      * @var array
      */
-    protected $services = [];
+    protected $services;
+
+    /**
+     * Initialise les services.
+     *
+     * @param array $services
+     */
+    public function __construct(array $services = []) {
+       $this->services = $services;
+    }
 
     /**
      * Ajoute un ou plusieurs services dans le gestionnaire de services.
