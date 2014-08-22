@@ -222,6 +222,6 @@ class CollectionTest extends WP_UnitTestCase {
         $b = new Collection(['a', 'b']);
 
         $this->assertSame("[ ]", $a->__toString());
-        $this->assertStringMatchesFormat('[%w0: "a"%w1: "b"%w]', $b->__toString());
+        $this->assertStringMatchesFormat('[%w"a"%w"b"%w]', $b->__toString());
     }
 }

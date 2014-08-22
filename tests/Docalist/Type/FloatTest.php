@@ -31,6 +31,6 @@ class FloatTest extends WP_UnitTestCase {
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
     public function testInvalidType()
     {
-        new Float('3.14');
+        new Float('zzz');
     }
 }

@@ -28,7 +28,7 @@ class BooleanTest extends WP_UnitTestCase {
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
     public function testInvalidType()
     {
-        new Boolean('true');
+        new Boolean('ttt');
     }
 
     public function testToString() {

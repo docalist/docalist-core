@@ -28,6 +28,6 @@ class StringTest extends WP_UnitTestCase {
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
     public function testInvalidType()
     {
-        new String(12);
+        new String([]);
     }
 }

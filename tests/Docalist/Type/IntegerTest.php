@@ -28,6 +28,6 @@ class IntegerTest extends WP_UnitTestCase {
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
     public function testInvalidType()
     {
-        new Integer('12');
+        new Integer('zzz');
     }
 }
