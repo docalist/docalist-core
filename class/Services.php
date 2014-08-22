@@ -16,7 +16,7 @@
 namespace Docalist;
 
 use Closure;
-use Exception;
+use LogicException;
 
 /**
  * Gestionnaire de services Docalist.
@@ -30,22 +30,35 @@ class Services {
     protected $services = [];
 
     /**
-     * Ajoute un service dans le gestionnaire de services.
+     * Ajoute un ou plusieurs services dans le gestionnaire de services.
      *
-     * @param string $id identifiant unique de l'objet.
+     * Vous pouvez ajouter un service unique en appellant la méthode avec deux
+     * paramètres ou un ensemble de service en passant directement un tableau
+     * en paramètre.
+     *
+     * @param string|array $id identifiant unique du service à ajouter, ou
+     * tableau de services de la forme identifiant => service.
      * @param mixed $service le service à ajouter. Cela peut être un scalaire
      * (un paramètre de configuration, par exemple), un objet (par exemple un
      * plugin) ou une closure qui sera invoquée lors du premier appel pour créer
-     * l'instance du service.
+     * l'instance du service. Ce paramètre n'est pas utilisé si vous passez un
+     * tableau de services pour $id.
      *
-     * @throws Exception S'il existe déjà un service avec l'identifiant indiqué.
+     * @throws LogicException S'il existe déjà un service avec l'identifiant indiqué.
      *
      * @return self
      */
-    public function add($id, $service) {
+    public function add($id, $service = null) {
+        if (is_array($id)) {
+            foreach($id as $id => $service) {
+                $this->add($id, $service);
+            }
+            return $this;
+        }
+
         if (isset($this->services[$id])) {
             $message = __('%s existe déjà.', 'docalist-core');
-            throw new Exception(sprintf($message, $id));
+            throw new LogicException(sprintf($message, $id));
         }
 
         $this->services[$id] = $service;
@@ -65,6 +78,24 @@ class Services {
     }
 
     /**
+     * Indique si le service indiqué est chargé.
+     *
+     * Si le service n'existe pas, ou s'il a été défini via une closure et que
+     * cette closure n'a pas encore été exécutée, le service est considéré comme
+     * "non chargé".
+     *
+     * Dans tous les autres cas, la méthode retourne true.
+     *
+     * @param string $id l'identifiant du service recherché.
+     *
+     * @return bool
+     */
+    public function isLoaded($id) {
+        return isset($this->services[$id])
+            && ! ($this->services[$id] instanceof Closure);
+    }
+
+    /**
      * Retourne le service ayant l'identifiant indiqué.
      *
      * Si le service n'a pas encore été créé, il est instancié en invoquant
@@ -73,14 +104,14 @@ class Services {
      *
      * @param string $id l'identifiant de l'objet à retourner.
      *
-     * @throws Exception Si l'identifiant indiqué n'existe pas.
+     * @throws LogicException Si l'identifiant indiqué n'existe pas.
      *
      * @return mixed
      */
     public function get($id) {
         if (! isset($this->services[$id])) {
             $message = __('Service "%s" non trouvé.', 'docalist-core');
-            throw new Exception(sprintf($message, $id));
+            throw new LogicException(sprintf($message, $id));
         }
 
         $service = $this->services[$id];
@@ -89,5 +120,28 @@ class Services {
         }
 
         return $service;
+    }
+
+    /**
+     * Retourne la liste des services déclarés.
+     *
+     * @eturn array un tableau contenant les noms de tous les services, dans
+     * l'ordre dans lequel ils ont été déclarés.
+     */
+    public function names() {
+        return array_keys($this->services);
+    }
+
+    /**
+     * Retourne l'état des services (chargés ou non).
+     *
+     * @eturn array un tableau contenant les noms de tous les services.
+     */
+    public function state() {
+        $t = $this->services;
+        foreach($t as $id => & $state) {
+            $state = $this->isLoaded($id);
+        }
+        return $t;
     }
 }
