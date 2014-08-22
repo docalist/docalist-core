@@ -48,19 +48,18 @@ function docalist($service) {
             'Symfony' => __DIR__ . '/lib/Symfony'
         ]);
 
-        // Si on est sous phpunit, ajoute le path des tests
+        // Si on est sous phpunit, ajoute les tests à l'autoloader
         if (defined('PHPUnit_MAIN_METHOD')) {
             $autoloader->add('Docalist\Tests', __DIR__ . '/tests/Docalist');
         }
 
         // Initialise le gestionnaire de services
-        $services = new Services();
+        $services = new Services([
+            'autoloader' => $autoloader
+        ]);
 
         // Le gestionnaire de services est lui-même un service
         $services->add('services', $services);
-
-        // Ajoute l'autoloader dans la liste des services disponibles
-        $services->add('autoloader', $autoloader);
     }
 
     // Retourne le service demandé
