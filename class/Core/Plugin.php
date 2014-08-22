@@ -33,59 +33,63 @@ class Plugin {
         // Charge les fichiers de traduction du plugin
         load_plugin_textdomain('docalist-core', false, 'docalist-core/languages');
 
-        // Crée le service 'settings-repository'
-        docalist('services')->add('settings-repository', function() {
-            return new SettingsRepository();
-        });
+        // Enregistre les services docalist par défaut
+        docalist('services')->add([
+            // Service settings-repository
+            'settings-repository' => function() {
+                return new SettingsRepository();
+            },
 
-        // Charge la configuration du plugin
-        docalist('services')->add('docalist-core-settings', function() {
-            return new Settings(docalist('settings-repository'));
-        });
+            // Configuration de docalist-core
+            'docalist-core-settings' => function($services) {
+                return new Settings($services->get('settings-repository'));
+            },
 
-        // WordPress n'offre aucun moyen simple d'obtenir la racine du site :
-        // - ABSPATH ne fonctionne pas si wp est dans un sous-répertoire
-        // - get_home_path() ne fonctionne que dans le back-office
-        // Pour y remédier on définit le service à la demande "site-root"
-        // qui retourne le path absolu du site avec un slash final.
-        docalist('services')->add('site-root', function() {
-            if (PHP_SAPI === 'cli' || PHP_SAPI === 'cli-server') {
-                throw new \Exception('site-root is not avalable with CLI SAPI');
-            }
-            $root = substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['PHP_SELF']));
+            // site-root
+            // WordPress n'offre aucun moyen simple d'obtenir la racine du site :
+            // - ABSPATH ne fonctionne pas si wp est dans un sous-répertoire
+            // - get_home_path() ne fonctionne que dans le back-office
+            // Pour y remédier on définit le service à la demande "site-root"
+            // qui retourne le path absolu du site avec un slash final.
+            'site-root' => function() {
+                if (PHP_SAPI === 'cli' || PHP_SAPI === 'cli-server') {
+                    throw new \Exception('site-root is not avalable with CLI SAPI');
+                }
+                $root = substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['PHP_SELF']));
 
-            $root = strtr($root, '/\\', DIRECTORY_SEPARATOR);
-            $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+                $root = strtr($root, '/\\', DIRECTORY_SEPARATOR);
+                $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-            return $root;
-        });
+                return $root;
+            },
 
-        // Crée le service "views"
-        docalist('services')->add('views', function() {
-            return new Views();
-        });
+            // Service "views"
+            'views' => function() {
+                return new Views();
+            },
 
-        // Crée le service "file-cache"
-        docalist('services')->add('file-cache', function() {
-            $dir = get_temp_dir() . 'docalist-cache';
-            return new FileCache(docalist('site-root'), $dir);
-        });
+            // Service "file-cache"
+            'file-cache' => function($services) {
+                $dir = get_temp_dir() . 'docalist-cache';
+                return new FileCache($services->get('site-root'), $dir);
+            },
 
-        // Crée le service "table-manager"
-        docalist('services')->add('table-manager', function() {
-            return new TableManager(docalist('docalist-core-settings'));
-        });
+            // Service "table-manager"
+            'table-manager' => function($services) {
+                return new TableManager($services->get('docalist-core-settings'));
+            },
 
-        // Crée le service "sequences"
-        docalist('services')->add('sequences', function() {
-            return new Sequences();
-        });
+            // Crée le service "sequences"
+            'sequences' =>function() {
+                return new Sequences();
+            },
+
+            // Service "lookup"
+            'lookup' => new Lookup(),
+        ]);
 
         // Enregistre nos propres tables quand c'est nécessaire
         add_action('docalist_register_tables', array($this, 'registerTables'));
-
-        // Crée le service "lookup"
-        docalist('services')->add('lookup', new Lookup());
 
         // Définit les lookups de type "table"
         add_filter('docalist_table_lookup', function($value, $source, $search) {
