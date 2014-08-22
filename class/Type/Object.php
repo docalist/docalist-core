@@ -150,15 +150,28 @@ class Object extends Any {
 
             // Crée une collection si le champ est répétable
             if ($field->repeatable()) {
-                // TODO : si $value est déjà une Collection
-                $this->value[$name] = new Collection($value, $field);
+                // Si value est déjà une Collection, on prend tel quel
+                if ($value instanceof Collection) {
+                    $this->value[$name] = $value;
+                }
+                // Sinon, on instancie
+                else {
+                    $this->value[$name] = new Collection($value, $field);
+                }
             }
 
             // Crée un type simple sinon
             else {
                 $type = $field->className();
-                // TODO : si $value est déjà du type $type
-                $this->value[$name] = new $type($value, $field);
+
+                // Si value est déjà du bon type, on le prend tel quel
+                if ($value instanceof $type) {
+                    $this->value[$name] = $value;
+                }
+                // Sinon, on instancie
+                else {
+                    $this->value[$name] = new $type($value, $field);
+                }
             }
         }
 
