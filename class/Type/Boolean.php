@@ -25,7 +25,9 @@ class Boolean extends Scalar {
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();
         if (! is_bool($value)){
-            throw new InvalidTypeException('boolean');
+            if (is_null($value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))) {
+                throw new InvalidTypeException('boolean');
+            }
         }
 
         $this->value = $value;

@@ -25,7 +25,10 @@ class String extends Scalar {
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();
         if (! is_string($value)){
-            throw new InvalidTypeException('string');
+            if (! is_scalar($value)) {
+                throw new InvalidTypeException('string');
+            }
+            $value = (string) $value;
         }
 
         $this->value = $value;

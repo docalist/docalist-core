@@ -25,9 +25,7 @@ class Float extends Scalar {
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();
         if (! is_float($value)){
-            if (is_int($value)) {
-                $value = (float) $value;
-            } else {
+            if (false === $value = filter_var($value, FILTER_VALIDATE_FLOAT)) {
                 throw new InvalidTypeException('float');
             }
         }
