@@ -95,7 +95,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return mixed
      */
-    public final function defaultValue() {
+    public function defaultValue() {
         if ($this->schema) {
             $default = $this->schema->defaultValue();
             if (! is_null($default)) {
