@@ -26,7 +26,9 @@ use Docalist\Type\Settings;
 class MySettings extends Settings {
     protected static function loadSchema() {
         return [
-            'a' => [ 'default' => 'default' ],
+            'fields' => [
+                'a' => [ 'default' => 'default' ]
+            ]
         ];
     }
 }

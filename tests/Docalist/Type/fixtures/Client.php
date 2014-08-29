@@ -20,8 +20,10 @@ use Docalist\Type\Entity;
 class Client extends Entity {
     protected static function loadSchema() {
         return [
-            'name' => [ 'default' => 'noname' ],
-            'factures' => ['type' => 'Facture*', 'key' => 'code']
+            'fields' => [
+                'name' => [ 'default' => 'noname' ],
+                'factures' => ['type' => 'Facture*', 'key' => 'code']
+            ]
         ];
     }
 }

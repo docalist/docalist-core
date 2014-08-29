@@ -20,7 +20,9 @@ use Docalist\Type\Object;
 class Facture extends Object {
     protected static function loadSchema() {
         return [
-            'code', 'label', 'total' => 'int'
+            'fields' => [
+                'code', 'label', 'total' => 'int'
+            ]
         ];
     }
 }

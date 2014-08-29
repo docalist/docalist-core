@@ -26,12 +26,14 @@ class Settings extends TypeSettings {
     protected $id = 'docalist-core-settings';
 
     protected static function loadSchema() {
-        return array(
-            'tables' => [
-                'type' => 'Docalist\Table\TableInfo*',
-                'key' => 'name',
-                'label' => __('Liste des tables d\'autorité personnalisées', 'docalist-core'),
-            ],
-        );
+        return [
+            'fields' => [
+                'tables' => [
+                    'type' => 'Docalist\Table\TableInfo*',
+                    'key' => 'name',
+                    'label' => __('Liste des tables d\'autorité personnalisées', 'docalist-core'),
+                ]
+            ]
+        ];
     }
 }

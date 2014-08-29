@@ -32,37 +32,39 @@ class TableInfo extends Object {
     protected static function loadSchema() {
         // @formatter:off
         return [
-            'name' => [
-                'label' => __('Nom', 'docalist-core'),
-                'description' => __('Nom de code de la table (doit être unique)', 'docalist-core'),
-            ],
+            'fields' => [
+                'name' => [
+                    'label' => __('Nom', 'docalist-core'),
+                    'description' => __('Nom de code de la table (doit être unique)', 'docalist-core'),
+                ],
 
-            'path' => [
-                'label' => __('Path', 'docalist-core'),
-                'description' => __('Path (absolu) de la table.', 'docalist-core'),
-            ],
+                'path' => [
+                    'label' => __('Path', 'docalist-core'),
+                    'description' => __('Path (absolu) de la table.', 'docalist-core'),
+                ],
 
-            'label' => [
-                'label' => __('Libellé', 'docalist-core'),
-                'description' => __('Libellé de la table', 'docalist-core'),
-            ],
+                'label' => [
+                    'label' => __('Libellé', 'docalist-core'),
+                    'description' => __('Libellé de la table', 'docalist-core'),
+                ],
 
-            'format' => [
-                'label' => __('Format', 'docalist-core'),
-                'description' => __('Format de la table (table, thesaurus, conversion, etc.)', 'docalist-core'),
-            ],
+                'format' => [
+                    'label' => __('Format', 'docalist-core'),
+                    'description' => __('Format de la table (table, thesaurus, conversion, etc.)', 'docalist-core'),
+                ],
 
-            'type' => [
-                'label' => __('Type', 'docalist-core'),
-                'description' => __('Type de table (pays, langues, etc.)', 'docalist-core'),
-            ],
+                'type' => [
+                    'label' => __('Type', 'docalist-core'),
+                    'description' => __('Type de table (pays, langues, etc.)', 'docalist-core'),
+                ],
 
-            'user' => [
-                'type' => 'bool',
-                'default' => true,
-                'label' => __('Table utilisateur', 'docalist-core'),
-                'description' => __("Indique s'il s'agit d'une table utilisateur ou d'une table prédéfinie.", 'docalist-core'),
-            ],
+                'user' => [
+                    'type' => 'bool',
+                    'default' => true,
+                    'label' => __('Table utilisateur', 'docalist-core'),
+                    'description' => __("Indique s'il s'agit d'une table utilisateur ou d'une table prédéfinie.", 'docalist-core'),
+                ]
+            ]
         ];
         // @formatter:on
     }

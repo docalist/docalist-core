@@ -20,10 +20,12 @@ use Docalist\Type\Object;
 class Money extends Object {
     protected static function loadSchema() {
         return [
-            'amount' => ['type' => 'float', 'default' => 0],
-            'currency' => [ 'default' => 'EUR' ],
-            'conversion' => 'Money*',
-            'timestamp' => ['type' => 'int']
+            'fields' => [
+                'amount' => ['type' => 'float', 'default' => 0],
+                'currency' => [ 'default' => 'EUR' ],
+                'conversion' => 'Money*',
+                'timestamp' => ['type' => 'int']
+            ]
         ];
     }
 }

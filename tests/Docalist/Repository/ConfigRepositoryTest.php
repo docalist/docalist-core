@@ -27,8 +27,10 @@ use Docalist\Type\Settings;
 class MySettings extends Settings {
     protected static function loadSchema() {
         return [
-            'url' => [ 'default' => 'http://127.0.0.1:9200/' ],
-            'timeout' => [ 'type' => 'int', 'default' => 30 ],
+            'fields' => [
+                'url' => [ 'default' => 'http://127.0.0.1:9200/' ],
+                'timeout' => [ 'type' => 'int', 'default' => 30 ],
+            ]
         ];
     }
 }
