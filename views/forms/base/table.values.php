@@ -33,7 +33,7 @@ $writer->startElement('tbody');
 if (!$this->repeatable()) {
     $this->block('widget');
 } else {
-    $data = $this->data ?: array(null);
+    $data = count($this->data) ? $this->data : array(null);
     foreach($data as $i=>$data) {
         $this->occurence($i);
         $this->bindOccurence($data);
