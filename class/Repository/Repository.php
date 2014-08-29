@@ -101,11 +101,11 @@ abstract class Repository {
      *
      * @throws RepositoryException Si une erreur survient durant le chargement.
      */
-    public final function load($id, $type = null) {
+    public function load($id, $type = null) {
         // Utilise le type par défaut si aucun type n'a été indiqué
         empty($type) && $type = $this->type;
 
-        // Retourne une entité si on a un type, les données brutes sinon
+        // Charge l'entité
         return new $type($this->loadRaw($id), null, $id);
     }
 
