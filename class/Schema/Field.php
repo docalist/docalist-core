@@ -18,64 +18,27 @@ use InvalidArgumentException;
 
 /**
  * Décrit les propriétés d'un champ au sein d'un schéma.
+ *
+ * @amethod string name() Retourne le nom du champ.
+ *
+ * @amethod string type() Retourne le type du champ.
+ * La propriété contient toujours un nom de Type complet incluant le namespace
+ * ('Docalist\Type\String' par défaut). Les alias (string, int, float, bool...)
+ * sont convertis lors de la création du champ.
+ *
+ * @amethod boolean repeatable() Indique si le champ est répétable.
+ *
+ * @amethod string label() Retourne le libellé du champ.
+ *
+ * @amethod string description() Retourne la description du champ.
+ *
+ * @amethod string key() Si le champ est une collection d'objets, retourne le
+ * nom du sous-champ utilisé comme clé pour la collection.
+ *
  */
 class Field extends Schema {
-    /**
-     * Nom du champ.
-     *
-     * @var string
-     */
-    protected $name = '';
-
-    /**
-     * Type du champ.
-     *
-     * La propriété contient toujours un nom de Type complet (avec namespace).
-     * Les alias (string, int, float, bool...) sont convertis lors de la
-     * création du champ.
-     *
-     * @var string
-     */
-    protected $type = 'Docalist\Type\String';
-
-    /**
-     * Indique si le champ est répétable.
-     *
-     * @var boolean
-     */
-    protected $repeatable = false;
-
-    /**
-     * Valeur par défaut du champ.
-     *
-     * @var mixed
-     */
-    protected $default = null;
-
-    /**
-     * Libellé du champ.
-     *
-     * @var string
-     */
-    protected $label = '';
-
-    /**
-     * Description du champ.
-     *
-     * @var string
-     */
-    protected $description = '';
-
-    /**
-     * Nom du sous-champ utilisé comme clé si le champ est une collection
-     * d'entités,
-     *
-     * @var string
-     */
-    protected $key = null;
-
-    public function __construct(array $data, $defaultNamespace = '') {
-        static $alias = [ // garder synchro avec le tableau de type()
+    public function __construct(array $value, $defaultNamespace = '') {
+        static $alias = [ // garder synchro avec le tableau de friendlyType()
             'any'     => 'Docalist\Type\Any',
             'scalar'  => 'Docalist\Type\Scalar',
             'string'  => 'Docalist\Type\String',
@@ -92,31 +55,19 @@ class Field extends Schema {
             'long'    => 'Docalist\Type\Integer',
         ];
 
-        // Teste si le champ contient des propriétés qu'on ne connait pas
-        if ($unknown = array_diff_key($data, get_object_vars($this))) {
-            $msg = 'Unknown field property(es) in field "%s": "%s"';
-            $name = isset($data['name']) ? $data['name'] : '';
-            throw new InvalidArgumentException(sprintf($msg, $name, implode(', ', array_keys($unknown))));
-        }
-
-        // Nom du champ
-        if (isset($data['name'])) {
-            $this->name = (string) $data['name'];
-        }
-
         // Type
-        if (isset($data['type'])) {
-            $this->type = (string) $data['type'];
+        if (isset($value['type'])) {
+            $type = (string) $value['type'];
 
             // Répétable : type='xx*' équivaut à type='xx' + repeatable=true
-            if (substr($this->type, -1) === '*') {
-                $this->type = substr($this->type, 0, -1);
-                $data['repeatable'] = true;
+            if (substr($type, -1) === '*') {
+                $type = substr($type, 0, -1);
+                $value['repeatable'] = true;
             }
 
             // Si le type indiqué est un alias, on le traduit en nom de Type
-            if (isset($alias[$this->type])) {
-                $this->type = $alias[$this->type];
+            if (isset($alias[$type])) {
+                $type = $alias[$type];
             }
 
             // Le type indiqué doit être un nom de Type docalist
@@ -127,81 +78,94 @@ class Field extends Schema {
                 // Si c'est un nom de classe court et que la classe existe à la
                 // fois dans le namespace en cours et dans le namespace global,
                 // c'est celle du namespace en cours qui est prise en compte.
-                if ($defaultNamespace && false === strpos($this->type, '\\')) {
-                    $class = $defaultNamespace . '\\' . $this->type;
-                    if (class_exists($class, true)) {
-                        $this->type = $class;
+                if ($defaultNamespace && false === strpos($type, '\\')) {
+                    $class = $defaultNamespace . '\\' . $type;
+                    class_exists($class, true) && $type = $class;
+                }
+
+                if (is_a($type, 'Docalist\Type\Collection', true)) {
+                    // $value['repeatable'] = true;
+                    $value['collection'] = $type;
+                    $ns = $type::ns();
+                    $type = $type::type();
+                    if ($ns) {
+                        $class = $ns . '\\' . $type;
+                        class_exists($class, true) && $type = $class;
                     }
                 }
 
                 // La classe indiquée doit être un nom de Type et doit exister
-                if (! is_a($this->type, 'Docalist\Type\Any', true)) {
+                if (! is_a($type, 'Docalist\Type\Any', true)) {
                     $msg = 'Invalid type "%s" for field "%s"';
 
-                    throw new InvalidArgumentException(sprintf($msg, $this->type, $this->name));
+                    throw new InvalidArgumentException(sprintf($msg, $type, $this->name()));
                 }
             }
+            $value['type'] = $type;
+        }
+        if (isset($value['repeatable']) && $value['repeatable'] && !isset($value['collection'])) {
+            $value['collection'] = 'Docalist\Type\Collection';
+            unset($value['repeatable']);
         }
 
-        // Repeatable
-        if (isset($data['repeatable'])) {
-            $this->repeatable = (bool) $data['repeatable'];
-        }
-
-        // Default
-        if (isset($data['default'])) {
-            $this->default = $data['default'];
-        }
-
-        // Key
-        if (isset($data['key'])) {
-            $this->key = (string) $data['key'];
-        }
-
-        // Label
-        if (isset($data['label'])) {
-            $this->label = (string) $data['label'];
-        }
-
-        // Description
-        if (isset($data['description'])) {
-            $this->description = (string) $data['description'];
-        }
-
-        // Fields
-        if (isset($data['fields'])) {
-            parent::__construct($data['fields']);
-        } else {
-            $this->fields = false; // cf. fields()
-        }
+        // Fields et autres propriétés
+        parent::__construct($value);
     }
+
+    public function name() {
+        return isset($this->value['name']) ? $this->value['name'] : '';
+    }
+
+    public function type() {
+        return isset($this->value['type']) ? $this->value['type'] : 'Docalist\Type\String';
+    }
+
+    public function collection() {
+        return isset($this->value['collection']) ? $this->value['collection'] : null;
+    }
+
+    public function repeatable() {
+        return isset($this->value['collection']);
+    }
+
+    public function label() {
+        if (isset($this->value['label'])) {
+            return $this->value['label'];
+        }
+
+        if (isset($this->value['name'])) {
+            return $this->value['name'];
+        }
+
+        return '';
+    }
+
+    public function description() {
+        return isset($this->value['description']) ? $this->value['description'] : '';
+    }
+
+    public function key() {
+        return isset($this->value['key']) ? $this->value['key'] : null;
+    }
+
 
     public function fields() {
         // On initialise fields tardivement (plutôt que dans le constructeur)
-        // Pour pouvoir gérer les schémas récursifs (par exemple un objet Money
+        // pour pouvoir gérer les schémas récursifs (par exemple un objet Money
         // qui contient des conversions Money*). Si on initialise dès le
         // constructeur, on obtient une boucle infinie sur defaultSchema.
         // Du coup on le fait içi, c'est-à-dire une fois que le format a été
         // chargé et compilé.
-        if ($this->fields === false) {
-            $type = $this->type;
+        if (! array_key_exists('fields', $this->value)) {
+            $type = $this->type();
             if (is_a($type, 'Docalist\Type\Object', true)) {
-                $this->fields = $type::defaultSchema()->fields;
+                $this->value['fields'] = $type::defaultSchema()->fields();
             } else {
-                $this->fields = null;
+                $this->value['fields']= null;
             }
         }
 
-        return $this->fields;
-    }
-
-    /**
-     * Retourne le nom du champ.
-     *
-     * @return string
-     */
-    public function name() {
-        return $this->name;
+        return parent::fields();
     }
 
     /**
@@ -210,11 +174,11 @@ class Field extends Schema {
      *
      * Pour les types standards, la méthode retourne un alias (par exemple
      * 'int' au lieu de 'Docalist\Type\Integer'). Pour les autres types,
-     * la méthode retourne le nom de classe complet, comme className().
+     * la méthode retourne le nom de classe complet, comme type().
      *
      * @return string
      */
-    public function type() {
+    public function friendlyType() {
         static $alias = [ // garder synchro avec le tableau de __construct()
             'Docalist\Type\Any'     => 'any',
             'Docalist\Type\Scalar'  => 'scalar',
@@ -224,39 +188,8 @@ class Field extends Schema {
             'Docalist\Type\Float'   => 'float',
         ];
 
-        return isset($alias[$this->type]) ? $alias[$this->type] : $this->type;
-    }
-
-    /**
-     * Retourne le type exact du champ.
-     *
-     * Cette méthode est similaire à type() mais elle retourne toujours le nom
-     * exact de la classe de Type utilisée pour représenter le champ (i.e. elle
-     * ne retourne jamais un alias comme 'int ou 'string').
-     *
-     * @return string
-     */
-    public function className() {
-        return $this->type;
-    }
-
-    /**
-     * Indique si le champ est répétable.
-     *
-     * @return bool
-     */
-    public function repeatable() {
-        return $this->repeatable;
-    }
-
-    /**
-     * Pour une collection d'entités, indique le sous-champ utilisé comme clé
-     * pour les entrées de la collection.
-     *
-     * @return string|null
-     */
-    public function key() {
-        return $this->key;
+        $type = $this->type();
+        return isset($alias[$type]) ? $alias[$type] : $type;
     }
 
     /**
@@ -265,29 +198,12 @@ class Field extends Schema {
      * @return mixed
      */
     public function defaultValue($execCallable = false) {
-        if (! $execCallable || ! is_callable($this->default)) {
-            return $this->default;
+        $default = isset($this->value['default']) ? $this->value['default'] : null;
+        if (! $execCallable || ! is_callable($default)) {
+            return $default;
         }
 
-        return call_user_func($this->default, $this);
-    }
-
-    /**
-     * Retourne le libellé du champ, ou son nom si le champ n'a pas de libellé.
-     *
-     * @return string
-     */
-    public function label() {
-        return $this->label ?: $this->name;
-    }
-
-    /**
-     * Retourne la description du champ.
-     *
-     * @return string
-     */
-    public function description() {
-        return $this->description;
+        return call_user_func($default, $this);
     }
 
     /**
@@ -296,16 +212,40 @@ class Field extends Schema {
      * @return array
      */
     public function toArray() {
-        $field = ['name' => $this->name];
-        $type = $this->type();
-        /* $type !== 'string' && */$field['type'] = $type;
-        $this->repeatable && $field['repeatable'] = $this->repeatable;
-        $this->default && $field['default'] = $this->default;
-        $this->label && $field['label'] = $this->label;
-        $this->description && $field['description'] = $this->description;
-        $this->key && $field['key'] = $this->key;
-        $this->fields && $field['fields'] = parent::toArray();
+        $field = $this->value;
+
+        unset($field['fields']);
+        $field['type'] = $this->friendlyType();
+
+        // $this->fields && $field['fields'] = parent::toArray();
+
+        if (isset($field['collection'])) {
+
+            // Si c'est la collection standard, inutile de l'indiquer
+            if ($field['collection'] === 'Docalist\Type\Collection') {
+                unset($field['collection']);
+                $field['type'] = isset($field['type']) ? ($field['type'] . '*') : 'string*';
+            }
+
+            else {
+                $field['type'] = $field['collection'];
+                unset($field['collection']);
+            }
+        }
+
+        if ($field['type'] === 'string') {
+            unset($field['type']);
+        }
 
         return $field;
+    }
+
+    public function merge(array $data) {
+        foreach($data as $key => $value) {
+            $this->value[$key] = $value;
+            if (empty($this->value[$key])) {
+                unset($this->value[$key]);
+            }
+        }
     }
 }
