@@ -16,6 +16,7 @@ namespace Docalist\Type;
 
 use Docalist\Schema\Schema;
 use Docalist\Type\Exception\InvalidTypeException;
+use InvalidArgumentException;
 
 /**
  * Type objet.
@@ -72,10 +73,7 @@ class Object extends Any {
 
         // Si loadSchema nous a retourné un tableau, on le compile
         if (is_array($schema)) {
-            // Détermine le namespace pour résoudre les noms de classe relatifs
-            $class = get_called_class();
-            $namespace = substr($class, 0, strrpos($class, '\\'));
-            $schema = new Schema($schema, $namespace);
+            $schema = new Schema($schema, self::ns());
         }
 
         return $schema;
@@ -146,23 +144,33 @@ class Object extends Any {
         // Cas d'un objet typé (ayant un schéma)
         if ($this->schema) {
             // Vérifie que le champ existe et récupère son schéma
-            $field = $this->schema->field($name);
+             if ($this->schema->has($name)) {
+                $field = $this->schema->field($name);
+            } else {
+                $defaultSchema = $this->defaultSchema();
+                if ($defaultSchema->has($name)) {
+                    $field = $defaultSchema->field($name);
+                } else {
+                    $msg = 'Field %s does not exist';
+                    throw new InvalidArgumentException(sprintf($msg, $name));
+                }
+            }
 
             // Crée une collection si le champ est répétable
-            if ($field->repeatable()) {
+            if ($collection = $field->collection()) {
                 // Si value est déjà une Collection, on prend tel quel
                 if ($value instanceof Collection) {
                     $this->value[$name] = $value;
                 }
                 // Sinon, on instancie
                 else {
-                    $this->value[$name] = new Collection($value, $field);
+                    $this->value[$name] = new $collection($value, $field);
                 }
             }
 
             // Crée un type simple sinon
             else {
-                $type = $field->className();
+                $type = $field->type();
 
                 // Si value est déjà du bon type, on le prend tel quel
                 if ($value instanceof $type) {
@@ -274,11 +282,11 @@ class Object extends Any {
         // Le champ n'existe pas encore, retourne la valeur par défaut
         if ($this->schema) {
             $field = $this->schema->field($name);
-            if ($field->repeatable()) {
-                return Collection::classDefault();
+            if ($collection = $field->collection()) {
+                return $collection::classDefault();
             }
 
-            $type = $field->className();
+            $type = $field->type();
             return $type::classDefault();
         }
 
