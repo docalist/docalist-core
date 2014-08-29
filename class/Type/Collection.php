@@ -24,6 +24,25 @@ use InvalidArgumentException;
 class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate {
     static protected $default = [];
 
+    /**
+     * Le type des éléments de cette collection.
+     *
+     * Destiné à être surchargé par les classes descendantes (Any par défaut).
+     *
+     * @var string
+     */
+    static protected $type = 'Docalist\Type\Any';
+
+    /**
+     * Retourne le type (le nom de classe complet) des éléments de cette
+     * collection.
+     *
+     * @return string
+     */
+    static public final function type() {
+        return static::$type;
+    }
+
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();
         if (! is_array($value)){
@@ -93,7 +112,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         // Cas d'une collection typée (avec un schéma)
         if ($this->schema) {
             // Détermine le type des éléments de cette collection
-            $type = $this->schema->className();
+            $type = $this->schema->type();
 
             // Si value est un objet du bon type, ok
             if ($value instanceof $type) {
@@ -121,8 +140,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Si c'est une collection à clé, ignore offset et utilise le sous-champ
         if ($this->schema && $key = $this->schema->key()) {
-            $key = $item->$key;
-            $key = $key ? $key->value() : ''; // si l'item n'a pas le sous-champ correspondant à la clé
+            $key = $item->$key();
             $this->value[$key] = $item;
         }
 
