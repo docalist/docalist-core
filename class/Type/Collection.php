@@ -121,7 +121,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
             // Sinon instancie l'élément
             else {
-                $item = new $type($value, $this->schema);
+//                $item = new $type($value, $this->schema);
+                $item = new $type($value);
             }
         }
 
