@@ -269,4 +269,11 @@ abstract class Repository {
      * @return int
      */
     abstract public function count();
+
+    /**
+     * Supprime toutes les entités stockées dans le dépôt.
+     *
+     * Le dépôt lui-même n'est pas supprimé.
+     */
+    abstract public function deleteAll();
 }

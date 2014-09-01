@@ -196,7 +196,7 @@ class PostTypeRepository extends Repository {
      * @param string $sql Requête sql à exécuter.
      * @param string $msg Message à afficher.
      */
-/*
+
     private function sql($sql, $msg) {
         global $wpdb;
 
@@ -210,11 +210,7 @@ class PostTypeRepository extends Repository {
             do_action('docalist_biblio_deleteall_progress', $msg);
         }
     }
-*/
-    /**
-     * Vide la base
-     */
-/*
+
     public function deleteAll() {
         global $wpdb;
 
@@ -289,7 +285,7 @@ class PostTypeRepository extends Repository {
         // Fin de la suppression
         do_action('docalist_biblio_deleteall_done', $this, $count);
     }
-*/
+
     /**
      * Convertit les données d'une entité en post WordPress.
      *

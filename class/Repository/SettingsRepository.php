@@ -113,4 +113,7 @@ class SettingsRepository extends Repository {
         return (int) $wpdb->get_var($sql);
     }
 
+    public function deleteAll() {
+        throw new \Exception(__METHOD__ . " n'est pas encore implémenté.");
+    }
 }

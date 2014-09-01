@@ -176,4 +176,8 @@ class DirectoryRepository extends Repository {
     public function count() {
         throw new \Exception(__METHOD__ . " n'est pas encore implémenté.");
     }
+
+    public function deleteAll() {
+        throw new \Exception(__METHOD__ . " n'est pas encore implémenté.");
+    }
 }
