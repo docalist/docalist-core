@@ -179,12 +179,6 @@ class PostTypeRepository extends Repository {
         return $count ? false : true; // ! $count
     }
 */
-    /**
-     * Retourne le nombre de notices dans la base.
-     *
-     * @return int
-     */
-/*
     public function count() {
         global $wpdb;
 
@@ -195,7 +189,7 @@ class PostTypeRepository extends Repository {
         // à voir wp_count_posts() retourne un objet = count par post_status
         // faire la somme pour éviter la requête sql içi ?
     }
-*/
+
     /**
      * Méthode utilitaire utilisée par deleteAll().
      *

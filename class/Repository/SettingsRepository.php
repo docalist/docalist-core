@@ -105,4 +105,12 @@ class SettingsRepository extends Repository {
             throw new EntityNotFoundException($id);
         }
     }
+
+    public function count() {
+        global $wpdb;
+
+        $sql = "SELECT count(option_name) FROM $wpdb->options WHERE option_name like 'docalist-%'";
+        return (int) $wpdb->get_var($sql);
+    }
+
 }

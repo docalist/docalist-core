@@ -262,4 +262,11 @@ abstract class Repository {
 
         return $data;
     }
+
+    /**
+     * Retourne le nombre d'entités stockées dans le dépôt.
+     *
+     * @return int
+     */
+    abstract public function count();
 }

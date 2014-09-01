@@ -172,4 +172,8 @@ class DirectoryRepository extends Repository {
             throw new RepositoryException($error['message']);
         }
     }
+
+    public function count() {
+        throw new \Exception(__METHOD__ . " n'est pas encore implémenté.");
+    }
 }
