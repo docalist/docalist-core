@@ -363,7 +363,7 @@ class PostTypeRepository extends Repository {
     protected function decode($post, $id) {
         // Si c'est un nouveau post, il se peut que post_excerpt soit vide
         if (empty($post['post_excerpt'])) {
-            die('post_excerpt vide ' . __FILE__ . ':' . __LINE__);
+            //die('post_excerpt vide ' . __FILE__ . ':' . __LINE__);
             $data = [];
         }
 
@@ -374,7 +374,7 @@ class PostTypeRepository extends Repository {
 
         // Initialise les champs virtuels de la notice à partir des champs wordpress
         foreach(static::$fieldMap as $src => $dst) {
-            if (isset($post[$src])) {
+            if (isset($post[$src]) && $post[$src] !== '') {
                 $data[$dst] = $post[$src];
             }
         }
