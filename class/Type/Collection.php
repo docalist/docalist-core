@@ -121,8 +121,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
             // Sinon instancie l'élément
             else {
-//                $item = new $type($value, $this->schema);
-                $item = new $type($value);
+                if (is_a($type, 'Docalist\Type\Object', true)) {
+                    $item = new $type($value);
+                } else {
+                    $item = new $type($value, $this->schema);
+                }
             }
         }
 
