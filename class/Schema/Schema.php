@@ -104,7 +104,7 @@ class Schema extends Any {
      * @return mixed
      */
     public function __set($name, $value) {
-        $this->value[$name] = $value;
+        ! is_null($value) && $this->value[$name] = $value;
     }
 
     /**
