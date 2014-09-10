@@ -42,3 +42,10 @@ if ($this->data) {
 
 // Génère un input standard
 $this->parentBlock($args);
+
+if ($this->description()) {
+    //$writer->writeRaw($this->description());
+    $this->label($this->description());
+    $this->description(false);
+    $this->block('label');
+}
