@@ -316,7 +316,11 @@ jQuery.fn.tableLookup = function() {
         }, $(this).data());
         
         $(this).selectize({
-            plugins: ['subnavigate'], // définit un peu plus bas
+            plugins: {
+                'subnavigate': {}, // définit un peu plus bas
+                'drag_drop': {},
+                'remove_button': { 'title': '' }, // pour ne pas avoir à gérer les trados
+            }, 
             
             // Le JSON retourné par "docalist-table-lookup" est de la forme :
             // [ { "code": "xx", "label": "aa" }, { "code": "yy", "label": "bb" } ]

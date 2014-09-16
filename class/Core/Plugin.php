@@ -157,8 +157,8 @@ class Plugin {
         wp_register_script(
             'docalist-forms',
             "$url/views/forms/docalist-forms.js", // TODO: version min.js
-            ['jquery','selectize'],
-            '140610',
+            ['jquery','jquery-ui-sortable','selectize'],
+            '140916',
             false // TODO: Passer à true (position top)
         );
 
