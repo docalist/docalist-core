@@ -68,7 +68,7 @@ button.cloner {
 }
 
 button.cloner:hover {
-/*    background-image: url('add.png'); */
+    background-image: url('add.png');
     border-color: #ccc;
 }
 
