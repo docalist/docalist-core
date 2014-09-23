@@ -430,7 +430,7 @@ abstract class Field {
     public function label($label = null) {
         // Getter
         if (is_null($label)) {
-            if ($this->label) {
+            if (!is_null($this->label)) {
                 return $this->label;
             }
 
@@ -461,7 +461,7 @@ abstract class Field {
     public function description($description = null, $after = null) {
         // Getter
         if (is_null($description)) {
-            if ($this->description) {
+            if (!is_null($this->description)) {
                 return $this->description;
             }
 
