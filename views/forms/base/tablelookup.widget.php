@@ -69,8 +69,12 @@ $this->generateId();
 
 // Génère le select
 $args['data-table'] = $table;
-$valueField !== 'code' && $args['data-valueField'] = $valueField;
-$labelField !== 'label' && $args['data-labelField'] = $labelField;
+// important : depuis jquery 1.5 la casse des attributs data est changée
+// - xY sera convertit en xy
+// - x-y sera convertit en xY
+// cf. http://stackoverflow.com/a/22753630
+$valueField !== 'code' && $args['data-value-field'] = $valueField;
+$labelField !== 'label' && $args['data-label-field'] = $labelField;
 
 // Génère le script inline qui intialise selectize()
 $this->parentBlock($args);
