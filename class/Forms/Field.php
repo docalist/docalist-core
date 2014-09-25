@@ -153,6 +153,13 @@ abstract class Field {
     protected $repeatable = null;
 
     /**
+     * Niveau de hiérarchie pour les boutons "+".
+     * Par défaut, calcul auto mais peut être fixé manuellement dans certains
+     * cas (exemple : widgets docalist search facets).
+     */
+    protected $repeatLevel = null;
+
+    /**
      *
      * @var FieldSchema
      */
@@ -534,13 +541,26 @@ abstract class Field {
      * - si le champ est répétable et que son parent est répétable, retoune 2
      * - et ainsi de suite
      *
+     * @param int $repeatLevel
+     *
      * @return int
      */
-    protected function repeatLevel() {
-        $level = $this->parent ? $this->parent->repeatLevel() : 0;
-        $this->repeatable() && ++$level;
+    public function repeatLevel($repeatLevel = null) {
+        // Getter
+        if (is_null($repeatLevel)) {
+            if (! is_null($this->repeatLevel)) {
+                return $this->repeatLevel;
+            }
+            $level = $this->parent ? $this->parent->repeatLevel() : 0;
+            $this->repeatable() && ++$level;
 
-        return $level;
+            return $level;
+        }
+
+        // Setter
+        $this->repeatLevel = $repeatLevel;
+
+        return $this;
     }
 
     public function schema(FieldSchema $schema = null) {
