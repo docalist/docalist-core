@@ -419,4 +419,8 @@ class SQLite implements TableInterface {
         // Retourne les résultats
         return $this->search($what, $where, $field, $limit);
     }
+
+    public function quote($text) {
+        return $this->db->quote($text);
+    }
 }

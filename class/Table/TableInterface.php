@@ -222,4 +222,12 @@ interface TableInterface {
      * (consultez la documentation de {@link search()}).
      */
     public function lookup($what = '*', $prefix, $limit = null);
+
+    /**
+     * Protège une chaîne pour l'utiliser dans une requête SQL.
+     *
+     * @param string $text
+     * @return string
+     */
+    public function quote($text);
 }
