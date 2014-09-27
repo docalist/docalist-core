@@ -120,13 +120,11 @@ jQuery(document).ready(function($) {
         
         // Pour chacun des selectize, fait une sauvegarde et appelle destroy
         selectized.each(function() {
-            // Récupère la valeur de l'élément
-            var value = this.selectize.getValue();
-            
-            // S'il n'est pas vide, sauvegarde dans l'attribut data-save
-            if (value) {
-                $(this).data('save', this.selectize.options[value]);
-            }
+            // Sauvegarde la valeur actuelle dans l'attribut data-save
+            $(this).data('save', {
+            	'value': this.selectize.getValue(),
+            	'options': this.selectize.options
+            });
             
             // Quand on var faire "destroy", selectize va réinitialiser le
             // select avec les options d'origine, telles qu'elles figuraient 
@@ -165,18 +163,14 @@ jQuery(document).ready(function($) {
         // Restaure la sauvegarde qu'on a faite dans le noeud d'origine
         selectized.each(function() {
             var save = $(this).data('save');
-            // this.selectize.clearOptions();
-            if (save) {
-                this.selectize.addOption(save);
-                this.selectize.addItem(save[this.selectize.settings.valueField]);
-            }
-            // else : data-save vide, rien à faire car le noeud est déjà vide
+            this.selectize.options = save.options;
+            this.selectize.setValue(save.value);
         });
 
         // 5. Fait un clear sur tous les champs présents dans le clone
         // Source : http://goo.gl/RE9f1
-        clone.find('input:text, input:password, input:file, select, textarea').val('');
-        clone.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
+        clone.find('input:text, input:password, input:file, select, textarea').addBack().val('');
+        clone.find('input:radio, input:checkbox').removeAttr('checked').addBack().removeAttr('selected');
         
         // Si on voulait faire un reset, j'ai trouvé la méthode suivante :
         // var form = $('<form>').append(clone).get(0).reset();
@@ -303,7 +297,7 @@ jQuery.fn.tableLookup = function() {
     return this.each(function() { 
         
         var createId = function(label) {
-            return 'ND' + label;
+            return label;
         }
         
         // Les paramètres figurent en attributs "data-" du select
@@ -314,6 +308,8 @@ jQuery.fn.tableLookup = function() {
             
             zzz:''
         }, $(this).data());
+        
+        settings.lookupType = settings.table.split(':')[0];
         
         $(this).selectize({
             plugins: {
@@ -328,8 +324,9 @@ jQuery.fn.tableLookup = function() {
             valueField: settings.valueField, // Nom du champ qui contient la valeur
             labelField: settings.labelField, // Nom du champ qui contient le libellé
             
-            // Table d'autorité = liste fermé, on ne peut pas créer de nouvelles valeurs
-            create: false,
+            // Table d'autorité = liste fermée, on ne peut pas créer de nouvelles valeurs
+            // Lookup sur index = liste ouverte, on peut créer de nouvelles valeurs
+            create: settings.lookupType === 'index' ? true : false,
             
             // Charge les options dispo en tâche de fond dès l'initialisation
             preload: true,
@@ -373,8 +370,8 @@ jQuery.fn.tableLookup = function() {
                     },
                     success: function(res) {
                         for (var i = 0, n = res.length; i < n; i++) {
-                            if (! res[i].code) {
-                                res[i].code = createId(res[i].label);
+                            if (! res[i][settings.valueField]) {
+                                res[i][settings.valueField] = createId(res[i][settings.labelField]);
                             }
                         }
                         
@@ -439,7 +436,7 @@ jQuery.fn.tableLookup = function() {
                     // Cas d'un descripteur
                     else {
                         html = '<div class="des">';
-                        html += '<span class="term">' + escape(item.label) + '</span>';
+                        html += '<span class="term">' + escape(item[settings.labelField]) + '</span>';
                     }
                     
                     /*                    
