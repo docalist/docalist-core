@@ -30,9 +30,14 @@
 .field-table thead th {
     padding: 0 0 0 5px; /* left:2px pour compenser le border-left des inputs */
     width: auto;
-/*    font-size: smaller; */
     line-height: normal;
 }
+
+.field-table thead th, .form-table .form-table th, 
+.field-table td p, .form-table .form-table td p {
+    font-size: smaller;
+}
+
 
 .field-table th+th {
     padding-left: 15px;

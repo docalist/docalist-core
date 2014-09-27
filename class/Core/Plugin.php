@@ -166,7 +166,7 @@ class Plugin {
         wp_register_style(
             'docalist-forms-default',
             "$url/views/forms/default/default.css",
-            [],
+            ['wp-admin'],
             '140318'
         );
 
@@ -182,8 +182,8 @@ class Plugin {
         wp_register_style(
             'docalist-forms-wordpress',
             "$url/views/forms/wordpress/wordpress-theme.css",
-            [],
-            '140326'
+            ['wp-admin'],
+            '140927'
         );
     }
 
