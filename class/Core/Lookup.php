@@ -113,7 +113,7 @@ class Lookup {
         $source = $_REQUEST['source'];
 
         // Récupère la chaine recherchée
-        $search = empty($_REQUEST['search']) ? '' : $_REQUEST['search'];
+        $search = isset($_REQUEST['search']) ? $_REQUEST['search'] : '';
 
         // Recherche les entrées qui correspondent aux critères indiqués
         $result = $this->lookup($source, $search);
