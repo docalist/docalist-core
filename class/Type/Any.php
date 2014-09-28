@@ -276,4 +276,14 @@ class Any implements Serializable, JsonSerializable {
 
         throw new InvalidTypeException('a php type that I can guess');
     }
+
+
+    /**
+     * Filtre les valeurs vides.
+     *
+     * @return bool true si le champ est vide, false sinon.
+     */
+    public function filterEmpty() {
+        return empty($this->value);
+    }
 }

@@ -287,4 +287,14 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         return $result;
     }
+
+    public function filterEmpty() {
+        foreach($this->value as $key => $item) { /* @var $item Any */
+            if ($item->filterEmpty()) {
+                unset($this->value[$key]);
+            }
+        }
+
+        return empty($this->value);
+    }
 }
