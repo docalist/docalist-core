@@ -25,7 +25,9 @@ class Integer extends Scalar {
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();
         if (! is_int($value)){
-            if (false === $value = filter_var($value, FILTER_VALIDATE_INT)) {
+            if ($value === '') {
+                $value = 0;
+            } elseif (false === $value = filter_var($value, FILTER_VALIDATE_INT)) {
                 throw new InvalidTypeException('int');
             }
         }
