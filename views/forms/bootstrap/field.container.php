@@ -1,15 +1,24 @@
 <?php
-$writer->startElement('div');
-$writer->writeAttribute('class', 'control-group field-' . $this->type());
+global $level;
 
-$this->label && $this->block('label');
+++$level;
 
-$writer->startElement('div');
-$writer->writeAttribute('class', 'controls');
-$this->description && (! $this->descriptionAfter) && $this->block('description');
-$this->block('errors');
-$this->block('values');
-$this->description && $this->descriptionAfter && $this->block('description');
-$writer->fullEndElement();
+if ($level === 1) {
+    $this->block('values');
+} else {
+    $writer->startElement('div');
+    $writer->writeAttribute('class', 'control-group field-' . $this->type());
 
-$writer->fullEndElement();
+    $this->label && $this->block('label');
+
+    $writer->startElement('div');
+    $writer->writeAttribute('class', 'controls');
+    $this->description && (! $this->descriptionAfter) && $this->block('description');
+    $this->block('errors');
+    $this->block('values');
+    $this->description && $this->descriptionAfter && $this->block('description');
+    $writer->fullEndElement();
+
+    $writer->fullEndElement();
+}
+--$level;
