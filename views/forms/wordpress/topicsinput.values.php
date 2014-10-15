@@ -28,7 +28,7 @@ list($type, $tableName) = explode(':', $table);
 // ouvre la table
 $table = docalist('table-manager')->get($tableName); /* @var $table TableInterface */
 
-// Avec le thème wordpress, quand on arriv elà, on est dans un td.
+// Avec le thème wordpress, quand on arrive là, on est dans un td.
 // Le libellé du champ a déjà été affiché dans le th
 // S'il y a une description, elle a également été affichée au début du td
 
@@ -73,7 +73,7 @@ foreach($table->search() as $code => $topic) {
 // montre qu'il y a un problème.
 $href = admin_url("options-general.php?page=docalist-tables&m=TableEdit&tableName=$tableName");
 foreach($data as $code => $terms) {
-    $name = $this->name . '[' . $i . ']';
+    $name = $this->controlName() . '[' . $i . ']';
 
     $field = new Hidden($name . '[type]');
     $field->attribute('value', $code);
