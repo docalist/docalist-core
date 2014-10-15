@@ -247,5 +247,8 @@ class Field extends Schema {
                 unset($this->value[$key]);
             }
         }
+        if (! isset($data['default'])) {
+            unset($this->value['default']);
+        }
     }
 }
