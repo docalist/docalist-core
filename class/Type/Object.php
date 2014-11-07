@@ -312,13 +312,24 @@ class Object extends Any {
         return $result;
     }
 
-    public function filterEmpty() {
+    public function filterEmpty($strict = true) {
         foreach($this->value as $key => $item) { /* @var $item Any */
-            if ($item->filterEmpty()) {
+            if ($item->filterEmpty($strict)) {
                 unset($this->value[$key]);
             }
         }
 
         return empty($this->value);
+    }
+
+    /**
+     * Similaire à filterEmpty() mais filtre uniquement la propriété dont le nom
+     * est passé en paramètre.
+     *
+     * @param string $name Nom de la propriété à filtrer
+     * @param string $strict Mode de comparaison.
+     */
+    protected function filterEmptyProperty($name, $strict = true) {
+        return !isset($this->value[$name]) || $this->value[$name]->filterEmpty($strict);
     }
 }
