@@ -281,9 +281,35 @@ class Any implements Serializable, JsonSerializable {
     /**
      * Filtre les valeurs vides.
      *
+     * La méthode filterEmpty() permet de supprimer les valeurs vides d'un
+     * type : elle retourne true si la valeur est vide, false sinon.
+     *
+     * Pour un type scalaire, c'est équivalent à la fonction php empty().
+     *
+     * Pour un type composite (objet, collection, entité...), la méthode est
+     * récursive : elle applique filterEmpty() à chacun des éléments qui
+     * composent le type composite, supprime les éléments pour lesquels
+     * filterEmpty() a retourné true et retourne true ou false selon que le
+     * type composite est vide ou non après traitement.
+     *
+     * Par défaut ($strict = true), filterEmpty() effectue une comparaison
+     * "stricte" pour déterminer si un objet est vide : elle retourne true si
+     * toutes les propriétés de l'objet sont vides (autrement dit, un objet qui
+     * contient au moins une propriété sera considéré comme non vide).
+     *
+     * En passant $strict = false, une comparaison spécifique est utilisée pour
+     * déterminer si un objet est vide ou non. Pour cela, chaque type objet
+     * peut surcharger la méthode filterEmpty() et définir dans quel cas il
+     * est vide. Pour un auteur, par exemple, on considérera qu'il est vide si
+     * on n'a pas de nom ; pour un résumé, on retournera true si l'objet Content
+     * contient un type de contenu mais aucun texte, etc.
+     *
+     * @param bool $strict Définit le mode de comparaison utilisé pour
+     * déterminer si la valeur est vide ou non (true par défaut).
+     *
      * @return bool true si le champ est vide, false sinon.
      */
-    public function filterEmpty() {
+    public function filterEmpty($strict = true) {
         return empty($this->value);
     }
 }
