@@ -288,9 +288,9 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $result;
     }
 
-    public function filterEmpty() {
+    public function filterEmpty($strict = true) {
         foreach($this->value as $key => $item) { /* @var $item Any */
-            if ($item->filterEmpty()) {
+            if ($item->filterEmpty($strict)) {
                 unset($this->value[$key]);
             }
         }
