@@ -104,8 +104,6 @@ class Any implements Serializable, JsonSerializable {
         }
 
         return static::$default;
-
-        return $this->schema ? $this->schema->defaultValue() : static::$default;
     }
 
     /**
