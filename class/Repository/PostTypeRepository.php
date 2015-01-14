@@ -130,11 +130,12 @@ class PostTypeRepository extends Repository {
     protected function saveData($id, $post) {
         global $wpdb;
 
+        // Injecte les valeurs par défaut (uniquement celles qui sont indispensables)
+        $this->postDefaults($post);
+
         // Insère ou met à jour le post si l'entité a déjà un ID
         if ($id) {
-//            if (false === $wpdb->update($wpdb->posts, $post, ['ID' => $id, 'post_type' => $this->postType])) {
             $post['ID'] = $id;
-            $post['post_type'] = $this->postType;
             if (false === $wpdb->replace($wpdb->posts, $post)) {
                 throw new RepositoryException($wpdb->last_error);
             }
@@ -153,6 +154,95 @@ class PostTypeRepository extends Repository {
 
         // Ok
         return $id;
+    }
+
+    /**
+     * Attribue une valeur par défaut aux différents champs du post passé en
+     * paramètre.
+     *
+     * Cette méthode est appellée par saveData() juset avant que le post
+     * wordpress ne soit enregistré.
+     *
+     * @param array $post
+     */
+    protected function postDefaults(array & $post) {
+        /*
+         * Remarques :
+         * - get_default_post_to_edit() n'est pas adaptée : cela prend en compte
+         *   ce que contient l'url en cours et cela applique des options qui
+         *   sont spécifiques aux articles (comment_status, etc.)
+         * - les champs sont listés dans l'ordre de la table wp_posts
+         * - vérifier ce que fait wp_insert_post().
+         */
+
+        // Laisse ID vide pour permettre à mysql d'injecter un autonumber
+        if (!isset($post['ID'])) {
+            $post['ID'] = 0;
+        }
+        if (!isset($post['post_author'])) {
+            $post['post_author'] = get_current_user_id();
+        }
+        if (!isset($post['post_date'  ])) {
+            $post['post_date'  ] = current_time('mysql');
+        }
+        if (!isset($post['post_date_gmt'])) {
+            $post['post_date_gmt'] = get_gmt_from_date($post['post_date']);
+        }
+        if (!isset($post['post_content'])) {
+            $post['post_content'] = '';
+        }
+        if (!isset($post['post_title'])) {
+            $post['post_title'] = '(no title)';
+        }
+        if (!isset($post['post_excerpt'])) {
+            $post['post_excerpt'] = '{}';
+        }
+        if (!isset($post['post_status'])) {
+            $post['post_title'] = 'publish'; // option ?
+        }
+        if (!isset($post['comment_status'])) {
+            $post['comment_status'] = 'open'; // option ?
+        }
+        if (!isset($post['ping_status'])) {
+            $post['ping_status'] = 'open'; // option ?
+        }
+        if (!isset($post['post_password'])) {
+            $post['post_password'] = '';
+        }
+        if (!isset($post['post_name'])) {
+            $post['post_name'] = '';
+        }
+        if (!isset($post['to_ping'])) {
+            $post['to_ping'] = '';
+        }
+        if (!isset($post['pinged'])) {
+            $post['pinged'] = '';
+        }
+        if (!isset($post['post_modified'])) {
+            $post['post_modified'] = $post['post_date'];
+        }
+        if (!isset($post['post_modified_gmt'])) {
+            $post['post_modified_gmt'] = $post['post_date_gmt'];
+        }
+        if (!isset($post['post_content_filtered'])) {
+            $post['post_content_filtered'] = '';
+        }
+        if (!isset($post['post_parent'])) {
+            $post['post_parent'] = 0;
+        }
+        if (!isset($post['guid'])) {
+            $post['guid'] = ''; // ???
+        }
+        if (!isset($post['menu_order'])) {
+            $post['menu_order'] = 0;
+        }
+        $post['post_type'] = $this->postType;
+        if (!isset($post['post_mime_type'])) {
+            $post['post_mime_type'] = '';
+        }
+        if (!isset($post['comment_count'])) {
+            $post['comment_count'] = 0;
+        }
     }
 
     protected function deleteData($id) {
@@ -294,35 +384,9 @@ class PostTypeRepository extends Repository {
      * @return array Un post wordpress sous la forme d'un tableau.
      */
     protected function encode(array $data) {
-        // Valeurs par défaut du post (champs dans l'ordre de la table wp_posts)
-        $now = current_time('mysql');
-        $nowGmt = current_time('mysql', true);
-        $post = [
-            'post_author'           => get_current_user_id(),
-            'post_date'             => $now,
-         // 'post_date_gmt'         => fait plus bas
-            'post_content'          => '',
-            'post_title'            => 'ref sans title',
-            'post_excerpt'          => '',
-            'post_status'           => 'publish',
-            'comment_status'        => 'open',
-            'ping_status'           => 'open',
-            'post_password'         => '',
-            'post_name'             => '',
-            'to_ping'               => '',
-            'pinged'                => '',
-            'post_modified'         => $now,
-            'post_modified_gmt'     => $nowGmt,
-            'post_content_filtered' => '',
-            'post_parent'           => 0,
-            'guid'                  => '',
-            'menu_order'            => 0,
-            'post_type'             => $this->postType,
-            'post_mime_type'        => '',
-            'comment_count'         => 0,
-        ];
+        $post = [];
 
-        // Transfère les champs virtuels de la notice dans le post wordpress
+        // Transfère les champs mappés de la notice dans le post wordpress
         foreach(static::$fieldMap as $dst => $src) {
             if (isset($data[$src])) {
                 $post[$dst] = $data[$src];
@@ -332,11 +396,6 @@ class PostTypeRepository extends Repository {
 
         // Encode le reste des données en json dans post_excerpt
         $post['post_excerpt'] = parent::encode($data);
-
-        // Valeur par défaut des champs dont le contenu dépend d'autres champs
-        if (! isset($post['post_date_gmt'])) {
-            $post['post_date_gmt'] = get_gmt_from_date($post['post_date']);
-        }
 
         // Terminé
         return $post;
