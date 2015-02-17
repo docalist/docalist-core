@@ -46,6 +46,7 @@ class CsvTable extends SQLite {
             if (substr($this->fields[0], 0, 1) === '#') {
                 continue;
             }
+            $this->fields = array_map('trim', $this->fields);
             break;
         }
 
@@ -67,6 +68,9 @@ class CsvTable extends SQLite {
         $index = array_flip($this->fields);
         while (false !== $values = fgetcsv($file, 1024, ';'))
         {
+            // Ignore les espaces
+            $values = array_map('trim', $values);
+
             // Les lignes qui commencent par "#" sont des commentaires
             if (substr($values[0], 0, 1) === '#') {
                 continue;
