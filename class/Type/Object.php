@@ -123,6 +123,19 @@ class Object extends Any {
     }
 
     /**
+     * Retourne la liste des champs de l'objet.
+     *
+     * Remarque : contrairement à value() qui retourne un tableau de valeurs,
+     * fields() retourne un tableau d'objets Any. Cela permet, par exemple,
+     * d'itérer sur tous les champs d'un objet.
+     *
+     * @return Any[]
+     */
+    public function fields() {
+        return $this->value;
+    }
+
+    /**
      * Modifie une propriété de l'objet.
      *
      * @param string $name
