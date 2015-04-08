@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -192,7 +192,7 @@ class SQLite implements TableInterface {
             // Sépare le nom du champ de ses paramètres
             $pt = strpos($field, '(');
             if ($pt) {
-                $name = substr($field, 0, $pt - 1);
+                $name = trim(substr($field, 0, $pt));
                 $parms = trim(substr($field, $pt + 1), ' )');
             } else {
                 $name = $field;
