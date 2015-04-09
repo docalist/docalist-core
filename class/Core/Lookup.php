@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -36,16 +36,6 @@ use Exception;
  * "docalist_{type}_lookup" et retourne les résultats obtenus.
  */
 class Lookup {
-
-    /**
-     * Initialise le service "docalist-lookup"
-     */
-    public function __construct() {
-        // Crée l'action ajax "docalist-lookup"
-        $ajaxLookup = function() { $this->ajaxLookup(); };
-        add_action('wp_ajax_docalist-lookup', $ajaxLookup);
-        add_action('wp_ajax_nopriv_docalist-lookup', $ajaxLookup);
-    }
 
     /**
      * Recherche des entrées dans une table d'autorité ou dans un index
