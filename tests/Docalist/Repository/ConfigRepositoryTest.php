@@ -37,17 +37,13 @@ class MySettings extends Settings {
 
 class ConfigRepositoryTest extends WP_UnitTestCase {
     public function testNew() {
-        $this->markTestSkipped(
-          "Not testable in CLI mode, docalist('site-root') is not available."
-        );
-
         $repo = new ConfigRepository();
 
-        $dir = docalist('site-root') . 'config';
+        $dir = docalist('config-dir');
         $this->assertTrue(is_dir($dir));
 
         $repo->save(new MySettings);
 
-        $this->assertFileExists($dir . 'docalist-tests-repository-mysettings.json');
+        $this->assertFileExists($dir . '/docalist-tests-repository-mysettings.json');
     }
 }
