@@ -2,13 +2,13 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
  *
  * @package     Docalist
- * @subpackage  Core
+ * @subpackage  Table
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  * @version     $Id$
  */
@@ -26,9 +26,17 @@ use Docalist\Type\Boolean;
  * @property String $label Libellé de la table
  * @property String $format Format de la table (structure)
  * @property String $type Type de la table (nature)
- * @property Boolean $user true : table utilisateur, false : table prédéfinie
+ * @property Boolean $readonly true : table prédéfinie, false : table utilisateur
+ * @property String $creation Date de création
+ * @property String $lastupdate Date de dernière modification
  */
 class TableInfo extends Object {
+    // TODO : Gère l'ancien champ user, à enlever quand les settings auront ét éréenregistrés
+    public function assign($value) {
+        unset($value['user']);
+        return parent::assign($value);
+    }
+
     protected static function loadSchema() {
         // @formatter:off
         return [
@@ -58,11 +66,21 @@ class TableInfo extends Object {
                     'description' => __('Type de table (pays, langues, etc.)', 'docalist-core'),
                 ],
 
-                'user' => [
+                'readonly' => [
                     'type' => 'bool',
                     'default' => true,
-                    'label' => __('Table utilisateur', 'docalist-core'),
-                    'description' => __("Indique s'il s'agit d'une table utilisateur ou d'une table prédéfinie.", 'docalist-core'),
+                    'label' => __('Table en lecture seule', 'docalist-core'),
+                    'description' => __("Indique s'il s'agit d'une table prédéfinie ou d'une table personnalisée.", 'docalist-core'),
+                ],
+
+                'creation' => [
+                    'label' => __('Date de création', 'docalist-core'),
+                    'description' => __("Date/heure à laquelle la table a été créée.", 'docalist-core'),
+                ],
+
+                'lastupdate' => [
+                    'label' => __('Dernière création', 'docalist-core'),
+                    'description' => __("Date/heure à laquelle la table a modifiée pour la dernière fois.", 'docalist-core'),
                 ]
             ]
         ];
