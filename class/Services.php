@@ -17,6 +17,7 @@ namespace Docalist;
 
 use Closure;
 use LogicException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Gestionnaire de services Docalist.
@@ -28,6 +29,12 @@ class Services {
      * @var array
      */
     protected $services;
+
+    /**
+     *
+     * @var LoggerInterface
+     */
+    protected $log;
 
     /**
      * Initialise les services.
@@ -71,6 +78,12 @@ class Services {
         }
 
         $this->services[$id] = $service;
+
+        if ($id === 'logs') {
+            $this->log = $this->get('logs')->get('services');
+        }
+
+        $this->log && $this->log->debug('create service {id}', ['id' => $id]);
 
         return $this;
     }
@@ -125,6 +138,8 @@ class Services {
 
         $service = $this->services[$id];
         if ($service instanceof Closure) {
+            $this->log && $this->log->debug('instantiate service {id}', ['id' => $id]);
+
             return $this->services[$id] = $service($this);
         }
 
