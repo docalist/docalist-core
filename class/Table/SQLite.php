@@ -7,10 +7,10 @@
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
  *
- * @package Docalist
- * @subpackage Core
- * @author Daniel Ménard <daniel.menard@laposte.net>
- * @version SVN: $Id$
+ * @package     Docalist
+ * @subpackage  Table
+ * @author      Daniel Ménard <daniel.menard@laposte.net>
+ * @version     SVN: $Id$
  */
 namespace Docalist\Table;
 
@@ -54,7 +54,7 @@ class SQLite implements TableInterface {
      *
      * @var boolean
      */
-    protected $commit = null;
+    protected $commit = false;
 
     /**
      * Tableau contenant les noms des champs de la table.
@@ -123,7 +123,7 @@ class SQLite implements TableInterface {
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Démarre une transaction si la table est en read/write
-            !$this->readonly && $this->commit = $this->db->beginTransaction();
+            !$this->readonly && $this->beginTransaction();
 
             // Récupère le nom des champs de la table
             // @formatter:off
@@ -138,11 +138,38 @@ class SQLite implements TableInterface {
      * et ferme la base SQLite.
      */
     public function __destruct() {
-        // Si la table a été ouverte en écriture, committe les modifications
-        $this->commit && $this->db->commit();
+        // Committe les modifications éventuelles
+        $this->commit();
 
         // Ferme la connexion
-        unset($this->db);
+        $this->db = null;
+    }
+
+    /**
+     * Démarre une transaction si ce n'est pas déjà fait.
+     *
+     * @return self
+     */
+    protected function beginTransaction() {
+        if (! $this->commit) {
+            $this->commit = $this->db->beginTransaction();
+        }
+
+        return true;
+    }
+
+    /**
+     * Committe les modifications en attente si une transaction a été démarrée.
+     *
+     * @return self
+     */
+    protected function commit() {
+        if ($this->commit) {
+            $this->db->commit();
+            $this->commit = false;
+        }
+
+        return $this;
     }
 
     /**
@@ -292,7 +319,7 @@ class SQLite implements TableInterface {
      * créer la table de données et les index requis telle que retournée
      * par {@link parseFields()}.
      *
-     * @return PDO l'objet PDO représentant la base créée.
+     * @return self
      */
     protected function createSQLiteDatabase($path, $sql) {
         // Crée le répertoire de la base de données si nécessaire
@@ -309,15 +336,15 @@ class SQLite implements TableInterface {
         }
 
         // Crée la base de données SQLite
-        $db = new PDO("sqlite:$path");
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->commit = $db->beginTransaction();
+        $this->db = new PDO("sqlite:$path");
+        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->beginTransaction();
 
         // Crée la table contenant les données et les index indiqués dans la requête sql
-        $db->exec($sql);
+        $this->db->exec($sql);
 
         // Retourne la table créée
-        return $db;
+        return $this;
     }
 
     /**
