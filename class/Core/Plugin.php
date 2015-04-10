@@ -15,7 +15,7 @@
 
 namespace Docalist\Core;
 
-use Docalist\Logger;
+use Docalist\LogManager;
 use Docalist\Views;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
@@ -115,7 +115,7 @@ class Plugin {
 
             // Gestion des logs
             'logs' => function() {
-                return new Logger();
+                return new LogManager();
             },
 
             // Gestion des vues

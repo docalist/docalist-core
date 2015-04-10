@@ -29,7 +29,7 @@ use Exception;
  * Gestionnaire de Logs.
  *
  */
-class Logger {
+class LogManager {
 
     /**
      * Liste des loggers créés.
