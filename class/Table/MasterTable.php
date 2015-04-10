@@ -78,8 +78,9 @@ class MasterTable extends CsvTable {
     protected function syncBack() {
         $fields = $this->fields();
 
+        $header = $this->getFileHeader();
         $file = fopen($this->path, 'wt');
-        fwrite($file, $this->getFileHeader());
+        fwrite($file, $header);
         fputcsv($file, $fields, ';', '"');
 
         $records = $this->search('rowid,' . implode(',', $fields), '', 'rowid');
@@ -174,7 +175,6 @@ class MasterTable extends CsvTable {
     protected function prepare(TableInfo $table) {
         $name = $table->name();
 
-        $this->checkName($name);
         if (! file_exists($table->path())) {
             throw new InvalidArgumentException("Invalid path for table $name: file {$table->path()} do not exists");
         }
@@ -210,7 +210,7 @@ class MasterTable extends CsvTable {
             throw new InvalidArgumentException("Invalid table name '$name' (allowed chars: a-z, 0-9, '-' and '_')");
         }
 
-        // Vérifie qu'il n'existe pas déà une table avec ce nom
+        // Vérifie qu'il n'existe pas déjà une table avec ce nom
         if ($this->has($name)) {
             throw new InvalidArgumentException("Table $name already exists");
         }
@@ -353,6 +353,8 @@ class MasterTable extends CsvTable {
         if ($table === false) {
             throw new InvalidArgumentException("Table $name does not exist");
         }
+
+        $table->path = docalist('root-dir') . $table->path;
 
         return new TableInfo((array) $table);
     }
