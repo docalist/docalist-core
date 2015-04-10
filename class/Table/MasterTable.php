@@ -183,8 +183,8 @@ class MasterTable extends CsvTable {
         !isset($table->type) && $table->type = $name;
         !isset($table->format) && $table->format = $name;
         !isset($table->readonly) && $table->readonly = true;
-        !isset($table->creation) && $table->creation = date('Y-m-d H:i:s');
-        $table->lastupdate = date('Y-m-d H:i:s');
+        !isset($table->creation) && $table->creation = date_i18n('Y-m-d H:i:s');
+        $table->lastupdate = date_i18n('Y-m-d H:i:s');
 
         // Tokenize les champs
         $fields = $table->value();
