@@ -17,7 +17,6 @@ namespace Docalist;
 
 use Psr\Log\LoggerInterface;
 
-use Monolog\Logger as MonologLogger;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
