@@ -46,16 +46,10 @@ class AdminTables extends AdminPage {
      *
      * @param string $tableName
      *
-     * @return false|TableInfo
+     * @return TableInfo
      */
     protected function tableInfo($tableName) {
-        if ($info = docalist('table-manager')->info($tableName)) {
-            return $info;
-        }
-
-        $title = __('Table non trouvée', 'docalist-core');
-        $msg = __('La table "%s" n\'existe pas.', 'docalist-core');
-        wp_die(sprintf($msg, $tableName), $title);
+        return docalist('table-manager')->table($tableName);
     }
 
     /**
@@ -63,7 +57,7 @@ class AdminTables extends AdminPage {
      */
     public function actionTablesList() {
         return $this->view('docalist-core:table/list', [
-            'tables' => docalist('table-manager')->info(),
+            'tables' => docalist('table-manager')->tables(),
         ]);
     }
 
@@ -135,7 +129,7 @@ class AdminTables extends AdminPage {
             'tableInfo' => $tableInfo,
             'fields' => $fields,
             'data' => $data,
-            'readonly' => ! $tableInfo->user
+            'readonly' => $tableInfo->readonly()
         ]);
     }
 
@@ -166,7 +160,7 @@ class AdminTables extends AdminPage {
         // Suggère un nouveau nom pour la table
         for($i=2; ; $i++) {
             $name = "$tableName-$i";
-            if (is_null(docalist('table-manager')->info($name))) {
+            if (! docalist('table-manager')->has($name)) {
                 break;
             }
         }
