@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -46,11 +46,11 @@ use Docalist\Table\TableInfo;
      * personnalisées, un autre avec les tables prédéfinies.
      */
     $types = [
-        __("Tables personnalisées", 'docalist-core') => true,
-        __("Tables prédéfinies", 'docalist-core') => false,
+        __("Tables personnalisées", 'docalist-core') => false,
+        __("Tables prédéfinies", 'docalist-core') => true,
     ];
 
-    foreach($types as $title => $user): ?>
+    foreach($types as $title => $readonly): ?>
 
         <h3><?= $title ?></h3>
 
@@ -60,17 +60,20 @@ use Docalist\Table\TableInfo;
             <tr>
                 <th><?= __('Nom', 'docalist-core') ?></th>
                 <th><?= __('Libellé', 'docalist-core') ?></th>
-                <th><?= __('Type', 'docalist-core') ?></th>
                 <th><?= __('Format', 'docalist-core') ?></th>
+                <th><?= __('Type', 'docalist-core') ?></th>
+                <th><?= __('Création', 'docalist-core') ?></th>
+                <th><?= __('Mise à jour', 'docalist-core') ?></th>
             </tr>
         </thead>
 
         <?php
         $nb = 0;
-        /* @var $table TableInfo */
-        foreach($tables as $tableName => $table) :
-            if ($table->user() != $user) continue;
+        foreach($tables as $table) : /* @var $table TableInfo */
+            if ($table->readonly() != $readonly) continue;
             ++$nb;
+
+            $tableName = $table->name();
 
             $edit = esc_url($this->url('TableEdit', $tableName));
             $copy = esc_url($this->url('TableCopy',$tableName));
@@ -83,7 +86,7 @@ use Docalist\Table\TableInfo;
                         <a href="<?= $edit ?>"><?= $tableName ?></a>
                     </strong>
                     <div class="row-actions">
-                        <?php if ($user) : ?>
+                        <?php if (! $readonly) : ?>
                             <span class="edit">
                                 <a href="<?= $edit ?>">
                                     <?= __('Modifier', 'docalist-core') ?>
@@ -124,15 +127,17 @@ use Docalist\Table\TableInfo;
                 </td>
 
                 <td><?= $table->label() ?></td>
-                <td><?= $table->type() ?></td>
                 <td><?= $table->format() ?></td>
+                <td><?= $table->type() ?></td>
+                <td><?= $table->creation() ?></td>
+                <td><?= $table->lastupdate() ?></td>
             </tr>
         <?php endforeach ?>
 
         <?php if ($nb === 0) : ?>
             <tr>
                 <td colspan="3">
-                    <em><?= __('Aucune table définie.', 'docalist-core') ?></em>
+                    <em><?= __('Aucune table définie. Vous pouvez créer une table personnalisée en recopiant une des tables prédéfinies listées ci-dessous.', 'docalist-core') ?></em>
                 </td>
             </tr>
         <?php endif; ?>
