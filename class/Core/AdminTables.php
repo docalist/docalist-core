@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -56,8 +56,36 @@ class AdminTables extends AdminPage {
      * Liste des tables d'autorité.
      */
     public function actionTablesList() {
+        // Format en cours
+        $format = empty($_GET['format']) ? null : $_GET['format'];
+
+        // Type en cours
+        $type = empty($_GET['type']) ? null : $_GET['type'];
+
+        // Readonly ?
+        $readonly = null;
+        isset($_GET['readonly']) && $_GET['readonly'] === '0' && $readonly = '0';
+        isset($_GET['readonly']) && $_GET['readonly'] === '1' && $readonly = '1';
+
+        // Liste des formats disponibles
+        $formats = docalist('table-manager')->formats();
+
+        // Liste des types disponibles
+        $types = docalist('table-manager')->types($format);
+
+        // Tri en cours
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'label';
+        $order = isset($_GET['order']) ? $_GET['order'] : 'asc';
+
         return $this->view('docalist-core:table/list', [
-            'tables' => docalist('table-manager')->tables(),
+            'tables'    => docalist('table-manager')->tables($type, $format, $readonly, "$sort $order" ),
+            'formats'   => $formats,
+            'types'     => $types,
+            'format'    => $format,
+            'type'      => $type,
+            'readonly'  => $readonly,
+            'sort'      => $sort,
+            'order'     => $order
         ]);
     }
 
