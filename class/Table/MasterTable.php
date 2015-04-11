@@ -186,8 +186,11 @@ class MasterTable extends CsvTable {
         !isset($table->creation) && $table->creation = date_i18n('Y-m-d H:i:s');
         $table->lastupdate = date_i18n('Y-m-d H:i:s');
 
-        // Tokenize les champs
         $fields = $table->value();
+
+        $fields['readonly'] = $fields['readonly'] ? '1' : '0';
+
+        // Tokenize les champs
         foreach($fields as $name => $value)
         {
             $fields["_$name"] = implode(' ', Tokenizer::tokenize($value));
@@ -370,11 +373,13 @@ class MasterTable extends CsvTable {
      * @param string $type Optionnel, ne retourne que les tables du type indiqué.
      * @param string $format Optionnel, ne retourne que les tables du format
      * indiqué.
+     * @param bool $readonly Optionnel, ne retourne que les tables du type
+     * indiqué.
      * @param string $sort Optionnel, ordre de tri (par défaut : _label).
      *
      * @return TableInfo[]
      */
-    public function tables($type = null, $format = null, $sort = '_label') {
+    public function tables($type = null, $format = null, $readonly = null, $sort = '_label') {
         $where = '';
         if ($type) {
             $where = 'type=' . $this->db->quote($type);
@@ -383,7 +388,10 @@ class MasterTable extends CsvTable {
             $where && $where .= ' AND ';
             $where .= 'format=' . $this->db->quote($format);
         }
-
+        if (!is_null($readonly)) {
+            $where && $where .= ' AND ';
+            $where .= 'readonly=' . $this->db->quote($readonly ? '1' : '0');
+        }
         $fields = 'ROWID,' . implode(',', $this->fields());
         $tables = $this->search($fields, $where, $sort);
 
