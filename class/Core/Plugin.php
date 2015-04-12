@@ -23,6 +23,7 @@ use Docalist\Table\TableInfo;
 use Docalist\Sequences;
 use Docalist\Repository\SettingsRepository;
 use InvalidArgumentException;
+use Docalist\AdminNotices;
 
 /**
  * Plugin Docalist-Core.
@@ -131,6 +132,11 @@ class Plugin {
             // Gestion des tables
             'table-manager' => function() {
                 return new TableManager(docalist('docalist-core-settings')); // TODO: BAD
+            },
+
+            // Gestion des admin-notices
+            'admin-notices' => function() {
+                return new AdminNotices();
             },
 
             // Gestion des séquences
