@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -49,10 +49,13 @@ class Autoloader {
      *
      * @param string $path Chemin absolu du dossier qui contient les classes
      * pour le namespace indiqué.
+     *
+     * @throws Exception Si le namespace est déjà enregistré avec un path
+     * différent.
      */
     public function add($namespace, $path) {
         // Vérifie que ce namespace n'a pas déjà été enregistré
-        if (isset($this->path[$namespace])) {
+        if (isset($this->path[$namespace]) && $this->path[$namespace] === $path) {
             $msg = __('Le namespace %s est déjà enregistré (%s).', 'docalist-core');
             throw new Exception(sprintf($msg, $namespace, $this->path[$namespace]));
         }
