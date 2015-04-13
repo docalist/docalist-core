@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -22,57 +22,44 @@
  * @version     SVN: $Id$
  */
 
-// pas de namespace, la fonction docalist() est globale.
+namespace Docalist\Core;
 
-use Docalist\Autoloader;
-use Docalist\Services;
-use Docalist\Core\Plugin;
+// Définit une constante pour indiquer que ce plugin est activé
+define('DOCALIST_CORE', __FILE__);
 
 /**
- * Retourne un service docalist.
+ * Définit la fonction principale de docalist.
  *
- * @param string $service L'identifiant du service à retourner.
+ * On passe par un fichier externe, inclus via un require_once, pour garantir
+ * que la fonction n'est définie qu'une seule fois.
  *
- * @return mixed
+ * La raison, c'est que lors de l'activation d'un plugin, WordPress exécute la
+ * fonction plugin_sandbox_scrape qui fait des include du fichier plugin et
+ * donc peut réinclure un fichier déjà inclus.
  */
-function docalist($service) {
-    /* @var $services Services */
-    static $services = null;
-
-    // Au premier appel, on initialise l'instance
-    if (is_null($services)) {
-        // Initialise l'autoloader
-        require_once __DIR__ . '/class/Autoloader.php';
-        $autoloader = new Autoloader([
-            'Docalist' => __DIR__ . '/class',
-            'Symfony' => __DIR__ . '/lib/Symfony'
-        ]);
-
-        // Si on est sous phpunit, ajoute les tests à l'autoloader
-        if (defined('PHPUnit_MAIN_METHOD')) {
-            $autoloader->add('Docalist\Tests', __DIR__ . '/tests/Docalist');
-        }
-
-        // Initialise le gestionnaire de services
-        $services = new Services([
-            'autoloader' => $autoloader
-        ]);
-
-        // Le gestionnaire de services est lui-même un service
-        $services->add('services', $services);
-    }
-
-    // Retourne le service demandé
-    return $services->get($service);
-}
+require_once __DIR__ . '/docalist.php';
 
 /**
- * Charge les plugins Docalist
+ * Charge le plugin docalist-core en premier (priorité -PHP_INT_MAX).
  */
 add_action('plugins_loaded', function() {
-    // Charge le plugin docalist-core
     docalist('services')->add('docalist-core', new Plugin());
+}, -PHP_INT_MAX);
 
-    //  Charge tous les autres plugins docalist
-    do_action('docalist_loaded');
+/**
+ * Activation du plugin.
+ */
+add_action('activate_docalist-core/docalist-core.php', function() {
+    // la fonction docalist() est forcèment dispo (on a fait un require)
+    // notre autoloader est chargé (inclus dans le namespace général Docalist)
+    // par contre Plugin n'est pas chargé (plugins_loaded pas encore exécuté)
+    (new Installer)->activate();
+});
+
+/**
+ * Désactivation du plugin.
+ */
+add_action('deactivate_docalist-core/docalist-core.php', function() {
+    // Quand wp nous désactive, notre plugin est chargé
+    (new Installer)->deactivate();
 });
