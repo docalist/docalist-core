@@ -57,7 +57,7 @@ class Sequences {
      */
     public function name($group, $sequence) {
         // Valide le nom du groupe
-        if (! ctype_alnum($group)) {
+        if (!preg_match('~^[a-z][a-z0-9-]*$~', $group)) {
             throw new InvalidArgumentException("Invalid sequence group : $group");
         }
 
