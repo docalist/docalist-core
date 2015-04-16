@@ -15,15 +15,14 @@
 
 namespace Docalist\Core;
 
+use Docalist\Repository\SettingsRepository;
 use Docalist\LogManager;
 use Docalist\Views;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
-use Docalist\Table\TableInfo;
-use Docalist\Sequences;
-use Docalist\Repository\SettingsRepository;
-use InvalidArgumentException;
 use Docalist\AdminNotices;
+use Docalist\Sequences;
+use InvalidArgumentException;
 
 /**
  * Plugin Docalist-Core.
