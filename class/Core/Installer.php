@@ -43,6 +43,7 @@ class Installer {
         // Enregistre les tables prédéfinies
         foreach($this->tables() as $name => $table) {
             $table['name'] = $name;
+            $table['lastupdate'] = date_i18n('Y-m-d H:i:s', filemtime($table['path']));
             $tableManager->register(new TableInfo($table));
         }
     }
@@ -74,12 +75,14 @@ class Installer {
                 'label' => __('Liste complète des codes langues 3 lettres en français (ISO-639-2)', 'docalist-core'),
                 'format' => 'table',
                 'type' => 'languages',
+                'creation' => '2014-03-14 10:11:23',
             ],
             'ISO-639-2_alpha3_en' => [
                 'path' => $dir . 'languages/ISO-639-2_alpha3_en.txt',
                 'label' => __('Liste complète des codes langues 3 lettres en anglais (ISO-639-2)', 'docalist-core'),
                 'format' => 'table',
                 'type' => 'languages',
+                'creation' => '2014-03-14 10:11:43',
             ],
 
             // Tables des langues simplifiées (langues officielles de l'union européenne)
@@ -88,12 +91,14 @@ class Installer {
                 'label' => __('Codes 3 lettres en français des langues officielles de l\'Union Européenne (ISO-639-2)', 'docalist-core'),
                 'format' => 'table',
                 'type' => 'languages',
+                'creation' => '2014-03-15 09:01:39',
             ],
             'ISO-639-2_alpha3_EU_en' => [
                 'path' => $dir . 'languages/ISO-639-2_alpha3_EU_en.txt',
                 'label' => __('Codes 3 lettres en anglais des langues officielles de l\'Union Européenne (ISO-639-2)', 'docalist-core'),
                 'format' => 'table',
                 'type' => 'languages',
+                'creation' => '2014-03-15 09:01:39',
             ],
 
             // Tables de conversion des codes langues
@@ -102,6 +107,7 @@ class Installer {
                 'label' => __('Table de conversion "alpha2 -> alpha3" pour les codes langues (ISO-639-2)', 'docalist-core'),
                 'format' => 'conversion',
                 'type' => 'languages',
+                'creation' => '2014-03-14 10:12:15',
             ],
 
             // Tables des pays
@@ -110,18 +116,21 @@ class Installer {
                 'label' => __('Codes pays 2 lettres en français (ISO-3166-1)', 'docalist-core'),
                 'format' => 'table',
                 'type' => 'countries',
+                'creation' => '2014-03-14 10:08:17',
             ],
             'ISO-3166-1_alpha2_EN' => [
                 'path' => $dir . 'countries/ISO-3166-1_alpha2_en.txt',
                 'label' => __('Codes pays 2 lettres en anglais (ISO-3166-1)', 'docalist-core'),
                 'format' => 'table',
                 'type' => 'countries',
+                'creation' => '2014-03-14 10:08:32',
             ],
             'ISO-3166-1_alpha3-to-alpha2' => [
                 'path' => $dir . 'countries/ISO-3166-1_alpha3-to-alpha2.txt',
                 'label' => __('Table de conversion "alpha3 -> alpha2" pour les codes pays (ISO-3166-1)', 'docalist-core'),
                 'format' => 'conversion',
                 'type' => 'countries',
+                'creation' => '2014-03-14 10:09:01',
             ],
         ];
     }
