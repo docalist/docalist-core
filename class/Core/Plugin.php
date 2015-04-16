@@ -175,9 +175,6 @@ class Plugin {
         });
         add_action('wp_ajax_nopriv_docalist-lookup', $ajaxLookup);
 
-        // Déclare les tables docalist prédéfinies
-        add_action('docalist_register_tables', array($this, 'registerTables'));
-
         // Déclare les JS et les CSS inclus dans docalist-core
         add_action('init', function() {
             $this->registerAssets();
@@ -433,84 +430,4 @@ class Plugin {
         delete_transient(self::ADMIN_NOTICE_TRANSIENT);
     }
 */
-    /**
-     * Enregistre les tables prédéfinies.
-     *
-     * @param TableManager $tableManager
-     *
-     * @return self
-     */
-    public function registerTables(TableManager $tableManager) {
-        $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'tables'  . DIRECTORY_SEPARATOR;
-
-        // Tables des langues complète
-        $tableManager->register(new TableInfo([
-            'name' => 'ISO-639-2_alpha3_fr',
-            'path' => $dir . 'languages/ISO-639-2_alpha3_fr.txt',
-            'label' => __('Liste complète des codes langues 3 lettres en français (ISO-639-2)', 'docalist-core'),
-            'format' => 'table',
-            'type' => 'languages',
-        ]));
-
-        $tableManager->register(new TableInfo([
-            'name' => 'ISO-639-2_alpha3_en',
-            'path' => $dir . 'languages/ISO-639-2_alpha3_en.txt',
-            'label' => __('Liste complète des codes langues 3 lettres en anglais (ISO-639-2)', 'docalist-core'),
-            'format' => 'table',
-            'type' => 'languages',
-        ]));
-
-        // Tables des langues simplifiées (langues officielles de l'union européenne)
-        $tableManager->register(new TableInfo([
-            'name' => 'ISO-639-2_alpha3_EU_fr',
-            'path' => $dir . 'languages/ISO-639-2_alpha3_EU_fr.txt',
-            'label' => __('Codes 3 lettres en français des langues officielles de l\'Union Européenne (ISO-639-2)', 'docalist-core'),
-            'format' => 'table',
-            'type' => 'languages',
-        ]));
-
-        $tableManager->register(new TableInfo([
-            'name' => 'ISO-639-2_alpha3_EU_en',
-            'path' => $dir . 'languages/ISO-639-2_alpha3_EU_en.txt',
-            'label' => __('Codes 3 lettres en anglais des langues officielles de l\'Union Européenne (ISO-639-2)', 'docalist-core'),
-            'format' => 'table',
-            'type' => 'languages',
-        ]));
-
-        // Tables de conversion des codes langues
-        $tableManager->register(new TableInfo([
-            'name' => 'ISO-639-2_alpha2-to-alpha3',
-            'path' => $dir . 'languages/ISO-639-2_alpha2-to-alpha3.txt',
-            'label' => __('Table de conversion "alpha2 -> alpha3" pour les codes langues (ISO-639-2)', 'docalist-core'),
-            'format' => 'conversion',
-            'type' => 'languages',
-        ]));
-
-        // Tables des pays
-        $tableManager->register(new TableInfo([
-            'name' => 'ISO-3166-1_alpha2_fr',
-            'path' => $dir . 'countries/ISO-3166-1_alpha2_fr.txt',
-            'label' => __('Codes pays 2 lettres en français (ISO-3166-1)', 'docalist-core'),
-            'format' => 'table',
-            'type' => 'countries',
-        ]));
-
-        $tableManager->register(new TableInfo([
-            'name' => 'ISO-3166-1_alpha2_EN',
-            'path' => $dir . 'countries/ISO-3166-1_alpha2_en.txt',
-            'label' => __('Codes pays 2 lettres en anglais (ISO-3166-1)', 'docalist-core'),
-            'format' => 'table',
-            'type' => 'countries',
-        ]));
-
-        $tableManager->register(new TableInfo([
-            'name' => 'ISO-3166-1_alpha3-to-alpha2',
-            'path' => $dir . 'countries/ISO-3166-1_alpha3-to-alpha2.txt',
-            'label' => __('Table de conversion "alpha3 -> alpha2" pour les codes pays (ISO-3166-1)', 'docalist-core'),
-            'format' => 'conversion',
-            'type' => 'countries',
-        ]));
-
-        return $this;
-    }
 }
