@@ -222,9 +222,10 @@ class MasterTable extends CsvTable {
     /**
      * Déclare une table.
      *
-     * @param TableInfo $table Propriétés de la table.
+     * Si la table est déjà enregistrée (même nom), les informations sur la
+     * table sont mises à jour.
      *
-     * @throws InvalidArgumentException Si la table est déjà déclarée.
+     * @param TableInfo $table Propriétés de la table.
      *
      * @return self
      */
