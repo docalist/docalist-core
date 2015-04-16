@@ -184,7 +184,7 @@ class MasterTable extends CsvTable {
         !isset($table->format) && $table->format = $name;
         !isset($table->readonly) && $table->readonly = true;
         !isset($table->creation) && $table->creation = date_i18n('Y-m-d H:i:s');
-        $table->lastupdate = date_i18n('Y-m-d H:i:s');
+        !isset($table->lastupdate) && $table->lastupdate = date_i18n('Y-m-d H:i:s');
 
         $fields = $table->value();
 
@@ -230,6 +230,11 @@ class MasterTable extends CsvTable {
      */
     public function register(TableInfo $table) {
         $this->log && $this->log->notice("Register table '{$table->name()}'", ['table' => $table]);
+
+        // Si la table est déjà enregistrée (même nom), on met à jour
+        if ($id = $this->rowid($table->name())) {
+            return $this->update($id, $table);
+        }
 
         // Prépare les données à insérer
         $fields = $this->prepare($table);
