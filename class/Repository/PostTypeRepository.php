@@ -2,6 +2,8 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
+ * Copyright (C) 2012-2015 Daniel Ménard
+ *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
  *
@@ -151,6 +153,10 @@ class PostTypeRepository extends Repository {
             }
             $id = (int) $wpdb->insert_id; // insert retourne une chaine
         }
+
+        // Exécute l'action transition_post_status pour permettre l'indexation docalist search
+        $post = WP_Post::get_instance($id);
+        wp_transition_post_status($post->post_status, 'unknown', $post);
 
         // Ok
         return $id;
