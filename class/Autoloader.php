@@ -55,7 +55,7 @@ class Autoloader {
      */
     public function add($namespace, $path) {
         // Vérifie que ce namespace n'a pas déjà été enregistré
-        if (isset($this->path[$namespace]) && $this->path[$namespace] === $path) {
+        if (isset($this->path[$namespace]) && $this->path[$namespace] !== $path) {
             $msg = __('Le namespace %s est déjà enregistré (%s).', 'docalist-core');
             throw new Exception(sprintf($msg, $namespace, $this->path[$namespace]));
         }
