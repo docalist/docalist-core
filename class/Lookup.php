@@ -13,12 +13,9 @@
  * @version     SVN: $Id$
  */
 
-namespace Docalist\Core;
+namespace Docalist;
 
-use Docalist\Table\TableManager;
-use Docalist\Table\TableInfo;
 use Docalist\Http\JsonResponse;
-use Closure;
 use Exception;
 
 /**

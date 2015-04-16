@@ -22,6 +22,7 @@ use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\AdminNotices;
 use Docalist\Sequences;
+use Docalist\Lookup;
 use InvalidArgumentException;
 
 /**
