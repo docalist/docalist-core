@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012,2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -103,6 +103,7 @@ class Themes {
                 'assets' => array(
                     array(
                         'name' => 'docalist-forms',
+                        'position' => Assets::TOP
                     ),
                 ),
             ),
