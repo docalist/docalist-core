@@ -8,4 +8,4 @@ $GLOBALS['wp_tests_options'] = array(
 
 // wordpress-tests doit être dans le include_path de php
 // sinon, modifier le chemin d'accès ci-dessous
-require_once 'wordpress-tests/includes/bootstrap.php';
+require_once 'wordpress-develop/tests/phpunit/includes/bootstrap.php';
