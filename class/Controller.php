@@ -495,7 +495,7 @@ class Controller {
      * @throws Exception
      * - si l'action indiquée n'existe pas
      * - si la méthode qui implémente l'action est 'private' ou 'static'
-     * - si l'utilistaeur en cours n'a pas les droits suffisants
+     * - si l'utilistateur en cours n'a pas les droits suffisants
      * - si un paramètre est obligatoire mais n'a pas été fourni
      * - s'il y a trop de paramètres fournis ou des paramètres qui ne sont pas
      *   dans la signature de la méthode de l'action.
