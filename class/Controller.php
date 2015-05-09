@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -542,6 +542,18 @@ class Controller {
 
         // Retourne l'url
         return add_query_arg($args, admin_url($this->parentPage()));
+    }
+
+    /**
+     * Retourne l'url de base du contrôleur.
+     *
+     * @return string
+     */
+    protected function baseUrl() {
+        return add_query_arg(
+            [$this->controllerParameter => $this->id()],
+            admin_url($this->parentPage())
+        );
     }
 
     /**
