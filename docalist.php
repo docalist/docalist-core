@@ -26,24 +26,19 @@ use Docalist\Services;
  * @return mixed
  */
 function docalist($service) {
-    /* @var $services Services */
-    static $services = null;
+    static $services = null; /* @var $services Services */
 
-    // Au premier appel, on initialise l'instance
+    // Initialise le gestionnaire de services lors du premier appel
     if (is_null($services)) {
         // Initialise l'autoloader
         require_once __DIR__ . '/class/Autoloader.php';
         $autoloader = new Autoloader([
-            'Docalist' => __DIR__ . '/class',
-            'Symfony' => __DIR__ . '/lib/Symfony',
-            'Psr\Log' => __DIR__ . '/lib/psr/log/Psr/Log',
-            'Monolog' => __DIR__ . '/lib/monolog/monolog/src/Monolog'
+            'Docalist'       => __DIR__ . '/class',
+            'Symfony'        => __DIR__ . '/lib/Symfony',
+            'Psr\Log'        => __DIR__ . '/lib/psr/log/Psr/Log',
+            'Monolog'        => __DIR__ . '/lib/monolog/monolog/src/Monolog',
+            'Docalist\Tests' => __DIR__ . '/tests/Docalist'
         ]);
-
-        // Si on est sous phpunit, ajoute les tests à l'autoloader
-        if (defined('PHPUnit_MAIN_METHOD')) {
-            $autoloader->add('Docalist\Tests', __DIR__ . '/tests/Docalist');
-        }
 
         // Initialise le gestionnaire de services
         $services = new Services([
