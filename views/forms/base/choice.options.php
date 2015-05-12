@@ -12,6 +12,9 @@ if ($this->data instanceof Docalist\Type\Collection) {
     $selected = array_flip((array)$this->data);
 }
 
+// Teste si des clés ont été fournies (i.e. autre chose qu'un tableau numérique séquentiel)
+$hasKeys = array_keys($this->options) !== range(0, count($this->options) - 1);
+
 foreach ($this->options as $value => $label) {
     // Groupe d'options
     if (is_array($label)) {
@@ -24,12 +27,12 @@ foreach ($this->options as $value => $label) {
 
     // Option simple
     else {
-        $key = is_int($value) ? $label : $value;
+       $key = $hasKeys ? $value : $label;
         if ($flag = isset($selected[$key])) {
             unset($selected[$key]);
         }
         $this->block('option', array(
-            'value' => is_int($value) ? null : $value,
+            'value' => $hasKeys ? $value : null,
             'label' => $label,
             'selected' => $flag,
         ));
