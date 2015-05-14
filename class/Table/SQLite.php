@@ -229,7 +229,7 @@ class SQLite implements TableInterface {
             // Analyse les paramètres indiqués
             $parms = explode(',', $parms);
             $type = '';
-            $_constraints = $constraints = array();
+            $constraints = array();
             foreach ($parms as $parm) {
                 $parm = trim($parm);
                 switch (strtolower($parm)) {
@@ -258,7 +258,7 @@ class SQLite implements TableInterface {
                     case 'primary key':
                     case 'not null':
                     case 'unique':
-                        $_constraints[] = strtoupper($parm);
+                        $constraints[] = strtoupper($parm);
                         break;
 
                     case 'index':
