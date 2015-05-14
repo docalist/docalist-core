@@ -107,7 +107,7 @@ class Plugin {
      */
     protected function setupServices() {
         // Enregistre les services docalist par défaut
-        docalist('services')->add([
+        $services = [
 
             // Gestion des Settings
             'settings-repository' => function() {
@@ -134,11 +134,6 @@ class Plugin {
                 return new TableManager(docalist('docalist-core-settings')); // TODO: BAD
             },
 
-            // Gestion des admin-notices
-            'admin-notices' => function() {
-                return new AdminNotices();
-            },
-
             // Gestion des séquences
             'sequences' => function() {
                 return new Sequences();
@@ -148,7 +143,14 @@ class Plugin {
             'lookup' => function() {
                 return new Lookup();
             },
-        ]);
+        ];
+
+        // Le service admin-notices n'est disponible que dans le back-office
+        if (is_admin()) {
+            $services['admin-notices'] = new AdminNotices();
+        }
+
+        docalist('services')->add($services);
 
         return $this;
     }
