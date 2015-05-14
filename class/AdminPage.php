@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -167,6 +167,7 @@ class AdminPage extends Controller {
 
                 // Récupère le titre (h2) de la page et le fournit à wp pour
                 // qu'on ait le bon titre dans la balise <title> de la page
+                $matches = null; // évite warning "variable not initialized"
                 if (preg_match('~<h2>(.*?)</h2>~', $body, $matches)) {
                     $title = strip_tags($matches[1]);
                     // @see admin-header.php:36
