@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012,2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -912,10 +912,28 @@ abstract class Field {
     }
 
     public function generateId() {
-        $id = $this->controlName() ? : $this->type();
-        $id = rtrim(strtr($id, array('['=>'-', ']'=>'')), '-');
-        $this->attributes['id'] = $id;
-        return $id;
+        if (!isset($this->attributes['id'])) {
+            // Génère l'ID
+            $id = $this->controlName() ? : $this->type();
+
+            // Supprime les caractères spéciaux de jQuery
+            // cf. https://learn.jquery.com/using-jquery-core/faq/how-do-i-select-an-element-by-an-id-that-has-characters-used-in-css-notation/
+            $id = strtr($id, [
+                ':' => '-',
+                '.' => '-',
+                ',' => '-',
+                '[' => '-',
+                ']' => '',
+            ]);
+
+            // Supprime les tirets superflus
+            $id = rtrim($id, '-');
+
+            // Stocke l'ID généré
+            $this->attributes['id'] = $id;
+        }
+
+        return $this->attributes['id'];
 
 /*
         if (!isset($this->attributes['id'])) {
