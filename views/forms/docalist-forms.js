@@ -1,7 +1,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -301,15 +301,15 @@ jQuery.fn.tableLookup = function() {
         }
         
         // Les paramètres figurent en attributs "data-" du select
-        var settings = $.extend({
-            table: 'countries',      // Nom de la table à utiliser
-            valueField: 'code',      // Nom du champ qui contient le code
-            labelField: 'label',     // Nom du champ qui contient le libellé
+        var settings = $(this).data();
             
-            zzz:''
-        }, $(this).data());
-        
+        // Détermine le type de lookup
         settings.lookupType = settings.table.split(':')[0];
+
+        settings = $.extend({
+            valueField: settings.lookupType === 'index' ? 'text' : 'code',  // Nom du champ qui contient le code
+            labelField: settings.lookupType === 'index' ? 'text' : 'label'  // Nom du champ qui contient le libellé
+        }, settings);
         
         $(this).selectize({
             plugins: {
