@@ -113,9 +113,9 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
                  *  Sélecteur Format
                  *  --------------------------------------------------------------*/
                 ?>
+                <?php prepareSelect($formats, 'formatFormat'); ?>
                 <select name="format" onchange="this.form.submit()">
-                    <?php array_unshift($formats, null)?>
-                    <?php foreach($formats as $fmt): ?>
+                    <?php foreach($formats as $fmt => $label): ?>
                         <?php
                             $count = count($tableManager->tables($type, $fmt, $readonly));
                             if ($count === 0) {
@@ -123,8 +123,7 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
                             }
                         ?>
                         <option value="<?=$fmt?>" <?php selected($format, $fmt) ?>>
-                            <?=formatFormat($fmt) ?>
-                            (<?= number_format_i18n($count) ?>)
+                            <?=$label ?> (<?= number_format_i18n($count) ?>)
                         </option>
                     <?php endforeach ?>
                 </select>
@@ -134,9 +133,9 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
                  *  Sélecteur type
                  *  --------------------------------------------------------------*/
                 ?>
+                <?php prepareSelect($types, 'formatType'); ?>
                 <select name="type" onchange="this.form.submit()">
-                    <?php array_unshift($types, null)?>
-                    <?php foreach($types as $typ): ?>
+                    <?php foreach($types as $typ => $label): ?>
                         <?php
                             $count = count($tableManager->tables($typ, $format, $readonly));
                             if ($count === 0) {
@@ -144,8 +143,7 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
                             }
                         ?>
                         <option value="<?=$typ?>" <?php selected($type, $typ) ?>>
-                            <?=formatType($typ) ?>
-                            (<?= number_format_i18n($count) ?>)
+                            <?=$label ?> (<?= number_format_i18n($count) ?>)
                         </option>
                     <?php endforeach ?>
                 </select>
@@ -268,19 +266,28 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
     </form>
 </div>
 <?php
+    function prepareSelect(&$array, $formatter) {
+//        var_dump($array);
+        $array = array_combine($array, array_map(function($e) use($formatter) {
+            return $formatter === 'formatType' ? formatType($e) : formatFormat($e);
+        }, $array));
+        asort($array, SORT_NATURAL | SORT_FLAG_CASE);
+        array_unshift($array, $formatter === 'formatType' ? formatType(null) : formatFormat(null));
+    }
+
     function formatFormat($format) {
         switch($format) {
             case null:
                 return __('Tous les formats', 'docalist-core');
 
             case 'conversion':
-                return __('Table de conversion', 'docalist-core');
+                return __('Conversion', 'docalist-core');
 
             case 'master':
-                return __('Table maître', 'docalist-core');
+                return __('Master', 'docalist-core');
 
             case 'table':
-                return __('Table d\'autorité', 'docalist-core');
+                return __('Table', 'docalist-core');
 
             case 'thesaurus':
                 return __('Thesaurus', 'docalist-core');
@@ -302,13 +309,13 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
                 return __('Pays', 'docalist-core');
 
             case 'content':
-                return __('Types de contenus', 'docalist-core');
+                return __('Contenus', 'docalist-core');
 
             case 'format':
-                return __('Étiquettes de format', 'docalist-core');
+                return __('Formats', 'docalist-core');
 
             case 'roles':
-                return __('Étiquettes de rôle', 'docalist-core');
+                return __('Rôles', 'docalist-core');
 
             case 'thesaurus':
                 return __('Mots-clés', 'docalist-core');
@@ -317,31 +324,31 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
                 return __('Genres ', 'docalist-core');
 
             case 'topics':
-                return __('Liste de vocabulaires', 'docalist-core');
+                return __('Indexation', 'docalist-core');
 
             case 'medias':
                 return __('Supports', 'docalist-core');
 
             case 'dates':
-                return __('Types de dates', 'docalist-core');
+                return __('Dates', 'docalist-core');
 
             case 'links':
-                return __('Types de liens', 'docalist-core');
+                return __('Liens', 'docalist-core');
 
             case 'numbers':
-                return __('Types de numéros', 'docalist-core');
+                return __('Numéros', 'docalist-core');
 
             case 'extent':
-                return __('Étendues', 'docalist-core');
+                return __('Paginations', 'docalist-core');
 
             case 'relations':
-                return __('Types de relations', 'docalist-core');
+                return __('Relations', 'docalist-core');
 
             case 'titles':
-                return __('Types de titres', 'docalist-core');
+                return __('Titres', 'docalist-core');
 
             case 'types':
-                return __('Types de notices', 'docalist-core');
+                return __('Types', 'docalist-core');
 
             case 'master':
                 return __('Tables', 'docalist-core');
@@ -364,7 +371,7 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
                 return __('Prédéfinie', 'docalist-core');
 
             default:
-                return var_export($readonly);
+                return var_export($readonly, true);
         }
     }
 
