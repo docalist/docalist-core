@@ -340,11 +340,14 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
             case 'titles':
                 return __('Types de titres', 'docalist-core');
 
+            case 'types':
+                return __('Types de notices', 'docalist-core');
+
             case 'master':
                 return __('Tables', 'docalist-core');
 
             default:
-                return '*****' . ucfirst($type);
+                return ucfirst($type);
         }
     }
 
