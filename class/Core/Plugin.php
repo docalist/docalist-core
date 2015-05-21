@@ -25,6 +25,9 @@ use Docalist\Sequences;
 use Docalist\Lookup;
 use InvalidArgumentException;
 
+// use for migration
+use Docalist\Table\TableInfo;
+
 /**
  * Plugin Docalist-Core.
  */
@@ -42,6 +45,13 @@ class Plugin {
         // Enregistre les services docalist de base
         $this->setupServices();
 
+        if (isset($_REQUEST['migrate'])) {
+            $s = get_option('docalist-core-settings');
+            if ($s !== false) {
+                $this->migrate($s);
+            }
+        }
+
         // Charge la configuration de docalist-core
         docalist('services')->add('docalist-core-settings', function() {
             return new Settings(docalist('settings-repository'));
@@ -55,6 +65,95 @@ class Plugin {
 //         add_action('admin_notices', function(){
 //             $this->showAdminNotices();
 //         });
+    }
+
+    protected function migrate($option) {
+$option = file_get_contents(__DIR__ . '/test.txt');
+
+        error_reporting(E_ALL);
+
+        $go = isset($_REQUEST['go']);
+        $ok = true;
+
+        header('Content-Type: text/html; charset=UTF8');
+        echo "<h1>Les tables perso doivent être migrées.</h1>";
+        echo '
+            <style>
+                .error {font-weight: bold; color: red;}
+            </style>
+            ';
+
+        echo "<p>", $go ? "**MODE REEL**" : 'mode test', '</p>';
+
+        $tables = json_decode($option);
+        if (! is_object($tables)) {
+            var_dump($option);
+            var_dump($tables);
+            die("l'option existe mais json_decode ne retourne pas un objet");
+        }
+        $tables = $tables->tables;
+
+        $manager = docalist('table-manager'); /* @var $manager TableManager */
+
+        foreach($tables as $table) { /* @var $table TableInfo */
+            echo '<h2>', $table->name, '</h2>';
+            var_dump($table);
+
+            // Vérifie que l'ancien fichier table existe
+            if (!file_exists($table->path)) {
+                echo "<p class='error'>La table n'existe pas.</p>";
+                $ok = false;
+                continue;
+            }
+
+            // Vérifie que le nouveau fichier table n'existe pas
+            $path = docalist('tables-dir') . DIRECTORY_SEPARATOR . basename($table->path);
+            if (file_exists($path)) {
+                echo "<p class='error'>La nouvelle table existe déjà.</p>";
+                echo "<p>Path de la nouvelle table : <code>$path</code></p>";
+                $ok = false;
+            }
+
+            // Vérifie qu'il n'existe pas déjà une table avec ce nom
+            if ($manager->has($table->name)) {
+                echo "<p class='error'>Le manager a déjà une table avec ce nom.</p>";
+                $ok = false;
+            }
+
+            if (!$ok) {
+                continue;
+            }
+
+            if ($go) {
+                echo "- Copie de la table...";
+                if (true !== copy($table->path, $path)) {
+                    echo "<p class='error'>Impossible de copier $table->path vers $path.</p>";
+                    die();
+                }
+                echo 'ok<br />';
+
+                // Crée la structure TableInfo de la nouvelle table
+                $table->path = $path;
+                unset($table->user);
+                $table->readonly = false;
+                $table = new TableInfo((array)$table);
+
+                echo "- register...";
+                $manager->register($table);
+                echo 'ok<br />';
+            } else {
+                echo "<p>OK</p>";
+            }
+        }
+
+        if ($ok) {
+            echo "<h1>Tout à l'air OK. Vous pouvez lancer la migration</h1>";
+            echo "<p><a href='?migrate&go'>Go</p>";
+        } else {
+            echo "<h1>Une ou plusieurs erreurs détectées.</h1>";
+        }
+
+        die();
     }
 
     /**
@@ -131,7 +230,7 @@ class Plugin {
 
             // Gestion des tables
             'table-manager' => function() {
-                return new TableManager(docalist('docalist-core-settings')); // TODO: BAD
+                return new TableManager(); // TODO: BAD
             },
 
             // Gestion des séquences
