@@ -68,8 +68,6 @@ class Plugin {
     }
 
     protected function migrate($option) {
-$option = file_get_contents(__DIR__ . '/test.txt');
-
         error_reporting(E_ALL);
 
         $go = isset($_REQUEST['go']);
@@ -230,7 +228,7 @@ $option = file_get_contents(__DIR__ . '/test.txt');
 
             // Gestion des tables
             'table-manager' => function() {
-                return new TableManager(); // TODO: BAD
+                return new TableManager();
             },
 
             // Gestion des séquences
