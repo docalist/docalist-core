@@ -110,11 +110,20 @@ class Lookup {
 
         // admin_ajax.php génère des entêtes "no-cache" avant qu'on ait la main
         // comme on veut que les requêtes soient mises en cache, on les supprime
-        if (! WP_DEBUG) header_remove();
+        header_remove();
 
-        // Paramètre la réponse pour que la navigateur la mette en cache 10 minutes
+        // Détermine la durée de mise en cache de la requête lookup
+        if ('index' === strtok($source, ':')) {
+            $maxAge = 10 * MINUTE_IN_SECONDS;
+            // index : peut changer à chaque enregistrement de notice (candidat descripteurs, etc.)
+        } else {
+            $maxAge = 1 * WEEK_IN_SECONDS;
+            // table ou thesaurus : n'est pas sensé changer sans arrêt
+        }
+
+        // Paramètre la réponse pour que la navigateur la mette en cache
         $json->setProtocolVersion('1.1'); // 1.0 par défaut dans SF
-        $json->setPublic()->setMaxAge(600)->setSharedMaxAge(600);
+        $json->setPublic()->setMaxAge($maxAge)->setSharedMaxAge($maxAge);
         // TODO: mettre la durée de cache en config
 
         // Envoie la réponse au navigateur
