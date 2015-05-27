@@ -163,7 +163,9 @@ jQuery(document).ready(function($) {
         // Restaure la sauvegarde qu'on a faite dans le noeud d'origine
         selectized.each(function() {
             var save = $(this).data('save');
-            this.selectize.options = save.options;
+            for (var i in save.options) {
+                this.selectize.addOption(save.options[i]);
+            }
             this.selectize.setValue(save.value);
         });
 
