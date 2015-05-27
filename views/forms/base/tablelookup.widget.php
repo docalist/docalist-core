@@ -50,7 +50,7 @@ if (!empty($data) && ($type === 'table' || $type === 'thesaurus')) {
 $this->options = $options;
 
 // Garantit que le contrôle a un ID, pour y accèder dans le tag <script>
-$this->generateId();
+$this->generateId(true);
 
 // Génère le select
 $args['data-table'] = $tableName;

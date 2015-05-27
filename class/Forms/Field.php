@@ -911,8 +911,8 @@ abstract class Field {
         throw new Exception('Unable to render template');
     }
 
-    public function generateId() {
-        if (!isset($this->attributes['id'])) {
+    public function generateId($force = false) {
+        if ($force || !isset($this->attributes['id'])) {
             // Génère l'ID
             $id = $this->controlName() ? : $this->type();
 
