@@ -358,6 +358,9 @@ class TableManager {
         // Par défaut, retourne les 10 premières réponses obtenues
         $limit = 100;
 
+        // Récupère la table
+        $table = $this->get($table); /* @var $table TableInterface */
+
         // Détermine les champs à retourner
         if ($thesaurus) {
             $what = 'code,label,MT,USE,' .
@@ -391,8 +394,8 @@ class TableManager {
                 // Tokenize la chaine pour être insensible aux accents, etc.
                 $search = implode(' ', Tokenizer::tokenize($search));
 
-                // Comme on a tokenizé, pas besoin d'escape (search=[a-z0-9]+)
-                $where = "_code = '$search'";
+                // Construit la clause de recherche
+                $where = '_code=' . $table->quote($search);
 
                 // Les codes sont censés être uniques, donc une seule réponse
                 $limit = 1;
@@ -407,9 +410,9 @@ class TableManager {
             // Tokenize la chaine pour être insensible aux accents, etc.
             $search = implode(' ', Tokenizer::tokenize($search));
 
-            // Comme on a tokenizé, pas besoin d'escape (search=[a-z0-9]+)
+            // Construit la clause de recherche
             if ($search) {
-                $where = "_code like '$search%' OR _label LIKE '$search%'";
+                $where = sprintf('_code LIKE %1$s OR _label LIKE %1$s', $table->quote($search . '%'));
             } else {
                 $where = null;
             }
@@ -422,7 +425,7 @@ class TableManager {
         $what = 'ROWID,'.$what;
 
         // Lance la recherche
-        $result = $this->get($table)->search($what, $where, $order, $limit);
+        $result = $table->search($what, $where, $order, $limit);
 
         // En mode "thesaurus", traduit les codes par leur libellé
         if ($thesaurus && $result) {
@@ -431,7 +434,7 @@ class TableManager {
                 foreach(['USE', 'MT', 'BT','NT' ,'RT'] as $rel) {
                     if ($term->$rel) {
                         foreach(explode('¤', $term->$rel) as $code) {
-                            $codes[$code] = "'" . strtr($code, ["'" => "''"]) . "'"; // TODO: bad, utiliser PDO->quote()
+                            $codes[$code] = $table->quote($code);
                         }
                     }
                 }
@@ -441,8 +444,8 @@ class TableManager {
             }
 
             if ($codes) {
-                $where = 'code IN (' . implode(',', $codes) . ')';
-                $codes = $this->get($table)->search('code,label', $where);
+                $where = 'code IN (' . implode(',', $codes) . ')'; // qoute a été appellé sur chaque code plus haut
+                $codes = $table->search('code,label', $where);
                 foreach($result as $term) {
                     foreach(['USE', 'MT', 'BT','NT', 'RT'] as $rel) {
                         if ($term->$rel) {
@@ -544,7 +547,7 @@ class TableManager {
      * @return string[]
      */
     public function types($format = null) {
-        $where = 'type != "master"';
+        $where = "type != 'master'";
         $format && $where .= ' AND format=' . $this->master()->quote($format);
 
         return $this->master()->search('DISTINCT type', $where, '_type');
@@ -558,7 +561,7 @@ class TableManager {
      * @return string[]
      */
     public function formats($type = null) {
-        $where = 'format != "master"';
+        $where = "format != 'master'";
         $type && $where .= ' AND type=' . $this->master()->quote($type);
         return $this->master()->search('DISTINCT format', $where, '_format');
     }
