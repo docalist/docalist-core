@@ -10,7 +10,6 @@
  * @package     Docalist
  * @subpackage  Tables
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     $Id$
  */
 namespace Docalist\Core;
 

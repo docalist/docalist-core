@@ -10,7 +10,6 @@
  * @package     Docalist
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     $Id$
  */
 
 // pas de namespace, la fonction docalist() est globale.

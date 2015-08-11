@@ -19,7 +19,6 @@
  * @package     Docalist
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     SVN: $Id$
  */
 
 namespace Docalist\Core;

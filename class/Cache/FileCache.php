@@ -10,7 +10,6 @@
  * @package     Docalist
  * @subpackage  Cache
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     SVN: $Id$
  */
 
 namespace Docalist\Cache;

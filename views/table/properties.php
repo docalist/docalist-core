@@ -10,7 +10,6 @@
  * @package     Docalist
  * @subpackage  Views
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     $Id$
  */
 namespace Docalist\Views;
 
