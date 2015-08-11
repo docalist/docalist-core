@@ -10,8 +10,6 @@
  * @package     Docalist
  * @subpackage  Forms
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     SVN: $Id: Button.php 396 2013-02-11 12:09:16Z
- * daniel.menard.35@gmail.com $
  */
 
 namespace Docalist\Forms;

@@ -9,7 +9,6 @@
 # @package     Docalist
 # @subpackage  Tables
 # @author      Daniel Ménard <daniel.menard@laposte.net>
-# @version     SVN: $Id$
 # ------------------------------------------------------------------------------
 #
 # ------------------------------------------------------------------------------

@@ -10,7 +10,6 @@
  * @package     Docalist
  * @subpackage  Tests
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     SVN: $Id$
  */
 
 use Docalist\Type\Any;

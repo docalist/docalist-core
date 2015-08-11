@@ -10,8 +10,6 @@
  * @package     Docalist
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     SVN: $Id: AbstractActions.php 506 2013-03-13 16:30:08Z
- * daniel.menard.35@gmail.com $
  */
 
 namespace Docalist;
