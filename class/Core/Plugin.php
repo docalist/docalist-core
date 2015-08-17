@@ -176,7 +176,7 @@ class Plugin {
                 return $this->dataDirectory('config');
             },
 
-            // Répertoire de config (WP_CONTENT_DIR/data/config)
+            // Répertoire de cache de docalist (docalist-cache)
             'cache-dir' => function() {
                 return $this->cacheDirectory();
             },
