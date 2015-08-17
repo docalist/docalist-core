@@ -375,7 +375,23 @@ class Plugin {
      * @return string
      */
     protected function cacheDirectory() {
-        $directory = get_temp_dir() . 'docalist-cache'; // get_temp_dir : slash à la fin
+        // Par défaut on prend le path indiqué dans wp-config
+        if (defined('DOCALIST_CACHE_DIR')) {
+            $directory = DOCALIST_CACHE_DIR;
+        }
+
+        // Sinon, on utilise le répertoire temporaire du système
+        else {
+            // Le cache docalist ne doit PAS être partagé entre plusieurs sites
+            // (cf. https://github.com/daniel-menard/prisme/issues/302)
+            // Pour éviter ça, on inclut l'adresse du site dans le path du cache.
+            $site = get_home_url();
+            $site = substr($site, strpos($site, '://') + 3);
+            $site = rtrim($site, '/');
+
+            $directory = get_temp_dir() . 'docalist-cache/' . $site; // get_temp_dir : slash à la fin
+        }
+
         $directory = strtr($directory, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR);
         ! is_dir($directory) && $this->createProtectedDirectory($directory);
 
