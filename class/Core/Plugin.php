@@ -176,7 +176,7 @@ class Plugin {
                 return $this->dataDirectory('config');
             },
 
-            // Répertoire de cache de docalist (docalist-cache)
+            // Répertoire de cache de docalist (docalist-cache : dans /tmp ou fixé)
             'cache-dir' => function() {
                 return $this->cacheDirectory();
             },
