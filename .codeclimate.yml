@@ -36,5 +36,8 @@ ratings:
 # exclude_paths key.
 
 exclude_paths:
+- .git/**/*
 - lib/**/*
-- tests/*
+- tests/**/*
+- ".codeclimate.yml"
+- "LICENCE.txt"
