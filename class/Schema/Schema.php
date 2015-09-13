@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -173,20 +173,19 @@ class Schema extends Any {
     public function toArray() {
         $result = $this->value;
         if (isset($result['fields'])) {
-            $t = [];
+            $fields = [];
             foreach ($result['fields'] as $name => $field) {
                 $field = $field->toArray();
                 unset($field['name']);
                 if (empty($field)) {
-                    $t[] = $name;
+                    $fields[] = $name;
                 } elseif (count($field) === 1 && isset($field['type'])) {
-                    $t[$name] = $field['type'];
+                    $fields[$name] = $field['type'];
                 } else {
-                    $t[$name] = $field;
+                    $fields[$name] = $field;
                 }
             }
-            $result['fields'] = $t;
-
+            $result['fields'] = $fields;
         }
 
         return $result;
