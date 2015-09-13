@@ -36,17 +36,9 @@ class Schema extends Any {
         if (isset($value['fields'])) {
             $fields = [];
             foreach ($value['fields'] as $key => $field) {
-                // Gère les raccourcis autorisés si $field est une chaine
+                // Si $field est une chaine, on a soit int => name, soit name => type
                 if (is_string($field)) {
-                    // Champ de la forme : entier => nom
-                    if (is_int($key)) {
-                        $field = ['name' => $field];
-                    }
-
-                    // Champ de la forme : nom => type
-                    else {
-                        $field = ['name' => $key, 'type' => $field];
-                    }
+                    $field = is_int($key) ? ['name' => $field] : ['name' => $key, 'type' => $field];
                 }
 
                 // Champ de la forme : nom => array(propriétés)
