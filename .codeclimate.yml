@@ -29,6 +29,8 @@ engines:
 
 ratings:
   paths:
+  - docalist-core.php
+  - docalist.php
   - class/**
   - views/**
 
@@ -36,11 +38,14 @@ ratings:
 # exclude_paths key.
 
 exclude_paths:
-- .git/**/*
-- lib/**/*
-- tests/**/*
-- ".codeclimate.yml"
+- ".*"
+- "composer.json"
 - "LICENCE.txt"
-- ".gitignore"
-- ".project"
+- "phpunit.xml"
 - "README.md"
+- ".git/**/*"
+- doc/**/*
+- languages/**/*
+- lib/**/*
+- tables/**/*
+- tests/**/*
