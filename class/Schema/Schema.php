@@ -13,15 +13,61 @@
  */
 namespace Docalist\Schema;
 
-use Serializable, JsonSerializable;
 use InvalidArgumentException;
 use Docalist\Type\Any;
 
 /**
- * Un schéma permet de décrire la liste des champs qui composent une structure
- * de données.
+ * Un schéma permet de décrire les attributs d'un {@link Docalist\Type\Any type
+ * de données Docalist}.
+ *
+ * Pour un {@link Docalist\Type\Object type structuré}, un schéma permet
+ * également de définir la liste des champs qui composent cette structure en
+ * utilisant la collection fields.
+ *
+ * Les attributs d'un schéma peuvent être manipulés comme s'il s'agissait de
+ * propriétés ou de méthodes du schéma :
+ *
+ * <code>
+ *     $schema->description = 'Un exemple de schéma';
+ *     echo $schema->description;       // propriété
+ *     echo $schema->description();     // méthode
+ * </code>
  */
 class Schema extends Any {
+
+/*
+    Réflexion : bootstraper ?
+
+    Actuellement, les propriétés du schéma sont stockées sous la forme de types
+    php natifs et fields est un simple tableau php.
+
+    Pour être cohérent il faudrait les stocker sous la forme de types docalist
+    et non de types php : fields serait une Collection de Field et les
+    propriétés scalaires (description, label...) seraient stockées avec le type
+    docalist adéquat (String, etc.)
+
+    Cela simplifierait pas mal les choses, car dans ce cas, la classe Schema
+    serait juste un objet standard (au lieu d'hériter de Any, on hériterait de
+    Object). :
+
+    - Les méthodes __get, __set, __isset, __unset,  __call pourraient être
+      supprimées (déjà implémentées par Object).
+    - La méthode field() pourrait être supprimée (propriété comme une autre)
+    - $schema->fieldNames() pourrait être remplacé par $schema->fields->keys()
+    - $schema->field($field) pourrait être remplacé par $schema->field[$field]
+    - has($field) pourrait être remplacé par isset($schema->field[$field])
+
+    C'est assez séduisant (c'est toujours le cas quand on bootstrappe !) mais
+    est-utile ?
+
+    Au lieu de créer des types php, il faudra crééer des objets pour chaque
+    propriété. Quel impact sur les performances ?
+
+    Si au final on fait ça, il y a un impact un peu partout sur le code actuel.
+    Il faut revoir tous les appels aux propriétés/méthodes des schémas et
+    disposer de tests unitaires pour vérifier qu'on ne casse rien.
+ */
+
     /**
      * Construit un nouveau schéma.
      *
@@ -218,7 +264,7 @@ class Schema extends Any {
             }
 
             // Vérifie que le nom du champ est unique
-            $name = $field->name(); // nouveau nom si renomage
+            $name = $field->name(); // nouveau nom si renommage
             if (isset($result[$name])) {
                 $msg = 'Field %s defined twice';
                 throw new InvalidArgumentException(sprintf($msg, $name));
@@ -228,34 +274,6 @@ class Schema extends Any {
         }
         $this->value['fields'] = $result;
     }
-
-    /**
-     * Sérialise le schéma (implémentation de l'interface Serializable).
-     *
-     * @return string
-     */
-//     public function serialize() {
-//         return serialize($this->toArray());
-//     }
-
-    /**
-     * Désérialise le schéma (implémentation de l'interface Serializable).
-     *
-     * @param string $serialized
-     */
-//     public function unserialize($serialized) {
-//         $this->__construct(unserialize($serialized));
-//     }
-
-    /**
-     * Spécifie les données qui doivent être sérialisées en JSON
-     * (implémentation de l'interface JsonSerializable).
-     *
-     * @return mixed
-     */
-//     public function jsonSerialize () {
-//         return $this->toArray();
-//     }
 
     /**
      * Retourne la valeur par défaut du schéma, c'est-à-dire un tableau
