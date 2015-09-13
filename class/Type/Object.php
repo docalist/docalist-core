@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -249,7 +249,7 @@ class Object extends Any {
     }
 
     /**
-     * Permet d'accéder à une propriété comme s'il s'gissait d'une méthode.
+     * Permet d'accéder à une propriété comme s'il s'agissait d'une méthode.
      *
      * Si un objet livre a une propriété "title', vous pouvez y accéder (getter)
      * en appellant :
@@ -270,7 +270,7 @@ class Object extends Any {
      * </code>
      *
      * @param string $name Nom de la propriété.
-     * @param array $arguments Valeur éventuel. Si aucun argument 'est indiqué,
+     * @param array $arguments Valeur éventuel. Si aucun argument n'est indiqué,
      * la propriété sera accédée via son getter sinon, c'est le setter qui est
      * utilisé.
      *
@@ -284,7 +284,7 @@ class Object extends Any {
             return $this->__set($name, $arguments[0]);
         }
 
-        // Appel de la forme : $object->property($x)
+        // Appel de la forme : $object->property()
 
         // Le champ existe déjà, retourne sa valeur
         if (isset($this->value[$name])) {
