@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -121,7 +121,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
             // Sinon instancie l'élément
             else {
                 if (is_a($type, 'Docalist\Type\Object', true)) {
-                    $item = new $type($value);
+                    $item = new $type($value); /* @var $item Object */
+
+                    // Un objet a déjà un schéma, donc on ne peut pas lui fournir le notre
+                    // On se contente de recopier les propriétés qu'il n'a pas (format, etc.)
+                    $item->schema->value += $this->schema->value;
                 } else {
                     $item = new $type($value, $this->schema);
                 }
