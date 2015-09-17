@@ -39,13 +39,6 @@ class Any implements Serializable, JsonSerializable {
      */
     protected $schema;
 
-    /**
-     * Indentation en cours, utilisé uniquement pour __toString() dans les
-     * classes Composite et Collection.
-     *
-     * @var string
-     */
-    static protected $indent = '';
 
     /**
      * Crée un nouveau type.

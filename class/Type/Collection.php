@@ -275,24 +275,6 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $this;
     }
 
-    public function __toString() {
-        if (empty($this->value)) {
-            return '[ ]';
-        }
-
-        $result = '[';
-        self::$indent .= '    ';
-        foreach($this->value as $key => $item) {
-            $result .= PHP_EOL . self::$indent;
-            is_string($key) && $result .= var_export($key, true) . ': ' ;
-            $result .= $item->__toString();
-        }
-        self::$indent = substr(self::$indent, 0, -4);
-        $result .= PHP_EOL . self::$indent . ']';
-
-        return $result;
-    }
-
     public function filterEmpty($strict = true) {
         foreach($this->value as $key => $item) { /* @var $item Any */
             if ($item->filterEmpty($strict)) {

@@ -307,25 +307,6 @@ class Composite extends Any {
         return Any::classDefault();
     }
 
-    public function __toString() {
-        if (empty($this->value)) {
-            return '{ }';
-        }
-
-        $result = '{';
-        self::$indent .= '    ';
-        $fields = $this->schema ? $this->schema->fieldNames() : array_keys($this->value);
-        foreach($fields as $name) {
-            if (isset($this->value[$name])) {
-                $result .= PHP_EOL . self::$indent . $name . ': ' . $this->value[$name]->__toString();
-            }
-        }
-        self::$indent = substr(self::$indent, 0, -4);
-        $result .= PHP_EOL . self::$indent . '}';
-
-        return $result;
-    }
-
     public function filterEmpty($strict = true) {
         foreach($this->value as $key => $item) { /* @var $item Any */
             if ($item->filterEmpty($strict)) {
