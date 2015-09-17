@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -22,12 +22,9 @@ class InvalidTypeException extends InvalidArgumentException {
     /**
      * Construit l'exception.
      *
-     * @param string $expected Chaine décrivant le type qui était attendu.
+     * @param string $expected le nom du type qui était attendu.
      */
     public function __construct($expected) {
-//        $msg = __('Type incorrect, "%s" attendu', 'docalist-core');
-        $msg = 'Type incorrect, "%s" attendu';
-        $msg = sprintf($msg, $expected);
-        parent::__construct($msg);
+        parent::__construct(sprintf('Incorrect type, expected %s', $expected));
     }
 }
