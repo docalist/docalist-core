@@ -143,7 +143,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
             // Sinon, essaie de créer un Type à partir de la valeur
             else {
-                $item = self::guessType($value);
+                $item = Any::fromPhpType($value);
             }
         }
 

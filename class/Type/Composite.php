@@ -206,7 +206,7 @@ class Composite extends Any {
 
             // Sinon, essaie de créer le Type le plus adapté
             else {
-                $this->value[$name] = self::guessType($value);
+                $this->value[$name] = Any::fromPhpType($value);
             }
         }
 

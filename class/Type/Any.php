@@ -58,18 +58,28 @@ class Any implements Serializable, JsonSerializable {
     }
 
     /**
-     * Essaie de créer un Type à partir de la valeur php passée en paramètre.
+     * Crée un Type Docalist à partir de la valeur php passée en paramètre.
      *
      * La méthode essaie de déterminer la classe Type la plus adaptée en
-     * fonction du type php de la valeur indiquée.
+     * fonction du type php de la valeur passée en paramètre :
      *
-     * @param mixed $value
+     * - string -> {@link Text}
+     * - int -> {@link Integer}
+     * - bool -> {@link Boolean}
+     * - float -> {@link Decimal}
+     * - array (numeric keys) -> {@link Collection}
+     * - array (string keys) -> {@link Composite}
+     * - null -> {@link Any}
+     *
+     * @param mixed $value La valeur Php a convertir en type Docalist.
+     * @param Schema $schema Optionnel, le schéma du type.
+     *
      * @return Any
      *
-     * @throws InvalidTypeException Si le type de la valeur passée en paramètre
-     * n'est pas reconnu.
+     * @throws InvalidTypeException Si le type de la valeur php passée en
+     * paramètre n'est pas géré.
      */
-    static protected final function guessType($value) {
+    static public final function fromPhpType($value, Schema $schema = null) {
         if (is_array($value)) {
             // ça peut être une collection ou un tableau
             // pour tester si les clés sont des int (0..n) on pourrait utiliser
@@ -77,30 +87,30 @@ class Any implements Serializable, JsonSerializable {
             // cf. https://gist.github.com/Thinkscape/1965669
             // mais dans notre cas, il suffit de tester la clé du 1er élément
             if (is_int(key($value))) { // tableau numérique
-                return new Collection($value);
+                return new Collection($value, $schema);
             } else {
-                return new Composite($value); // tableau associatif
+                return new Composite($value, $schema); // tableau associatif
             }
         }
 
         if (is_string($value)) {
-            return new Text($value);
+            return new Text($value, $schema);
         }
 
         if (is_int($value)) {
-            return new Integer($value);
+            return new Integer($value, $schema);
         }
 
         if (is_bool($value)) {
-            return new Boolean($value);
+            return new Boolean($value, $schema);
         }
 
         if (is_float($value)) {
-            return new Decimal($value);
+            return new Decimal($value, $schema);
         }
 
         if (is_null($value)) {
-            return new Any();
+            return new Any($value, $schema);
         }
 
         throw new InvalidTypeException('a php type that I can guess');
