@@ -44,7 +44,7 @@ class Any implements Serializable, JsonSerializable {
     // -------------------------------------------------------------------------
 
     /**
-     * Crée un nouveau type.
+     * Crée un nouveau type docalist.
      *
      * @param mixed $value La valeur initiale. Pour les scalaires, vous devez
      * passer un type php natif correspondant au type de l'objet (int, bool,
@@ -58,9 +58,9 @@ class Any implements Serializable, JsonSerializable {
     }
 
     /**
-     * Crée un Type Docalist à partir de la valeur php passée en paramètre.
+     * Crée un type docalist à partir de la valeur php passée en paramètre.
      *
-     * La méthode essaie de déterminer la classe Type la plus adaptée en
+     * La méthode essaie de déterminer le type docalist le plus adapté en
      * fonction du type php de la valeur passée en paramètre :
      *
      * - string -> {@link Text}
