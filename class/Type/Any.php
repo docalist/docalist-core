@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -264,7 +264,7 @@ class Any implements Serializable, JsonSerializable {
         }
 
         if (is_float($value)) {
-            return new Float($value);
+            return new Decimal($value);
         }
 
         if (is_null($value)) {
