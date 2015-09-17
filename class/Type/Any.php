@@ -113,7 +113,7 @@ class Any implements Serializable, JsonSerializable {
             return new Any($value, $schema);
         }
 
-        throw new InvalidTypeException('a php type that I can guess');
+        throw new InvalidTypeException('a basic php type');
     }
 
     // -------------------------------------------------------------------------
