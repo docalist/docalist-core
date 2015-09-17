@@ -19,7 +19,9 @@ use Docalist\Type\Exception\InvalidTypeException;
  * Classe de base pour les types scalaires.
  */
 class Scalar extends Any {
-    static protected $default = ''; // null ? false ?
+    static public function classDefault() {
+        return ''; // null ? false ?
+    }
 
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();

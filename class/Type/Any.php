@@ -40,17 +40,6 @@ class Any implements Serializable, JsonSerializable {
     protected $schema;
 
     /**
-     * La valeur par défaut du type.
-     *
-     * Cette valeur n'est utilisée que si le type n'a pas de schéma (si on a
-     * un schéma, defaultValue() retourne la valeur par défaut indiquée dans
-     * le schéma).
-     *
-     * @var mixed
-     */
-    static protected $default = null;
-
-    /**
      * Indentation en cours, utilisé uniquement pour __toString() dans les
      * classes Composite et Collection.
      *
@@ -73,15 +62,16 @@ class Any implements Serializable, JsonSerializable {
     }
 
     /**
-     * Retourne la valeur par défaut de la classe.
+     * Retourne la valeur par défaut du type.
      *
-     * Cette méthode est statique, elle indique la valeur par défaut de cette
-     * classe de type.
+     * La méthode statique classDefault() retourne la valeur par défaut des
+     * instances ce type. Les classes descendantes (Boolean, Integer, etc.)
+     * surchargent cette méthode et retournent leur propre valeur par défaut.
      *
      * @return mixed
      */
-    static public final function classDefault() {
-        return static::$default;
+    static public function classDefault() {
+        return null;
     }
 
     /**
@@ -101,7 +91,7 @@ class Any implements Serializable, JsonSerializable {
             }
         }
 
-        return static::$default;
+        return static::classDefault();
     }
 
     /**

@@ -19,7 +19,9 @@ use Docalist\Type\Exception\InvalidTypeException;
  * Type booléen.
  */
 class Boolean extends Scalar {
-    static protected $default = true;
+    static public function classDefault() {
+        return true;
+    }
 
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();

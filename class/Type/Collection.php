@@ -21,8 +21,6 @@ use InvalidArgumentException;
  * Une collection de types.
  */
 class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate {
-    static protected $default = [];
-
     /**
      * Le type des éléments de cette collection.
      *
@@ -31,6 +29,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * @var string
      */
     static protected $type = 'Docalist\Type\Any';
+
+    static public function classDefault() {
+        return [];
+    }
 
     /**
      * Retourne le type (le nom de classe complet) des éléments de cette

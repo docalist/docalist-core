@@ -43,7 +43,9 @@ use InvalidArgumentException;
  * constructeur.
  */
 class Composite extends Any {
-    static protected $default = [];
+    static public function classDefault() {
+        return [];
+    }
 
     /**
      * Charge le schéma par défaut de l'objet.

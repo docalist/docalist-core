@@ -19,7 +19,9 @@ use Docalist\Type\Exception\InvalidTypeException;
  * Type chaine de caractères.
  */
 class Text extends Scalar {
-    static protected $default = '';
+    static public function classDefault() {
+        return '';
+    }
 
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();

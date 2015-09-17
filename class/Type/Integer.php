@@ -19,7 +19,9 @@ use Docalist\Type\Exception\InvalidTypeException;
  * Type entier.
  */
 class Integer extends Scalar {
-    static protected $default = 0;
+    static public function classDefault() {
+        return 0;
+    }
 
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();

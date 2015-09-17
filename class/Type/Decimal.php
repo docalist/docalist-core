@@ -19,7 +19,9 @@ use Docalist\Type\Exception\InvalidTypeException;
  * Type nombre décimal.
  */
 class Decimal extends Scalar {
-    static protected $default = 0.0;
+    static public function classDefault() {
+        return 0.0;
+    }
 
     public function assign($value) {
         ($value instanceof Any) && $value = $value->value();
