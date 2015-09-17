@@ -39,6 +39,9 @@ class Any implements Serializable, JsonSerializable {
      */
     protected $schema;
 
+    // -------------------------------------------------------------------------
+    // Constructeurs
+    // -------------------------------------------------------------------------
 
     /**
      * Crée un nouveau type.
@@ -52,159 +55,6 @@ class Any implements Serializable, JsonSerializable {
     public function __construct($value = null, Schema $schema = null) {
         $this->schema = $schema;
         $this->assign(is_null($value) ? $this->defaultValue() : $value);
-    }
-
-    /**
-     * Retourne la valeur par défaut du type.
-     *
-     * La méthode statique classDefault() retourne la valeur par défaut des
-     * instances ce type. Les classes descendantes (Boolean, Integer, etc.)
-     * surchargent cette méthode et retournent leur propre valeur par défaut.
-     *
-     * @return mixed
-     */
-    static public function classDefault() {
-        return null;
-    }
-
-    /**
-     * Retourne la valeur par défaut de l'objet.
-     *
-     * La méthode retourne la valeur par défaut indiquée dans le schéma associé
-     * à l'objet ou la valeur par défaut du type (classDefault) si aucun schéma
-     * n'est associé ou s'il n'indique pas de valeur par défaut.
-     *
-     * @return mixed
-     */
-    public function defaultValue() {
-        if ($this->schema) {
-            $default = $this->schema->defaultValue();
-            if (! is_null($default)) {
-                return $default;
-            }
-        }
-
-        return static::classDefault();
-    }
-
-    /**
-     * Assigne une valeur au type.
-     *
-     * @param mixed $value La valeur à assigner.
-     *
-     * @return self $this
-     *
-     * @throws InvalidTypeException Si $value est invalide.
-     */
-    public function assign($value) {
-        ($value instanceof Any) && $value = $value->value();
-        $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * Retourne la valeur sous la forme d'un type php natif (string, int, float
-     * ou bool pour les types simples, un tableau pour les types structurés et
-     * les collections).
-     *
-     * @return mixed
-     */
-    public function value() {
-        return $this->value;
-    }
-
-    /**
-     * Réinitialise le type à sa valeur par défaut.
-     *
-     * @return self $this
-     */
-    public final function reset() {
-        return $this->assign($this->defaultValue());
-    }
-
-    /**
-     * Retourne le schéma du type.
-     *
-     * @return Schema le schéma ou null si le type n'a pas de schéma associé.
-     */
-    public final function schema() {
-        return $this->schema;
-    }
-
-    /**
-     * Teste si deux types sont identiques.
-     *
-     * Par défaut, les types sont identiques si ils ont la même classe et
-     * la même valeur.
-     *
-     * @param Any $other
-     *
-     * @return boolean
-     */
-    public function equals(Any $other) {
-        return get_class($this) === get_class($other) && $this->value() === $other->value();
-    }
-
-    /**
-     * Retourne une représentation de la valeur sous forme de chaine de
-     * caractères.
-     *
-     * @return string
-     */
-    public function __toString() {
-        return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    }
-
-    /**
-     * Sérialise la valeur (implémentation de l'interface Serializable).
-     *
-     * @return string
-     */
-    public final function serialize() {
-        return serialize($this->value);
-    }
-
-    /**
-     * Désérialise le type (implémentation de l'interface Serializable).
-     *
-     * @param string $serialized
-     */
-    public final function unserialize($serialized) {
-        $this->assign(unserialize($serialized));
-    }
-
-    /**
-     * Spécifie les données qui doivent être sérialisées en JSON
-     * (implémentation de l'interface JsonSerializable).
-     *
-     * @return mixed
-     */
-    public final function jsonSerialize () {
-        return $this->value;
-    }
-//+is ?
-
-    /**
-     * Retourne le nom de la classe.
-     *
-     * @return string Retourne le nom de classe complet du type (incluant le
-     * namespace).
-     */
-    static public final function className() {
-        return get_called_class();
-    }
-
-    /**
-     * Retourne le namespace de la classe du type.
-     *
-     * @return string Le namespace de la classe ou une chaine vide s'il s'agit
-     * d'une classe globale.
-     */
-    static public final function ns() {
-        $class = get_called_class();
-        $pt = strrpos($class, '\\');
-        return $pt === false ? '' : substr($class, 0, $pt);
     }
 
     /**
@@ -256,6 +106,191 @@ class Any implements Serializable, JsonSerializable {
         throw new InvalidTypeException('a php type that I can guess');
     }
 
+    // -------------------------------------------------------------------------
+    // Valeur par défaut
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retourne la valeur par défaut du type.
+     *
+     * La méthode statique classDefault() retourne la valeur par défaut des
+     * instances ce type. Les classes descendantes (Boolean, Integer, etc.)
+     * surchargent cette méthode et retournent leur propre valeur par défaut.
+     *
+     * @return mixed
+     */
+    static public function classDefault() {
+        return null;
+    }
+
+    /**
+     * Retourne la valeur par défaut de l'objet.
+     *
+     * La méthode retourne la valeur par défaut indiquée dans le schéma associé
+     * à l'objet ou la valeur par défaut du type (classDefault) si aucun schéma
+     * n'est associé ou s'il n'indique pas de valeur par défaut.
+     *
+     * @return mixed
+     */
+    public function defaultValue() {
+        if ($this->schema) {
+            $default = $this->schema->defaultValue();
+            if (! is_null($default)) {
+                return $default;
+            }
+        }
+
+        return static::classDefault();
+    }
+
+    // -------------------------------------------------------------------------
+    // Initialisation de la valeur
+    // -------------------------------------------------------------------------
+
+    /**
+     * Assigne une valeur au type.
+     *
+     * @param mixed $value La valeur à assigner.
+     *
+     * @return self $this
+     *
+     * @throws InvalidTypeException Si $value est invalide.
+     */
+    public function assign($value) {
+        ($value instanceof Any) && $value = $value->value();
+        $this->value = $value;
+
+        return $this;
+    }
+
+    /**
+     * Réinitialise le type à sa valeur par défaut.
+     *
+     * @return self $this
+     */
+    public final function reset() {
+        return $this->assign($this->defaultValue());
+    }
+
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retourne la valeur sous la forme d'un type php natif (string, int, float
+     * ou bool pour les types simples, un tableau pour les types structurés et
+     * les collections).
+     *
+     * @return mixed
+     */
+    public function value() {
+        return $this->value;
+    }
+
+    /**
+     * Retourne le schéma du type.
+     *
+     * @return Schema le schéma ou null si le type n'a pas de schéma associé.
+     */
+    public final function schema() {
+        return $this->schema;
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests et comparaisons
+    // -------------------------------------------------------------------------
+
+    /**
+     * Teste si deux types sont identiques.
+     *
+     * Par défaut, les types sont identiques si ils ont la même classe et
+     * la même valeur.
+     *
+     * @param Any $other
+     *
+     * @return boolean
+     */
+    public function equals(Any $other) {
+        return get_class($this) === get_class($other) && $this->value() === $other->value();
+    }
+
+    /**
+     * Retourne une représentation de la valeur du type sous forme de chaine de
+     * caractères.
+     *
+     * @return string
+     */
+    public function __toString() {
+        return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Serializable
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retourne une chaine contenant la version sérialisée au format PHP de la
+     * valeur du type.
+     *
+     * @return string
+     */
+    public final function serialize() {
+        return serialize($this->value);
+    }
+
+    /**
+     * Initialise la valeur du type à partir d'une chaine contenant une valeur
+     * sérialisée au format PHP.
+     *
+     * @param string $serialized
+     */
+    public final function unserialize($serialized) {
+        $this->assign(unserialize($serialized));
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface JsonSerializable
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retourne les données à prendre en compte lorsque ce type est sérialisé
+     * au format JSON.
+     *
+     * @return mixed
+     */
+    public final function jsonSerialize () {
+        return $this->value;
+    }
+
+    // -------------------------------------------------------------------------
+    // Divers
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retourne le nom de la classe.
+     *
+     * @return string Retourne le nom de classe complet du type (incluant le
+     * namespace).
+     */
+    static public final function className() {
+        return get_called_class();
+    }
+
+    /**
+     * Retourne le namespace de la classe du type.
+     *
+     * @return string Le namespace de la classe ou une chaine vide s'il s'agit
+     * d'une classe globale.
+     */
+    static public final function ns() {
+        $class = get_called_class();
+        $pt = strrpos($class, '\\');
+        return $pt === false ? '' : substr($class, 0, $pt);
+    }
+
+    // -------------------------------------------------------------------------
+    // Filterable
+    // -------------------------------------------------------------------------
 
     /**
      * Filtre les valeurs vides.
