@@ -36,8 +36,4 @@ class Text extends Scalar {
 
         return $this;
     }
-
-    public function __toString() {
-        return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    }
 }

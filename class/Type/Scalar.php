@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -32,9 +32,5 @@ class Scalar extends Any {
         $this->value = $value;
 
         return $this;
-    }
-
-    public function __toString() {
-        return (string) $this->value;
     }
 }
