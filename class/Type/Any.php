@@ -165,7 +165,7 @@ class Any implements Serializable, JsonSerializable {
     }
 
     /**
-     * Retourne une représentation de la valeur sous forme de chaine de
+     * Retourne une représentation de la valeursous forme de chaine de
      * caractères.
      *
      * @return string
@@ -180,7 +180,7 @@ class Any implements Serializable, JsonSerializable {
      * @return string
      */
     public final function serialize() {
-        return serialize($this->value);
+        return serialize($this->value());
     }
 
     /**
@@ -199,7 +199,7 @@ class Any implements Serializable, JsonSerializable {
      * @return mixed
      */
     public final function jsonSerialize () {
-        return $this->value;
+        return $this->value();
     }
 //+is ?
 
