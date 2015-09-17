@@ -22,7 +22,7 @@ use InvalidArgumentException;
  *
  * @amethod string type() Retourne le type du champ.
  * La propriété contient toujours un nom de Type complet incluant le namespace
- * ('Docalist\Type\String' par défaut). Les alias (string, int, float, bool...)
+ * ('Docalist\Type\Text' par défaut). Les alias (string, int, float, bool...)
  * sont convertis lors de la création du champ.
  *
  * @amethod boolean repeatable() Indique si le champ est répétable.
@@ -40,7 +40,7 @@ class Field extends Schema {
         static $alias = [ // garder synchro avec le tableau de friendlyType()
             'any'     => 'Docalist\Type\Any',
             'scalar'  => 'Docalist\Type\Scalar',
-            'string'  => 'Docalist\Type\String',
+            'string'  => 'Docalist\Type\Text',
             'int'     => 'Docalist\Type\Integer',
             'bool'    => 'Docalist\Type\Boolean',
             'float'   => 'Docalist\Type\Float',
@@ -50,7 +50,7 @@ class Field extends Schema {
             'boolean' => 'Docalist\Type\Boolean',
             'double'  => 'Docalist\Type\Float',
             'real'    => 'Docalist\Type\Float',
-            'text'    => 'Docalist\Type\String',
+            'text'    => 'Docalist\Type\Text',
             'long'    => 'Docalist\Type\Integer',
         ];
 
@@ -116,7 +116,7 @@ class Field extends Schema {
     }
 
     public function type() {
-        return isset($this->value['type']) ? $this->value['type'] : 'Docalist\Type\String';
+        return isset($this->value['type']) ? $this->value['type'] : 'Docalist\Type\Text';
     }
 
     public function collection() {
@@ -181,7 +181,7 @@ class Field extends Schema {
         static $alias = [ // garder synchro avec le tableau de __construct()
             'Docalist\Type\Any'     => 'any',
             'Docalist\Type\Scalar'  => 'scalar',
-            'Docalist\Type\String'  => 'string',
+            'Docalist\Type\Text'    => 'string',
             'Docalist\Type\Integer' => 'int',
             'Docalist\Type\Boolean' => 'bool',
             'Docalist\Type\Float'   => 'float',
@@ -223,7 +223,7 @@ class Field extends Schema {
             // Si c'est la collection standard, inutile de l'indiquer
             if ($field['collection'] === 'Docalist\Type\Collection') {
                 unset($field['collection']);
-                $field['type'] = isset($field['type']) ? ($field['type'] . '*') : 'string*';
+                $field['type'] = isset($field['type']) ? ($field['type'] . '*') : 'text*';
             }
 
             else {
@@ -232,7 +232,7 @@ class Field extends Schema {
             }
         }
 
-        if ($field['type'] === 'string') {
+        if ($field['type'] === 'text') {
             unset($field['type']);
         }
 

@@ -44,7 +44,7 @@ class Schema extends Any {
     Pour être cohérent il faudrait les stocker sous la forme de types docalist
     et non de types php : fields serait une Collection de Field et les
     propriétés scalaires (description, label...) seraient stockées avec le type
-    docalist adéquat (String, etc.)
+    docalist adéquat (Text, etc.)
 
     Cela simplifierait pas mal les choses, car dans ce cas, la classe Schema
     serait juste un objet standard (au lieu d'hériter de Any, on hériterait de

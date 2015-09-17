@@ -14,20 +14,20 @@
 namespace Docalist\Table;
 
 use Docalist\Type\Object;
-use Docalist\Type\String;
+use Docalist\Type\Text;
 use Docalist\Type\Boolean;
 
 /**
  * Paramètres d'une table d'autorité.
  *
- * @property String $name Nom de la table
- * @property String $path Path (absolu) de la table
- * @property String $label Libellé de la table
- * @property String $format Format de la table (structure)
- * @property String $type Type de la table (nature)
+ * @property Text $name Nom de la table
+ * @property Text $path Path (absolu) de la table
+ * @property Text $label Libellé de la table
+ * @property Text $format Format de la table (structure)
+ * @property Text $type Type de la table (nature)
  * @property Boolean $readonly true : table prédéfinie, false : table utilisateur
- * @property String $creation Date de création
- * @property String $lastupdate Date de dernière modification
+ * @property Text $creation Date de création
+ * @property Text $lastupdate Date de dernière modification
  */
 class TableInfo extends Object {
     // TODO : Gère l'ancien champ user, à enlever quand les settings auront ét éréenregistrés

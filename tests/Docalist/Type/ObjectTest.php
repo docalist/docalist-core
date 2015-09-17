@@ -76,7 +76,7 @@ class ObjectTest extends WP_UnitTestCase {
         $a = new Money(['amount' => 16., 'currency' => '$', 'conversion' => [ ['amount' => 12.] ], 'timestamp' => 123456 ]);
 
         $this->assertInstanceOf('Docalist\Type\Float', $a->amount);
-        $this->assertInstanceOf('Docalist\Type\String', $a->currency);
+        $this->assertInstanceOf('Docalist\Type\Text', $a->currency);
         $this->assertInstanceOf('Docalist\Type\Collection', $a->conversion);
         $this->assertInstanceOf('Docalist\Type\Integer', $a->timestamp);
 
@@ -119,7 +119,7 @@ class ObjectTest extends WP_UnitTestCase {
         $a = new Money(['amount' => 16., 'currency' => '$', 'conversion' => [ ['amount' => 12.] ], 'timestamp' => 123456 ]);
 
 //         $this->assertInstanceOf('Docalist\Type\Float', $a->amount());
-//         $this->assertInstanceOf('Docalist\Type\String', $a->currency());
+//         $this->assertInstanceOf('Docalist\Type\Text', $a->currency());
 //         $this->assertInstanceOf('Docalist\Type\Collection', $a->conversion());
 //         $this->assertInstanceOf('Docalist\Type\Integer', $a->timestamp());
 
@@ -133,7 +133,7 @@ class ObjectTest extends WP_UnitTestCase {
 
         $a->amount(16)->currency('$')->conversion([ ['amount' => 12.] ])->timestamp(123456);
 //         $this->assertInstanceOf('Docalist\Type\Float', $a->amount());
-//         $this->assertInstanceOf('Docalist\Type\String', $a->currency());
+//         $this->assertInstanceOf('Docalist\Type\Text', $a->currency());
 //         $this->assertInstanceOf('Docalist\Type\Collection', $a->conversion());
 //         $this->assertInstanceOf('Docalist\Type\Integer', $a->timestamp());
 

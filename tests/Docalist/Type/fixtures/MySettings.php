@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -17,10 +17,10 @@ namespace Docalist\Tests\Type\Fixtures;
 use WP_UnitTestCase;
 
 use Docalist\Type\Settings;
+use Docalist\Type\Text;
 
 /**
- * @property string $url
- * @property int $timeout
+ * @property Text $url
  */
 class MySettings extends Settings {
     protected static function loadSchema() {

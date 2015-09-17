@@ -18,7 +18,7 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type chaine de caractères.
  */
-class String extends Scalar {
+class Text extends Scalar {
     static protected $default = '';
 
     public function assign($value) {

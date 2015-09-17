@@ -252,7 +252,7 @@ class Any implements Serializable, JsonSerializable {
         }
 
         if (is_string($value)) {
-            return new String($value);
+            return new Text($value);
         }
 
         if (is_int($value)) {

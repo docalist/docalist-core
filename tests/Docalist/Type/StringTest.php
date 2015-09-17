@@ -16,17 +16,17 @@ namespace Docalist\Tests\Type;
 
 use WP_UnitTestCase;
 
-use Docalist\Type\String;
+use Docalist\Type\Text;
 
 class StringTest extends WP_UnitTestCase {
     public function testNew() {
-        $a = new String();
+        $a = new Text();
         $this->assertSame('', $a->value());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
     public function testInvalidType()
     {
-        new String([]);
+        new Text([]);
     }
 }
