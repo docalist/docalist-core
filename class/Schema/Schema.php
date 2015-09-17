@@ -78,7 +78,7 @@ class Schema extends Any {
      *
      * @throws InvalidArgumentException Si le schéma contient des erreurs.
      */
-    public function __construct(array $value, $defaultNameSpace = '') {
+    public function __construct(array $value) {
         if (isset($value['fields'])) {
             $fields = [];
             foreach ($value['fields'] as $key => $field) {
@@ -93,7 +93,7 @@ class Schema extends Any {
                 }
 
                 // Compile
-                $field = new Field($field, $defaultNameSpace);
+                $field = new Field($field);
 
                 // Vérifie que le nom du champ est unique
                 $name = $field->name();

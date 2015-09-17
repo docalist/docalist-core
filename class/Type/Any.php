@@ -273,32 +273,6 @@ class Any implements Serializable, JsonSerializable {
     }
 
     // -------------------------------------------------------------------------
-    // Divers
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retourne le nom de la classe.
-     *
-     * @return string Retourne le nom de classe complet du type (incluant le
-     * namespace).
-     */
-    static public final function className() {
-        return get_called_class();
-    }
-
-    /**
-     * Retourne le namespace de la classe du type.
-     *
-     * @return string Le namespace de la classe ou une chaine vide s'il s'agit
-     * d'une classe globale.
-     */
-    static public final function ns() {
-        $class = get_called_class();
-        $pt = strrpos($class, '\\');
-        return $pt === false ? '' : substr($class, 0, $pt);
-    }
-
-    // -------------------------------------------------------------------------
     // Filterable
     // -------------------------------------------------------------------------
 

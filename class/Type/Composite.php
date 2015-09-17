@@ -74,7 +74,7 @@ class Composite extends Any {
 
         // Si loadSchema nous a retourné un tableau, on le compile
         if (is_array($schema)) {
-            $schema = new Schema($schema, self::ns());
+            $schema = new Schema($schema);
         }
 
         return $schema;

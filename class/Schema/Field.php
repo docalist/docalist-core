@@ -36,7 +36,7 @@ use InvalidArgumentException;
  *
  */
 class Field extends Schema {
-    public function __construct(array $value, $defaultNamespace = '') {
+    public function __construct(array $value) {
         static $alias = [ // garder synchro avec le tableau de friendlyType()
             'any'     => 'Docalist\Type\Any',
             'scalar'  => 'Docalist\Type\Scalar',
@@ -71,26 +71,9 @@ class Field extends Schema {
 
             // Le type indiqué doit être un nom de Type docalist
             else {
-                // On peut avoir soit un nom relatif au namespace en cours,
-                // (juste un nom de classe sans namespace et sans antislashs),
-                // soit un nom de classe complet incluant le namespace.
-                // Si c'est un nom de classe court et que la classe existe à la
-                // fois dans le namespace en cours et dans le namespace global,
-                // c'est celle du namespace en cours qui est prise en compte.
-                if ($defaultNamespace && false === strpos($type, '\\')) {
-                    $class = $defaultNamespace . '\\' . $type;
-                    class_exists($class, true) && $type = $class;
-                }
-
                 if (is_a($type, 'Docalist\Type\Collection', true)) {
-                    // $value['repeatable'] = true;
                     $value['collection'] = $type;
-                    $ns = $type::ns();
                     $type = $type::type();
-                    if ($ns) {
-                        $class = $ns . '\\' . $type;
-                        class_exists($class, true) && $type = $class;
-                    }
                 }
 
                 // La classe indiquée doit être un nom de Type et doit exister
