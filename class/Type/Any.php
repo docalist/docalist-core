@@ -230,7 +230,7 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return string
      */
-    public function __toString() {
+    public final function __toString() {
         return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
