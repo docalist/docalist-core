@@ -15,7 +15,7 @@
 namespace Docalist\Forms;
 
 use ReflectionClass;
-use Docalist\Type\Object;
+use Docalist\Type\Composite;
 
 /**
  * Représente une liste de champs.
@@ -99,7 +99,7 @@ abstract class Fields extends Field {
 
         if($debug) echo '&rArr;Fields ', $this->type(), '.', ($this->name() ?: $this->label()), '::bind()<br />';
 
-        if (is_null($this->schema) && $data instanceof Object) {
+        if (is_null($this->schema) && $data instanceof Composite) {
             if($debug) echo "data est un Object<br />";
             $this->schema = $data->schema();
             if($debug) echo "this.schema initialisé<br />";

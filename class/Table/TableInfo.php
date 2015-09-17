@@ -13,7 +13,7 @@
  */
 namespace Docalist\Table;
 
-use Docalist\Type\Object;
+use Docalist\Type\Composite;
 use Docalist\Type\Text;
 use Docalist\Type\Boolean;
 
@@ -29,7 +29,7 @@ use Docalist\Type\Boolean;
  * @property Text $creation Date de création
  * @property Text $lastupdate Date de dernière modification
  */
-class TableInfo extends Object {
+class TableInfo extends Composite {
     // TODO : Gère l'ancien champ user, à enlever quand les settings auront ét éréenregistrés
     public function assign($value) {
         unset($value['user']);

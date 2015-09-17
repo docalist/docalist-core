@@ -16,7 +16,7 @@ namespace Docalist\Tests\Type;
 
 use WP_UnitTestCase;
 
-use Docalist\Type\Object;
+use Docalist\Type\Composite;
 use Docalist\Type\Collection;
 
 use Docalist\Tests\Type\Fixtures\Client;

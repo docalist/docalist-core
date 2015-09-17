@@ -16,14 +16,14 @@ namespace Docalist\Tests\Type;
 
 use WP_UnitTestCase;
 
-use Docalist\Type\Object;
+use Docalist\Type\Composite;
 use Docalist\Schema\Schema;
 use Docalist\Tests\Type\Fixtures\Money;
 use Docalist\Type\Any;
 
-class ObjectTest extends WP_UnitTestCase {
+class CompositeTest extends WP_UnitTestCase {
     public function testNew() {
-        $a = new Object();
+        $a = new Composite();
         $this->assertSame([], $a->value());
 
         // valeurs par défaut (amount : 0, currency : EUR)
@@ -42,7 +42,7 @@ class ObjectTest extends WP_UnitTestCase {
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
     public function testInvalidType()
     {
-        (new Object)->assign('true');
+        (new Composite)->assign('true');
     }
 
     public function testSet() {
@@ -145,12 +145,12 @@ class ObjectTest extends WP_UnitTestCase {
         $a = new Money();
         $this->assertSame([], $a->conversion());
 
-        $a = new Object();
+        $a = new Composite();
         $this->assertSame(Any::classDefault(), $a->prop());
     }
 
     public function testToString() {
-        $a = new Object();
+        $a = new Composite();
         $b = new Money();
 
         $this->assertSame("{ }", $a->__toString());

@@ -20,7 +20,7 @@ use Docalist\Type\Any;
  * Un schéma permet de décrire les attributs d'un {@link Docalist\Type\Any type
  * de données Docalist}.
  *
- * Pour un {@link Docalist\Type\Object type structuré}, un schéma permet
+ * Pour un {@link Docalist\Type\Composite type structuré}, un schéma permet
  * également de définir la liste des champs qui composent cette structure en
  * utilisant la collection fields.
  *
@@ -48,10 +48,10 @@ class Schema extends Any {
 
     Cela simplifierait pas mal les choses, car dans ce cas, la classe Schema
     serait juste un objet standard (au lieu d'hériter de Any, on hériterait de
-    Object). :
+    Composite). :
 
     - Les méthodes __get, __set, __isset, __unset,  __call pourraient être
-      supprimées (déjà implémentées par Object).
+      supprimées (déjà implémentées par Composite).
     - La méthode field() pourrait être supprimée (propriété comme une autre)
     - $schema->fieldNames() pourrait être remplacé par $schema->fields->keys()
     - $schema->field($field) pourrait être remplacé par $schema->field[$field]

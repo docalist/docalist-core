@@ -42,7 +42,7 @@ use InvalidArgumentException;
  * classe, soit une version personnalisée du schéma transmise en paramètre au
  * constructeur.
  */
-class Object extends Any {
+class Composite extends Any {
     static protected $default = [];
 
     /**
@@ -279,12 +279,12 @@ class Object extends Any {
      * permettre le chainage de méthodes.
      */
     public function __call($name, $arguments) {
-        // $object->property($x) permet de modifier la valeur d'un champ
+        // $composite->property($x) permet de modifier la valeur d'un champ
         if ($arguments) {
             return $this->__set($name, $arguments[0]);
         }
 
-        // Appel de la forme : $object->property()
+        // Appel de la forme : $composite->property()
 
         // Le champ existe déjà, retourne sa valeur
         if (isset($this->value[$name])) {

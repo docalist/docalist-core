@@ -22,7 +22,7 @@ use Docalist\Repository\Repository;
  *
  * Une entité est un objet qui dispose d'une identité (un ID unique).
  */
-class Entity extends Object {
+class Entity extends Composite {
     /**
      * L'identifiant de l'entité.
      *

@@ -14,9 +14,9 @@
 
 namespace Docalist\Tests\Type\Fixtures;
 
-use Docalist\Type\Object;
+use Docalist\Type\Composite;
 
-class Money extends Object {
+class Money extends Composite {
     protected static function loadSchema() {
         return [
             'fields' => [

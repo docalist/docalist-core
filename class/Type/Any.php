@@ -52,12 +52,11 @@ class Any implements Serializable, JsonSerializable {
 
     /**
      * Indentation en cours, utilisé uniquement pour __toString() dans les
-     * classes Object et Collection.
+     * classes Composite et Collection.
      *
      * @var string
      */
     static protected $indent = '';
-    // TODO A réfléchir : introduire une classe Composite pour Object et Collection ?
 
     /**
      * Crée un nouveau type.
@@ -247,7 +246,7 @@ class Any implements Serializable, JsonSerializable {
             if (is_int(key($value))) { // tableau numérique
                 return new Collection($value);
             } else {
-                return new Object($value); // tableau associatif
+                return new Composite($value); // tableau associatif
             }
         }
 

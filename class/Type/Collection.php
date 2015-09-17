@@ -120,8 +120,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
             // Sinon instancie l'élément
             else {
-                if (is_a($type, 'Docalist\Type\Object', true)) {
-                    $item = new $type($value); /* @var $item Object */
+                if (is_a($type, 'Docalist\Type\Composite', true)) {
+                    $item = new $type($value); /* @var $item Composite */
 
                     // Un objet a déjà un schéma, donc on ne peut pas lui fournir le notre
                     // On se contente de recopier les propriétés qu'il n'a pas (format, etc.)
