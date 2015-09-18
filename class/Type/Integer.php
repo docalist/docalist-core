@@ -19,7 +19,7 @@ use Docalist\Type\Exception\InvalidTypeException;
  * Type entier.
  */
 class Integer extends Scalar {
-    static public function classDefault() {
+    public static function classDefault() {
         return 0;
     }
 

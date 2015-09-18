@@ -18,15 +18,20 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type booléen.
  */
-class Boolean extends Scalar {
-    static public function classDefault() {
+class Boolean extends Scalar
+{
+
+    public static function classDefault()
+    {
         return true;
     }
 
-    public function assign($value) {
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_bool($value)){
-            if (is_null($value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))) {
+        if (! is_bool($value)) {
+            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if (is_null($value)) {
                 throw new InvalidTypeException('boolean');
             }
         }

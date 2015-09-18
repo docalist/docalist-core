@@ -18,14 +18,18 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Classe de base pour les types scalaires.
  */
-class Scalar extends Any {
-    static public function classDefault() {
+class Scalar extends Any
+{
+
+    public static function classDefault()
+    {
         return ''; // null ? false ?
     }
 
-    public function assign($value) {
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_scalar($value)){
+        if (! is_scalar($value)) {
             throw new InvalidTypeException('scalar');
         }
 
