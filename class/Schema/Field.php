@@ -80,7 +80,7 @@ class Field extends Schema {
                 if (! is_a($type, 'Docalist\Type\Any', true)) {
                     $msg = 'Invalid type "%s" for field "%s"';
 
-                    throw new InvalidArgumentException(sprintf($msg, $type, $this->name()));
+                    throw new InvalidArgumentException(sprintf($msg, $type, isset($value['name']) ? $value['name'] : '(noname)'));
                 }
             }
             $value['type'] = $type;
