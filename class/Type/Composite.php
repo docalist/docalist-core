@@ -42,8 +42,11 @@ use InvalidArgumentException;
  * classe, soit une version personnalisée du schéma transmise en paramètre au
  * constructeur.
  */
-class Composite extends Any {
-    static public function classDefault() {
+class Composite extends Any
+{
+
+    public static function classDefault()
+    {
         return [];
     }
 
@@ -55,7 +58,8 @@ class Composite extends Any {
      *
      * @return array Un tableau représentant les données du schéma.
      */
-    protected static function loadSchema() {
+    protected static function loadSchema()
+    {
         return null;
     }
 
@@ -67,10 +71,12 @@ class Composite extends Any {
      *
      * @return Schema
      */
-    public static final function defaultSchema() {
+    final public static function defaultSchema()
+    {
         // Charge le format par défaut
         $schema = static::loadSchema();
         // retourne un schéma, un tableau ou null
+
 
         // Si loadSchema nous a retourné un tableau, on le compile
         if (is_array($schema)) {
@@ -96,14 +102,16 @@ class Composite extends Any {
      * @param array $value
      * @param Schema $schema
      */
-    public function __construct(array $value = null, Schema $schema = null) {
+    public function __construct(array $value = null, Schema $schema = null)
+    {
         // Initialise le schéma (utilise le schéma par défaut si besoin)
-        parent::__construct($value, $schema ?: $this::defaultSchema());
+        parent::__construct($value, $schema ?  : $this::defaultSchema());
     }
 
-    public function assign($value) {
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_array($value)){
+        if (! is_array($value)) {
             throw new InvalidTypeException('array');
         }
 
@@ -118,11 +126,12 @@ class Composite extends Any {
         // (faire un array_diff + unset de ce qu'on avait et qu'on n'a plus)
     }
 
-    public function value() {
+    public function value()
+    {
         // important : on retourne les champs dans l'ordre du schéma
         $fields = $this->schema ? $this->schema->fieldNames() : array_keys($this->value);
         $result = [];
-        foreach($fields as $name) {
+        foreach ($fields as $name) {
             if (isset($this->value[$name])) {
                 $value = $this->value[$name]->value();
                 $value !== [] && $result[$name] = $value;
@@ -140,7 +149,8 @@ class Composite extends Any {
      *
      * @return Any[]
      */
-    public function fields() {
+    public function fields()
+    {
         return $this->value;
     }
 
@@ -152,7 +162,8 @@ class Composite extends Any {
      *
      * @return self $this
      */
-    public function __set($name, $value) {
+    public function __set($name, $value)
+    {
         // Si la propriété existe déjà, on change simplement sa valeur
         if (isset($this->value[$name])) {
             is_null($value) && $value = $this->value[$name]->defaultValue();
@@ -163,10 +174,11 @@ class Composite extends Any {
 
         // Il faut initialiser le champ
 
+
         // Cas d'un objet typé (ayant un schéma)
         if ($this->schema) {
             // Vérifie que le champ existe et récupère son schéma
-             if ($this->schema->has($name)) {
+            if ($this->schema->has($name)) {
                 $field = $this->schema->field($name);
             } else {
                 $defaultSchema = $this->defaultSchema();
@@ -183,8 +195,7 @@ class Composite extends Any {
                 // Si value est déjà une Collection, on prend tel quel
                 if ($value instanceof Collection) {
                     $this->value[$name] = $value;
-                }
-                // Sinon, on instancie
+                }                 // Sinon, on instancie
                 else {
                     $this->value[$name] = new $collection($value, $field);
                 }
@@ -197,8 +208,7 @@ class Composite extends Any {
                 // Si value est déjà du bon type, on le prend tel quel
                 if ($value instanceof $type) {
                     $this->value[$name] = $value;
-                }
-                // Sinon, on instancie
+                }                 // Sinon, on instancie
                 else {
                     $this->value[$name] = new $type($value, $field);
                 }
@@ -228,7 +238,8 @@ class Composite extends Any {
      *
      * @return bool
      */
-    public function __isset($name) {
+    public function __isset($name)
+    {
         return isset($this->value[$name]);
     }
 
@@ -237,7 +248,8 @@ class Composite extends Any {
      *
      * @param string $name
      */
-    public function __unset($name) {
+    public function __unset($name)
+    {
         unset($this->value[$name]);
     }
 
@@ -250,7 +262,8 @@ class Composite extends Any {
      *
      * @throws InvalidArgumentException Si la propriété n'existe pas dans le schéma.
      */
-    public function __get($name) {
+    public function __get($name)
+    {
         // Initialise le champ s'il n'existe pas encore
         ! isset($this->value[$name]) && $this->__set($name, null);
 
@@ -288,13 +301,15 @@ class Composite extends Any {
      * comme getter), soit l'objet en cours (utilisation comme setter) pour
      * permettre le chainage de méthodes.
      */
-    public function __call($name, $arguments) {
+    public function __call($name, $arguments)
+    {
         // $composite->property($x) permet de modifier la valeur d'un champ
         if ($arguments) {
             return $this->__set($name, $arguments[0]);
         }
 
         // Appel de la forme : $composite->property()
+
 
         // Le champ existe déjà, retourne sa valeur
         if (isset($this->value[$name])) {
@@ -315,8 +330,9 @@ class Composite extends Any {
         return Any::classDefault();
     }
 
-    public function filterEmpty($strict = true) {
-        foreach($this->value as $key => $item) { /* @var $item Any */
+    public function filterEmpty($strict = true)
+    {
+        foreach ($this->value as $key => $item) { /* @var $item Any */
             if ($item->filterEmpty($strict)) {
                 unset($this->value[$key]);
             }
@@ -332,7 +348,8 @@ class Composite extends Any {
      * @param string $name Nom de la propriété à filtrer
      * @param string $strict Mode de comparaison.
      */
-    protected function filterEmptyProperty($name, $strict = true) {
-        return !isset($this->value[$name]) || $this->value[$name]->filterEmpty($strict);
+    protected function filterEmptyProperty($name, $strict = true)
+    {
+        return ! isset($this->value[$name]) || $this->value[$name]->filterEmpty($strict);
     }
 }

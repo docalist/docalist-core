@@ -36,7 +36,9 @@ use Docalist\Forms\Field;
  * Les données saisies par l'utilisateur dans ce formulaire peuvent être
  * validées en utilisant la méthode {@link validateEditorSettings()}.
  */
-interface Editable {
+interface Editable
+{
+
     /**
      * Retourne le formulaire permettant de saisir ce champ.
      *

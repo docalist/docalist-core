@@ -29,7 +29,9 @@ use Docalist\Forms\Field;
  * Les données saisies par l'utilisateur dans ce formulaire peuvent être
  * validées en utilisant la méthode {@link validateSettings()}.
  */
-interface Configurable {
+interface Configurable
+{
+
     /**
      * Retourne formulaire permettant de saisir et de modifier
      * les paramètres de base du type : libellé à utiliser, description, droit

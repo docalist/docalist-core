@@ -18,14 +18,18 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type chaine de caractères.
  */
-class Text extends Scalar {
-    static public function classDefault() {
+class Text extends Scalar
+{
+
+    public static function classDefault()
+    {
         return '';
     }
 
-    public function assign($value) {
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_string($value)){
+        if (! is_string($value)) {
             if (! is_scalar($value)) {
                 throw new InvalidTypeException('string');
             }
