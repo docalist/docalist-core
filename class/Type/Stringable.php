@@ -24,7 +24,9 @@ use Docalist\Forms\Field;
  *
  * Cette interface permet de formaliser le contrat.
  */
-interface Stringable {
+interface Stringable
+{
+
     /**
      * Retourne une représentation du type sous forme de chaine de caractères.
      *
