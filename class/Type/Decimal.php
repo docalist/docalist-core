@@ -18,14 +18,18 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type nombre décimal.
  */
-class Decimal extends Scalar {
-    static public function classDefault() {
+class Decimal extends Scalar
+{
+
+    public static function classDefault()
+    {
         return 0.0;
     }
 
-    public function assign($value) {
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_float($value)){
+        if (! is_float($value)) {
             if (false === $value = filter_var($value, FILTER_VALIDATE_FLOAT)) {
                 throw new InvalidTypeException('float');
             }
