@@ -74,9 +74,17 @@ class Composite extends Any {
 
         // Si loadSchema nous a retourné un tableau, on le compile
         if (is_array($schema)) {
-            $schema = new Schema($schema);
+            try {
+                $schema = new Schema($schema);
+            } catch (InvalidArgumentException $e) {
+                throw new InvalidArgumentException(sprintf('%s::loadchema(): %s', get_called_class(), $e->getMessage()));
+            }
         }
 
+        $t = array_intersect($schema->fieldNames(), get_class_methods(__CLASS__));
+        if ($t) {
+            echo 'WARNING : schema(', get_called_class(), ') conflit nom de champ / nom de méthode : ', implode(', ', $t), '<br />';
+        }
         return $schema;
 
         // TODO: cache
