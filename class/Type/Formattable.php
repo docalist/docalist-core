@@ -39,7 +39,9 @@ use Docalist\Forms\Field;
  * Les données saisies par l'utilisateur dans ce formulaire peuvent être
  * validées en utilisant la méthode {@link validateFormatSettings()}.
  */
-interface Formattable {
+interface Formattable
+{
+
     /**
      * Formatte le type.
      *
