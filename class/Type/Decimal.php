@@ -21,7 +21,7 @@ use Docalist\Type\Exception\InvalidTypeException;
 class Decimal extends Scalar
 {
 
-    public static function classDefault()
+    public static function getClassDefault()
     {
         return 0.0;
     }

@@ -45,7 +45,7 @@ use InvalidArgumentException;
 class Composite extends Any
 {
 
-    public static function classDefault()
+    public static function getClassDefault()
     {
         return [];
     }
@@ -86,11 +86,12 @@ class Composite extends Any
                 throw new InvalidArgumentException(sprintf('%s::loadchema(): %s', get_called_class(), $e->getMessage()));
             }
         }
-
+/*
         $t = array_intersect($schema->fieldNames(), get_class_methods(__CLASS__));
         if ($t) {
             echo 'WARNING : schema(', get_called_class(), ') conflit nom de champ / nom de méthode : ', implode(', ', $t), '<br />';
         }
+*/
         return $schema;
 
         // TODO: cache
@@ -320,14 +321,14 @@ class Composite extends Any
         if ($this->schema) {
             $field = $this->schema->field($name);
             if ($collection = $field->collection()) {
-                return $collection::classDefault();
+                return $collection::getClassDefault();
             }
 
             $type = $field->type();
-            return $type::classDefault();
+            return $type::getClassDefault();
         }
 
-        return Any::classDefault();
+        return Any::getClassDefault();
     }
 
     public function filterEmpty($strict = true)

@@ -30,7 +30,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     static protected $type = 'Docalist\Type\Any';
 
-    static public function classDefault() {
+    static public function getClassDefault() {
         return [];
     }
 

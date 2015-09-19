@@ -21,7 +21,7 @@ use Docalist\Type\Exception\InvalidTypeException;
 class Text extends Scalar
 {
 
-    public static function classDefault()
+    public static function getClassDefault()
     {
         return '';
     }

@@ -21,7 +21,7 @@ use Docalist\Type\Exception\InvalidTypeException;
 class Scalar extends Any
 {
 
-    public static function classDefault()
+    public static function getClassDefault()
     {
         return ''; // null ? false ?
     }
