@@ -187,7 +187,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return self $this
      */
-    public final function reset()
+    final public function reset()
     {
         return $this->assign($this->getDefaultValue());
     }
@@ -214,7 +214,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return Schema le schéma ou null si le type n'a pas de schéma associé.
      */
-    public final function schema()
+    final public function schema()
     {
         return $this->schema;
     }
@@ -258,7 +258,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return string
      */
-    public final function serialize()
+    final public function serialize()
     {
         return serialize($this->value);
     }
@@ -269,7 +269,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @param string $serialized
      */
-    public final function unserialize($serialized)
+    final public function unserialize($serialized)
     {
         $this->assign(unserialize($serialized));
     }
@@ -285,7 +285,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return mixed
      */
-    public final function jsonSerialize()
+    final public function jsonSerialize()
     {
         return $this->value;
     }
