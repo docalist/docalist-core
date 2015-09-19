@@ -13,20 +13,19 @@
  */
 namespace Docalist\Type;
 
-use Serializable, JsonSerializable;
+use Serializable;
+use JsonSerializable;
 use Docalist\Schema\Schema;
 use Docalist\Forms\Fragment;
 use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Tag;
 
-/*
- * Inspiration : https://github.com/nicolopignatelli/valueobjects
- */
-
 /**
  * Classe de base pour les différents types de données.
  */
-class Any implements Stringable, Formattable, Editable, Serializable, JsonSerializable {
+class Any implements Stringable, Formattable, Editable, Serializable, JsonSerializable
+{
+
     /**
      * La valeur du type.
      *
@@ -45,6 +44,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // Constructeurs
     // -------------------------------------------------------------------------
 
+
     /**
      * Crée un nouveau type docalist.
      *
@@ -54,7 +54,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      * passer un tableau.
      * @param Schema $schema Optionnel, le schéma du type.
      */
-    public function __construct($value = null, Schema $schema = null) {
+    public function __construct($value = null, Schema $schema = null)
+    {
         $this->schema = $schema;
         $this->assign(is_null($value) ? $this->defaultValue() : $value);
     }
@@ -81,7 +82,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      * @throws InvalidTypeException Si le type de la valeur php passée en
      * paramètre n'est pas géré.
      */
-    static public final function fromPhpType($value, Schema $schema = null) {
+    final public static function fromPhpType($value, Schema $schema = null)
+    {
         if (is_array($value)) {
             // ça peut être une collection ou un tableau
             // pour tester si les clés sont des int (0..n) on pourrait utiliser
@@ -90,9 +92,9 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             // mais dans notre cas, il suffit de tester la clé du 1er élément
             if (is_int(key($value))) { // tableau numérique
                 return new Collection($value, $schema);
-            } else {
-                return new Composite($value, $schema); // tableau associatif
             }
+
+            return new Composite($value, $schema); // tableau associatif
         }
 
         if (is_string($value)) {
@@ -122,6 +124,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // Valeur par défaut
     // -------------------------------------------------------------------------
 
+
     /**
      * Retourne la valeur par défaut du type.
      *
@@ -131,7 +134,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return mixed
      */
-    static public function getClassDefault() {
+    public static function getClassDefault()
+    {
         return null;
     }
 
@@ -144,7 +148,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return mixed
      */
-    public function getDefaultValue() {
+    public function getDefaultValue()
+    {
         if ($this->schema) {
             $default = $this->schema->defaultValue();
             if (! is_null($default)) {
@@ -159,6 +164,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // Initialisation de la valeur
     // -------------------------------------------------------------------------
 
+
     /**
      * Assigne une valeur au type.
      *
@@ -168,7 +174,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @throws InvalidTypeException Si $value est invalide.
      */
-    public function assign($value) {
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
         $this->value = $value;
 
@@ -180,13 +187,15 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return self $this
      */
-    public final function reset() {
+    public final function reset()
+    {
         return $this->assign($this->getDefaultValue());
     }
 
     // -------------------------------------------------------------------------
     // Getters
     // -------------------------------------------------------------------------
+
 
     /**
      * Retourne la valeur sous la forme d'un type php natif (string, int, float
@@ -195,7 +204,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return mixed
      */
-    public function value() {
+    public function value()
+    {
         return $this->value;
     }
 
@@ -204,13 +214,15 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return Schema le schéma ou null si le type n'a pas de schéma associé.
      */
-    public final function schema() {
+    public final function schema()
+    {
         return $this->schema;
     }
 
     // -------------------------------------------------------------------------
     // Tests et comparaisons
     // -------------------------------------------------------------------------
+
 
     /**
      * Teste si deux types sont identiques.
@@ -222,15 +234,16 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return boolean
      */
-    public function equals(Any $other) {
+    public function equals(Any $other)
+    {
         return get_class($this) === get_class($other) && $this->value() === $other->value();
     }
 
     // -------------------------------------------------------------------------
     // Interface Stringable
     // -------------------------------------------------------------------------
-
-    public function __toString() {
+    public function __toString()
+    {
         return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
@@ -238,13 +251,15 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // Interface Serializable
     // -------------------------------------------------------------------------
 
+
     /**
      * Retourne une chaine contenant la version sérialisée au format PHP de la
      * valeur du type.
      *
      * @return string
      */
-    public final function serialize() {
+    public final function serialize()
+    {
         return serialize($this->value);
     }
 
@@ -254,7 +269,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @param string $serialized
      */
-    public final function unserialize($serialized) {
+    public final function unserialize($serialized)
+    {
         $this->assign(unserialize($serialized));
     }
 
@@ -262,19 +278,22 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // Interface JsonSerializable
     // -------------------------------------------------------------------------
 
+
     /**
      * Retourne les données à prendre en compte lorsque ce type est sérialisé
      * au format JSON.
      *
      * @return mixed
      */
-    public final function jsonSerialize () {
+    public final function jsonSerialize()
+    {
         return $this->value;
     }
 
     // -------------------------------------------------------------------------
     // Interface Filterable
     // -------------------------------------------------------------------------
+
 
     /**
      * Filtre les valeurs vides.
@@ -307,19 +326,19 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return bool true si le champ est vide, false sinon.
      */
-    public function filterEmpty($strict = true) {
+    public function filterEmpty($strict = true)
+    {
         return empty($this->value);
     }
 
     // -------------------------------------------------------------------------
     // Interface Configurable
     // -------------------------------------------------------------------------
-
-    public function getSettingsForm() {
+    public function getSettingsForm()
+    {
         $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
         $form = new Fragment($name);
-        $form->hidden('name')
-            ->attribute('class', 'name');
+        $form->hidden('name')->attribute('class', 'name');
         $form->input('label')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'label regular-text')
@@ -340,41 +359,44 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         return $form;
     }
 
-    public function validateSettings(array $settings) {
+    public function validateSettings(array $settings)
+    {
         return $settings;
     }
 
     // -------------------------------------------------------------------------
     // Interface Formattable
     // -------------------------------------------------------------------------
-
-    public function getFormattedValue(array $options = null) {
+    public function getFormattedValue(array $options = null)
+    {
         return get_class($this) . '::format() not implemented';
     }
 
-    public function getAvailableFormats() {
+    public function getAvailableFormats()
+    {
         return [];
     }
 
-    public function getDefaultFormat() {
+    public function getDefaultFormat()
+    {
         return key($this->getAvailableFormats()); // key() retourne null si tableau vide
     }
 
-    public function getFormatSettingsForm() {
+    public function getFormatSettingsForm()
+    {
         $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
         $form = new Fragment($name);
-        $form->hidden('name')
-            ->attribute('class', 'name');
+        $form->hidden('name')->attribute('class', 'name');
         $form->input('labelspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'labelspec regular-text')
-            ->attribute('placeholder', $this->schema->label ?: __('(aucun libellé)', 'docalist-core'))
+            ->attribute('placeholder', $this->schema->label ?  : __('(aucun libellé)', 'docalist-core'))
             ->label(__('Libellé', 'docalist-core'))
             ->description(__("Libellé affiché avant le champ. Par défaut, c'est le même que dans la grille de saisie mais vous pouvez saisir un nouveau texte si vous voulez un libellé différent.", 'docalist-core'));
         $form->input('capabilityspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'capabilityspec regular-text')
-            ->attribute('placeholder', $this->schema->capability ?: '')
+            ->attribute('placeholder', $this->schema->capability ?  : '')
             ->label(__('Droit requis', 'docalist-core'))
             ->description(__("Droit requis pour afficher ce champ. Par défaut, c'est le droit du champ qui figure dans la grille de base qui est utilisé.", 'docalist-core'));
         $form->input('before')
@@ -391,49 +413,52 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         return $form;
     }
 
-    public function validateFormatSettings(array $settings) {
+    public function validateFormatSettings(array $settings)
+    {
         return $settings;
     }
 
     // -------------------------------------------------------------------------
     // Interface Editable
     // -------------------------------------------------------------------------
-
-    public function getEditorForm(array $options = null) {
+    public function getEditorForm(array $options = null)
+    {
         return new Tag('p', get_class($this) . '::getEditorForm() not implemented');
     }
 
-    public function getAvailableEditors() {
+    public function getAvailableEditors()
+    {
         return [];
     }
 
-    public function getDefaultEditor() {
+    public function getDefaultEditor()
+    {
         return key($this->getAvailableEditors()); // key() retourne null si tableau vide
     }
 
-    public function getEditorSettingsForm() {
+    public function getEditorSettingsForm()
+    {
         $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
 
         $form = new Fragment($name);
-        $form->hidden('name')
-            ->attribute('class', 'name');
+        $form->hidden('name')->attribute('class', 'name');
         $form->input('labelspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'labelspec regular-text')
-            ->attribute('placeholder', $this->schema->label ?: __('(aucun libellé)', 'docalist-core'))
+            ->attribute('placeholder', $this->schema->label ?  : __('(aucun libellé)', 'docalist-core'))
             ->label(__('Libellé en saisie', 'docalist-core'))
             ->description(__("Libellé affiché en saisie. Par défaut, c'est le libellé indiqué dans les paramètres de base qui est utilisé mais vous pouvez indiquer un libellé différent si vous le souhaitez.", 'docalist-core'));
         $form->textarea('descriptionspec')
             ->attribute('id', $name . '-description')
             ->attribute('class', 'description large-text')
             ->attribute('rows', 2)
-            ->attribute('placeholder', $this->schema->description ?: __('(pas de description)', 'docalist-core'))
+            ->attribute('placeholder', $this->schema->description ?  : __('(pas de description)', 'docalist-core'))
             ->label(__('Aide à la saisie', 'docalist-core'))
             ->description(__("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ. Par défaut, c'est la description du champ qui figure dans la grille de base qui est utilisée.", 'docalist-core'));
         $form->input('capabilityspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'capabilityspec regular-text')
-            ->attribute('placeholder', $this->schema->capability ?: '')
+            ->attribute('placeholder', $this->schema->capability ?  : '')
             ->label(__('Droit requis', 'docalist-core'))
             ->description(__("Droit requis pour que ce champ apparaissent dans le formulaire. Par défaut, c'est le droit du champ qui figure dans la grille de base qui est utilisé.", 'docalist-core'));
 
@@ -455,13 +480,15 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         return $form;
     }
 
-    public function validateEditorSettings(array $settings) {
+    public function validateEditorSettings(array $settings)
+    {
         return $settings;
     }
 
     // -------------------------------------------------------------------------
     // Privé
     // -------------------------------------------------------------------------
+
 
     /**
      * Génère un nom aléatoire composé de lettres minuscules.
@@ -471,7 +498,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return string
      */
-    private function randomId($length = 4) {
-        return substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), -$length);
+    private function randomId($length = 4)
+    {
+        return substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), - $length);
     }
 }
