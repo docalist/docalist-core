@@ -23,21 +23,22 @@ use Docalist\Forms\Field;
  * par exemple choisir le libellé à utiliser, la table d'autorité associée, les
  * droits requis pour y avoir accès, etc.
  *
- * La méthode {@link getSettingsForm()} retourne un {@link Docalist\Forms\Field
- * formulaire} contenant toutes les options disponibles.
+ * La méthode {@link getSettingsForm()} retourne un {@link Field formulaire}
+ * contenant toutes les options disponibles.
  *
  * Les données saisies par l'utilisateur dans ce formulaire peuvent être
  * validées en utilisant la méthode {@link validateSettings()}.
+ *
+ * @link Field formulaire
  */
 interface Configurable
 {
 
     /**
-     * Retourne formulaire permettant de saisir et de modifier
-     * les paramètres de base du type : libellé à utiliser, description, droit
-     * requis, etc.
+     * Retourne un formulaire permettant de saisir et de modifier les paramètres
+     * de base du type : libellé à utiliser, description, droit requis, etc.
      *
-     * @return Fragment
+     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
      */
     public function getSettingsForm();
 
@@ -52,9 +53,9 @@ interface Configurable
      * inchangés) mais les classes descendantes peuvent surcharger cette méthode
      * pour faire les vérifications nécessaires.
      *
-     * @param array $settings Les paramétres validés.
+     * @param array $settings Les paramétres à valider.
      *
-     * @return array
+     * @return array Les paramètres validés.
      */
     public function validateSettings(array $settings);
 }
