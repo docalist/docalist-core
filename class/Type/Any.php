@@ -144,7 +144,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return mixed
      */
-    public function defaultValue() {
+    public function getDefaultValue() {
         if ($this->schema) {
             $default = $this->schema->defaultValue();
             if (! is_null($default)) {
@@ -181,7 +181,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      * @return self $this
      */
     public final function reset() {
-        return $this->assign($this->defaultValue());
+        return $this->assign($this->getDefaultValue());
     }
 
     // -------------------------------------------------------------------------

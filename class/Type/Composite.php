@@ -167,7 +167,7 @@ class Composite extends Any
     {
         // Si la propriété existe déjà, on change simplement sa valeur
         if (isset($this->value[$name])) {
-            is_null($value) && $value = $this->value[$name]->defaultValue();
+            is_null($value) && $value = $this->value[$name]->getDefaultValue();
             $this->value[$name]->assign($value);
             return $this;
             // TODO : si $value est déjà un type du bon type
