@@ -16,8 +16,8 @@ namespace Docalist\Type;
 use Docalist\Forms\Field;
 
 /**
- * Stringable : API permettant d'obtenir une représentation textuelle d'un type
- * de données docalist.
+ * API permettant d'obtenir une représentation textuelle d'un type de données
+ * docalist.
  *
  * Tous les types de données docalist peuvent être "dumpés" sous forme de
  * chaine et implémente la méthode magique __toString() de PHP.

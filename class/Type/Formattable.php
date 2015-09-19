@@ -16,7 +16,7 @@ namespace Docalist\Type;
 use Docalist\Forms\Field;
 
 /**
- * Formattable : API permettant de formatter un type de données docalist.
+ * API permettant de formatter un type de données docalist.
  *
  * Tous les types de données docalist peuvent être formattés (pour les afficher,
  * les exporter, etc.) en appellant la méthode {@link getFormattedValue()}.

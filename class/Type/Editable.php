@@ -16,7 +16,7 @@ namespace Docalist\Type;
 use Docalist\Forms\Field;
 
 /**
- * Editable : API permettant de saisir et modifier un type de données docalist.
+ * API permettant de saisir et modifier un type de données docalist.
  *
  * Tous les types de données docalist disposent d'un ou plusieurs éditeurs (des
  * {@link Docalist\Forms\Field formulaires}) qui peuvent être utilisés pour

@@ -16,8 +16,7 @@ namespace Docalist\Type;
 use Docalist\Forms\Field;
 
 /**
- * Configurable : API permettant de modifier les paramètres d'un type de données
- * docalist.
+ * API permettant de modifier les paramètres d'un type de données docalist.
  *
  * Tous les types de données docalist disposent peuvent être paramétrés. On peut
  * par exemple choisir le libellé à utiliser, la table d'autorité associée, les
