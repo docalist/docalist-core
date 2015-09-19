@@ -82,7 +82,7 @@ interface Formattable
      * les paramètres d'affichage du type : libellé à afficher, format
      * d'affichage, etc.
      *
-     * @return Field
+     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
      */
     public function getFormatSettingsForm();
 
@@ -97,9 +97,9 @@ interface Formattable
      * inchangés) mais les classes descendantes peuvent surcharger cette méthode
      * pour faire les vérifications nécessaires.
      *
-     * @param array $settings Les paramétres validés.
+     * @param array $settings Les paramétres à valider.
      *
-     * @return array
+     * @return array Les paramètres validés.
      */
     public function validateFormatSettings(array $settings);
 }
