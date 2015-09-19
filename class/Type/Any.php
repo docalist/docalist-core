@@ -13,9 +13,11 @@
  */
 namespace Docalist\Type;
 
-use Docalist\Schema\Schema;
 use Serializable, JsonSerializable;
+use Docalist\Schema\Schema;
+use Docalist\Forms\Fragment;
 use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Forms\Tag;
 
 /*
  * Inspiration : https://github.com/nicolopignatelli/valueobjects
@@ -24,7 +26,7 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Classe de base pour les différents types de données.
  */
-class Any implements Serializable, JsonSerializable {
+class Any implements Stringable, Formattable, Editable, Serializable, JsonSerializable {
     /**
      * La valeur du type.
      *
@@ -123,13 +125,13 @@ class Any implements Serializable, JsonSerializable {
     /**
      * Retourne la valeur par défaut du type.
      *
-     * La méthode statique classDefault() retourne la valeur par défaut des
+     * La méthode statique getClassDefault() retourne la valeur par défaut des
      * instances ce type. Les classes descendantes (Boolean, Integer, etc.)
      * surchargent cette méthode et retournent leur propre valeur par défaut.
      *
      * @return mixed
      */
-    static public function classDefault() {
+    static public function getClassDefault() {
         return null;
     }
 
@@ -137,8 +139,8 @@ class Any implements Serializable, JsonSerializable {
      * Retourne la valeur par défaut de l'objet.
      *
      * La méthode retourne la valeur par défaut indiquée dans le schéma associé
-     * à l'objet ou la valeur par défaut du type (classDefault) si aucun schéma
-     * n'est associé ou s'il n'indique pas de valeur par défaut.
+     * à l'objet ou la valeur par défaut du type (getClassDefault) si aucun
+     * schéma n'est associé ou s'il n'indique pas de valeur par défaut.
      *
      * @return mixed
      */
@@ -150,7 +152,7 @@ class Any implements Serializable, JsonSerializable {
             }
         }
 
-        return static::classDefault();
+        return static::getClassDefault();
     }
 
     // -------------------------------------------------------------------------
@@ -224,13 +226,11 @@ class Any implements Serializable, JsonSerializable {
         return get_class($this) === get_class($other) && $this->value() === $other->value();
     }
 
-    /**
-     * Retourne une représentation de la valeur du type sous forme de chaine de
-     * caractères.
-     *
-     * @return string
-     */
-    public final function __toString() {
+    // -------------------------------------------------------------------------
+    // Interface Stringable
+    // -------------------------------------------------------------------------
+
+    public function __toString() {
         return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
@@ -273,7 +273,7 @@ class Any implements Serializable, JsonSerializable {
     }
 
     // -------------------------------------------------------------------------
-    // Filterable
+    // Interface Filterable
     // -------------------------------------------------------------------------
 
     /**
@@ -309,5 +309,169 @@ class Any implements Serializable, JsonSerializable {
      */
     public function filterEmpty($strict = true) {
         return empty($this->value);
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Configurable
+    // -------------------------------------------------------------------------
+
+    public function getSettingsForm() {
+        $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+        $form = new Fragment($name);
+        $form->hidden('name')
+            ->attribute('class', 'name');
+        $form->input('label')
+            ->attribute('id', $name . '-label')
+            ->attribute('class', 'label regular-text')
+            ->label(__('Libellé du champ', 'docalist-core'))
+            ->description(__('Libellé utilisé pour désigner le champ.', 'docalist-core'));
+        $form->textarea('description')
+            ->attribute('id', $name . '-description')
+            ->attribute('class', 'description large-text')
+            ->attribute('rows', 2)
+            ->label(__('Description', 'docalist-core'))
+            ->description(__('Description du champ : rôle, particularités, format...', 'docalist-core'));
+        $form->input('capability')
+            ->attribute('id', $name . '-capability')
+            ->attribute('class', 'capability regular-text')
+            ->label(__('Droit requis', 'docalist-core'))
+            ->description(__("Capacité WordPress dont doit disposer l'utilisateur pour pouvoir accéder à ce champ ou vide si aucun droit particulier n'est requis.", 'docalist-core'));
+
+        return $form;
+    }
+
+    public function validateSettings(array $settings) {
+        return $settings;
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Formattable
+    // -------------------------------------------------------------------------
+
+    public function getFormattedValue(array $options = null) {
+        return get_class($this) . '::format() not implemented';
+    }
+
+    public function getAvailableFormats() {
+        return [];
+    }
+
+    public function getDefaultFormat() {
+        return key($this->getAvailableFormats()); // key() retourne null si tableau vide
+    }
+
+    public function getFormatSettingsForm() {
+        $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+        $form = new Fragment($name);
+        $form->hidden('name')
+            ->attribute('class', 'name');
+        $form->input('labelspec')
+            ->attribute('id', $name . '-label')
+            ->attribute('class', 'labelspec regular-text')
+            ->attribute('placeholder', $this->schema->label ?: __('(aucun libellé)', 'docalist-core'))
+            ->label(__('Libellé', 'docalist-core'))
+            ->description(__("Libellé affiché avant le champ. Par défaut, c'est le même que dans la grille de saisie mais vous pouvez saisir un nouveau texte si vous voulez un libellé différent.", 'docalist-core'));
+        $form->input('capabilityspec')
+            ->attribute('id', $name . '-label')
+            ->attribute('class', 'capabilityspec regular-text')
+            ->attribute('placeholder', $this->schema->capability ?: '')
+            ->label(__('Droit requis', 'docalist-core'))
+            ->description(__("Droit requis pour afficher ce champ. Par défaut, c'est le droit du champ qui figure dans la grille de base qui est utilisé.", 'docalist-core'));
+        $form->input('before')
+            ->attribute('id', $name . '-before')
+            ->attribute('class', 'before regular-text')
+            ->label(__('Avant le champ', 'docalist-core'))
+            ->description(__('Texte ou code html à insérer avant le contenu du champ.', 'docalist-core'));
+        $form->input('after')
+            ->attribute('id', $name . '-before')
+            ->attribute('class', 'after regular-text')
+            ->label(__('Après le champ', 'docalist-core'))
+            ->description(__('Texte ou code html à insérer après le contenu du champ.', 'docalist-core'));
+
+        return $form;
+    }
+
+    public function validateFormatSettings(array $settings) {
+        return $settings;
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Editable
+    // -------------------------------------------------------------------------
+
+    public function getEditorForm(array $options = null) {
+        return new Tag('p', get_class($this) . '::getEditorForm() not implemented');
+    }
+
+    public function getAvailableEditors() {
+        return [];
+    }
+
+    public function getDefaultEditor() {
+        return key($this->getAvailableEditors()); // key() retourne null si tableau vide
+    }
+
+    public function getEditorSettingsForm() {
+        $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+
+        $form = new Fragment($name);
+        $form->hidden('name')
+            ->attribute('class', 'name');
+        $form->input('labelspec')
+            ->attribute('id', $name . '-label')
+            ->attribute('class', 'labelspec regular-text')
+            ->attribute('placeholder', $this->schema->label ?: __('(aucun libellé)', 'docalist-core'))
+            ->label(__('Libellé en saisie', 'docalist-core'))
+            ->description(__("Libellé affiché en saisie. Par défaut, c'est le libellé indiqué dans les paramètres de base qui est utilisé mais vous pouvez indiquer un libellé différent si vous le souhaitez.", 'docalist-core'));
+        $form->textarea('descriptionspec')
+            ->attribute('id', $name . '-description')
+            ->attribute('class', 'description large-text')
+            ->attribute('rows', 2)
+            ->attribute('placeholder', $this->schema->description ?: __('(pas de description)', 'docalist-core'))
+            ->label(__('Aide à la saisie', 'docalist-core'))
+            ->description(__("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ. Par défaut, c'est la description du champ qui figure dans la grille de base qui est utilisée.", 'docalist-core'));
+        $form->input('capabilityspec')
+            ->attribute('id', $name . '-label')
+            ->attribute('class', 'capabilityspec regular-text')
+            ->attribute('placeholder', $this->schema->capability ?: '')
+            ->label(__('Droit requis', 'docalist-core'))
+            ->description(__("Droit requis pour que ce champ apparaissent dans le formulaire. Par défaut, c'est le droit du champ qui figure dans la grille de base qui est utilisé.", 'docalist-core'));
+
+        $default = $this->editForm()->name('default');
+
+        if ($this->schema->repeatable()) {
+            $default->label(__('Valeurs par défaut', 'docalist-core'));
+            if (($default instanceof Select) && $default->multiple()) {
+                // pas besoin du bouton "add"
+            } else {
+                $default->repeatable(true);
+            }
+        } else {
+            $default->label(__('Valeur par défaut', 'docalist-core'));
+        }
+
+        $form->add($default);
+
+        return $form;
+    }
+
+    public function validateEditorSettings(array $settings) {
+        return $settings;
+    }
+
+    // -------------------------------------------------------------------------
+    // Privé
+    // -------------------------------------------------------------------------
+
+    /**
+     * Génère un nom aléatoire composé de lettres minuscules.
+     *
+     * @param number $length Longueur du nom à générer. Une longueur de 4 permet
+     * de générer environ 30000 id différents.
+     *
+     * @return string
+     */
+    private function randomId($length = 4) {
+        return substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), -$length);
     }
 }
