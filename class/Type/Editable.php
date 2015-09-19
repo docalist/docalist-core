@@ -19,7 +19,7 @@ use Docalist\Forms\Field;
  * Editable : API permettant de saisir et modifier un type de données docalist.
  *
  * Tous les types de données docalist disposent d'un ou plusieurs éditeurs (des
- * {@link Docalist\Forms\Field formulaires} qui peuvent être utilisés pour
+ * {@link Docalist\Forms\Field formulaires}) qui peuvent être utilisés pour
  * saisir et modifier des valeurs de ce type.
  *
  * La méthode {@link getAvailableEditors()} permet d'obtenir la liste des
@@ -44,7 +44,7 @@ interface Editable
      *
      * @param array $options Options à appliquer à l'éditeur.
      *
-     * @return Field
+     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
      */
     public function getEditorForm(array $options = null);
 
@@ -76,7 +76,7 @@ interface Editable
      *
      * Retourne le formulaire "paramètres de saisie" du champ.
      *
-     * @return Field
+     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
      */
     public function getEditorSettingsForm();
 
