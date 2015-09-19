@@ -33,7 +33,7 @@ interface Stringable
      * Remarque : la chaine obtenue est plutôt destinée à du débogage et le
      * format est susceptible de changer.
      *
-     * @return string
+     * @return string Une représentation textuelle du type.
      */
     public function __toString();
 }
