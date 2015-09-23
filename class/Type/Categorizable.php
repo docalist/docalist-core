@@ -54,5 +54,5 @@ interface Categorizable
      * {@link getCategoryCode()}. Par exemple pour un auteur, c'est le libellé
      * de l'étiquette de rôle qui sera retourné.
      */
-    public function getCategoryCode(array $options = null);
+    public function getCategoryLabel(array $options = null);
 }
