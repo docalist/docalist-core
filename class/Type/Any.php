@@ -360,7 +360,11 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->attribute('id', $name . '-capability')
             ->attribute('class', 'capability regular-text')
             ->label(__('Droit requis', 'docalist-core'))
-            ->description(__("Capacité WordPress requise pour accéder à ce champ ou vide si aucun droit particulier n'est requis.", 'docalist-core'));
+            ->description(
+                __("Capacité WordPress que l'utilisateur doit avoir pour pouvoir accéder au champ.", 'docalist-core') .
+                ' ' .
+                __("Si vous n'indiquez rien, aucun droit particulier ne sera nécessaire.", 'docalist-core')
+            );
 
         return $form;
     }
@@ -401,14 +405,22 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->attribute('class', 'labelspec regular-text')
             ->attribute('placeholder', $this->schema->label ?  : __('(aucun libellé)', 'docalist-core'))
             ->label(__('Libellé', 'docalist-core'))
-            ->description(__("Libellé affiché avant le champ. Par défaut, c'est le même que dans la grille de saisie mais vous pouvez saisir un nouveau texte si vous voulez un libellé différent.", 'docalist-core'));
+            ->description(
+                __("Libellé qui sera affiché devant le champ.", 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est le libellé de la grille de base qui sera utilisé.", 'docalist-core')
+            );
 
         $form->input('capabilityspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'capabilityspec regular-text')
             ->attribute('placeholder', $this->schema->capability ?  : '')
             ->label(__('Droit requis', 'docalist-core'))
-            ->description(__("Droit requis pour afficher ce champ. Par défaut, c'est le droit du champ qui figure dans la grille de base qui est utilisé.", 'docalist-core'));
+            ->description(
+                __("Capacité WordPress requise pour que ce champ soit affiché.", 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est la capacité de la grille de base qui sera utilisée.", 'docalist-core')
+            );
 
         $form->input('before')
             ->attribute('id', $name . '-before')
@@ -474,7 +486,11 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->attribute('class', 'labelspec regular-text')
             ->attribute('placeholder', $this->schema->label ?  : __('(aucun libellé)', 'docalist-core'))
             ->label(__('Libellé en saisie', 'docalist-core'))
-            ->description(__("Libellé affiché en saisie. Par défaut, c'est le libellé indiqué dans les paramètres de base qui est utilisé mais vous pouvez indiquer un libellé différent si vous le souhaitez.", 'docalist-core'));
+            ->description(
+                __("Libellé qui sera affiché pour saisir ce champ.", 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est le libellé de la grille de base qui sera utilisé.", 'docalist-core')
+            );
 
         $form->textarea('descriptionspec')
             ->attribute('id', $name . '-description')
@@ -482,14 +498,22 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->attribute('rows', 2)
             ->attribute('placeholder', $this->schema->description ?  : __('(pas de description)', 'docalist-core'))
             ->label(__('Aide à la saisie', 'docalist-core'))
-            ->description(__("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ. Par défaut, c'est la description du champ qui figure dans la grille de base qui est utilisée.", 'docalist-core'));
+            ->description(
+                __("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ.", 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est la description de la grille de base qui sera utilisée.", 'docalist-core')
+            );
 
         $form->input('capabilityspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'capabilityspec regular-text')
             ->attribute('placeholder', $this->schema->capability ?  : '')
             ->label(__('Droit requis', 'docalist-core'))
-            ->description(__("Droit requis pour que ce champ apparaissent dans le formulaire. Par défaut, c'est le droit du champ qui figure dans la grille de base qui est utilisé.", 'docalist-core'));
+            ->description(
+                __("Capacité WordPress requise pour que ce champ apparaisse dans le formulaire.", 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est la capacité de la grille de base qui sera utilisée.", 'docalist-core')
+            );
 
         $default = $this->editForm()
             ->name('default')
