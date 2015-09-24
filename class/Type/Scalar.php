@@ -14,6 +14,7 @@
 namespace Docalist\Type;
 
 use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Forms\Input;
 
 /**
  * Classe de base pour les types scalaires.
@@ -36,5 +37,19 @@ class Scalar extends Any
         $this->value = $value;
 
         return $this;
+    }
+
+    public function getFormattedValue(array $options = null)
+    {
+        return (string) $this->value;
+    }
+
+    public function getEditorForm(array $options = null)
+    {
+        $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+        $form = new Input($name);
+        isset($this->schema) && $form->name($this->schema->name());
+
+        return $form;
     }
 }
