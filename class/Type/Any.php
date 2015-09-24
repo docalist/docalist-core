@@ -129,7 +129,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      * Retourne la valeur par défaut du type.
      *
      * La méthode statique getClassDefault() retourne la valeur par défaut des
-     * instances ce type. Les classes descendantes (Boolean, Integer, etc.)
+     * instances de ce type. Les classes descendantes (Boolean, Integer, etc.)
      * surchargent cette méthode et retournent leur propre valeur par défaut.
      *
      * @return mixed
@@ -143,8 +143,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      * Retourne la valeur par défaut de l'objet.
      *
      * La méthode retourne la valeur par défaut indiquée dans le schéma associé
-     * à l'objet ou la valeur par défaut du type (getClassDefault) si aucun
-     * schéma n'est associé ou s'il n'indique pas de valeur par défaut.
+     * à l'objet ou la {@link getClassDefault() valeur par défaut du type} si
+     * aucun schéma n'est associé ou s'il n'indique pas de valeur par défaut.
      *
      * @return mixed
      */

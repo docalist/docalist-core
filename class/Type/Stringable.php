@@ -20,7 +20,7 @@ use Docalist\Forms\Field;
  * docalist.
  *
  * Tous les types de données docalist peuvent être "dumpés" sous forme de
- * chaine et implémente la méthode magique __toString() de PHP.
+ * chaine et implémentent la méthode magique __toString() de PHP.
  *
  * Cette interface permet de formaliser le contrat.
  */

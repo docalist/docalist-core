@@ -19,7 +19,7 @@ namespace Docalist\Type;
  * Les valeurs de certains champs, lorsqu'ils sont répétables, peuvent être
  * classées en catégories : des auteurs, par exemple peutvent être classés en
  * fonction de leur rôle (traducteur, illustrateur...), des numéros peuvent
- * être classés apr type de numéro, etc.
+ * être classés par type de numéro, etc.
  *
  * Cette interface permet à un type de données docalist d'indiquer qu'il est
  * catégorisable. Pour cela, deux méthodes doivent être implémentées :
