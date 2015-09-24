@@ -337,24 +337,29 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     public function getSettingsForm()
     {
         $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+
         $form = new Fragment($name);
+
         $form->hidden('name')->attribute('class', 'name');
+
         $form->input('label')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'label regular-text')
             ->label(__('Libellé du champ', 'docalist-core'))
-            ->description(__('Libellé utilisé pour désigner le champ.', 'docalist-core'));
+            ->description(__('Libellé utilisé pour désigner ce champ.', 'docalist-core'));
+
         $form->textarea('description')
             ->attribute('id', $name . '-description')
             ->attribute('class', 'description large-text')
             ->attribute('rows', 2)
             ->label(__('Description', 'docalist-core'))
             ->description(__('Description du champ : rôle, particularités, format...', 'docalist-core'));
+
         $form->input('capability')
             ->attribute('id', $name . '-capability')
             ->attribute('class', 'capability regular-text')
             ->label(__('Droit requis', 'docalist-core'))
-            ->description(__("Capacité WordPress dont doit disposer l'utilisateur pour pouvoir accéder à ce champ ou vide si aucun droit particulier n'est requis.", 'docalist-core'));
+            ->description(__("Capacité WordPress requise pour accéder à ce champ ou vide si aucun droit particulier n'est requis.", 'docalist-core'));
 
         return $form;
     }
@@ -369,7 +374,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // -------------------------------------------------------------------------
     public function getFormattedValue(array $options = null)
     {
-        return get_class($this) . '::format() not implemented';
+        return get_class($this) . '::getFormattedValue() not implemented';
     }
 
     public function getAvailableFormats()
@@ -459,13 +464,17 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
 
         $form = new Fragment($name);
-        $form->hidden('name')->attribute('class', 'name');
+
+        $form->hidden('name')
+            ->attribute('class', 'name');
+
         $form->input('labelspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'labelspec regular-text')
             ->attribute('placeholder', $this->schema->label ?  : __('(aucun libellé)', 'docalist-core'))
             ->label(__('Libellé en saisie', 'docalist-core'))
             ->description(__("Libellé affiché en saisie. Par défaut, c'est le libellé indiqué dans les paramètres de base qui est utilisé mais vous pouvez indiquer un libellé différent si vous le souhaitez.", 'docalist-core'));
+
         $form->textarea('descriptionspec')
             ->attribute('id', $name . '-description')
             ->attribute('class', 'description large-text')
@@ -473,6 +482,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->attribute('placeholder', $this->schema->description ?  : __('(pas de description)', 'docalist-core'))
             ->label(__('Aide à la saisie', 'docalist-core'))
             ->description(__("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ. Par défaut, c'est la description du champ qui figure dans la grille de base qui est utilisée.", 'docalist-core'));
+
         $form->input('capabilityspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'capabilityspec regular-text')
@@ -480,17 +490,14 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->label(__('Droit requis', 'docalist-core'))
             ->description(__("Droit requis pour que ce champ apparaissent dans le formulaire. Par défaut, c'est le droit du champ qui figure dans la grille de base qui est utilisé.", 'docalist-core'));
 
-        $default = $this->editForm()->name('default');
+        $default = $this->editForm()
+            ->name('default')
+            ->label(__('Valeur par défaut', 'docalist-core'));
 
-        if ($this->schema->repeatable()) {
-            $default->label(__('Valeurs par défaut', 'docalist-core'));
-            if (($default instanceof Select) && $default->multiple()) {
-                // pas besoin du bouton "add"
-            } else {
-                $default->repeatable(true);
-            }
-        } else {
-            $default->label(__('Valeur par défaut', 'docalist-core'));
+        if ($this->schema->repeatable() && ! (($default instanceof Select) && $default->multiple())) {
+            // Ajoute le bouton "add" pour les champs répétables
+            // Sauf s'il s'agit d'un Select multiple
+            $default->repeatable(true);
         }
 
         $form->add($default);
