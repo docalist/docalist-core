@@ -361,7 +361,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->attribute('class', 'capability regular-text')
             ->label(__('Droit requis', 'docalist-core'))
             ->description(
-                __("Capacité WordPress que l'utilisateur doit avoir pour pouvoir accéder au champ.", 'docalist-core') .
+                __("Capacité WordPress requise pour pouvoir accéder au champ.", 'docalist-core') .
                 ' ' .
                 __("Si vous n'indiquez rien, aucun droit particulier ne sera nécessaire.", 'docalist-core')
             );
@@ -580,7 +580,8 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      * @param array|null $options Le tableau d'options passées en paramètre.
      * @param mixed $default La valeur par défaut de l'option.
      */
-    protected function getOption($name, array $options = null, $default = null) {
+    protected function getOption($name, array $options = null, $default = null)
+    {
         if (isset($options[$name])) {
             return $options[$name];
         }
