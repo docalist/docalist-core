@@ -57,7 +57,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     public function __construct($value = null, Schema $schema = null)
     {
         $this->schema = $schema;
-        $this->assign(is_null($value) ? $this->defaultValue() : $value);
+        $this->assign(is_null($value) ? $this->getDefaultValue() : $value);
     }
 
     /**
@@ -385,30 +385,48 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     public function getFormatSettingsForm()
     {
         $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+
         $form = new Fragment($name);
+
         $form->hidden('name')->attribute('class', 'name');
+
         $form->input('labelspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'labelspec regular-text')
             ->attribute('placeholder', $this->schema->label ?  : __('(aucun libellé)', 'docalist-core'))
             ->label(__('Libellé', 'docalist-core'))
             ->description(__("Libellé affiché avant le champ. Par défaut, c'est le même que dans la grille de saisie mais vous pouvez saisir un nouveau texte si vous voulez un libellé différent.", 'docalist-core'));
+
         $form->input('capabilityspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'capabilityspec regular-text')
             ->attribute('placeholder', $this->schema->capability ?  : '')
             ->label(__('Droit requis', 'docalist-core'))
             ->description(__("Droit requis pour afficher ce champ. Par défaut, c'est le droit du champ qui figure dans la grille de base qui est utilisé.", 'docalist-core'));
+
         $form->input('before')
             ->attribute('id', $name . '-before')
             ->attribute('class', 'before regular-text')
             ->label(__('Avant le champ', 'docalist-core'))
             ->description(__('Texte ou code html à insérer avant le contenu du champ.', 'docalist-core'));
+
         $form->input('after')
             ->attribute('id', $name . '-before')
             ->attribute('class', 'after regular-text')
             ->label(__('Après le champ', 'docalist-core'))
             ->description(__('Texte ou code html à insérer après le contenu du champ.', 'docalist-core'));
+
+        // Propose le choix du format si plusieurs formats sont disponibles
+        $formats = $this->getAvailableFormats();
+        if (count($formats)) {
+            $form->select('format')
+                ->attribute('id', $name . '-format')
+                ->attribute('class', 'format regular-text')
+                ->label(__("Format d'affichage", 'docalist-core'))
+                ->description(__("Choisissez dans la liste le format d'affichage à utiliser.", 'docalist-core'))
+                ->options($formats)
+                ->firstOption(false);
+        }
 
         return $form;
     }
@@ -501,5 +519,44 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     private function randomId($length = 4)
     {
         return substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), - $length);
+    }
+
+    /**
+     * Retourne la valeur d'une option.
+     *
+     * La méthode détermine la valeur de l'option indiquée en paramètre en
+     * examinant successivement :
+     *
+     * - les options passées en paramètre,
+     * - le schéma du type,
+     * - la valeur par défaut passée en paramètre.
+     *
+     * Cette méthode utilitaire permet aux classes descendantes de gérer
+     * facilement les options qui sont passées en paramètre à des méthodes
+     * comme {@link getEditorForm()} ou {@link getFormattedValue()}.
+     *
+     * Exemple :
+     *
+     * <code>
+     * public function getFormattedValue(array $options = null) {
+     *     $sep = $this->getOption('sep', $options,  ', ');
+     *     ...
+     * }
+     * </code>
+     *
+     * @param string $name Le nom de l'option recherchée.
+     * @param array|null $options Le tableau d'options passées en paramètre.
+     * @param mixed $default La valeur par défaut de l'option.
+     */
+    protected function getOption($name, array $options = null, $default = null) {
+        if (isset($options[$name])) {
+            return $options[$name];
+        }
+
+        if (isset($this->schema->value[$name])) {
+            return $this->schema->value[$name];
+        }
+
+        return $default;
     }
 }
