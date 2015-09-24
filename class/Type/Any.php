@@ -548,7 +548,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @return string
      */
-    private function randomId($length = 4)
+    protected function randomId($length = 4)
     {
         return substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), - $length);
     }
