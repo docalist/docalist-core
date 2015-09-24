@@ -20,7 +20,9 @@ use InvalidArgumentException;
 /**
  * Une collection de types.
  */
-class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate {
+class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate
+{
+
     /**
      * Le type des éléments de cette collection.
      *
@@ -28,9 +30,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @var string
      */
-    static protected $type = 'Docalist\Type\Any';
+    protected static $type = 'Docalist\Type\Any';
 
-    static public function getClassDefault() {
+    public static function getClassDefault()
+    {
         return [];
     }
 
@@ -40,13 +43,15 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return string
      */
-    static public final function type() {
+    final public static function type()
+    {
         return static::$type;
     }
 
-    public function assign($value) {
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_array($value)){
+        if (! is_array($value)) {
             throw new InvalidTypeException('array');
         }
 
@@ -58,9 +63,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $this;
     }
 
-    public function value() {
+    public function value()
+    {
         $result = [];
-        foreach($this->value as $item) {
+        foreach ($this->value as $item) {
             $result[] = $item->value();
         }
         return $result;
@@ -74,7 +80,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return bool
      */
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->value[$offset]);
     }
 
@@ -89,7 +96,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * @throws InvalidArgumentException Si la position indiquée n'est pas
      * valide.
      */
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         if (isset($this->value[$offset])) {
             return $this->value[$offset];
         }
@@ -109,7 +117,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @param mixed $value Les données de l'élément.
      */
-    public function offsetSet ($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         // Cas d'une collection typée (avec un schéma)
         if ($this->schema) {
             // Détermine le type des éléments de cette collection
@@ -143,7 +152,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
             // Sinon, essaie de créer un Type à partir de la valeur
             else {
-                $item = Any::fromPhpType($value);
+                $item = self::fromPhpType($value);
             }
         }
 
@@ -169,7 +178,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @param int $offset
      */
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->value[$offset]);
     }
 
@@ -179,7 +189,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return int
      */
-    public function count() {
+    public function count()
+    {
         return count($this->value);
     }
 
@@ -189,7 +200,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return ArrayIterator
      */
-    public function getIterator() {
+    public function getIterator()
+    {
         return new ArrayIterator($this->value);
     }
 
@@ -199,7 +211,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return mixed Le premier élément ou false si la collection est vide.
      */
-    public function first() {
+    public function first()
+    {
         return reset($this->value);
     }
 
@@ -209,7 +222,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return mixed Le dernier élément ou false si la collection est vide.
      */
-    public function last() {
+    public function last()
+    {
         return end($this->value);
     }
 
@@ -219,8 +233,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * @return int|string La clé de l'élément en cours ou null s'il n'y a pas
      * d'élément courant.
      */
-
-    public function key() {
+    public function key()
+    {
         return key($this->value);
     }
 
@@ -229,7 +243,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return mixed L'élément ou false si la collection est vide.
      */
-    public function current() {
+    public function current()
+    {
         return current($this->value);
     }
 
@@ -238,7 +253,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return mixed L'élément suivant ou false s'il n'y a plus d'éléments.
      */
-    public function next() {
+    public function next()
+    {
         return next($this->value);
     }
 
@@ -247,41 +263,198 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return string[]
      */
-    public function keys() {
+    public function keys()
+    {
         return array_keys($this->value);
     }
 
     /**
      * Met à jour les clés de la collection.
      *
-     * Pour une collection simple, les éléments de la colelction sont simplement
+     * Pour une collection simple, les éléments de la collection sont simplement
      * renumérotés de façon continue à partir de zéro. Si une clé a été définie
      * dans le schéma de la collection, la collection est recréée en utilisant
      * la clé de chacun des éléments.
      *
      * @return self $this
      */
-    public function refreshKeys() {
+    public function refreshKeys()
+    {
+        // Cas d'une collection à clé
         if ($this->schema && $key = $this->schema->key()) {
             $result = [];
-            foreach($this->value as $item) {
+            foreach ($this->value as $item) {
                 $result[$item->$key->value()] = $item;
             }
             $this->value = $result;
-        } else {
-            $this->value = array_values($this->value);
+            return $this;
         }
 
+        // Collection sans clés
+        $this->value = array_values($this->value);
         return $this;
     }
 
-    public function filterEmpty($strict = true) {
-        foreach($this->value as $key => $item) { /* @var $item Any */
+    public function filterEmpty($strict = true)
+    {
+        foreach ($this->value as $key => $item) { /* @var $item Any */
             if ($item->filterEmpty($strict)) {
                 unset($this->value[$key]);
             }
         }
 
         return empty($this->value);
+    }
+
+    public function getFormattedValue(array $options = null)
+    {
+        // Paramètres d'affichage
+        $prefix = $this->getOption('prefix', $options, '');
+        $suffix = $this->getOption('suffix', $options, '');
+        $sep = $this->getOption('sep', $options, ', ');
+        $limit = $this->getOption('limit', $options, 0);
+        $explode = $this->getOption('explode', $options, false);
+        $ellipsis = $this->getOption('ellipsis', $options, '');
+
+        // Les items à formatter
+        $items = $this->value;
+
+        // Le résultat
+        $result = [];
+
+        // Sanity check / debug
+        if ($explode && ! is_a($this->schema->type(), 'Docalist\Type\Categorizable', true)) {
+            echo $this->schema->name(), " : l'option 'vue éclatée' est activée mais le champ ne gère pas l'interface 'Categorizable'<br />";
+            $explode = false;
+        }
+
+        // Cas 1. Option "vue éclatée" activée (explode)
+        if ($explode) {
+            // Formatte tous les items en les classant par catégorie (libellé)
+            foreach ($items as $item) {
+                /* @var $item Categorizable */
+                $category = $item->getCategoryLabel($options);
+
+                /* @var $item Any */
+                $result[$category][] = $prefix . $item->getFormattedValue($options) . $suffix;
+            }
+
+            // Formatte les items dans chacune des catégories
+            foreach ($result as $label => $items) {
+                // Tronque la liste d'items si nécessaire
+                $truncate = $this->truncate($items, $limit);
+
+                // Insère le séparateur indiqué entre les items
+                $result[$label] = implode($sep, $items);
+
+                // Ajoute une ellipse si les items ont été tronqués
+                $truncate && $result[$label] .= $ellipsis;
+            }
+
+            // Ok
+            return $result;
+        }
+
+        // Cas 2. Affichage normal
+
+        // Tronque la liste d'items si nécessaire (inutile de tout formatter)
+        $truncate = $this->truncate($items, $limit);
+
+        // Formatte chaque item
+        foreach ($items as $item) { /* @var $item Any */
+            $result[] = $prefix . $item->getFormattedValue($options) . $suffix;
+        }
+
+        // Concatène les éléments avec le séparateur indiqué
+        $result = implode($sep, $result);
+
+        // Ajoute une ellipse si la liste d'items a été tronquée
+        $truncate && $result .= $ellipsis;
+
+        // Ok
+        return $result;
+    }
+
+    /**
+     * Tronque le tableau passé en paramètre.
+     *
+     * @param array $items Le tableau à tronquer.
+     * @param int $limit Le nombre d'éléments à conserver :
+     * - 0 : pas de limite,
+     * - > 0 : ne conserve que les $limit premiers éléments,
+     * - < 0 : ne conserve que les $limit derniers éléments.
+     *
+     * @return bool true si le tableau a été tronqué, false sinon.
+     */
+    protected function truncate(array & $items, $limit)
+    {
+        // Détermine s'il faut tronquer la liste
+        $truncate = $limit && (abs($limit) < count($items));
+
+        // Pas de limite (0) ou limite non atteinte, terminé
+        if (! $truncate) {
+            return false;
+        }
+
+        // Si $limit est positif, on ne garde que les x premiers
+        if ($limit > 0) {
+            $items = array_slice($items, 0, $limit);
+            return true;
+        }
+
+        // Si $limit est négatif, on ne garde que les x derniers
+        $items = array_slice($items, $limit);
+        return true;
+    }
+
+    public function getFormatSettingsForm()
+    {
+        // Crée un item pour récupérer son formulaire
+        $type = $this->schema->type();
+        $item = new $type(null, $this->schema); /* @var $item Any */
+        $name = $this->schema->name();
+        $form = $item->getFormatSettingsForm();
+
+        // Propose l'option "vue éclatée" si le champ est catégorisable
+        if ($item instanceof Categorizable) {
+            $form->checkbox('explode')
+                ->label(__('Vue éclatée', 'docalist-core'))
+                ->description(__('Classe les items en catégories et affiche un champ distinct pour chaque catégorie.', 'docalist-core'));
+        }
+
+        $form->input('prefix')
+            ->attribute('id', $name . '-prefix')
+            ->attribute('class', 'prefix regular-text')
+            ->label(__('Avant les items', 'docalist-core'))
+            ->description(__('Texte ou code html à insérer avant chaque item.', 'docalist-core'));
+
+        $form->input('sep')
+            ->attribute('id', $name . '-sep')
+            ->attribute('class', 'sep small-text')
+            ->label(__('Entre les items', 'docalist-core'))
+            ->description(__('Séparateur ou code html à insérer entre les items.', 'docalist-core'));
+
+        $form->input('suffix')
+            ->attribute('id', $name . '-suffix')
+            ->attribute('class', 'suffix regular-text')
+            ->label(__('Après les items', 'docalist-core'))
+            ->description(__('Texte ou code html à insérer après chaque item.', 'docalist-core'));
+
+        $form->input('limit')
+            ->attribute('type', 'number')
+            ->attribute('id', $name . '-limit')
+            ->attribute('class', 'limit small-text')
+            ->label(__('Limite', 'docalist-core'))
+            ->description(__("Permet de limiter le nombre d'items affichés (3 : les trois premiers, -3 : les trois derniers, 0 ou vide : afficher tout).", 'docalist-core'))
+            ->attribute('placeholder', 'tout');
+
+        $form->input('ellipsis')
+            ->attribute('id', $name . '-limit')
+            ->attribute('class', 'limit regular-text')
+            ->label(__('Ellipse', 'docalist-core'))
+            ->description(__("Texte à afficher si la liste est tronquée (i.e. si le nombre d'items dépasse la limite indiquée plus haut).", 'docalist-core'));
+
+        return $form;
+
     }
 }
