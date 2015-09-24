@@ -13,9 +13,12 @@
  */
 namespace Docalist\Type;
 
-use Docalist\Type\Exception\InvalidTypeException;
-use ArrayAccess, Countable, IteratorAggregate, ArrayIterator;
+use ArrayAccess;
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
 use InvalidArgumentException;
+use Docalist\Type\Exception\InvalidTypeException;
 
 /**
  * Une collection de types.
@@ -324,7 +327,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Sanity check / debug
         if ($explode && ! is_a($this->schema->type(), 'Docalist\Type\Categorizable', true)) {
-            echo $this->schema->name(), " : l'option 'vue éclatée' est activée mais le champ ne gère pas l'interface 'Categorizable'<br />";
+            echo $this->schema->name(), " : 'vue éclatée' activée mais le champ ne gère pas 'Categorizable'<br />";
             $explode = false;
         }
 
@@ -419,7 +422,12 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         if ($item instanceof Categorizable) {
             $form->checkbox('explode')
                 ->label(__('Vue éclatée', 'docalist-core'))
-                ->description(__('Classe les items en catégories et affiche un champ distinct pour chaque catégorie.', 'docalist-core'));
+                ->description(
+                    __(
+                        'Classe les items par catégorie et affiche un champ distinct pour chaque catégorie.',
+                        'docalist-core'
+                    )
+                );
         }
 
         $form->input('prefix')
@@ -445,14 +453,20 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
             ->attribute('id', $name . '-limit')
             ->attribute('class', 'limit small-text')
             ->label(__('Limite', 'docalist-core'))
-            ->description(__("Permet de limiter le nombre d'items affichés (3 : les trois premiers, -3 : les trois derniers, 0 ou vide : afficher tout).", 'docalist-core'))
+            ->description(
+                __("Permet de limiter le nombre d'items affichés.", 'docalist-core') .
+                ' ' .
+                __('Exemples : 3 = les trois premiers, -3 = les trois derniers, 0 (ou vide) = tout.', 'docalist-core')
+            )
             ->attribute('placeholder', 'tout');
 
         $form->input('ellipsis')
             ->attribute('id', $name . '-limit')
             ->attribute('class', 'limit regular-text')
             ->label(__('Ellipse', 'docalist-core'))
-            ->description(__("Texte à afficher si la liste est tronquée (i.e. si le nombre d'items dépasse la limite indiquée plus haut).", 'docalist-core'));
+            ->description(
+                __("Texte à afficher si le nombre d'items dépasse la limite indiquée plus haut.", 'docalist-core')
+            );
 
         return $form;
 
