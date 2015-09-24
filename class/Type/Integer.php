@@ -37,4 +37,9 @@ class Integer extends Scalar {
 
         return $this;
     }
+
+    public function getEditorForm(array $options = null)
+    {
+        return parent::getEditorForm($options)->attribute('type', 'number');
+    }
 }
