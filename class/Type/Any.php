@@ -19,6 +19,7 @@ use Docalist\Schema\Schema;
 use Docalist\Forms\Fragment;
 use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Tag;
+use Docalist\Forms\Select;
 
 /**
  * Classe de base pour les différents types de données.
