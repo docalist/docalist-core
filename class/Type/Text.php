@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -20,7 +21,6 @@ use Docalist\Type\Exception\InvalidTypeException;
  */
 class Text extends Scalar
 {
-
     public static function getClassDefault()
     {
         return '';
