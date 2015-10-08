@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -18,14 +19,8 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type nombre décimal.
  */
-class Decimal extends Scalar
+class Decimal extends Number
 {
-
-    public static function getClassDefault()
-    {
-        return 0.0;
-    }
-
     public function assign($value)
     {
         ($value instanceof Any) && $value = $value->value();
@@ -38,5 +33,10 @@ class Decimal extends Scalar
         $this->value = $value;
 
         return $this;
+    }
+
+    public function getEditorForm(array $options = null)
+    {
+        return parent::getEditorForm($options)->attribute('step', '0.01');
     }
 }
