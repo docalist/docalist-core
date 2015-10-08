@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -18,13 +19,15 @@ use InvalidArgumentException;
 /**
  * Exception générée lorsqu'un nom de type est incorrect.
  */
-class InvalidTypeException extends InvalidArgumentException {
+class InvalidTypeException extends InvalidArgumentException
+{
     /**
      * Construit l'exception.
      *
      * @param string $expected le nom du type qui était attendu.
      */
-    public function __construct($expected) {
+    public function __construct($expected)
+    {
         parent::__construct(sprintf('Incorrect type, expected %s', $expected));
     }
 }
