@@ -18,7 +18,6 @@ use Docalist\Table\TableManager;
 use Docalist\Table\TableInterface;
 use Docalist\Forms\TableLookup;
 use InvalidArgumentException;
-use Docalist\Forms\Fragment;
 
 /**
  * Un champ texte contenant un code provenant d'un table d'autorité associée
@@ -32,12 +31,19 @@ class TableEntry extends Text
 {
     public function getSettingsForm()
     {
-        return $this->addTableSelect(parent::getSettingsForm());
-    }
+        // Récupère le formulaire par défaut
+        $form = parent::getSettingsForm();
 
-    public function getFormatSettingsForm()
-    {
-        return $this->addTableSelect(parent::getFormatSettingsForm());
+        // Ajoute un select permettant de choisir la table à utiliser
+        $form->select('table')
+            ->label($this->tableLabel())
+            ->description(__("Choisissez la table d'autorité à utiliser pour ce champ. ", 'docalist-code'))
+            ->attribute('class', 'table regular-text')
+            ->options($this->getPossibleTables())
+            ->firstOption(false);
+
+        // ok
+        return $form;
     }
 
     public function getEditorForm(array $options = null)
@@ -64,7 +70,7 @@ class TableEntry extends Text
             return $code;
         }
 
-        $table = $this->openTable($options);
+        $table = $this->openTable();
         if (false === $entry = $table->find('*', 'code=' . $table->quote($code))) {
             return $code;
         }
@@ -85,18 +91,14 @@ class TableEntry extends Text
     /**
      * Ouvre la table d'autorité associée au champ.
      *
-     * @param array $options Options de formattage (table, tablespec).
-     *
      * @return TableInterface
      */
-    protected function openTable(array $options = null)
+    protected function openTable()
     {
-        // Détermine la table à utiliser
-        $table = $this->getOption('tablespec', $options) ?: $this->getOption('table', $options);
-
         // Le nom de la table est de la forme "type:nom", on ne veut que le nom
-        $table = explode(':', $table)[1];
+        $table = explode(':', $this->schema->table())[1];
 
+        // Ouvre la table
         return docalist('table-manager')->get($table);
     }
 
@@ -112,17 +114,14 @@ class TableEntry extends Text
      */
     protected function getPossibleTables()
     {
-        // Récupère le nom de la table actuelle
-        $table = $this->getOption('table');
-
         // Le nom de la table est de la forme "type:nom", on ne veut que le nom
-        $table = explode(':', $table)[1];
+        $table = explode(':', $this->schema->table())[1];
 
         // Détermine son type
         $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
         $type = $tableManager->table($table)->type();
 
-        // Récupère toutes les tables qui ont le même type
+        // Récupère toutes les tables qui ont le même type, sauf les tables de conversion
         $tables = [];
         foreach ($tableManager->tables($type) as $table) { /* @var $tableInfo TableInfo */
             if ($table->format() !== 'conversion') {
@@ -132,26 +131,6 @@ class TableEntry extends Text
         }
 
         return $tables;
-    }
-
-    /**
-     * Ajoute un Select permettant de choisir la table d'autorité à utiliser
-     * dans le formulaire passé en paramètre.
-     *
-     * @param Fragment $form Le formulaire à modifier.
-     *
-     * @return $form Le formulaire modifié.
-     */
-    protected function addTableSelect(Fragment $form)
-    {
-        $form->select('table')
-            ->label($this->tableLabel())
-            ->description(__("Choisissez la table d'autorité à utiliser pour ce champ. ", 'docalist-code'))
-            ->attribute('class', 'table regular-text')
-            ->options($this->getPossibleTables())
-            ->firstOption(false);
-
-        return $form;
     }
 
     /**
