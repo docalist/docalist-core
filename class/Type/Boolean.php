@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -20,7 +21,6 @@ use Docalist\Type\Exception\InvalidTypeException;
  */
 class Boolean extends Scalar
 {
-
     public static function getClassDefault()
     {
         return true;
@@ -39,5 +39,10 @@ class Boolean extends Scalar
         $this->value = $value;
 
         return $this;
+    }
+
+    public function getEditorForm(array $options = null)
+    {
+        return parent::getEditorForm($options)->attribute('type', 'checkbox');
     }
 }
