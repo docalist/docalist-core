@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -18,14 +19,12 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type entier.
  */
-class Integer extends Scalar {
-    public static function getClassDefault() {
-        return 0;
-    }
-
-    public function assign($value) {
+class Integer extends Number
+{
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_int($value)){
+        if (! is_int($value)) {
             if ($value === '') {
                 $value = 0;
             } elseif (false === $value = filter_var($value, FILTER_VALIDATE_INT)) {
@@ -40,6 +39,6 @@ class Integer extends Scalar {
 
     public function getEditorForm(array $options = null)
     {
-        return parent::getEditorForm($options)->attribute('type', 'number');
+        return parent::getEditorForm($options)->attribute('step', '1');
     }
 }
