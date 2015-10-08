@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -19,13 +20,13 @@ use Countable;
 use IteratorAggregate;
 use InvalidArgumentException;
 use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Forms\Choice;
 
 /**
  * Une collection de types.
  */
 class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate
 {
-
     /**
      * Le type des éléments de cette collection.
      *
@@ -72,6 +73,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         foreach ($this->value as $item) {
             $result[] = $item->value();
         }
+
         return $result;
     }
 
@@ -290,11 +292,13 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
                 $result[$item->$key->value()] = $item;
             }
             $this->value = $result;
+
             return $this;
         }
 
         // Collection sans clés
         $this->value = array_values($this->value);
+
         return $this;
     }
 
@@ -307,6 +311,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         }
 
         return empty($this->value);
+    }
+
+    public function getSettingsForm()
+    {
+        return $this->createTemporaryItem()->getSettingsForm();
     }
 
     public function getFormattedValue(array $options = null)
@@ -402,21 +411,22 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         // Si $limit est positif, on ne garde que les x premiers
         if ($limit > 0) {
             $items = array_slice($items, 0, $limit);
+
             return true;
         }
 
         // Si $limit est négatif, on ne garde que les x derniers
         $items = array_slice($items, $limit);
+
         return true;
     }
 
     public function getFormatSettingsForm()
     {
         // Crée un item pour récupérer son formulaire
-        $type = $this->schema->type();
-        $item = new $type(null, $this->schema); /* @var $item Any */
-        $name = $this->schema->name();
+        $item = $this->createTemporaryItem();
         $form = $item->getFormatSettingsForm();
+        $name = $this->schema->name();
 
         // Propose l'option "vue éclatée" si le champ est catégorisable
         if ($item instanceof Categorizable) {
@@ -469,6 +479,52 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
             );
 
         return $form;
+    }
 
+    public function getEditorForm(array $options = null)
+    {
+        // Crée un item et récupére son formulaire
+        $form = $this->createTemporaryItem()->getEditorForm($options);
+
+        // Modifie le champ pour qu'il soit répétable
+        if ($form instanceof Choice) {
+            $form->multiple(true);
+        } else {
+            $form->repeatable(true);
+        }
+
+        // Ok
+        return $form;
+    }
+
+    /**
+     * Crée un item temporaire.
+     *
+     * Cette méthode est utilisée par getSettingsForm, getEditorForm, etc. pour récupérer
+     * le formulaire généré par l'item.
+     *
+     * @return Any
+     */
+    private function createTemporaryItem()
+    {
+        // Récupère le type des items de la collection
+        $type = $this->schema->type();
+
+        // Pour une collection, default est un tableau de valeur
+        // On est obligé de l'enlever du schéma car sinon item génère une exception 'bad type'
+        $default = null;
+        if (isset($this->schema->value['default'])) {
+            $default = $this->schema->value['default'];
+            unset($this->schema->value['default']);
+        }
+
+        // Crée l'item
+        $item = new $type(null, $this->schema);
+
+        // Restaure la valeur par défaut du schéma
+        ! is_null($default) && $this->schema->value['default'] = $default;
+
+        // Ok
+        return $item;
     }
 }
