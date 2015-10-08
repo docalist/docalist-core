@@ -345,7 +345,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
             // Formatte tous les items en les classant par catégorie (libellé)
             foreach ($items as $item) {
                 /* @var $item Categorizable */
-                $category = $item->getCategoryLabel($options);
+                $category = $item->getCategoryLabel();
 
                 /* @var $item Any */
                 $result[$category][] = $prefix . $item->getFormattedValue($options) . $suffix;
