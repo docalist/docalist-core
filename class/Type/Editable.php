@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -38,16 +39,6 @@ use Docalist\Forms\Field;
  */
 interface Editable
 {
-
-    /**
-     * Retourne le formulaire permettant de saisir ce champ.
-     *
-     * @param array $options Options à appliquer à l'éditeur.
-     *
-     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
-     */
-    public function getEditorForm(array $options = null);
-
     /**
      * Retourne la liste des éditeurs disponibles pour ce type.
      *
@@ -96,4 +87,13 @@ interface Editable
      * @return array Les paramétres validés.
      */
     public function validateEditorSettings(array $settings);
+
+    /**
+     * Retourne le formulaire permettant de saisir ce champ.
+     *
+     * @param array $options Options à appliquer à l'éditeur.
+     *
+     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
+     */
+    public function getEditorForm(array $options = null);
 }
