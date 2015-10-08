@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -41,21 +42,6 @@ use Docalist\Forms\Field;
  */
 interface Formattable
 {
-
-    /**
-     * Formatte le type.
-     *
-     * @param array $options Options de formattage.
-     *
-     * @return string|array Par défaut, la méthode retourne une chaine
-     * contenant la valeur formattée selon les options indiquées.
-     *
-     * Si l'option 'vue éclatée' (option 'explode' du type {@link Collection})
-     * est activée, la méthode retourne un tableau contenant un ou plusieurs
-     * éléments de la forme "catégorie" => "éléments de cette catégorie".
-     */
-    public function getFormattedValue(array $options = null);
-
     /**
      * Retourne la liste des formats d'affichage disponibles.
      *
@@ -102,4 +88,18 @@ interface Formattable
      * @return array Les paramètres validés.
      */
     public function validateFormatSettings(array $settings);
+
+    /**
+     * Formatte le type.
+     *
+     * @param array $options Options de formattage.
+     *
+     * @return string|array Par défaut, la méthode retourne une chaine
+     * contenant la valeur formattée selon les options indiquées.
+     *
+     * Si l'option 'vue éclatée' (option 'explode' du type {@link Collection})
+     * est activée, la méthode retourne un tableau contenant un ou plusieurs
+     * éléments de la forme "catégorie" => "éléments de cette catégorie".
+     */
+    public function getFormattedValue(array $options = null);
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -13,8 +14,6 @@
  */
 namespace Docalist\Type;
 
-use Docalist\Forms\Field;
-
 /**
  * API permettant d'obtenir une représentation textuelle d'un type de données
  * docalist.
@@ -26,7 +25,6 @@ use Docalist\Forms\Field;
  */
 interface Stringable
 {
-
     /**
      * Retourne une représentation du type sous forme de chaine de caractères.
      *

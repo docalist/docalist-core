@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -33,7 +34,6 @@ namespace Docalist\Type;
  */
 interface Categorizable
 {
-
     /**
      * Retourne le code de la catégorie à laquelle appartient cette valeur.
      *

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -32,7 +33,6 @@ use Docalist\Forms\Field;
  */
 interface Configurable
 {
-
     /**
      * Retourne un formulaire permettant de saisir et de modifier les paramètres
      * de base du type : libellé à utiliser, description, droit requis, etc.
