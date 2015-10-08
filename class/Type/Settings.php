@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -14,7 +15,6 @@
 namespace Docalist\Type;
 
 use Docalist\Repository\Repository;
-use Docalist\Repository\Exception\EntityNotFoundException;
 
 /**
  * Classe de base pour les settings.
@@ -44,7 +44,8 @@ use Docalist\Repository\Exception\EntityNotFoundException;
  * permet d'invoquer les méthodes save(), reload() et reset() sans avoir à
  * indiquer à nouveau le dépôt.
  */
-class Settings extends Entity {
+class Settings extends Entity
+{
     /**
      * Le dépôt dans lequel est stocké cet objet Settings.
      *
@@ -59,7 +60,8 @@ class Settings extends Entity {
      * paramètres.
      * @param scalar $id L'identifiant du settings
      */
-    public function __construct(Repository $repository, $id = null) {
+    public function __construct(Repository $repository, $id = null)
+    {
         // Stocke le dépôt associé
         $this->repository = $repository;
 
@@ -86,14 +88,16 @@ class Settings extends Entity {
      *
      * @return Repository
      */
-    public function repository() {
+    public function repository()
+    {
         return $this->repository;
     }
 
     /**
      * Enregistre les settings.
      */
-    public function save() {
+    public function save()
+    {
         $this->repository->save($this);
     }
 
@@ -102,7 +106,8 @@ class Settings extends Entity {
      *
      * @return self $this
      */
-    public function reload() {
+    public function reload()
+    {
         $this->__construct($this->repository);
 
         return $this;
@@ -114,10 +119,12 @@ class Settings extends Entity {
      *
      * @return self $this
      */
-    public function delete() {
+    public function delete()
+    {
         if ($this->repository->has($this->id)) {
             $this->repository->delete($this->id());
         }
+
         return $this->reset();
     }
 }
