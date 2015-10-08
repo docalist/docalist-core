@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -16,11 +17,14 @@ namespace Docalist\Type;
 use Docalist\Schema\Schema;
 use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
+use Docalist\Forms\Fragment;
 
 /**
- * Type objet.
+ * Type Composite.
  *
- * Un objet de données a un schéma qui décrit les attributs disponibles.
+ * Un Composite est un objet de données qui dispose d'un schéma
+ * décrivant les attributs disponibles.
+ *
  * Les classes descendantes doivent implémenter la méthode statique
  * loadSchema() qui retourne le schéma par défaut de l'objet.
  *
@@ -44,7 +48,6 @@ use InvalidArgumentException;
  */
 class Composite extends Any
 {
-
     public static function getClassDefault()
     {
         return [];
@@ -77,7 +80,6 @@ class Composite extends Any
         $schema = static::loadSchema();
         // retourne un schéma, un tableau ou null
 
-
         // Si loadSchema nous a retourné un tableau, on le compile
         if (is_array($schema)) {
             try {
@@ -106,7 +108,7 @@ class Composite extends Any
     public function __construct(array $value = null, Schema $schema = null)
     {
         // Initialise le schéma (utilise le schéma par défaut si besoin)
-        parent::__construct($value, $schema ?  : $this::defaultSchema());
+        parent::__construct($value, $schema ?: $this::defaultSchema());
     }
 
     public function assign($value)
@@ -138,6 +140,7 @@ class Composite extends Any
                 $value !== [] && $result[$name] = $value;
             }
         }
+
         return $result;
     }
 
@@ -169,12 +172,12 @@ class Composite extends Any
         if (isset($this->value[$name])) {
             is_null($value) && $value = $this->value[$name]->getDefaultValue();
             $this->value[$name]->assign($value);
+
             return $this;
             // TODO : si $value est déjà un type du bon type
         }
 
         // Il faut initialiser le champ
-
 
         // Cas d'un objet typé (ayant un schéma)
         if ($this->schema) {
@@ -311,7 +314,6 @@ class Composite extends Any
 
         // Appel de la forme : $composite->property()
 
-
         // Le champ existe déjà, retourne sa valeur
         if (isset($this->value[$name])) {
             return $this->value[$name]->value();
@@ -325,6 +327,7 @@ class Composite extends Any
             }
 
             $type = $field->type();
+
             return $type::getClassDefault();
         }
 
@@ -352,5 +355,19 @@ class Composite extends Any
     protected function filterEmptyProperty($name, $strict = true)
     {
         return ! isset($this->value[$name]) || $this->value[$name]->filterEmpty($strict);
+    }
+
+    public function getEditorForm(array $options = null)
+    {
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+
+//        $editor = new Table($name);
+        $editor = new Fragment($name);
+
+        foreach ($this->schema->fieldNames() as $name) {
+            $editor->add($this->__get($name)->getEditorForm());
+        }
+
+        return $editor;
     }
 }
