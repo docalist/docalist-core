@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -18,15 +19,13 @@ use JsonSerializable;
 use Docalist\Schema\Schema;
 use Docalist\Forms\Fragment;
 use Docalist\Type\Exception\InvalidTypeException;
-use Docalist\Forms\Tag;
-use Docalist\Forms\Select;
+use Docalist\Forms\Input;
 
 /**
  * Classe de base pour les différents types de données.
  */
-class Any implements Stringable, Formattable, Editable, Serializable, JsonSerializable
+class Any implements Stringable, Configurable, Formattable, Editable, Serializable, JsonSerializable
 {
-
     /**
      * La valeur du type.
      *
@@ -44,7 +43,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // -------------------------------------------------------------------------
     // Constructeurs
     // -------------------------------------------------------------------------
-
 
     /**
      * Crée un nouveau type docalist.
@@ -115,7 +113,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         }
 
         if (is_null($value)) {
-            return new Any($value, $schema);
+            return new self($value, $schema);
         }
 
         throw new InvalidTypeException('a basic php type');
@@ -124,7 +122,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // -------------------------------------------------------------------------
     // Valeur par défaut
     // -------------------------------------------------------------------------
-
 
     /**
      * Retourne la valeur par défaut du type.
@@ -137,7 +134,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      */
     public static function getClassDefault()
     {
-        return null;
+        return;
     }
 
     /**
@@ -165,7 +162,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // Initialisation de la valeur
     // -------------------------------------------------------------------------
 
-
     /**
      * Assigne une valeur au type.
      *
@@ -177,7 +173,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      */
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->value();
+        ($value instanceof self) && $value = $value->value();
         $this->value = $value;
 
         return $this;
@@ -196,7 +192,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // -------------------------------------------------------------------------
     // Getters
     // -------------------------------------------------------------------------
-
 
     /**
      * Retourne la valeur sous la forme d'un type php natif (string, int, float
@@ -224,7 +219,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // Tests et comparaisons
     // -------------------------------------------------------------------------
 
-
     /**
      * Teste si deux types sont identiques.
      *
@@ -233,7 +227,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
      *
      * @param Any $other
      *
-     * @return boolean
+     * @return bool
      */
     public function equals(Any $other)
     {
@@ -251,7 +245,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // -------------------------------------------------------------------------
     // Interface Serializable
     // -------------------------------------------------------------------------
-
 
     /**
      * Retourne une chaine contenant la version sérialisée au format PHP de la
@@ -279,7 +272,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // Interface JsonSerializable
     // -------------------------------------------------------------------------
 
-
     /**
      * Retourne les données à prendre en compte lorsque ce type est sérialisé
      * au format JSON.
@@ -294,7 +286,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // -------------------------------------------------------------------------
     // Interface Filterable
     // -------------------------------------------------------------------------
-
 
     /**
      * Filtre les valeurs vides.
@@ -335,9 +326,10 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // -------------------------------------------------------------------------
     // Interface Configurable
     // -------------------------------------------------------------------------
+
     public function getSettingsForm()
     {
-        $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
 
         $form = new Fragment($name);
 
@@ -346,7 +338,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         $form->input('label')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'label regular-text')
-            ->label(__('Libellé du champ', 'docalist-core'))
+            ->label(__('Libellé', 'docalist-core'))
             ->description(__('Libellé utilisé pour désigner ce champ.', 'docalist-core'));
 
         $form->textarea('description')
@@ -354,14 +346,14 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->attribute('class', 'description large-text')
             ->attribute('rows', 2)
             ->label(__('Description', 'docalist-core'))
-            ->description(__('Description du champ : rôle, particularités, format...', 'docalist-core'));
+            ->description(__('Description : rôle, particularités, format...', 'docalist-core'));
 
         $form->input('capability')
             ->attribute('id', $name . '-capability')
             ->attribute('class', 'capability regular-text')
             ->label(__('Droit requis', 'docalist-core'))
             ->description(
-                __("Capacité WordPress requise pour pouvoir accéder au champ.", 'docalist-core') .
+                __('Capacité WordPress requise pour pouvoir accéder au champ.', 'docalist-core') .
                 ' ' .
                 __("Si vous n'indiquez rien, aucun droit particulier ne sera nécessaire.", 'docalist-core')
             );
@@ -377,10 +369,6 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
     // -------------------------------------------------------------------------
     // Interface Formattable
     // -------------------------------------------------------------------------
-    public function getFormattedValue(array $options = null)
-    {
-        return get_class($this) . '::getFormattedValue() not implemented';
-    }
 
     public function getAvailableFormats()
     {
@@ -394,7 +382,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
 
     public function getFormatSettingsForm()
     {
-        $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
 
         $form = new Fragment($name);
 
@@ -403,10 +391,10 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         $form->input('labelspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'labelspec regular-text')
-            ->attribute('placeholder', $this->schema->label ?  : __('(aucun libellé)', 'docalist-core'))
+            ->attribute('placeholder', $this->schema->label ?: __('(aucun libellé)', 'docalist-core'))
             ->label(__('Libellé', 'docalist-core'))
             ->description(
-                __("Libellé qui sera affiché devant le champ.", 'docalist-core') .
+                __('Libellé qui sera affiché devant le champ.', 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est le libellé de la grille de base qui sera utilisé.", 'docalist-core')
             );
@@ -414,10 +402,10 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         $form->input('capabilityspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'capabilityspec regular-text')
-            ->attribute('placeholder', $this->schema->capability ?  : '')
+            ->attribute('placeholder', $this->schema->capability ?: '')
             ->label(__('Droit requis', 'docalist-core'))
             ->description(
-                __("Capacité WordPress requise pour que ce champ soit affiché.", 'docalist-core') .
+                __('Capacité WordPress requise pour que ce champ soit affiché.', 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est la capacité de la grille de base qui sera utilisée.", 'docalist-core')
             );
@@ -454,13 +442,14 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         return $settings;
     }
 
+    public function getFormattedValue(array $options = null)
+    {
+        return get_class($this) . '::getFormattedValue() not implemented';
+    }
+
     // -------------------------------------------------------------------------
     // Interface Editable
     // -------------------------------------------------------------------------
-    public function getEditorForm(array $options = null)
-    {
-        return new Tag('p', get_class($this) . '::getEditorForm() not implemented');
-    }
 
     public function getAvailableEditors()
     {
@@ -474,7 +463,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
 
     public function getEditorSettingsForm()
     {
-        $name = isset($this->schema->name) ? $this->schema->name() : $this->randomId();
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
 
         $form = new Fragment($name);
 
@@ -484,10 +473,10 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         $form->input('labelspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'labelspec regular-text')
-            ->attribute('placeholder', $this->schema->label ?  : __('(aucun libellé)', 'docalist-core'))
+            ->attribute('placeholder', $this->schema->label ?: __('(aucun libellé)', 'docalist-core'))
             ->label(__('Libellé en saisie', 'docalist-core'))
             ->description(
-                __("Libellé qui sera affiché pour saisir ce champ.", 'docalist-core') .
+                __('Libellé qui sera affiché pour saisir ce champ.', 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est le libellé de la grille de base qui sera utilisé.", 'docalist-core')
             );
@@ -496,7 +485,7 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
             ->attribute('id', $name . '-description')
             ->attribute('class', 'description large-text')
             ->attribute('rows', 2)
-            ->attribute('placeholder', $this->schema->description ?  : __('(pas de description)', 'docalist-core'))
+            ->attribute('placeholder', $this->schema->description ?: __('(pas de description)', 'docalist-core'))
             ->label(__('Aide à la saisie', 'docalist-core'))
             ->description(
                 __("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ.", 'docalist-core') .
@@ -507,25 +496,13 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         $form->input('capabilityspec')
             ->attribute('id', $name . '-label')
             ->attribute('class', 'capabilityspec regular-text')
-            ->attribute('placeholder', $this->schema->capability ?  : '')
+            ->attribute('placeholder', $this->schema->capability ?: '')
             ->label(__('Droit requis', 'docalist-core'))
             ->description(
-                __("Capacité WordPress requise pour que ce champ apparaisse dans le formulaire.", 'docalist-core') .
+                __('Capacité WordPress requise pour que ce champ apparaisse dans le formulaire.', 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est la capacité de la grille de base qui sera utilisée.", 'docalist-core')
             );
-
-        $default = $this->editForm()
-            ->name('default')
-            ->label(__('Valeur par défaut', 'docalist-core'));
-
-        if ($this->schema->repeatable() && ! (($default instanceof Select) && $default->multiple())) {
-            // Ajoute le bouton "add" pour les champs répétables
-            // Sauf s'il s'agit d'un Select multiple
-            $default->repeatable(true);
-        }
-
-        $form->add($default);
 
         return $form;
     }
@@ -535,10 +512,17 @@ class Any implements Stringable, Formattable, Editable, Serializable, JsonSerial
         return $settings;
     }
 
+    public function getEditorForm(array $options = null)
+    {
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+
+        return new Input($name);
+        //return (new Input($name))->label($this->schema->label())->description($this->schema->description());
+    }
+
     // -------------------------------------------------------------------------
     // Privé
     // -------------------------------------------------------------------------
-
 
     /**
      * Génère un nom aléatoire composé de lettres minuscules.
