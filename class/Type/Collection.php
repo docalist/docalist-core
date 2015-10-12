@@ -429,15 +429,13 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $name = $this->schema->name();
 
         // Propose l'option "vue éclatée" si le champ est catégorisable
-        if ($item instanceof Categorizable) {
+        if ($item instanceof Categorizable) { /* @var $item Categorizable */
             $form->checkbox('explode')
                 ->label(__('Vue éclatée', 'docalist-core'))
-                ->description(
-                    __(
-                        'Classe les items par catégorie et affiche un champ distinct pour chaque catégorie.',
-                        'docalist-core'
-                    )
-                );
+                ->description(sprintf(
+                    __('Affiche un champ distinct pour chaque %s.', 'docalist-core'),
+                    $item->getCategoryName()
+                ));
         }
 
         $form->input('prefix')
