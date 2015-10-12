@@ -51,4 +51,18 @@ interface Categorizable
      * de l'étiquette de rôle qui sera retourné.
      */
     public function getCategoryLabel();
+
+    /**
+     * Retourne un libellé utilisé pour désigner la catégorie.
+     *
+     * Ce libellé permet d'indiquer à l'utilisateur comment seront classées les
+     * entrées (avec un message du style "Classer les valeurs par <libellé>").
+     *
+     * Le message retourné doit être au singulier et sans majuscule de début.
+     * Par exemple "langue" et non pas "Langue" ou "langues".
+     *
+     * @return string Le libellé à utiliser pour désigner la catégorie à
+     * l'utilisateur.
+     */
+    public function getCategoryName();
 }
