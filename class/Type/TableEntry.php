@@ -18,6 +18,7 @@ use Docalist\Table\TableManager;
 use Docalist\Table\TableInterface;
 use Docalist\Forms\TableLookup;
 use InvalidArgumentException;
+use Docalist\Schema\Schema;
 
 /**
  * Un champ texte contenant un code provenant d'un table d'autorité associée
@@ -29,6 +30,25 @@ use InvalidArgumentException;
  */
 class TableEntry extends Text
 {
+    public function __construct($value = null, Schema $schema = null)
+    {
+        parent::__construct($value, $schema);
+
+        // Garantit qu'on a un schéma et que la table à utiliser est indiquée
+        if (is_null($schema) || !isset($schema->value['table'])) {
+            $field = [];
+            isset($schema->value['name']) && $field[] = $schema->value['name'];
+            isset($schema->value['label']) && $field[] = $schema->value['label'];
+            isset($schema->value['description']) && $field[] = $schema->value['description'];
+            $field = implode(' / ', $field);
+            $field && $field = " ($field)";
+
+            throw new InvalidArgumentException(
+                sprintf("Schema property 'table' is required for a TableEntry field%s.", $field)
+            );
+        }
+    }
+
     public function getSettingsForm()
     {
         // Récupère le formulaire par défaut
@@ -37,7 +57,7 @@ class TableEntry extends Text
         // Ajoute un select permettant de choisir la table à utiliser
         $form->select('table')
             ->label($this->tableLabel())
-            ->description(__("Choisissez la table d'autorité à utiliser pour ce champ. ", 'docalist-code'))
+            ->description(__("Choisissez la table d'autorité à utiliser pour ce champ.", 'docalist-core'))
             ->attribute('class', 'table regular-text')
             ->options($this->getPossibleTables())
             ->firstOption(false);
@@ -144,6 +164,6 @@ class TableEntry extends Text
      */
     protected function tableLabel()
     {
-        return __("Table d'autorité", 'docalist-code');
+        return __("Table d'autorité", 'docalist-core');
     }
 }
