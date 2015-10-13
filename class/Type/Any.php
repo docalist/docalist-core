@@ -183,16 +183,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return $this;
     }
 
-    /**
-     * Réinitialise le type à sa valeur par défaut.
-     *
-     * @return self $this
-     */
-    final public function reset()
-    {
-        return $this->assign($this->getDefaultValue());
-    }
-
     // -------------------------------------------------------------------------
     // Getters
     // -------------------------------------------------------------------------
