@@ -14,6 +14,10 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Type\Interfaces\Stringable;
+use Docalist\Type\Interfaces\Configurable;
+use Docalist\Type\Interfaces\Formattable;
+use Docalist\Type\Interfaces\Editable;
 use Serializable;
 use JsonSerializable;
 use Docalist\Schema\Schema;

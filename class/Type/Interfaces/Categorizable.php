@@ -12,7 +12,7 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-namespace Docalist\Type;
+namespace Docalist\Type\Interfaces;
 
 /**
  * API permettant de classer les valeurs d'un champ en catégories (vue éclatée).

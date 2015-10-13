@@ -14,6 +14,8 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Type\Interfaces\Categorizable;
+
 /**
  * Un MultiField est un composite qui permet de regrouper plusieurs champs
  * similaires dans un champ unique.

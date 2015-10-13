@@ -12,7 +12,7 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-namespace Docalist\Type;
+namespace Docalist\Type\Interfaces;
 
 /**
  * API permettant d'obtenir une représentation textuelle d'un type de données

@@ -12,7 +12,7 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-namespace Docalist\Type;
+namespace Docalist\Type\Interfaces;
 
 use Docalist\Forms\Field;
 
