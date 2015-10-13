@@ -220,25 +220,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     }
 
     // -------------------------------------------------------------------------
-    // Tests et comparaisons
-    // -------------------------------------------------------------------------
-
-    /**
-     * Teste si deux types sont identiques.
-     *
-     * Par défaut, les types sont identiques si ils ont la même classe et
-     * la même valeur.
-     *
-     * @param Any $other
-     *
-     * @return bool
-     */
-    public function equals(Any $other)
-    {
-        return get_class($this) === get_class($other) && $this->value() === $other->value();
-    }
-
-    // -------------------------------------------------------------------------
     // Interface Stringable
     // -------------------------------------------------------------------------
     public function __toString()
