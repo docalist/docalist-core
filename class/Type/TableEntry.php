@@ -84,28 +84,37 @@ class TableEntry extends Text
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
 
-        $code = $this->value;
-
-        if ($format === 'code') {
-            return $code;
-        }
-
-        $table = $this->openTable();
-        if (false === $entry = $table->find('*', 'code=' . $table->quote($code))) {
-            return $code;
-        }
-
         switch ($format) {
-            // 'code': déjà traité plus haut
+            case 'code':
+                return $this->value;
+
             case 'label':
-                return $entry->label ?: $code;
+                return $this->getLabel();
 
             case 'label+description':
+                $code = $this->value;
+                $table = $this->openTable();
+                if (false === $entry = $table->find('*', 'code=' . $table->quote($code))) {
+                    return $code;
+                }
                 return sprintf('<abbr title="%s">%s</abbr>', esc_attr($entry->description), $entry->label ?: $code);
-
-            default:
-                throw new InvalidArgumentException('Invalid format');
         }
+
+        throw new InvalidArgumentException('Invalid format');
+    }
+
+    protected function getLabel()
+    {
+        // Ouvre la table
+        $table = $this->openTable();
+
+        // Recherche le code et retourne le libellé associé
+        if (false === $label = $table->find('label', 'code=' . $table->quote($this->value))) {
+            return $label;
+        }
+
+        // Code non trouvé, retourne le code
+        return $this->value;
     }
 
     /**
