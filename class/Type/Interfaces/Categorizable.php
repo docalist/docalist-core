@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -23,7 +22,9 @@ namespace Docalist\Type\Interfaces;
  * être classés par type de numéro, etc.
  *
  * Cette interface permet à un type de données docalist d'indiquer qu'il est
- * catégorisable. Pour cela, deux méthodes doivent être implémentées :
+ * catégorisable. Pour cela, trois méthodes doivent être implémentées :
+ * - {@link getCategoryName()} qui retourne le nom utiliser pour désigner
+ *   la catégorie
  * - {@link getCategoryCode()} qui retourne le code de la catégorie à laquelle
  *   appartient le type de données
  * - {@link getCategoryLabel()} qui retourne le libellé de cette catégorie.
