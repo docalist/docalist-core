@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -14,7 +13,7 @@
  */
 namespace Docalist\Type\Interfaces;
 
-use Docalist\Forms\Field;
+use Docalist\Forms\Element;
 
 /**
  * API permettant de modifier les paramètres d'un type de données docalist.
@@ -23,21 +22,19 @@ use Docalist\Forms\Field;
  * par exemple choisir le libellé à utiliser, la table d'autorité associée, les
  * droits requis pour y avoir accès, etc.
  *
- * La méthode {@link getSettingsForm()} retourne un {@link Field formulaire}
- * contenant toutes les options disponibles.
+ * La méthode {@link getSettingsForm()} retourne un {@link Element élément de
+ * formulaire} permettant de modifier les options disponibles.
  *
  * Les données saisies par l'utilisateur dans ce formulaire peuvent être
  * validées en utilisant la méthode {@link validateSettings()}.
- *
- * @link Field formulaire
  */
 interface Configurable
 {
     /**
-     * Retourne un formulaire permettant de saisir et de modifier les paramètres
-     * de base du type : libellé à utiliser, description, droit requis, etc.
+     * Retourne un élément de formulaire permettant de saisir et de modifier les
+     * paramètres du type : libellé à utiliser, description, droit requis, etc.
      *
-     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
+     * @return Element Un élément de formulaire.
      */
     public function getSettingsForm();
 
