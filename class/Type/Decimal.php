@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -37,6 +36,6 @@ class Decimal extends Number
 
     public function getEditorForm(array $options = null)
     {
-        return parent::getEditorForm($options)->attribute('step', '0.01');
+        return parent::getEditorForm($options)->setAttribute('step', '0.01');
     }
 }
