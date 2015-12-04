@@ -76,25 +76,23 @@ class Schema extends Composite
                 $value['repeatable'] = true;
             }
 
-            // Si le type indiqué est un alias, on le traduit en nom de Type
-            if (isset(self::$alias[$type])) {
-                $type = self::$alias[$type];
+            // Si le type indiqué est un alias, on le traduit en nom de classe
+            isset(self::$alias[$type]) && $type = self::$alias[$type];
+
+            // Si le type indiqué est une collection, c'est la collection qui fournit le type des éléments
+            if (is_a($type, 'Docalist\Type\Collection', true)) {
+                $value['collection'] = $type;
+                $type = $type::type();
             }
 
-            // Le type indiqué doit être un nom de Type docalist
-            else {
-                if (is_a($type, 'Docalist\Type\Collection', true)) {
-                    $value['collection'] = $type;
-                    $type = $type::type();
-                }
+            // Au final, le type doit désigner un nom de classe de type complet
+            if (! is_a($type, 'Docalist\Type\Any', true)) {
+                $msg = 'Invalid type "%s" for field "%s"';
 
-                // La classe indiquée doit être un nom de Type et doit exister
-                if (! is_a($type, 'Docalist\Type\Any', true)) {
-                    $msg = 'Invalid type "%s" for field "%s"';
-
-                    throw new InvalidArgumentException(sprintf($msg, $type, isset($value['name']) ? $value['name'] : '(noname)'));
-                }
+                throw new InvalidArgumentException(sprintf($msg, $type, isset($value['name']) ? $value['name'] : '(noname)'));
             }
+
+            // Ok
             $value['type'] = $type;
         }
 
@@ -104,7 +102,7 @@ class Schema extends Composite
         }
         unset($value['repeatable']);
 
-        $this->schema = null;
+        // On court-circuite parent::__construct pour éviter les appels à defaultSchema, loadSchema, etc.
         $this->assign($value);
     }
 
