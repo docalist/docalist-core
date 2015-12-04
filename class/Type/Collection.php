@@ -17,9 +17,10 @@ use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use InvalidArgumentException;
-use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Choice;
+use Docalist\Type\Interfaces\Categorizable;
+use Docalist\Type\Exception\InvalidTypeException;
+use InvalidArgumentException;
 
 /**
  * Une collection de types.
