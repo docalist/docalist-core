@@ -104,7 +104,6 @@ class Schema extends Composite
         }
         unset($value['repeatable']);
 
-        //parent::__construct($value);
         $this->schema = null;
         $this->assign($value);
     }
@@ -148,7 +147,6 @@ class Schema extends Composite
             // Vérifie que le nom du champ est unique
             $name = $field->name();
             if (isset($fields[$name])) {
-                var_dump($fields[$name], $field, $value);
                 throw new InvalidArgumentException("Field $name defined twice");
             }
 
