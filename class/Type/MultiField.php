@@ -15,8 +15,6 @@ namespace Docalist\Type;
 
 use Docalist\Type\Interfaces\Categorizable;
 use Docalist\Forms\Table;
-use Docalist\Schema\Schema;
-use InvalidArgumentException;
 
 /**
  * Un MultiField est un composite qui permet de regrouper plusieurs champs
