@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012,2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,7 +11,6 @@
  * @subpackage  Forms
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Forms;
 
 /**
@@ -21,91 +20,104 @@ namespace Docalist\Forms;
  * {@link http://www.w3.org/TR/html5/forms.html#the-select-element The select
  * element}.
  */
-class Select extends Choice {
+class Select extends Choice
+{
+    /**
+     * @var false|array Valeur et libellé de la première option du select.
+     */
+    protected $firstOption = ['' => '…'];
 
     /**
-     * @var array Libellé et valeur de la première option du select lorsque
-     * celui-ci n'est pas obligatoire (exemple : 'choisissez une valeur').
+     * Modifie le libellé et la valeur de la première option du select.
+     *
+     * Cette option est utilisée pour les select simples, elle est ignorée pour
+     * les select multiple.
+     *
+     * @param string $firstOption Optionnel, valeur de l'option.
+     *
+     * @return self
      */
-    protected $firstOption = array(
-        'label' => '…',
-        'value' => ''
-    );
-
-    /**
-     * Retourne ou modifie la valeur de l'attribut "multiple" du select.
-     *
-     * C'est juste un raccourci pour $select->attribute('multiple', 'multiple').
-     *
-     * @param bool $multiple
-     *
-     * @return bool|$this
-     */
-    public function multiple($multiple = null) {
-        return $this->attribute('multiple', $multiple);
-    }
-
-    /**
-     * Retourne ou modifie le libellé et la valeur de la première option
-     * affichée dans le select lorsque celui-ci n'est pas obligatoire.
-     *
-     * Cette option n'est affichée que lorsque le select n'est pas multiple.
-     *
-     * Par défaut, une chaine vide est affichée (avec value=""). Vous pouvez
-     * modifier l'option en appellant par exemple
-     * <code>
-     * $select->firstOption('Choisissez une valeur', 0);
-     * </code>
-     *
-     * Vous pouvez également désactiver la première option d'un select
-     * multiple en appellant
-     * <code>
-     * $select->firstOption(false);
-     * </code>
-     *
-     * @param string $label Libellé à afficher
-     * @param string $value Optionnel, valeur de l'option.
-     *
-     * @return array|false|$this Appellée sans paramètre, la méthode retourne
-     * un tableau qui contient le libellé (clé label) et la valeur (clé value)
-     * actuellement utilisés ; ou false si la première option a été désactivée.
-     * Utilisée en setter, la méthode retourne $this.
-     */
-    public function firstOption($label = null, $value = '') {
-        if (is_null($label)) {
-            return $this->firstOption;
+    public function setFirstOption($firstOption = true)
+    {
+        switch (true) {
+            case $firstOption === false;
+                break;
+            case $firstOption === true;
+                $firstOption = ['' => '…'];
+                break;
+            case is_string($firstOption):
+                $firstOption = ['' => $firstOption];
+                break;
+            case is_array($firstOption):
+                if (count($firstOption) !== 1) {
+                    return $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
+                }
+                break;
+            default:
+                $this->invalidArgument('%s: invalid firstOption, expected true, false, string or array.');
         }
-
-        if ($label === false) {
-            $this->firstOption = false;
-        } else {
-            $this->firstOption = array(
-                'label' => $label,
-                'value' => $value
-            );
-        }
+        $this->firstOption = $firstOption;
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * Retourne le libellé et la valeur de la première option du select ou false
+     * si la première option est désactivée.
      *
-     * Si le select est multivalué (multiple=true), il faut ajouter '[]' au
+     * @return false|array
+     */
+    public function getFirstOption()
+    {
+        return $this->firstOption;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Si le select est multivalué (multiple=true), la méthode ajoute '[]' au
      * nom du contrôle.
      */
-    protected function controlName() {
-        $name = parent::controlName();
-        $this->attribute('multiple') && $name .= '[]';
+    protected function getControlName()
+    {
+        $name = parent::getControlName();
+        $this->hasAttribute('multiple') && $name .= '[]';
 
         return $name;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function isArray() {
-        return $this->attribute('multiple');
+    protected function isMultivalued()
+    {
+        return parent::isMultivalued() || $this->hasAttribute('multiple');
     }
 
+    protected function displayOptions(Theme $theme, array $options = [], array $data = [], array $attributes = [])
+    {
+        static $depth = 0;
+
+        $visited = [];
+        foreach ($options as $value => $label) {
+            // Si label est un tableau c'est un optgroup : value contient le libellé du optgroup et label les options
+            if (is_array($label)) {
+                $depth && $this->invalidArgument('%s: options groups cannot be nested.');
+                ++$depth;
+                $theme->start('optgroup', ['label' => $value]);
+                $visited += $this->displayOptions($theme, $label, $data);
+                $theme->end('optgroup');
+                --$depth;
+                continue;
+            }
+
+            // Option normale
+            $attr = $attributes + ['value' => $value];
+            if (in_array($value, $data, false)) {
+                $attr['selected'] = 'selected';
+                $visited[$value] = $value;
+            }
+
+            $theme->tag('option', $attr, $label);
+        }
+
+        return array_diff_key(array_combine($data, $data), $visited);
+    }
 }
