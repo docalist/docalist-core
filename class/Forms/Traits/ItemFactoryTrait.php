@@ -300,6 +300,7 @@ trait ItemFactoryTrait
      * Crée un élément EntryPicker et l'ajoute au container.
      *
      * @param string $name Le nom de l'élément.
+     * @param array $attributes Optionnel, les attributs de l'élément.
      *
      * @return EntryPicker
      */
@@ -312,6 +313,7 @@ trait ItemFactoryTrait
      * Crée un élément Table et l'ajoute au container.
      *
      * @param string $name Le nom de l'élément.
+     * @param array $attributes Optionnel, les attributs de l'élément.
      *
      * @return Table
      */
@@ -320,17 +322,16 @@ trait ItemFactoryTrait
         return new Table($name, $attributes, $this);
     }
 
-    //--------------------------------------------------------------------------------------
-
     /**
      * Crée un élément Fieldset et l'ajoute au container.
      *
      * @param string $name Le nom de l'élément.
+     * @param array $attributes Optionnel, les attributs de l'élément.
      *
      * @return Fieldset
      */
-    public function fieldset($legend)
-    { // TODO params
-        return $this->add(new Fieldset($legend));
+    public function fieldset($name = null, array $attributes = null)
+    {
+        return new Fieldset($name, $attributes, $this);
     }
 }
