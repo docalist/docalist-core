@@ -1,8 +1,23 @@
 <?php
     use Docalist\Forms\Form, Docalist\Forms\Themes, Docalist\Forms\Assets;
+use Docalist\Utils;
 
+    define('WP_USE_THEMES', false);
+    require(__DIR__ . '/../../../../../wordpress/wp-load.php');
+/*
+function __($x) {return $x;}
+function load_plugin_textdomain() {}
+function is_admin() {return false;}
+function add_filter() {}
+function add_action() {}
+function apply_filters($tag, $value) {return $value;}
+function wp_upload_dir() {}
+function get_template_directory() {return realpath(__DIR__ . '/../../../../../themes/Prisme2012');}
+define('WP_PLUGIN_DIR', realpath(__DIR__ . '/../../../../'));
+*/
     // charge docalist-form
-    require __DIR__ . '/../src/autoload.php';
+//    require __DIR__ . '/../../../docalist.php';
+//    new Docalist\Core\Plugin();
 
     $_GET += array(
         'file' => 'form1',
@@ -32,7 +47,7 @@
     if ($isPost) $form->bind($_POST);
 
     $assets = Themes::assets($theme)->add($form->assets());
-
+    Utils::enqueueAssets($assets);
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -41,7 +56,11 @@
     <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <?php assets($assets, 'top') ?>
+    <?php
+        // assets($assets, 'top')
+        // Utils::enqueueAssets($assets);
+        wp_head();
+    ?>
     <script src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js" type="text/javascript"></script>
     <link href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css" type="text/css" rel="stylesheet" />
     <link href="docalist-forms-tests.css" type="text/css" rel="stylesheet" />
@@ -134,11 +153,11 @@
         </div>
     </div>
 
-    <?php assets($assets, 'bottom') ?>
+    <?php //assets($assets, 'bottom') ?>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
     <script src="docalist-forms-tests.js" type="text/javascript"></script>
-
+    <?php wp_footer(); ?>
 </body>
 </html>
 <?php
@@ -173,11 +192,13 @@ function choose() {
 }
 
 function assets($assets, $pos) {
+        var_dump($assets); die();
     foreach($assets->get(null, $pos) as $asset) {
         extract($asset);
 
-        if ( false === strpos($src, '//')) {
-            $src = '../src/' . $src;
+        if (isset($src) && false === strpos($src, '//')) {
+            $src = plugins_url('docalist-core/views/forms/'.$src);
+            var_dump($src); die();
         }
 
         if ($condition) echo "<!--[if $condition]>\n";
