@@ -20,6 +20,11 @@ use Docalist\Type\Exception\InvalidTypeException;
  */
 class Scalar extends Any
 {
+    public static function getClassDefault()
+    {
+        return '';
+    }
+
     public function assign($value)
     {
         ($value instanceof Any) && $value = $value->value();

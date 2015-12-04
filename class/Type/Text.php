@@ -22,11 +22,6 @@ use InvalidArgumentException;
  */
 class Text extends Scalar
 {
-    public static function getClassDefault()
-    {
-        return '';
-    }
-
     public function assign($value)
     {
         ($value instanceof Any) && $value = $value->value();
