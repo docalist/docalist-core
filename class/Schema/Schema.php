@@ -264,6 +264,6 @@ class Schema extends Composite
             return $result;
         }
 
-        return isset($this->value['default']) ? $this->value['default'] : null;
+        return isset($this->value['default']) ? $this->value['default']->value() : null;
     }
 }
