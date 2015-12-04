@@ -15,13 +15,12 @@ namespace Docalist\Table;
 
 use Docalist\Cache\FileCache;
 use Docalist\Tokenizer;
-use PDO;
 
 /**
  * Une table au format CSV.
- *
  */
-class CsvTable extends SQLite {
+class CsvTable extends SQLite
+{
     protected $readonly = true;
 
     protected function compile()
@@ -40,7 +39,7 @@ class CsvTable extends SQLite {
 
         // Charge les entêtes de colonne
         // On peut avoir des lignes de commentaires (#xxx) avant les entêtes
-        for(;;) {
+        for (;;) {
             $this->fields = fgetcsv($file, 1024, ';');
             if (substr($this->fields[0], 0, 1) === '#') {
                 continue;
@@ -54,8 +53,7 @@ class CsvTable extends SQLite {
         $this->createSQLiteDatabase($path, $sql);
 
         // Prépare le statement utilisé pour charger les données
-        $sql = sprintf
-        (
+        $sql = sprintf(
             'INSERT INTO "data"("%s") VALUES (%s);',
             implode('","', $this->fields),
             rtrim(str_repeat('?,', count($this->fields)), ',)')
@@ -64,8 +62,7 @@ class CsvTable extends SQLite {
 
         // Charge les données
         $index = array_flip($this->fields);
-        while (false !== $values = fgetcsv($file, 1024, ';'))
-        {
+        while (false !== $values = fgetcsv($file, 1024, ';')) {
             // Ignore les espaces
             $values = array_map('trim', $values);
 
@@ -74,8 +71,7 @@ class CsvTable extends SQLite {
                 continue;
             }
             $allvalues = $values;
-            foreach($values as $i => $value)
-            {
+            foreach ($values as $i => $value) {
                 if (trim($value) === '') {
                     $allvalues[$i] = null;
                     if (isset($index['_' . $this->fields[$i]])) {
@@ -99,7 +95,8 @@ class CsvTable extends SQLite {
         return false;
     }
 
-    public function type() {
+    public function type()
+    {
         return 'csv';
     }
 }

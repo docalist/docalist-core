@@ -13,17 +13,15 @@
  */
 namespace Docalist\Table;
 
-use Docalist\Cache\FileCache;
 use Docalist\Tokenizer;
 use PDO;
 use Exception;
 
 /**
  * Classe de base pour les tables d'autorité.
- *
  */
-class SQLite implements TableInterface {
-
+class SQLite implements TableInterface
+{
     /**
      * Le path de la table de référence.
      *
@@ -36,7 +34,7 @@ class SQLite implements TableInterface {
      *
      * Surchargé dans les classes descendantes
      *
-     * @var boolean
+     * @var bool
      */
     protected $readonly = false;
 
@@ -51,7 +49,7 @@ class SQLite implements TableInterface {
     /**
      * Indique si on a une transaction (une écriture) en cours.
      *
-     * @var boolean
+     * @var bool
      */
     protected $commit = false;
 
@@ -62,27 +60,31 @@ class SQLite implements TableInterface {
      */
     protected $fields = null;
 
-    public function type() {
+    public function type()
+    {
         return 'sqlite';
     }
 
-    public function path() {
+    public function path()
+    {
         return $this->path;
     }
 
-    public function readOnly() {
+    public function readOnly()
+    {
         return $this->readonly;
     }
 
-    public function fields($all = false) {
+    public function fields($all = false)
+    {
         // Retourne tous les champs
         if ($all) {
             return $this->fields;
         }
 
         // Ne retourne que les champs normaux
-        $fields = array();
-        foreach($this->fields as $field) {
+        $fields = [];
+        foreach ($this->fields as $field) {
             $field[0] !== '_' && $fields[] = $field;
         }
 
@@ -105,7 +107,8 @@ class SQLite implements TableInterface {
      *
      * @param string $path le path du fichier de la table à ouvrir.
      */
-    public function __construct($path) {
+    public function __construct($path)
+    {
         // Stocke le path de la table
         $this->path = $path;
 
@@ -125,10 +128,8 @@ class SQLite implements TableInterface {
             !$this->readonly && $this->beginTransaction();
 
             // Récupère le nom des champs de la table
-            // @formatter:off
             $this->fields = $this->db->query('PRAGMA table_info(data)')
                 ->fetchAll(PDO::FETCH_NUM | PDO::FETCH_COLUMN, 1);
-            // @formatter:on
         }
     }
 
@@ -136,7 +137,8 @@ class SQLite implements TableInterface {
      * Destructeur. Committe les éventuelles modifications apportées à la table
      * et ferme la base SQLite.
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         // Committe les modifications éventuelles
         $this->commit();
 
@@ -149,7 +151,8 @@ class SQLite implements TableInterface {
      *
      * @return self
      */
-    protected function beginTransaction() {
+    protected function beginTransaction()
+    {
         if (! $this->commit) {
             $this->commit = $this->db->beginTransaction();
         }
@@ -162,7 +165,8 @@ class SQLite implements TableInterface {
      *
      * @return self
      */
-    protected function commit() {
+    protected function commit()
+    {
         if ($this->commit) {
             $this->db->commit();
             $this->commit = false;
@@ -184,7 +188,8 @@ class SQLite implements TableInterface {
      * base a été créée lors de la compilation (dans ce cas elle est déjà
      * ouverte, la valeur "false" retournée signifie "ne pas réouvrir").
      */
-    protected function compile() {
+    protected function compile()
+    {
         // pour une table au format sqlite, on n'a rien à compiler
         // on ouvre directement le fichier.
         return $this->path;
@@ -207,12 +212,13 @@ class SQLite implements TableInterface {
      *
      * @throw Exception si la syntaxe de la ligne d'entête est incorrecte.
      */
-    protected function parseFields() {
+    protected function parseFields()
+    {
         // Chaine de base pour les messages d'erreur
         $err = __('Erreur dans la table %s. ', 'docalist-core');
 
         // Examine tous les champs
-        $_names = $names = $_defs = $defs = $index = array();
+        $_names = $names = $_defs = $defs = $index = [];
         foreach ($this->fields as $field) {
 
             // Sépare le nom du champ de ses paramètres
@@ -228,7 +234,7 @@ class SQLite implements TableInterface {
             // Analyse les paramètres indiqués
             $parms = explode(',', $parms);
             $type = '';
-            $constraints = array();
+            $constraints = [];
             foreach ($parms as $parm) {
                 $parm = trim($parm);
                 switch (strtolower($parm)) {
@@ -320,7 +326,8 @@ class SQLite implements TableInterface {
      *
      * @return self
      */
-    protected function createSQLiteDatabase($path, $sql) {
+    protected function createSQLiteDatabase($path, $sql)
+    {
         // Crée le répertoire de la base de données si nécessaire
         $dir = dirname($path);
         if (!is_dir($dir) && !@mkdir($dir, 0777, true)) {
@@ -380,7 +387,8 @@ class SQLite implements TableInterface {
      * vide) contenant les réponses obtenues. Le format de chaque élément
      * dépend de $fetchMode (cf. doc de PDO).
      */
-    protected function query($what = '*', $where = '', $order = '', $limit = null, $offset = null, $fetchMode = PDO::FETCH_OBJ) {
+    protected function query($what = '*', $where = '', $order = '', $limit = null, $offset = null, $fetchMode = PDO::FETCH_OBJ)
+    {
         // Construit la requête sql
         $sql = "SELECT $what FROM data";
         $where && $sql .= " WHERE $where";
@@ -400,7 +408,8 @@ class SQLite implements TableInterface {
         return $result;
     }
 
-    public function search($what = '*', $where = '', $order = '', $limit = null, $offset = null) {
+    public function search($what = '*', $where = '', $order = '', $limit = null, $offset = null)
+    {
         $nb = (strpos($what, '*') === false) ? substr_count($what, ',') : 2;
         switch ($nb) {
             // Un seul champ : tableau de valeurs
@@ -422,12 +431,15 @@ class SQLite implements TableInterface {
         return $this->query($what, $where, $order, $limit, $offset, $fetchMode);
     }
 
-    public function find($what = '*', $where = '') {
+    public function find($what = '*', $where = '')
+    {
         $result = $this->search($what, $where, '', 1);
+
         return empty($result) ? false : reset($result);
     }
 
-    public function lookup($what = '*', $prefix, $limit = null) {
+    public function lookup($what = '*', $prefix, $limit = null)
+    {
         // On recherche et on trie sur le premier champ indiqué
         $field = strtok($what, ',');
         $field === '*' && $field = $this->fields[0];
@@ -446,7 +458,8 @@ class SQLite implements TableInterface {
         return $this->search($what, $where, $field, $limit);
     }
 
-    public function quote($text) {
+    public function quote($text)
+    {
         return $this->db->quote($text);
     }
 }

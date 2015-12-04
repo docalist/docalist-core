@@ -15,13 +15,12 @@ namespace Docalist\Table;
 
 use Docalist\Cache\FileCache;
 use Docalist\Tokenizer;
-use PDO;
 
 /**
  * Une table au format PHP.
- *
  */
-class PhpTable extends SQLite {
+class PhpTable extends SQLite
+{
     protected $readonly = true;
 
     protected function compile()
@@ -45,8 +44,7 @@ class PhpTable extends SQLite {
         $this->createSQLiteDatabase($path, $sql);
 
         // Prépare le statement utilisé pour charger les données
-        $sql = sprintf
-        (
+        $sql = sprintf(
             'INSERT INTO "data"("%s") VALUES (%s);',
             implode('","', $this->fields),
             rtrim(str_repeat('?,', count($this->fields)), ',)')
@@ -57,8 +55,7 @@ class PhpTable extends SQLite {
         $index = array_flip($this->fields);
         foreach ($data as $values) {
             $allvalues = $values;
-            foreach($values as $i => $value)
-            {
+            foreach ($values as $i => $value) {
                 if (trim($value) === '') {
                     $allvalues[$i] = null;
                     if (isset($index['_' . $this->fields[$i]])) {
@@ -80,7 +77,8 @@ class PhpTable extends SQLite {
         return false;
     }
 
-    public function type() {
+    public function type()
+    {
         return 'php';
     }
 }
