@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012,2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,106 +11,69 @@
  * @subpackage  Forms
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Forms;
 
-use Exception;
+use Docalist\Forms\Traits\AttributesTrait;
+use InvalidArgumentException;
 
 /**
- * Un tag (p, div, etc.) au sein d'un formulaire.
+ * Un tag html.
+ *
+ * Caractéristiques :
+ * - c'est un RawItem (hérite de Html)
+ * - a un nom de tag
+ * - possède des attributs
  */
-class Tag extends Fields {
+class Tag extends Html
+{
+    use AttributesTrait;
+
     /**
-     * @var string Le tag de l'élément.
+     * @var string Le nom du tag.
      */
     protected $tag;
 
     /**
-     * @var string Le contenu textuel de l'élément.
-     */
-    protected $content;
-
-    /**
      * Crée un nouveau tag.
      *
-     * @param string $tag le tag de l'élément.
-     *
-     * @param string $content Le contenu de l'élément.
+     * @param string $tag Optionnel, le tag de l'élément (div par défaut).
+     * @param string $content Optionnel, le contenu de l'élément.
+     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param Container $parent Optionnel, le containeur parent de l'item.
      */
-    public function __construct($tag, $content = null) {
-        $this->parseTag($tag);
-        $this->content = $content;
+    public function __construct($tag = 'div', $content = null, array $attributes = null, Container $parent = null)
+    {
+        parent::__construct($content, $parent);
+        $this->setTag($tag);
+        !is_null($attributes) && $this->addAttributes($attributes);
     }
 
     /**
-     * @inheritdoc
+     * Modifie le nom du tag.
      *
-     * Un champ de type "Tag" ne peut pas avoir de label.
-     */
-    public function label($label = null) {
-        if (is_null($label))
-            return $this->label;
-
-        throw new Exception('a Tag can\'t have a label');
-    }
-
-    /**
-     * Retourne ou modifie le tag de l'élément.
+     * @param string $tag Le nom tag.
      *
-     * @param string $tag Le nouveau tag de l'élément.
+     * Vous pouvez passer en paramétre un tag simple ('p', 'span'...) ou un sélecteur
+     * style CSS de la forme "tag[name]#id.class" qui permet de définir, en plus du
+     * nom du tag, les attributs name, id et class de l'élément.
      *
-     * La chaine passée en paramètre peut également contenir un nom, un id et
-     * des noms de classe (dans cet ordre). Par exemple si vous passez la chaine
-     * <code>'input[age]#age.date.required'</code>, cela créera un élément de la
-     * forme
+     * Par exemple, un sélecteur de la forme
+     * <code>'input[age]#age.date.required'</code>
+     * créera un élément du style :
      * <code><input name="age" id="age" class="date required" /></code>
      *
-     * @return string|$this
+     * Tous les éléments du sélecteur sont optionnels (sauf le nom de tag), mais
+     * ils doivent apparaître dans l'ordre indiqué ('p#id.class' fonctionnera,
+     * 'p.class#id' générera une erreur).
+     *
+     * @return self
      */
-    public function tagname($tag = null) {
-        if (is_null($tag))
-            return $this->tag;
-
-        $this->parseTag($tag);
-
-        return $this;
-    }
-
-    /**
-     * Retourne ou modifie le contenu textuel de l'élément.
-     *
-     * @param string $content
-     *
-     * @return string|$this
-     */
-    public function content($content = null) {
-        if (is_null($content))
-            return $this->content;
-
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
-     * Analyse un sélecteur de la forme tag[name]#id.class.class.
-     *
-     * Formes possibles :
-     * - tag (un tag, pas de nom, ni d'id ni de classes),
-     * - tag[name] (un tag, un nom, ni d'id ni de classes),
-     * - tag#id (un tag, un id, pas de classes),
-     * - tag.class1.class2 (un tag, des classes pas d'id),
-     * - tag#id.class1.class2 (un tag, un id et des classes).
-     *
-     * id et classes doivent apparaitre dans le bon ordre (#id.class et non
-     * pas class#id)
-     */
-    protected function parseTag($tag) {
-        //@formatter:off
-        $re =
+    public function setTag($tag)
+    {
+        $regexp =
             '~^
             (                       # Obligatoire : tag
-                [a-z0-9-]+             # $1=tag
+                [a-z][a-z0-9-]*     # $1=tag
             )
             (?:                     # Optionnel : nom entre crochets
                 \[                  # crochet ouvrant
@@ -127,17 +90,27 @@ class Tag extends Fields {
             )*
             ($)                     # capture bidon, garantit tout de $1 à $4
             ~ix';
-        //@formatter:off
 
-        if (! preg_match($re, $tag, $matches)) {
-            throw new Exception("Incorrect tag: $tag");
+        $match = null;
+        if (! preg_match($regexp, $tag, $match)) {
+            throw new InvalidArgumentException("Incorrect tag: $tag");
         }
 
-        list($subject, $this->tag, $name, $id, $class) = $matches;
+        $this->tag = $match[1];
+        $match[2] && $this->setAttribute('name', $match[2]);
+        $match[3] && $this->setAttribute('id', $match[3]);
+        $match[4] && $this->setAttribute('class', strtr($match[4], '.', ' '));
 
-        $name && $this->attributes['name'] = $name;
-        $id && $this->attributes['id'] = $id;
-        $class && $this->attributes['class'] = strtr($class, '.', ' ');
+        return $this;
     }
 
+    /**
+     * Retourne le nom du tag.
+     *
+     * @return string
+     */
+    public function getTag()
+    {
+        return $this->tag;
+    }
 }
