@@ -14,8 +14,17 @@
 namespace Docalist\Forms;
 
 /**
- * Une table permettant d'éditer un champ structuré.
+ * Une metabox wordpress.
  */
-class Table extends Container
+class Metabox extends Container
 {
+    protected function hasLayout()
+    {
+        return false;
+    }
+
+    protected function hasDescriptionBlock()
+    {
+        return false;
+    }
 }
