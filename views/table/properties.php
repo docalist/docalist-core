@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -13,20 +13,21 @@
  */
 namespace Docalist\Views;
 
+use Docalist\Core\AdminTables;
+use Docalist\Table\TableInfo;
+use Docalist\Forms\Form;
+
 /**
  * Modifie les propriétés d'une table d'autorité.
  *
- * @param string $tableName Nom de la table à modifier.
- * @param TableInfo $tableInfo Infos sur la table.
- * @param string $error Message d'erreur éventuel à afficher.
+ * @var AdminTables $this
+ * @var string $tableName Nom de la table à modifier.
+ * @var TableInfo $tableInfo Infos sur la table.
+ * @var string $error Message d'erreur éventuel à afficher.
  */
-
-use Docalist\Table\TableInfo;
-use Docalist\Forms\Form;
 ?>
 <div class="wrap">
-    <?= screen_icon() ?>
-    <h2><?= sprintf(__('%s : propriétés', 'docalist-core'), $tableInfo->label() ?: $tableName) ?></h2>
+    <h1><?= sprintf(__('%s : propriétés', 'docalist-core'), $tableInfo->label() ?: $tableName) ?></h1>
 
     <p class="description">
         <?= __('Utilisez le formulaire ci-dessous pour modifier les propriétés de la table.', 'docalist-core') ?>
@@ -41,15 +42,15 @@ use Docalist\Forms\Form;
     <?php
         $form = new Form();
 
-        $form->input('name')->attribute('class', 'regular-text');
-        $form->input('label')->attribute('class', 'large-text');
+        $form->input('name')->addClass('regular-text');
+        $form->input('label')->addClass('large-text');
 
-        $form->div('type')->tag('span.description', $tableInfo->type());
-        $form->div('format')->tag('span.description', $tableInfo->format());
-        $form->div('path')->tag('span.description', $tableInfo->path());
+        $form->input('type')->setAttribute('disabled')->addClass('regular-text');
+        $form->input('format')->setAttribute('disabled')->addClass('regular-text');
+        $form->input('path')->setAttribute('disabled')->addClass('large-text');
 
         $form->submit(__('Enregistrer les modifications', 'docalist-search'));
 
-        $form->bind($tableInfo)->render('wordpress');
+        $form->bind($tableInfo)->display();
     ?>
 </div>

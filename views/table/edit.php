@@ -13,19 +13,19 @@
  */
 namespace Docalist\Views;
 
+use Docalist\Core\AdminTables;
+use Docalist\Table\TableInfo;
+
 /**
  * Edite ou affiche le contenu d'une table d'autorité.
  *
- * @param string $tableName Nom de la table à modifier.
- * @param TableInfo $tableInfo Infos sur la table.
- * @param string[] $fields Liste des champs de la table.
- * @param object[] $data Liste des enregistrements de la table.
- * @param bool $readonly True si la table est en lecture seule.
+ * @var AdminTables $this
+ * @var string $tableName Nom de la table à modifier.
+ * @var TableInfo $tableInfo Infos sur la table.
+ * @var string[] $fields Liste des champs de la table.
+ * @var object[] $data Liste des enregistrements de la table.
+ * @var bool $readonly True si la table est en lecture seule.
  */
-
-use Docalist\Table\TableInfo;
-
-/* @var $tableInfo TableInfo */
 
 // l'ID de la table est dynamique pour pouvoir éventuellement utiliser
 // l'option "persistentState" de HandsOnTable
@@ -41,8 +41,7 @@ wp_enqueue_style('handsontable-css', "$base/jquery.handsontable.full.css", false
 wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'], '0.9.19');
 ?>
 <div class="wrap">
-    <?= screen_icon() ?>
-    <h2><?= $tableInfo->label() ?: $tableName ?></h2>
+    <h1><?= $tableInfo->label() ?: $tableName ?></h1>
 
     <p class="description">
         <?php if ($readonly): ?>
@@ -52,7 +51,7 @@ wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'
         <?php endif; ?>
     </p>
 
-    <form method="post" action="" id="editForm">
+    <form method="post" id="editForm">
         <div id="<?=$id ?>"></div>
 
         <p class="buttons">

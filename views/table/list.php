@@ -12,18 +12,23 @@
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Views;
+
+use Docalist\Core\AdminTables;
 use Docalist\Table\TableInfo;
 use Docalist\Table\TableManager;
 
 /**
  * Liste des tables d'autorité.
  *
- * @param TableInfo[] $tables Liste des tables.
- * @param string[] $formats Formats de tables disponibles.
- * @param string[] $types Types de tables disponibles.
- * @param string $format Format en cours.
- * @param string $type Type en cours.
- * @param string $readonly Readonly ?
+ * @var AdminTables $this
+ * @var TableInfo[] $tables Liste des tables.
+ * @var string[] $formats Formats de tables disponibles.
+ * @var string[] $types Types de tables disponibles.
+ * @var string $format Format en cours.
+ * @var string $type Type en cours.
+ * @var string $readonly Critère readonly en cours.
+ * @var string $sort Critère de tri en cours.
+ * @var string $order Ordre de tri en cours.
  */
 
 $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
@@ -50,15 +55,14 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
     }
 </style>
 <div class="wrap">
-    <?= screen_icon() ?>
-    <h2>
+    <h1>
         <?= $format ? formatFormat($format) : __("Gestion des tables d'autorité", 'docalist-core') ?>
         <?php
             if ($type) {
                 echo ' - ', formatType($type);
             }
         ?>
-    </h2>
+    </h1>
 
     <p class="description"><?= __("
         Cette page vous permet de gérer les tables Docalist.

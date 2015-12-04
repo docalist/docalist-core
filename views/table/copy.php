@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -13,19 +13,20 @@
  */
 namespace Docalist\Views;
 
+use Docalist\Core\AdminTables;
+use Docalist\Forms\Form;
+use Docalist\Table\TableInfo;
+
 /**
  * Crée une nouvelle table par recopie d'une table existante.
  *
- * @param string $tableName Nom de la table à recopier.
- * @param TableInfo $tableInfo Infos sur la table à créer.
- * @param string $error Message d'erreur éventuel à afficher.
+ * @var AdminTables $this
+ * @var string $tableName Nom de la table à recopier.
+ * @var TableInfo $tableInfo Infos sur la table à créer.
+ * @var string $error Message d'erreur éventuel à afficher.
  */
-
-use Docalist\Forms\Form;
-use Docalist\Table\TableInfo;
 ?>
 <div class="wrap">
-    <?= screen_icon() ?>
     <h2><?= sprintf(__('Recopier la table "%s"', 'docalist-core'), $tableName) ?></h2>
 
     <p class="description">
@@ -40,12 +41,13 @@ use Docalist\Table\TableInfo;
 
     <?php
         $form = new Form();
-        $form->input('name')->attribute('class', 'regular-text');
-        $form->input('label')->attribute('class', 'large-text');
+        $form->input('name')->addClass('regular-text');
+        $form->input('label')->addClass('large-text');
         $form->checkbox('nodata')
-             ->label(__('Structure uniquement', 'docalist-core'));
-        $form->submit(__('Ok', 'docalist-search'));
+             ->setLabel(__('Structure uniquement', 'docalist-core'))
+             ->setDescription(__('Ne pas recopier les données', 'docalist-core'));
+        $form->submit(__('Créer la table', 'docalist-search'));
 
-        $form->bind($tableInfo)->render('wordpress');
+        $form->bind($tableInfo)->display();
     ?>
 </div>
