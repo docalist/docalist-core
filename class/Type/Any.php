@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -21,9 +20,10 @@ use Docalist\Type\Interfaces\Editable;
 use Serializable;
 use JsonSerializable;
 use Docalist\Schema\Schema;
-use Docalist\Forms\Fragment;
+use Docalist\Forms\Container;
 use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Input;
+use InvalidArgumentException;
 
 /**
  * Classe de base pour les différents types de données.
@@ -153,7 +153,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     public function getDefaultValue()
     {
         if ($this->schema) {
-            $default = $this->schema->defaultValue();
+            $default = $this->schema->getDefaultValue();
             if (! is_null($default)) {
                 return $default;
             }
@@ -212,7 +212,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // -------------------------------------------------------------------------
     // Interface Stringable
     // -------------------------------------------------------------------------
-    public function __toString()
+    final public function __toString()
     {
         return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
@@ -240,7 +240,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      */
     final public function unserialize($serialized)
     {
-        $this->assign(unserialize($serialized));
+        $this->value = unserialize($serialized);
     }
 
     // -------------------------------------------------------------------------
@@ -306,28 +306,28 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     {
         $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
 
-        $form = new Fragment($name);
+        $form = new Container($name);
 
-        $form->hidden('name')->attribute('class', 'name');
+        $form->hidden('name')->addClass('name');
 
         $form->input('label')
-            ->attribute('id', $name . '-label')
-            ->attribute('class', 'label regular-text')
-            ->label(__('Libellé', 'docalist-core'))
-            ->description(__('Libellé utilisé pour désigner ce champ.', 'docalist-core'));
+            ->setAttribute('id', $name . '-label')
+            ->addClass('label regular-text')
+            ->setLabel(__('Libellé', 'docalist-core'))
+            ->setDescription(__('Libellé utilisé pour désigner ce champ.', 'docalist-core'));
 
         $form->textarea('description')
-            ->attribute('id', $name . '-description')
-            ->attribute('class', 'description large-text')
-            ->attribute('rows', 2)
-            ->label(__('Description', 'docalist-core'))
-            ->description(__('Description : rôle, particularités, format...', 'docalist-core'));
+            ->setAttribute('id', $name . '-description')
+            ->addClass('description large-text')
+            ->setAttribute('rows', 2)
+            ->setLabel(__('Description', 'docalist-core'))
+            ->setDescription(__('Description : rôle, particularités, format...', 'docalist-core'));
 
         $form->input('capability')
-            ->attribute('id', $name . '-capability')
-            ->attribute('class', 'capability regular-text')
-            ->label(__('Droit requis', 'docalist-core'))
-            ->description(
+            ->setAttribute('id', $name . '-capability')
+            ->addClass('capability regular-text')
+            ->setLabel(__('Droit requis', 'docalist-core'))
+            ->setDescription(
                 __('Capacité WordPress requise pour pouvoir accéder au champ.', 'docalist-core') .
                 ' ' .
                 __("Si vous n'indiquez rien, aucun droit particulier ne sera nécessaire.", 'docalist-core')
@@ -359,54 +359,54 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     {
         $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
 
-        $form = new Fragment($name);
+        $form = new Container($name);
 
-        $form->hidden('name')->attribute('class', 'name');
+        $form->hidden('name')->addClass('name');
 
         $form->input('labelspec')
-            ->attribute('id', $name . '-label')
-            ->attribute('class', 'labelspec regular-text')
-            ->attribute('placeholder', $this->schema->label ?: __('(aucun libellé)', 'docalist-core'))
-            ->label(__('Libellé', 'docalist-core'))
-            ->description(
+            ->setAttribute('id', $name . '-label')
+            ->addClass('labelspec regular-text')
+            ->setAttribute('placeholder', $this->schema->label() ?: __('(aucun libellé)', 'docalist-core'))
+            ->setLabel(__('Libellé', 'docalist-core'))
+            ->setDescription(
                 __('Libellé qui sera affiché devant le champ.', 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est le libellé de la grille de base qui sera utilisé.", 'docalist-core')
             );
 
         $form->input('capabilityspec')
-            ->attribute('id', $name . '-label')
-            ->attribute('class', 'capabilityspec regular-text')
-            ->attribute('placeholder', $this->schema->capability ?: '')
-            ->label(__('Droit requis', 'docalist-core'))
-            ->description(
+            ->setAttribute('id', $name . '-capability')
+            ->addClass('capabilityspec regular-text')
+            ->setAttribute('placeholder', $this->schema->capability())
+            ->setLabel(__('Droit requis', 'docalist-core'))
+            ->setDescription(
                 __('Capacité WordPress requise pour que ce champ soit affiché.', 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est la capacité de la grille de base qui sera utilisée.", 'docalist-core')
             );
 
         $form->input('before')
-            ->attribute('id', $name . '-before')
-            ->attribute('class', 'before regular-text')
-            ->label(__('Avant le champ', 'docalist-core'))
-            ->description(__('Texte ou code html à insérer avant le contenu du champ.', 'docalist-core'));
+            ->setAttribute('id', $name . '-before')
+            ->addClass('before regular-text')
+            ->setLabel(__('Avant le champ', 'docalist-core'))
+            ->setDescription(__('Texte ou code html à insérer avant le contenu du champ.', 'docalist-core'));
 
         $form->input('after')
-            ->attribute('id', $name . '-before')
-            ->attribute('class', 'after regular-text')
-            ->label(__('Après le champ', 'docalist-core'))
-            ->description(__('Texte ou code html à insérer après le contenu du champ.', 'docalist-core'));
+            ->setAttribute('id', $name . '-after')
+            ->addClass('after regular-text')
+            ->setLabel(__('Après le champ', 'docalist-core'))
+            ->setDescription(__('Texte ou code html à insérer après le contenu du champ.', 'docalist-core'));
 
         // Propose le choix du format si plusieurs formats sont disponibles
         $formats = $this->getAvailableFormats();
         if (count($formats)) {
             $form->select('format')
-                ->attribute('id', $name . '-format')
-                ->attribute('class', 'format regular-text')
-                ->label(__("Format d'affichage", 'docalist-core'))
-                ->description(__("Choisissez dans la liste le format d'affichage à utiliser.", 'docalist-core'))
-                ->options($formats)
-                ->firstOption(false);
+                ->setAttribute('id', $name . '-format')
+                ->addClass('format regular-text')
+                ->setLabel(__("Format d'affichage", 'docalist-core'))
+                ->setDescription(__("Choisissez dans la liste le format d'affichage à utiliser.", 'docalist-core'))
+                ->setOptions($formats)
+                ->setFirstOption(false);
         }
 
         return $form;
@@ -417,7 +417,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return $settings;
     }
 
-    public function getFormattedValue(array $options = null)
+    public function getFormattedValue($options = null)
     {
         return get_class($this) . '::getFormattedValue() not implemented';
     }
@@ -440,44 +440,56 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     {
         $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
 
-        $form = new Fragment($name);
+        $form = new Container($name);
 
-        $form->hidden('name')
-            ->attribute('class', 'name');
+        $form->hidden('name')->addClass('name');
 
         $form->input('labelspec')
-            ->attribute('id', $name . '-label')
-            ->attribute('class', 'labelspec regular-text')
-            ->attribute('placeholder', $this->schema->label ?: __('(aucun libellé)', 'docalist-core'))
-            ->label(__('Libellé en saisie', 'docalist-core'))
-            ->description(
+            ->setAttribute('id', $name . '-label')
+            ->addClass('labelspec regular-text')
+            ->setAttribute('placeholder', $this->schema->label() ?: __('(aucun libellé)', 'docalist-core'))
+            ->setLabel(__('Libellé en saisie', 'docalist-core'))
+            ->setDescription(
                 __('Libellé qui sera affiché pour saisir ce champ.', 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est le libellé de la grille de base qui sera utilisé.", 'docalist-core')
             );
 
         $form->textarea('descriptionspec')
-            ->attribute('id', $name . '-description')
-            ->attribute('class', 'description large-text')
-            ->attribute('rows', 2)
-            ->attribute('placeholder', $this->schema->description ?: __('(pas de description)', 'docalist-core'))
-            ->label(__('Aide à la saisie', 'docalist-core'))
-            ->description(
+            ->setAttribute('id', $name . '-description')
+            ->addClass('description large-text')
+            ->setAttribute('rows', 2)
+            ->setAttribute('placeholder', $this->schema->description() ?: __('(pas de description)', 'docalist-core'))
+            ->setLabel(__('Aide à la saisie', 'docalist-core'))
+            ->setDescription(
                 __("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ.", 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est la description de la grille de base qui sera utilisée.", 'docalist-core')
             );
 
         $form->input('capabilityspec')
-            ->attribute('id', $name . '-label')
-            ->attribute('class', 'capabilityspec regular-text')
-            ->attribute('placeholder', $this->schema->capability ?: '')
-            ->label(__('Droit requis', 'docalist-core'))
-            ->description(
+            ->setAttribute('id', $name . '-capability')
+            ->addClass('capabilityspec regular-text')
+            ->setAttribute('placeholder', $this->schema->capability() ?: '')
+            ->setLabel(__('Droit requis', 'docalist-core'))
+            ->setDescription(
                 __('Capacité WordPress requise pour que ce champ apparaisse dans le formulaire.', 'docalist-core') .
                 ' ' .
                 __("Par défaut, c'est la capacité de la grille de base qui sera utilisée.", 'docalist-core')
             );
+
+        // Propose le choix du format si plusieurs éditeurs sont disponibles
+        $formats = $this->getAvailableEditors();
+        if (count($formats) > 1) {
+            $form->select('editor')
+            ->setAttribute('id', $name . '-editor')
+            ->addClass('editor regular-text')
+            ->setLabel(__("Editeur", 'docalist-core'))
+            ->setDescription(__("Choisissez dans la liste le contrôle à utiliser pour éditeur ce champ.", 'docalist-core'))
+            ->setOptions($formats)
+            ->setFirstOption(false);
+        }
+
 
         return $form;
     }
@@ -492,7 +504,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
 
         return new Input($name);
-        //return (new Input($name))->label($this->schema->label())->description($this->schema->description());
     }
 
     // -------------------------------------------------------------------------
@@ -529,24 +540,43 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      * Exemple :
      *
      * <code>
-     * public function getFormattedValue(array $options = null) {
+     * public function getFormattedValue($options = null) {
      *     $sep = $this->getOption('sep', $options,  ', ');
      *     ...
      * }
      * </code>
      *
      * @param string $name Le nom de l'option recherchée.
-     * @param array|null $options Le tableau d'options passées en paramètre.
+     * @param Schema|array|null $options Le tableau d'options passées en paramètre.
      * @param mixed $default La valeur par défaut de l'option.
+     *
+     * @return scalar
      */
-    protected function getOption($name, array $options = null, $default = null)
+    protected function getOption($name, Schema $options = null, $default = null) // TODO : Schema $options ?
     {
-        if (isset($options[$name])) {
-            return $options[$name];
+        // Les options ont été passées sous forme de Schema, retourne la valeur de l'option si elle existe
+        if ($options instanceof Schema) {
+            if (isset($options->$name)) {
+                return $options->__get($name)->value();
+            }
         }
 
-        if (isset($this->schema->value[$name])) {
-            return $this->schema->value[$name];
+        // Tableau d'options, retourne l'option si elle existe
+        elseif (is_array($options)) {
+            if (isset($options[$name])) {
+                return $options[$name];
+            }
+        }
+
+        // Erreur
+        elseif (!is_null($options)) {
+            die('here');
+            throw new InvalidArgumentException('Invalid options, expected Schema or array, got ' . gettype($options));
+        }
+
+        // L'option demandée ne figure pas dans les options, regarde dans le schéma
+        if (isset($this->schema->$name)) {
+            return $this->schema->__get($name)->value();
         }
 
         return $default;
