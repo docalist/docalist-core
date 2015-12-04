@@ -274,8 +274,8 @@ class Container extends Element implements Countable, IteratorAggregate
         parent::bindSchema($schema);
 
         foreach ($this->items as $item) {
-            if ($item instanceof Element && ($name = $item->getName()) && $schema->has($name)) {
-                $item->bindSchema($schema->field($name));
+            if ($item instanceof Element && ($name = $item->getName()) && $schema->hasField($name)) {
+                $item->bindSchema($schema->getField($name));
             }
         }
     }
