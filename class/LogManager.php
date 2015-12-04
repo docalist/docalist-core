@@ -11,24 +11,19 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist;
 
 use Psr\Log\LoggerInterface;
-
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Monolog\Formatter\LineFormatter;
 
-use Exception;
-
 /**
  * Gestionnaire de Logs.
- *
  */
-class LogManager {
-
+class LogManager
+{
     /**
      * Liste des loggers créés.
      */
@@ -48,7 +43,8 @@ class LogManager {
      *
      * @return LoggerInterface
      */
-    public function get($channel) {
+    public function get($channel)
+    {
         // Permet à l'application de définir le logger
         $logger = apply_filters('docalist_setup_logger', null, $channel);
 
@@ -66,7 +62,8 @@ class LogManager {
      *
      * @return HandlerInterface
      */
-    protected function defaultHandler() {
+    protected function defaultHandler()
+    {
         if (! isset($this->defaultHandler)) {
             $path = docalist('log-dir') . '/docalist.log';
             $this->defaultHandler = new RotatingFileHandler($path, 10, MonologLogger::ERROR); // TODO : options
