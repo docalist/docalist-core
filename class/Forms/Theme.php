@@ -372,7 +372,7 @@ class Theme
         return htmlspecialchars($text, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_DISALLOWED, 'UTF-8');
 
         // remarque : Zend utilise ENT_QUOTES | ENT_SUBSTITUTE;
-        https://github.com/zendframework/zend-escaper/blob/master/src/Escaper.php#L144
+        // https://github.com/zendframework/zend-escaper/blob/master/src/Escaper.php#L144
     }
 
     /**
