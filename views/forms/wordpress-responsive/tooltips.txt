@@ -1,0 +1,36 @@
+CSS : 
+-------------------------------------------
+.tooltip {
+   display: inline;
+   position: relative;
+}
+
+.tooltip-content {
+   display: none; 
+}
+
+.tooltip:hover .tooltip-content {
+    position: absolute;
+    display: block;
+    width: 320px;
+    z-index: 999;
+   
+    border-radius: 6px;
+   
+    border: 1px solid #00a0d2;
+    background-color: #e5f5fa;
+    padding: 10px;
+
+    -webkit-box-shadow: 0 3px 6px rgba(0,0,0,0.075);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.075);
+}
+
+
+HTML (dans _label.php) 
+-------------------------------------------
+<div class="tooltip">
+    <span class="dashicons dashicons-editor-help tooltip-handle"></span>
+    <div class="tooltip-content">
+        <p class="description"><?= $this->getDescription()?></p>
+    </div>
+</div>
