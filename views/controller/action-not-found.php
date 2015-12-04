@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -13,10 +13,13 @@
  */
 namespace Docalist\Views;
 
+use Docalist\Controller;
+
 /**
  * Génère une page "Action non trouvée".
  *
- * @param string $action Le nom de l'action qui n'a pas été trouvée.
+ * @var Controller $this
+ * @var string $action Le nom de l'action qui n'a pas été trouvée.
  */
 
 $title = __('Action non trouvée', 'docalist-core');
