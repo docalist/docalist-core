@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -14,18 +13,18 @@
  */
 namespace Docalist\Type\Interfaces;
 
-use Docalist\Forms\Field;
+use Docalist\Forms\Element;
 
 /**
  * API permettant de saisir et modifier un type de données docalist.
  *
- * Tous les types de données docalist disposent d'un ou plusieurs éditeurs (des
- * {@link Docalist\Forms\Field formulaires}) qui peuvent être utilisés pour
- * saisir et modifier des valeurs de ce type.
+ * Tous les types de données docalist disposent d'un ou plusieurs éditeurs
+ * (des {@link Docalist\Forms\Element élément de formulaires}) qui peuvent
+ * être utilisés pour saisir et modifier des valeurs de ce type.
  *
  * La méthode {@link getAvailableEditors()} permet d'obtenir la liste des
- * éditeurs disponibles pour un type donné et {@link getDefaultEditor()} permet
- * de connaître le nom de l'éditeur par défaut.
+ * éditeurs disponibles pour un type donné et {@link getDefaultEditor()}
+ * permet de connaître le nom de l'éditeur par défaut.
  *
  * Pour obtenir le formulaire de saisie, il suffit d'appeller la méthode
  * {@link getEditorForm()}.
@@ -61,13 +60,13 @@ interface Editable
     public function getDefaultEditor();
 
     /**
-     * Retourne un formulaire permettant de saisir et de modifier les paramètres
-     * de saisie du type : libellé à afficher, éditeur à utiliser, valeur par
-     * défaut, etc.
+     * Retourne un élément de formulaire permettant de saisir et de modifier
+     * les paramètres de saisie du type : libellé à afficher, éditeur à utiliser,
+     * valeur par défaut, etc.
      *
      * Retourne le formulaire "paramètres de saisie" du champ.
      *
-     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
+     * @return Element Un élément de formulaire.
      */
     public function getEditorSettingsForm();
 
@@ -89,11 +88,11 @@ interface Editable
     public function validateEditorSettings(array $settings);
 
     /**
-     * Retourne le formulaire permettant de saisir ce champ.
+     * Retourne un élément de formulaire permettant de saisir ce champ.
      *
      * @param array $options Options à appliquer à l'éditeur.
      *
-     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
+     * @return Element Un élément de formulaire.
      */
     public function getEditorForm(array $options = null);
 }
