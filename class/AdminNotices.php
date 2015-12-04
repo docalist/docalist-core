@@ -12,10 +12,7 @@
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  * @version     SVN: $Id$
  */
-
 namespace Docalist;
-
-use InvalidArgumentException;
 
 /**
  * Service "admin notices".
@@ -27,7 +24,8 @@ use InvalidArgumentException;
  * - warning : message d'avertissement, confirmation, etc. (en orange)
  * - error : message d'erreur, opération qui a échouée, etc. (en rouge).
  */
-class AdminNotices {
+class AdminNotices
+{
     /*
      * Principes :
      * - Le service admin-notices n'est disponible que dans le back-office de
@@ -62,11 +60,12 @@ class AdminNotices {
     /**
      * Crée le service admin-notices.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $meta = get_user_meta(get_current_user_id(), self::META, true);
         is_array($meta) && $this->notices = $meta;
 
-        add_action('admin_notices', function() {
+        add_action('admin_notices', function () {
             ! empty($this->notices) && $this->render();
         });
     }
@@ -81,7 +80,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function add($type, $content, $title = null) {
+    public function add($type, $content, $title = null)
+    {
         // Stocke la notice
         $this->notices[] = [$type, $content, $title];
         add_user_meta(get_current_user_id(), self::META, $this->notices, true);
@@ -95,7 +95,8 @@ class AdminNotices {
      *
      * @return int
      */
-    public function count() {
+    public function count()
+    {
         return count($this->notices);
     }
 
@@ -107,7 +108,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function info($content, $title = null) {
+    public function info($content, $title = null)
+    {
         return $this->add('info', $content, $title);
     }
 
@@ -119,7 +121,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function success($content, $title = null) {
+    public function success($content, $title = null)
+    {
         return $this->add('success', $content, $title);
     }
 
@@ -131,7 +134,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function warning($content, $title = null) {
+    public function warning($content, $title = null)
+    {
         return $this->add('warning', $content, $title);
     }
 
@@ -143,7 +147,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function error($content, $title = null) {
+    public function error($content, $title = null)
+    {
         return $this->add('error', $content, $title);
     }
 
@@ -152,9 +157,10 @@ class AdminNotices {
      *
      * @return self
      */
-    protected function render() {
+    protected function render()
+    {
         // Affiche les notices dans l'ordre où elles ont été ajoutées
-        foreach($this->notices as $notice) {
+        foreach ($this->notices as $notice) {
             list($type, $content, $title) = $notice;
 
             printf('<div class="notice notice-%s is-dismissible">', $type);
