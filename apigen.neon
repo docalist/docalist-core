@@ -1,0 +1,14 @@
+source:
+    - ./class
+
+destination: ./apidoc
+
+title: API docalist-core
+
+todo: yes
+
+accessLevels: [public, protected, private]
+
+noSourceCode: yes
+
+templateTheme: bootstrap

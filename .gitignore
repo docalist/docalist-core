@@ -39,3 +39,6 @@ local.properties
 
 # TeXlipse plugin
 .texlipse
+
+# Doc sur l'api générée par apigen
+apidoc/
