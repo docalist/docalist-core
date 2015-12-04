@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -70,7 +69,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     public function value()
     {
         $result = [];
-        foreach ($this->value as $item) {
+        foreach ($this->value as $item) { // faut-il conserver la clé ?
             $result[] = $item->value();
         }
 
@@ -127,7 +126,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         // Cas d'une collection typée (avec un schéma)
         if ($this->schema) {
             // Détermine le type des éléments de cette collection
-            $type = $this->schema->type();
+            $type = $this->schema->type() ?: 'Docalist\Type\Any';
 
             // Si value est un objet du bon type, ok
             if ($value instanceof $type) {
@@ -139,9 +138,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
                 if (is_a($type, 'Docalist\Type\Composite', true)) {
                     $item = new $type($value); /* @var $item Composite */
 
-                    // Un objet a déjà un schéma, donc on ne peut pas lui fournir le notre
-                    // On se contente de recopier les propriétés qu'il n'a pas (format, etc.)
-                    $item->schema->value += $this->schema->value;
+                    if (! is_null($item->schema)) {
+                        // Un objet a déjà un schéma, donc on ne peut pas lui fournir le notre
+                        // On se contente de recopier les propriétés qu'il n'a pas (format, etc.)
+                        $item->schema->value += $this->schema->value;
+                    }
                 } else {
                     $item = new $type($value, $this->schema);
                 }
@@ -163,8 +164,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Si c'est une collection à clé, ignore offset et utilise le sous-champ
         if ($this->schema && $key = $this->schema->key()) {
-            $key = $item->$key();
-            $this->value[$key] = $item;
+            $this->value[$item->$key()] = $item;
         }
 
         // Collection sans clés
@@ -304,7 +304,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
     public function filterEmpty($strict = true)
     {
-        foreach ($this->value as $key => $item) { /* @var $item Any */
+        foreach ($this->value as $key => $item) { /* @var Any $item */
             if ($item->filterEmpty($strict)) {
                 unset($this->value[$key]);
             }
@@ -318,7 +318,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $this->createTemporaryItem()->getSettingsForm();
     }
 
-    public function getFormattedValue(array $options = null)
+    public function getFormattedValue($options = null)
     {
         // Paramètres d'affichage
         $prefix = $this->getOption('prefix', $options, '');
@@ -335,7 +335,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $result = [];
 
         // Sanity check / debug
-        if ($explode && ! is_a($this->schema->type(), 'Docalist\Type\Categorizable', true)) {
+        if ($explode && ! is_a($this->schema->type(), 'Docalist\Type\Interfaces\Categorizable', true)) {
             echo $this->schema->name(), " : 'vue éclatée' activée mais le champ ne gère pas 'Categorizable'<br />";
             $explode = false;
         }
@@ -431,48 +431,48 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         // Propose l'option "vue éclatée" si le champ est catégorisable
         if ($item instanceof Categorizable) { /* @var $item Categorizable */
             $form->checkbox('explode')
-                ->label(__('Vue éclatée', 'docalist-core'))
-                ->description(sprintf(
+                ->setLabel(__('Vue éclatée', 'docalist-core'))
+                ->setDescription(sprintf(
                     __('Affiche un champ distinct pour chaque %s.', 'docalist-core'),
                     $item->getCategoryName()
                 ));
         }
 
         $form->input('prefix')
-            ->attribute('id', $name . '-prefix')
-            ->attribute('class', 'prefix regular-text')
-            ->label(__('Avant les items', 'docalist-core'))
-            ->description(__('Texte ou code html à insérer avant chaque item.', 'docalist-core'));
+            ->setAttribute('id', $name . '-prefix')
+            ->addClass('prefix regular-text')
+            ->setLabel(__('Avant les items', 'docalist-core'))
+            ->setDescription(__('Texte ou code html à insérer avant chaque item.', 'docalist-core'));
 
         $form->input('sep')
-            ->attribute('id', $name . '-sep')
-            ->attribute('class', 'sep small-text')
-            ->label(__('Entre les items', 'docalist-core'))
-            ->description(__('Séparateur ou code html à insérer entre les items.', 'docalist-core'));
+            ->setAttribute('id', $name . '-sep')
+            ->addClass('sep small-text')
+            ->setLabel(__('Entre les items', 'docalist-core'))
+            ->setDescription(__('Séparateur ou code html à insérer entre les items.', 'docalist-core'));
 
         $form->input('suffix')
-            ->attribute('id', $name . '-suffix')
-            ->attribute('class', 'suffix regular-text')
-            ->label(__('Après les items', 'docalist-core'))
-            ->description(__('Texte ou code html à insérer après chaque item.', 'docalist-core'));
+            ->setAttribute('id', $name . '-suffix')
+            ->addClass('suffix regular-text')
+            ->setLabel(__('Après les items', 'docalist-core'))
+            ->setDescription(__('Texte ou code html à insérer après chaque item.', 'docalist-core'));
 
         $form->input('limit')
-            ->attribute('type', 'number')
-            ->attribute('id', $name . '-limit')
-            ->attribute('class', 'limit small-text')
-            ->label(__('Limite', 'docalist-core'))
-            ->description(
+            ->setAttribute('type', 'number')
+            ->setAttribute('id', $name . '-limit')
+            ->addClass('limit small-text')
+            ->setLabel(__('Limite', 'docalist-core'))
+            ->setDescription(
                 __("Permet de limiter le nombre d'items affichés.", 'docalist-core') .
                 ' ' .
                 __('Exemples : 3 = les trois premiers, -3 = les trois derniers, 0 (ou vide) = tout.', 'docalist-core')
             )
-            ->attribute('placeholder', 'tout');
+            ->setAttribute('placeholder', 'tout');
 
         $form->input('ellipsis')
-            ->attribute('id', $name . '-limit')
-            ->attribute('class', 'limit regular-text')
-            ->label(__('Ellipse', 'docalist-core'))
-            ->description(
+            ->setAttribute('id', $name . '-limit')
+            ->addClass('limit regular-text')
+            ->setLabel(__('Ellipse', 'docalist-core'))
+            ->setDescription(
                 __("Texte à afficher si le nombre d'items dépasse la limite indiquée plus haut.", 'docalist-core')
             );
 
@@ -486,9 +486,9 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Modifie le champ pour qu'il soit répétable
         if ($form instanceof Choice) {
-            $form->multiple(true);
+            $form->setAttribute('multiple');
         } else {
-            $form->repeatable(true);
+            $form->setRepeatable();
         }
 
         // Ok
@@ -517,7 +517,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         }
 
         // Crée l'item
-        $item = new $type(null, $this->schema);
+        $item = new $type($type::getClassDefault(), $this->schema);
 
         // Restaure la valeur par défaut du schéma
         ! is_null($default) && $this->schema->value['default'] = $default;
