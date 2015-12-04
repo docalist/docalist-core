@@ -11,23 +11,25 @@
  * @subpackage  Tests
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Tests\Type\Fixtures;
-
-use WP_UnitTestCase;
 
 use Docalist\Type\Settings;
 use Docalist\Type\Text;
 
 /**
- * @property Text $url
+ * @property Text $a
  */
-class MySettings extends Settings {
-    protected static function loadSchema() {
+class MySettings extends Settings
+{
+    protected static function loadSchema()
+    {
         return [
             'fields' => [
-                'a' => [ 'default' => 'default' ]
-            ]
+                'a' => [
+                    'type' => 'Docalist\Type\Text',
+                    'default' => 'default',
+                ],
+            ],
         ];
     }
 }

@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,18 +11,17 @@
  * @subpackage  Tests
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Tests\Type;
 
 use WP_UnitTestCase;
-
 use Docalist\Type\Composite;
-use Docalist\Schema\Schema;
 use Docalist\Tests\Type\Fixtures\Money;
 use Docalist\Type\Any;
 
-class CompositeTest extends WP_UnitTestCase {
-    public function testNew() {
+class CompositeTest extends WP_UnitTestCase
+{
+    public function testNew()
+    {
         $a = new Composite();
         $this->assertSame([], $a->value());
 
@@ -35,17 +34,18 @@ class CompositeTest extends WP_UnitTestCase {
         $this->assertSame(['amount' => 12.], $euro->value());
 
         // data() retourne les champs dans l'ordre du schéma (currency <-> amount)
-        $euro = new Money(['amount' => 12, 'conversion' => [ ['currency' => '$', 'amount' => 16.06] ] ]);
-        $this->assertSame(['amount' => 12., 'conversion' => [ ['amount' => 16.06, 'currency' => '$'] ] ], $euro->value());
+        $euro = new Money(['amount' => 12, 'conversion' => [['currency' => '$', 'amount' => 16.06]]]);
+        $this->assertSame(['amount' => 12., 'conversion' => [['amount' => 16.06, 'currency' => '$']]], $euro->value());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
     public function testInvalidType()
     {
-        (new Composite)->assign('true');
+        (new Composite())->assign('true');
     }
 
-    public function testSet() {
+    public function testSet()
+    {
         $a = new Money();
 
         $a->amount = 12.0;
@@ -58,8 +58,8 @@ class CompositeTest extends WP_UnitTestCase {
         $a->timestamp = 123456; // initialise un champ qui ne l'est pas déjà
         $this->assertSame(['amount' => 16., 'currency' => '$', 'timestamp' => 123456], $a->value());
 
-        $a->conversion = [ ['currency' => 'EUR', 'amount' => 12] ];
-        $this->assertSame(['amount' => 16., 'currency' => '$', 'conversion' => [ ['amount' => 12., 'currency' => 'EUR'] ], 'timestamp' => 123456 ], $a->value());
+        $a->conversion = [['currency' => 'EUR', 'amount' => 12]];
+        $this->assertSame(['amount' => 16., 'currency' => '$', 'conversion' => [['amount' => 12., 'currency' => 'EUR']], 'timestamp' => 123456], $a->value());
 
         $a->conversion = null; // conversion réinitialisé à sa valeur par défaut ([]) puis filtré par value() donc supprimé
         $this->assertSame(['amount' => 16., 'currency' => '$', 'timestamp' => 123456], $a->value());
@@ -72,17 +72,18 @@ class CompositeTest extends WP_UnitTestCase {
         $this->assertSame(['amount' => 0., 'currency' => 'EUR', 'timestamp' => 0], $a->value());
     }
 
-    public function testGet() {
-        $a = new Money(['amount' => 16., 'currency' => '$', 'conversion' => [ ['amount' => 12.] ], 'timestamp' => 123456 ]);
+    public function testGet()
+    {
+        $a = new Money(['amount' => 16., 'currency' => '$', 'conversion' => [['amount' => 12.]], 'timestamp' => 123456]);
 
-        $this->assertInstanceOf('Docalist\Type\Float', $a->amount);
+        $this->assertInstanceOf('Docalist\Type\Decimal', $a->amount);
         $this->assertInstanceOf('Docalist\Type\Text', $a->currency);
         $this->assertInstanceOf('Docalist\Type\Collection', $a->conversion);
         $this->assertInstanceOf('Docalist\Type\Integer', $a->timestamp);
 
         $this->assertSame(16., $a->amount->value());
         $this->assertSame('$', $a->currency->value());
-        $this->assertSame([ ['amount' => 12.] ], $a->conversion->value());
+        $this->assertSame([['amount' => 12.]], $a->conversion->value());
         $this->assertSame(123456, $a->timestamp->value());
 
         $a = new Money();
@@ -96,7 +97,8 @@ class CompositeTest extends WP_UnitTestCase {
         $a->abcdef;
     }
 
-    public function testIssetUnset() {
+    public function testIssetUnset()
+    {
         $a = new Money();
 
         $this->assertTrue(isset($a->amount));
@@ -109,14 +111,15 @@ class CompositeTest extends WP_UnitTestCase {
         unset($a->timestamp);
         $this->assertFalse(isset($a->timestamp));
 
-        $a->conversion = [ ['amount' => 12.] ];
+        $a->conversion = [['amount' => 12.]];
         $this->assertTrue(isset($a->conversion));
         unset($a->conversion);
         $this->assertFalse(isset($a->conversion));
     }
 
-    public function testCall() {
-        $a = new Money(['amount' => 16., 'currency' => '$', 'conversion' => [ ['amount' => 12.] ], 'timestamp' => 123456 ]);
+    public function testCall()
+    {
+        $a = new Money(['amount' => 16., 'currency' => '$', 'conversion' => [['amount' => 12.]], 'timestamp' => 123456]);
 
 //         $this->assertInstanceOf('Docalist\Type\Float', $a->amount());
 //         $this->assertInstanceOf('Docalist\Type\Text', $a->currency());
@@ -125,13 +128,13 @@ class CompositeTest extends WP_UnitTestCase {
 
         $this->assertSame(16., $a->amount());
         $this->assertSame('$', $a->currency());
-        $this->assertSame([ ['amount' => 12.] ], $a->conversion());
+        $this->assertSame([['amount' => 12.]], $a->conversion());
         $this->assertSame(123456, $a->timestamp());
 
 
         $a = new Money();
 
-        $a->amount(16)->currency('$')->conversion([ ['amount' => 12.] ])->timestamp(123456);
+        $a->amount(16)->currency('$')->conversion([['amount' => 12.]])->timestamp(123456);
 //         $this->assertInstanceOf('Docalist\Type\Float', $a->amount());
 //         $this->assertInstanceOf('Docalist\Type\Text', $a->currency());
 //         $this->assertInstanceOf('Docalist\Type\Collection', $a->conversion());
@@ -139,21 +142,22 @@ class CompositeTest extends WP_UnitTestCase {
 
         $this->assertSame(16., $a->amount());
         $this->assertSame('$', $a->currency());
-        $this->assertSame([ ['amount' => 12.] ], $a->conversion());
+        $this->assertSame([['amount' => 12.]], $a->conversion());
         $this->assertSame(123456, $a->timestamp());
 
         $a = new Money();
         $this->assertSame([], $a->conversion());
 
         $a = new Composite();
-        $this->assertSame(Any::classDefault(), $a->prop());
+        $this->assertSame(Any::getClassDefault(), $a->prop());
     }
 
-    public function testToString() {
+    public function testToString()
+    {
         $a = new Composite();
         $b = new Money();
 
-        $this->assertSame("{ }", $a->__toString());
-        $this->assertStringMatchesFormat('{%wamount: 0%wcurrency: "EUR"%w}', $b->__toString());
+        $this->assertSame('[]', $a->__toString());
+        $this->assertStringMatchesFormat('{%w"amount": 0,%w"currency": "EUR"%w}', $b->__toString());
     }
 }
