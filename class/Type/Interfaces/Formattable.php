@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -14,7 +13,7 @@
  */
 namespace Docalist\Type\Interfaces;
 
-use Docalist\Forms\Field;
+use Docalist\Forms\Element;
 
 /**
  * API permettant de formatter un type de données docalist.
@@ -64,11 +63,11 @@ interface Formattable
     public function getDefaultFormat();
 
     /**
-     * Retourne un fragment de formulaire permettant de saisir et de modifier
+     * Retourne un élément de formulaire permettant de saisir et de modifier
      * les paramètres d'affichage du type : libellé à afficher, format
      * d'affichage, etc.
      *
-     * @return Field Un champ de formulaire ou un ensemble de champs (fragment).
+     * @return Element Un élément de formulaire.
      */
     public function getFormatSettingsForm();
 
@@ -92,7 +91,7 @@ interface Formattable
     /**
      * Formatte le type.
      *
-     * @param array $options Options de formattage.
+     * @param array|object $options Options de formattage.
      *
      * @return string|array Par défaut, la méthode retourne une chaine
      * contenant la valeur formattée selon les options indiquées.
@@ -101,5 +100,5 @@ interface Formattable
      * est activée, la méthode retourne un tableau contenant un ou plusieurs
      * éléments de la forme "catégorie" => "éléments de cette catégorie".
      */
-    public function getFormattedValue(array $options = null);
+    public function getFormattedValue($options = null);
 }
