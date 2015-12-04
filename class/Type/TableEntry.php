@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -14,11 +13,10 @@
  */
 namespace Docalist\Type;
 
-use Docalist\Table\TableManager;
-use Docalist\Table\TableInterface;
-use Docalist\Forms\TableLookup;
-use InvalidArgumentException;
 use Docalist\Schema\Schema;
+use Docalist\Forms\EntryPicker;
+use Docalist\Table\TableManager;
+use InvalidArgumentException;
 
 /**
  * Un champ texte contenant un code provenant d'un table d'autorité associée
@@ -35,17 +33,9 @@ class TableEntry extends Text
         parent::__construct($value, $schema);
 
         // Garantit qu'on a un schéma et que la table à utiliser est indiquée
-        if (is_null($schema) || !isset($schema->value['table'])) {
-            $field = [];
-            isset($schema->value['name']) && $field[] = $schema->value['name'];
-            isset($schema->value['label']) && $field[] = $schema->value['label'];
-            isset($schema->value['description']) && $field[] = $schema->value['description'];
-            $field = implode(' / ', $field);
-            $field && $field = " ($field)";
-
-            throw new InvalidArgumentException(
-                sprintf("Schema property 'table' is required for a TableEntry field%s.", $field)
-            );
+        if (is_null($schema) || empty($schema->table())) {
+            $field = $schema ? ($schema->name() ?: $schema->label()) : '';
+            throw new InvalidArgumentException("Schema property 'table' is required for a TableEntry field '$field'.");
         }
     }
 
@@ -56,11 +46,11 @@ class TableEntry extends Text
 
         // Ajoute un select permettant de choisir la table à utiliser
         $form->select('table')
-            ->label($this->tableLabel())
-            ->description(__("Choisissez la table d'autorité à utiliser pour ce champ.", 'docalist-core'))
-            ->attribute('class', 'table regular-text')
-            ->options($this->getPossibleTables())
-            ->firstOption(false);
+            ->setLabel($this->getTableLabel())
+            ->setDescription(__("Choisissez la table d'autorité à utiliser pour ce champ.", 'docalist-core'))
+            ->addClass('table regular-text')
+            ->setOptions($this->getPossibleTables())
+            ->setFirstOption(false);
 
         // ok
         return $form;
@@ -68,7 +58,10 @@ class TableEntry extends Text
 
     public function getEditorForm(array $options = null)
     {
-        return new TableLookup($this->schema->name(), $this->schema->table());
+        $picker = new EntryPicker($this->schema->name());
+        $picker->setOptions($this->schema->table());
+
+        return $picker;
     }
 
     public function getAvailableFormats()
@@ -80,7 +73,7 @@ class TableEntry extends Text
         ];
     }
 
-    public function getFormattedValue(array $options = null)
+    public function getFormattedValue($options = null)
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
 
@@ -89,46 +82,52 @@ class TableEntry extends Text
                 return $this->value;
 
             case 'label':
-                return $this->getLabel();
+                return $this->getEntry('label') ?: $this->value;
 
             case 'label+description':
-                $code = $this->value;
-                $table = $this->openTable();
-                if (false === $entry = $table->find('*', 'code=' . $table->quote($code))) {
-                    return $code;
+                $entry = $this->getEntry();
+                if ($entry === false) {
+                    return $this->value;
                 }
-                return sprintf('<abbr title="%s">%s</abbr>', esc_attr($entry->description), $entry->label ?: $code);
+
+                return sprintf(
+                    '<abbr title="%s">%s</abbr>',
+                    esc_attr($entry->description),
+                    $entry->label ?: $this->value
+                );
         }
 
-        throw new InvalidArgumentException('Invalid format');
-    }
-
-    protected function getLabel()
-    {
-        // Ouvre la table
-        $table = $this->openTable();
-
-        // Recherche le code et retourne le libellé associé
-        if (false === $label = $table->find('label', 'code=' . $table->quote($this->value))) {
-            return $label;
-        }
-
-        // Code non trouvé, retourne le code
-        return $this->value;
+        throw new InvalidArgumentException("Invalid TableEntry format '$format'");
     }
 
     /**
-     * Ouvre la table d'autorité associée au champ.
+     * Retourne l'entrée dans la table correspondant à la valeur actuelle du champ.
      *
-     * @return TableInterface
+     * @param string $returns Champ(s) à retourner, '*' par défaut.
+     *
+     * @return mixed
      */
-    protected function openTable()
+    public function getEntry($returns = '*')
     {
         // Le nom de la table est de la forme "type:nom", on ne veut que le nom
         $table = explode(':', $this->schema->table())[1];
 
         // Ouvre la table
-        return docalist('table-manager')->get($table);
+        $table = docalist('table-manager')->get($table);
+
+        // Recherche le code et retourne l'entrée correspondante
+        return $table->find($returns, 'code=' . $table->quote($this->value));
+    }
+
+    /**
+     * Retourne le libellé de l'entrée.
+     *
+     * @return string Retourne le libellé de l'entrée ou son code si l'entrée ne figure
+     * pas dans la table d'autorité associée.
+     */
+    public function getEntryLabel()
+    {
+        return $this->getEntry('label') ?: $this->value;
     }
 
     /**
@@ -171,7 +170,7 @@ class TableEntry extends Text
      *
      * @return string
      */
-    protected function tableLabel()
+    protected function getTableLabel()
     {
         return __("Table d'autorité", 'docalist-core');
     }
