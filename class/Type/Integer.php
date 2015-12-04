@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -39,6 +38,6 @@ class Integer extends Number
 
     public function getEditorForm(array $options = null)
     {
-        return parent::getEditorForm($options)->attribute('step', '1');
+        return parent::getEditorForm($options)->setAttribute('step', '1');
     }
 }

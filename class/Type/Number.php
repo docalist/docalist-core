@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -42,6 +41,6 @@ class Number extends Scalar
 
     public function getEditorForm(array $options = null)
     {
-        return parent::getEditorForm($options)->attribute('type', 'number');
+        return parent::getEditorForm($options)->setAttribute('type', 'number');
     }
 }

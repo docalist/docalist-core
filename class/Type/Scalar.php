@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -33,8 +32,9 @@ class Scalar extends Any
         return $this;
     }
 
-    public function getFormattedValue(array $options = null)
+    public function getFormattedValue($options = null)
     {
         return (string) $this->value;
     }
+
 }
