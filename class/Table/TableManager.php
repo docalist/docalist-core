@@ -13,19 +13,16 @@
  */
 namespace Docalist\Table;
 
-use Docalist\Core\Settings;
 use Docalist\Cache\FileCache;
 use Docalist\Tokenizer;
-use PDO;
 use Exception;
 use InvalidArgumentException;
 
 /**
  * Gestionnaire de tables d'autorité.
- *
  */
-class TableManager {
-
+class TableManager
+{
     /**
      * Le logger utilisé.
      *
@@ -58,7 +55,8 @@ class TableManager {
     /**
      * Initialise le gestionnaire de tables.
      */
-    public function __construct() {
+    public function __construct()
+    {
         // Initialise notre log
         $this->log = docalist('logs')->get('tables');
     }
@@ -72,7 +70,8 @@ class TableManager {
      *
      * @return self
      */
-    public function register(TableInfo $table) {
+    public function register(TableInfo $table)
+    {
         $this->master()->register($table);
 
         return $this;
@@ -90,7 +89,8 @@ class TableManager {
      *
      * @return self
      */
-    public function unregister($name) {
+    public function unregister($name)
+    {
         $this->master()->unregister($name);
 
         return $this;
@@ -105,7 +105,8 @@ class TableManager {
      *
      * @throws Exception Si la table indiquée n'a pas été enregistrée.
      */
-    public function get($name) {
+    public function get($name)
+    {
         if ($name === 'master') {
             return $this->master();
         }
@@ -121,7 +122,7 @@ class TableManager {
         // Ouvre la table
         $path = $table->path();
         $extension = pathinfo($path, PATHINFO_EXTENSION);
-        switch($extension) {
+        switch ($extension) {
             case 'sqlite':
             case 'db':
                 return $this->opened[$name] = new SQLite($path);
@@ -158,7 +159,8 @@ class TableManager {
      * - si un fichier $newName.txt existe déjà dans ce répertoire
      * - si une erreur survient durant la copie
      */
-    public function copy($name, $newName, $label, $nodata) {
+    public function copy($name, $newName, $label, $nodata)
+    {
         // Vérifie que la table source existe
         $table = $this->table($name);
 
@@ -184,7 +186,7 @@ class TableManager {
         fputcsv($file, $fields, ';', '"');
         if (! $nodata) {
             $data = $source->search('ROWID,' . implode(',', $fields));
-            foreach($data as $entry) {
+            foreach ($data as $entry) {
                 fputcsv($file, (array) $entry, ';', '"');
             }
         }
@@ -195,9 +197,9 @@ class TableManager {
             'name' => $newName,
             'path' => $path,
             'label' => $label,
-            'format'=> $table->format(),
+            'format' => $table->format(),
             'type' => $table->type(),
-            'readonly' => false
+            'readonly' => false,
         ]);
 
         // Déclare la nouvelle table
@@ -223,7 +225,8 @@ class TableManager {
      * - s'il existe déjà une table $newName.txt dans le répertoire des table.
      * - si la table ne peut pas être renommée
      */
-    public function update($name, $newName = null, $label = null, array $data = null) {
+    public function update($name, $newName = null, $label = null, array $data = null)
+    {
         // Vérifie que la table à modifier existe
         $table = $this->table($name);
 
@@ -251,7 +254,7 @@ class TableManager {
             // Génère le fichier CSV de la nouvelle table
             $file = fopen($path, 'wb');
             fputcsv($file, $fields, ';', '"');
-            foreach($data as $entry) {
+            foreach ($data as $entry) {
                 fputcsv($file, (array) $entry, ';', '"');
             }
             fclose($file);
@@ -307,7 +310,8 @@ class TableManager {
      * - si la table $name n'est pas une table personnalisée.
      * - si la suppression échoue
      */
-    public function delete($name) {
+    public function delete($name)
+    {
         // Vérifie que la table à modifier existe
         $table = $this->table($name);
 
@@ -353,7 +357,8 @@ class TableManager {
      * @return array La méthode retourne toujours un tableau (éventuellement
      * vide).
      */
-    public function lookup($table, $search, $thesaurus = false) {
+    public function lookup($table, $search, $thesaurus = false)
+    {
         // Par défaut, retourne les 10 premières réponses obtenues
         $limit = 100;
 
@@ -421,7 +426,7 @@ class TableManager {
         }
 
         // On veut un tableau d'objet, pas un tableau associatif code=>label
-        $what = 'ROWID,'.$what;
+        $what = 'ROWID,' . $what;
 
         // Lance la recherche
         $result = $table->search($what, $where, $order, $limit);
@@ -429,10 +434,10 @@ class TableManager {
         // En mode "thesaurus", traduit les codes par leur libellé
         if ($thesaurus && $result) {
             $codes = [];
-            foreach($result as $term) {
-                foreach(['USE', 'MT', 'BT','NT' ,'RT'] as $rel) {
+            foreach ($result as $term) {
+                foreach (['USE', 'MT', 'BT', 'NT', 'RT'] as $rel) {
                     if ($term->$rel) {
-                        foreach(explode('¤', $term->$rel) as $code) {
+                        foreach (explode('¤', $term->$rel) as $code) {
                             $codes[$code] = $table->quote($code);
                         }
                     }
@@ -445,11 +450,11 @@ class TableManager {
             if ($codes) {
                 $where = 'code IN (' . implode(',', $codes) . ')'; // qoute a été appellé sur chaque code plus haut
                 $codes = $table->search('code,label', $where);
-                foreach($result as $term) {
-                    foreach(['USE', 'MT', 'BT','NT', 'RT'] as $rel) {
+                foreach ($result as $term) {
+                    foreach (['USE', 'MT', 'BT', 'NT', 'RT'] as $rel) {
                         if ($term->$rel) {
                             $t = [];
-                            foreach(explode('¤', $term->$rel) as $code) {
+                            foreach (explode('¤', $term->$rel) as $code) {
                                 if (isset($codes[$code])) {
                                     $t[$code] = $codes[$code];
                                 } else {
@@ -472,7 +477,8 @@ class TableManager {
      *
      * @return MasterTable
      */
-    protected function master() {
+    protected function master()
+    {
         if (!isset($this->master)) {
             $path = docalist('tables-dir') . DIRECTORY_SEPARATOR . 'master.txt';
             $this->master = new MasterTable($path);
@@ -488,7 +494,8 @@ class TableManager {
      *
      * @return int|false L'ID de la table ou false si elle n'existe pas.
      */
-    public function rowid($name) {
+    public function rowid($name)
+    {
         return $this->master()->rowid($name);
     }
 
@@ -499,7 +506,8 @@ class TableManager {
      *
      * @return bool
      */
-    public function has($name) {
+    public function has($name)
+    {
         return $this->master()->has($name);
     }
 
@@ -513,7 +521,8 @@ class TableManager {
      * @throws InvalidArgumentException Si la table indiquée n'existe pas dans
      * la master table.
      */
-    public function table($name) {
+    public function table($name)
+    {
         return $this->master()->table($name);
     }
 
@@ -534,7 +543,8 @@ class TableManager {
      *
      * @return TableInfo[]
      */
-    public function tables($type = null, $format = null, $readonly = null, $sort = '_label') {
+    public function tables($type = null, $format = null, $readonly = null, $sort = '_label')
+    {
         return $this->master()->tables($type, $format, $readonly, $sort);
     }
 
@@ -545,7 +555,8 @@ class TableManager {
      *
      * @return string[]
      */
-    public function types($format = null) {
+    public function types($format = null)
+    {
         $where = "type != 'master'";
         $format && $where .= ' AND format=' . $this->master()->quote($format);
 
@@ -559,9 +570,11 @@ class TableManager {
      *
      * @return string[]
      */
-    public function formats($type = null) {
+    public function formats($type = null)
+    {
         $where = "format != 'master'";
         $type && $where .= ' AND type=' . $this->master()->quote($type);
+
         return $this->master()->search('DISTINCT format', $where, '_format');
     }
 }
