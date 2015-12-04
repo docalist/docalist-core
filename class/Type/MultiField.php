@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -15,6 +14,9 @@
 namespace Docalist\Type;
 
 use Docalist\Type\Interfaces\Categorizable;
+use Docalist\Forms\Table;
+use Docalist\Schema\Schema;
+use InvalidArgumentException;
 
 /**
  * Un MultiField est un composite qui permet de regrouper plusieurs champs
@@ -44,10 +46,8 @@ use Docalist\Type\Interfaces\Categorizable;
  * utilisable pour classer les différentes entrées et pour permettre au MultiField
  * d'implémenter l'interface {@link Categorizable}.
  *
- * Le champ à utiliser comme clé de classement peut être indiqué soit en
- * surchargeant la méthode {@link getCategoryField()}, soit dans la propriété
- * 'category-field' du schéma associé au MultiField. Par défaut, il s'agit du
- * champ 'type', donc ce n'est nécessaire que si un champ différent est utilisé.
+ * Par défaut, c'est le champ "type" qui sert de clé de classement. Si le champ a
+ * un autre nom, il faut surcharger la méthode {@link getCategoryField()}.
  *
  * Exemples de champs MultiField (dans docalist-biblio) :
  * - author : classement par role,
@@ -84,16 +84,12 @@ class MultiField extends Composite implements Categorizable
 
     public function getCategoryCode()
     {
-        $field = isset($this->schema->value['category-field'])
-            ? $this->schema->value['category-field']
-            : $this->getCategoryField();
-
-        return $this->$field->value();
+        return $this->__get($this->getCategoryField())->value();
     }
 
     public function getCategoryLabel()
     {
-        return $this->__get($this->getCategoryField())->getFormattedValue(['format' => 'label']);
+        return $this->__get($this->getCategoryField())->getEntryLabel();
     }
 
     public function getCategoryName()
@@ -106,5 +102,22 @@ class MultiField extends Composite implements Categorizable
         }
 
         return __('catégorie', 'docalist-core');
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Editable
+    // -------------------------------------------------------------------------
+
+    public function getEditorForm(array $options = null)
+    {
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+
+        $editor = new Table($name);
+        $class = $name . '-';
+        foreach ($this->schema->getFieldNames() as $name) {
+            $editor->add($this->__get($name)->getEditorForm()->addClass($class . $name));
+        }
+
+        return $editor;
     }
 }
