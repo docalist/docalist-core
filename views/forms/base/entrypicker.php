@@ -15,6 +15,7 @@ namespace Docalist\Views\Forms\Base;
 
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Theme;
+use Docalist\Type\Collection;
 
 /**
  * @var EntryPicker $this  Le champ à afficher.
@@ -32,7 +33,7 @@ $theme->enqueueStyle('selectize')->enqueueScript('selectize');
 //list($type, $name) = explode(':', $tableName);
 
 // Récupère les données du champ
-if ($this->data instanceof Docalist\Type\Collection) {
+if ($this->data instanceof Collection) {
     // par exemple si on a passé un objet "Settings" ou Property comme valeur actuelle du champ
     $data = $this->data->value();
 } else {
