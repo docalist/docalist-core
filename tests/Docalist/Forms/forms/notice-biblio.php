@@ -2,324 +2,324 @@
 use Docalist\Forms\Form;
 
 $form = new Form();
-$form->label('Saisie/modification d\'une notice documentaire');
+$form->setLabel('Saisie/modification d\'une notice documentaire');
 $form->addClass('form-horizontal');
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Nature du document');
+$box = $form->fieldset()->setLabel('Nature du document');
 
 $box->select('type')
-    ->label('Type de document')
-    ->options(array('article','livre','rapport'));
+    ->setLabel('Type de document')
+    ->setOptions(array('article','livre','rapport'));
 
 $box->checklist('genre')
-    ->label('Genre de document')
-    ->options(array('communication','decret','didacticiel','etat de l\'art'));
+    ->setLabel('Genre de document')
+    ->setOptions(array('communication','decret','didacticiel','etat de l\'art'));
 
 $box->checklist('media')
-    ->label('Support de document')
-    ->options(array('cd-rom','internet','papier','dvd','vhs'));
+    ->setLabel('Support de document')
+    ->setOptions(array('cd-rom','internet','papier','dvd','vhs'));
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Titre du document');
+$box = $form->fieldset()->setLabel('Titre du document');
 
 $box->input('title')
     ->addClass('span12')
-    ->label('Titre principal');
+    ->setLabel('Titre principal');
 
 $box->table('othertitle')
-    ->label('Autres titres')
-    ->repeatable(true)
+    ->setLabel('Autres titres')
+    ->setRepeatable(true)
         ->select('type')
-        ->label('Type de titre')
-        ->options(array('serie','dossier','special'))
+        ->setLabel('Type de titre')
+        ->setOptions(array('serie','dossier','special'))
         ->addClass('span4')
-    ->parent()
+    ->getParent()
         ->input('title')
-        ->label('Autre titre')
-        ->description('En minuscules, svp')
+        ->setLabel('Autre titre')
+        ->setDescription('En minuscules, svp')
         ->addClass('span8')
         ;
 
 $box->table('translation')
-    ->label('Traduction du titre')
-    ->repeatable(true)
+    ->setLabel('Traduction du titre')
+    ->setRepeatable(true)
         ->select('language')
-        ->label('Langue')
-        ->options(array('fre','eng','ita','spa','deu'))
+        ->setLabel('Langue')
+        ->setOptions(array('fre','eng','ita','spa','deu'))
         ->addClass('span4')
-    ->parent()
+    ->getParent()
         ->input('title')
-        ->label('Titre traduit')
+        ->setLabel('Titre traduit')
         ->addClass('span8')
         ;
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Auteurs');
+$box = $form->fieldset()->setLabel('Auteurs');
 
 $box->table('author')
-    ->label('Personnes')
-    ->repeatable(true)
+    ->setLabel('Personnes')
+    ->setRepeatable(true)
         ->input('name')
-        ->label('Nom')
+        ->setLabel('Nom')
         ->addClass('span5')
-    ->parent()
+    ->getParent()
         ->input('firstname')
-        ->label('Prénom')
+        ->setLabel('Prénom')
         ->addClass('span4')
-    ->parent()
+    ->getParent()
         ->select('role')
-        ->label('Rôle')
-        ->options(array('pref','trad','ill','dir','coord','postf','intro'))
+        ->setLabel('Rôle')
+        ->setOptions(array('pref','trad','ill','dir','coord','postf','intro'))
         ->addClass('span3')
         ;
 
 $box->table('organisation')
-    ->label('Organismes')
-    ->repeatable(true)
+    ->setLabel('Organismes')
+    ->setRepeatable(true)
         ->input('name')
-        ->label('Nom')
+        ->setLabel('Nom')
         ->addClass('span5')
-    ->parent()
+    ->getParent()
         ->input('city')
-        ->label('Ville')
+        ->setLabel('Ville')
         ->addClass('span3')
-    ->parent()
+    ->getParent()
         ->select('country')
-        ->label('Pays')
-        ->options(array('france', 'usa', 'espagne', 'italie'))
+        ->setLabel('Pays')
+        ->setOptions(array('france', 'usa', 'espagne', 'italie'))
         ->addClass('span2')
-    ->parent()
+    ->getParent()
         ->select('role')
-        ->label('Rôle')
-        ->options(array('com','financ'))
+        ->setLabel('Rôle')
+        ->setOptions(array('com','financ'))
         ->addClass('span2')
         ;
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Journal');
+$box = $form->fieldset()->setLabel('Journal');
 
 $box->input('journal')
-    ->label('Titre de périodique')
+    ->setLabel('Titre de périodique')
     ->addClass('span12')
-    ->description('Nom du journal dans lequel a été publié le document.');
+    ->setDescription('Nom du journal dans lequel a été publié le document.');
 
 $box->input('issn')
-    ->label('ISSN')
+    ->setLabel('ISSN')
     ->addClass('span6')
-    ->description('International Standard Serial Number : identifiant unique du journal.');
+    ->setDescription('International Standard Serial Number : identifiant unique du journal.');
 
 $box->input('volume')
-    ->label('Numéro de volume')
+    ->setLabel('Numéro de volume')
     ->addClass('span4')
-    ->description('Numéro de volume pour les périodiques, tome pour les monographies.');
+    ->setDescription('Numéro de volume pour les périodiques, tome pour les monographies.');
 
 $box->input('issue')
-    ->label('Numéro de fascicule')
+    ->setLabel('Numéro de fascicule')
     ->addClass('span4')
-    ->description('Numéro de la revue dans lequel le document a été publié.');
+    ->setDescription('Numéro de la revue dans lequel le document a été publié.');
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Informations bibliographiques');
+$box = $form->fieldset()->setLabel('Informations bibliographiques');
 
 $box->input('date')
-    ->label('Date de publication')
+    ->setLabel('Date de publication')
     ->addClass('span6')
-    ->description('Date d\'édition ou de diffusion du document.');
+    ->setDescription('Date d\'édition ou de diffusion du document.');
 
 $box->select('language')
-    ->label('Langue du document')
-    ->repeatable(true)
-    ->description('Langue(s) dans laquelle est écrit le document.')
+    ->setLabel('Langue du document')
+    ->setRepeatable(true)
+    ->setDescription('Langue(s) dans laquelle est écrit le document.')
     ->addClass('span6')
-    ->options(array('fre','eng','ita','spa','deu'));
+    ->setOptions(array('fre','eng','ita','spa','deu'));
 
 $box->input('pagination')
-    ->label('Pagination')
+    ->setLabel('Pagination')
     ->addClass('span6')
-    ->description('Pages de début et de fin (ex. 15-20) ou nombre de pages (ex. 10p.) du document.');
+    ->setDescription('Pages de début et de fin (ex. 15-20) ou nombre de pages (ex. 10p.) du document.');
 
 $box->input('format')
-    ->label('Format du document')
+    ->setLabel('Format du document')
     ->addClass('span12')
-    ->description('Caractéristiques matérielles du document : étiquettes de collation (tabl, ann, fig...), références bibliographiques, etc.');
+    ->setDescription('Caractéristiques matérielles du document : étiquettes de collation (tabl, ann, fig...), références bibliographiques, etc.');
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Informations éditeur');
+$box = $form->fieldset()->setLabel('Informations éditeur');
 
 $box->table('editor')
-    ->label('Editeur')
-    ->description('Editeur et lieu d\'édition.')
-    ->repeatable(true)
+    ->setLabel('Editeur')
+    ->setDescription('Editeur et lieu d\'édition.')
+    ->setRepeatable(true)
         ->input('name')
-        ->label('Nom')
+        ->setLabel('Nom')
         ->addClass('span5')
-    ->parent()
+    ->getParent()
         ->input('city')
-        ->label('Ville')
+        ->setLabel('Ville')
         ->addClass('span5')
-    ->parent()
+    ->getParent()
         ->select('country')
-        ->label('Pays')
+        ->setLabel('Pays')
         ->addClass('span2')
-        ->options(array('france', 'usa', 'espagne', 'italie'));
+        ->setOptions(array('france', 'usa', 'espagne', 'italie'));
 
 $box->table('collection')
-    ->label('Collection')
-    ->description('Collection et numéro au sein de cette collection du document catalogué.')
-    ->repeatable(true)
+    ->setLabel('Collection')
+    ->setDescription('Collection et numéro au sein de cette collection du document catalogué.')
+    ->setRepeatable(true)
         ->input('name')
-        ->label('Nom')
+        ->setLabel('Nom')
         ->addClass('span9')
-    ->parent()
+    ->getParent()
         ->input('number')
         ->addClass('span3')
-        ->label('Numéro dans la collection');
+        ->setLabel('Numéro dans la collection');
 
 $box->table('edition')
-    ->label('Mentions d\'édition')
-    ->description('Mentions d\'éditions (hors série, 2nde édition, etc.) et autres numéros du document (n° de rapport, de loi, etc.)')
-    ->repeatable(true)
+    ->setLabel('Mentions d\'édition')
+    ->setDescription('Mentions d\'éditions (hors série, 2nde édition, etc.) et autres numéros du document (n° de rapport, de loi, etc.)')
+    ->setRepeatable(true)
         ->input('type')
-        ->label('Mention')
+        ->setLabel('Mention')
         ->addClass('span9')
-    ->parent()
+    ->getParent()
         ->input('value')
-        ->label('Numéro')
+        ->setLabel('Numéro')
         ->addClass('span3')
         ;
 
 $box->input('isbn')
-    ->label('ISBN')
+    ->setLabel('ISBN')
     ->addClass('span6')
-    ->description('International Standard Book Number : identifiant unique pour les livres publiés.');
+    ->setDescription('International Standard Book Number : identifiant unique pour les livres publiés.');
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Congrès et diplômes');
+$box = $form->fieldset()->setLabel('Congrès et diplômes');
 
 $box->table('event')
-    ->label('Informations sur l\'événement')
-    ->description('Congrès, colloques, manifestations, soutenances de thèse, etc.')
+    ->setLabel('Informations sur l\'événement')
+    ->setDescription('Congrès, colloques, manifestations, soutenances de thèse, etc.')
         ->input('title')
-        ->label('Titre')
+        ->setLabel('Titre')
         ->addClass('span5')
-    ->parent()
+    ->getParent()
         ->input('date')
-        ->label('Date')
+        ->setLabel('Date')
         ->addClass('span2')
-    ->parent()
+    ->getParent()
         ->input('place')
-        ->label('Lieu')
+        ->setLabel('Lieu')
         ->addClass('span3')
-    ->parent()
+    ->getParent()
         ->input('number')
-        ->label('N°')
+        ->setLabel('N°')
         ->addClass('span2')
         ;
 
 $box->table('degree')
-    ->label('Diplôme')
-    ->description('Description des titres universitaires et professionnels.')
+    ->setLabel('Diplôme')
+    ->setDescription('Description des titres universitaires et professionnels.')
         ->select('level')
-        ->label('Niveau')
+        ->setLabel('Niveau')
         ->addClass('span3')
-        ->options(array('licence','master','doctorat'))
-    ->parent()
+        ->setOptions(array('licence','master','doctorat'))
+    ->getParent()
         ->input('title')
-        ->label('Intitulé')
+        ->setLabel('Intitulé')
         ->addClass('span9');
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Indexation et résumé');
+$box = $form->fieldset()->setLabel('Indexation et résumé');
 
 $box->table('topic')
-    ->label('Mots-clés')
-    ->description('Indexation du document : mots-clés matières, mots outils, noms propres, description géographique, période historique, candidats descripteurs, etc.', false)
-    ->repeatable(true)
+    ->setLabel('Mots-clés')
+    ->setDescription('Indexation du document : mots-clés matières, mots outils, noms propres, description géographique, période historique, candidats descripteurs, etc.', false)
+    ->setRepeatable(true)
         ->select('type')
-        ->label('Thesaurus')
+        ->setLabel('Thesaurus')
         ->addClass('span2')
-        ->options(array('theso un', 'theso deux', 'theso trois'))
-    ->parent()
-        ->Div()
-        ->attribute('style', 'border: 1px solid red')
-        ->label('Termes')
+        ->setOptions(array('theso un', 'theso deux', 'theso trois'))
+    ->getParent()
+        ->table()
+        ->setAttribute('style', 'border: 1px solid red')
+        ->setLabel('Termes')
         ->addClass('span12')
             ->input('terms')
             ->addClass('span2')
-            ->repeatable(true);
+            ->setRepeatable(true);
 
 $box->table('abstract')
-    ->label('Résumé')
-    ->description('Résumé du document et langue du résumé.')
-    ->repeatable(true)
+    ->setLabel('Résumé')
+    ->setDescription('Résumé du document et langue du résumé.')
+    ->setRepeatable(true)
         ->select('language')
-        ->label('Langue du résumé')
+        ->setLabel('Langue du résumé')
         ->addClass('span2')
-        ->options(array('fre','eng','ita','spa','deu'))
-    ->parent()
+        ->setOptions(array('fre','eng','ita','spa','deu'))
+    ->getParent()
         ->textarea('content')
-        ->label('Résumé')
+        ->setLabel('Résumé')
         ->addClass('span10')
         ;
 
 $box->table('note')
-    ->label('Notes')
-    ->description('Remarques, notes et informations complémentaires sur le document.')
-    ->repeatable(true)
+    ->setLabel('Notes')
+    ->setDescription('Remarques, notes et informations complémentaires sur le document.')
+    ->setRepeatable(true)
         ->select('type')
-        ->label('Type de note')
+        ->setLabel('Type de note')
         ->addClass('span2')
-        ->options(array('note visible','note interne','avertissement','objectifs pédagogiques','publics concernés','pré-requis', 'modalités d\'accès', 'copyright'))
-    ->parent()
+        ->setOptions(array('note visible','note interne','avertissement','objectifs pédagogiques','publics concernés','pré-requis', 'modalités d\'accès', 'copyright'))
+    ->getParent()
         ->textarea('content')
-        ->label('Contenu de la note')
+        ->setLabel('Contenu de la note')
         ->addClass('span10');
 
 // -----------------------------------------------------------------------------
 
-$box = $form->fieldset('Informations de gestion');
+$box = $form->fieldset()->setLabel('Informations de gestion');
 
 $box->input('ref')
-    ->label('Numéro de référence')
+    ->setLabel('Numéro de référence')
     ->addClass('span2')
-    ->description('Numéro unique identifiant la notice.');
+    ->setDescription('Numéro unique identifiant la notice.');
 
 $box->input('owner')
-    ->label('Propriétaire de la notice')
+    ->setLabel('Propriétaire de la notice')
     ->addClass('span2')
-    ->description('Personne ou centre de documentation qui a produit la notice.')
-    ->repeatable(true);
+    ->setDescription('Personne ou centre de documentation qui a produit la notice.')
+    ->setRepeatable(true);
 
 $box->table('creation')
-    ->label('Date de création')
-    ->description('Date de création de la notice.')
+    ->setLabel('Date de création')
+    ->setDescription('Date de création de la notice.')
         ->input('date')
-        ->label('Le')
+        ->setLabel('Le')
         ->addClass('span2')
-    ->parent()
+    ->getParent()
         ->input('by')
-        ->label('Par')
+        ->setLabel('Par')
         ->addClass('span2')
         ;
 
 $box->table('lastupdate')
-    ->label('Dernière modification')
-    ->description('Date de dernière mise à jour de la notice.')
+    ->setLabel('Dernière modification')
+    ->setDescription('Date de dernière mise à jour de la notice.')
         ->input('date')
-        ->label('Le')
+        ->setLabel('Le')
         ->addClass('span2')
-    ->parent()
+    ->getParent()
         ->input('by')
-        ->label('Par')
+        ->setLabel('Par')
         ->addClass('span2')
         ;
 

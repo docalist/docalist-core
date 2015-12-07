@@ -15,38 +15,38 @@ $colors = array(
 );
 
 $form = new Form();
-$form->label('Test des checklist');
+$form->setLabel('Test des checklist');
 
 foreach(array(1=>false, 2=>true) as $i=>$repeat) {
     $form->checklist("empty$i")
-         ->label('Vide :')
-         ->description('Une checklist vide, aucune option n\'a été fournie.')
-         ->repeatable($repeat);
+         ->setLabel('Vide :')
+         ->setDescription('Une checklist vide, aucune option n\'a été fournie.')
+         ->setRepeatable($repeat);
 
     $form->checklist("clair$i")
-         ->label('Couleurs :')
-         ->description('Une checklist simple, trois options de base sans attribut "value".')
-         ->repeatable($repeat)
-         ->options($colors['Sombres :']);
+         ->setLabel('Couleurs :')
+         ->setDescription('Une checklist simple, trois options de base sans attribut "value".')
+         ->setRepeatable($repeat)
+         ->setOptions($colors['Sombres :']);
 
     $form->checklist("sombre$i")
-         ->label('Couleurs :')
-         ->description('Une checklist simple, un attribut value="j" a été indiqué pour la couleur jaune.')
-         ->repeatable($repeat)
-         ->options($colors['Claires :']);
+         ->setLabel('Couleurs :')
+         ->setDescription('Une checklist simple, un attribut value="j" a été indiqué pour la couleur jaune.')
+         ->setRepeatable($repeat)
+         ->setOptions($colors['Claires :']);
 
     $form->checklist("group$i")
-         ->label('Couleurs :')
-         ->description('Une checklist hiérarchique contenant des optgroup.')
-         ->repeatable($repeat)
-         ->options($colors);
+         ->setLabel('Couleurs :')
+         ->setDescription('Une checklist hiérarchique contenant des optgroup.')
+         ->setRepeatable($repeat)
+         ->setOptions($colors);
 
     $form->checklist("group$i")
          ->addClass('inline')
-         ->label('Couleurs :')
-         ->description('INLINEUne checklist hiérarchique contenant à la fois des options simples et des groupes.')
-         ->repeatable($repeat)
-         ->options(array('transparent', 'blanc') + $colors + array('opaque'));
+         ->setLabel('Couleurs :')
+         ->setDescription('INLINEUne checklist hiérarchique contenant à la fois des options simples et des groupes.')
+         ->setRepeatable($repeat)
+         ->setOptions(array('transparent', 'blanc') + $colors + array('opaque'));
 
     if ($i === 1) {
         $form->tag('h3', 'Faisons maintenant la même chose mais en mettant l\'attribut repeatable à true :');

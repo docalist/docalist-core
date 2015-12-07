@@ -17,7 +17,6 @@ namespace Docalist\Tests\Repository;
 use WP_UnitTestCase;
 
 use Docalist\Repository\DirectoryRepository;
-use Docalist\Type\Entity;
 use Docalist\Tests\Type\Fixtures\Client;
 
 class DirectoryRepositoryTest extends WP_UnitTestCase {

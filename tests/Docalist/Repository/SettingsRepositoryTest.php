@@ -14,12 +14,8 @@
 
 namespace Docalist\Tests\Repository;
 
-use WP_UnitTestCase;
-
 use Docalist\Repository\Repository;
 use Docalist\Repository\SettingsRepository;
-use Docalist\Repository\Exception\EntityNotFoundException;
-use Docalist\Type\Entity;
 use Docalist\Tests\Type\Fixtures\Client;
 
 class SettingsRepositoryTest extends RepositoryTest {

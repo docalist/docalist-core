@@ -5,7 +5,7 @@ $repeat = true;
 $desc = 'Description du champ';
 
 $form = new Form();
-$form->label('Un formulaire avec tous les types de champs');
+$form->setLabel('Un formulaire avec tous les types de champs');
 
 $pos = array(
     'Description affichée à sa position par défaut' => null,
@@ -17,86 +17,86 @@ foreach($pos as $title => $pos) {
     $form->tag('h3', $title);
 
     $form->button()
-         ->label('button')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('button')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->checkbox('checkbox')
-         ->label('checkbox')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('checkbox')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->checklist('checklist')
-         ->label('checklist')
-         ->description($desc, $pos)
-         ->repeatable($repeat)
-         ->options(array(
+         ->setLabel('checklist')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat)
+         ->setOptions(array(
             'un',
             'deux'
          ));
 
-    $form->fieldset('un fieldset')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+    $form->fieldset()->setLabel('un fieldset')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->hidden('hidden')
-         ->label('hidden')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('hidden')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->input('input')
-         ->label('input')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('input')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->password('password')
-         ->label('password')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('password')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->radio('radio')
-         ->label('radio')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('radio')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
     /*
     $form->radiolist('radiolist')
-         ->label('radio')
-         ->description($desc, $pos)
-         ->repeatable($repeat)
-         ->options(array(
+         ->setLabel('radio')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat)
+         ->setOptions(array(
             'un',
             'deux'
          ));
     */
     $form->reset()
-         ->label('reset')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('reset')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->select('select')
-         ->label('select')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('select')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->submit()
-         ->label('submit')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('submit')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->table('table')
-         ->label('table')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('table')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
-    $form->tag('p')
-         ->label('tag p')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+//     $form->tag('p')
+//          ->setLabel('tag p')
+//          ->setDescription($desc, $pos)
+//          ->setRepeatable($repeat);
 
     $form->textarea('textarea')
-         ->label('textarea')
-         ->description($desc, $pos)
-         ->repeatable($repeat);
+         ->setLabel('textarea')
+         ->setDescription($desc, $pos)
+         ->setRepeatable($repeat);
 
     $form->submit('Go !');
 }

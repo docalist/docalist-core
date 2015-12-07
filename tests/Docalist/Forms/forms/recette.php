@@ -3,84 +3,84 @@ use Docalist\Forms\Form;
 
 
 $form = new Form();
-$form ->label('Un formulaire de saisie pour des recettes de cuisine')
-      ->description('Ce formulaire est inspiré de <a href="http://www.marmiton.org/recettes/recette_lasagnes-de-haute-corse_48084.aspx">cette recette</a>.');
+$form ->setLabel('Un formulaire de saisie pour des recettes de cuisine')
+      ->setDescription('Ce formulaire est inspiré de <a href="http://www.marmiton.org/recettes/recette_lasagnes-de-haute-corse_48084.aspx">cette recette</a>.');
 
 // -----------------------------------------------------------------------------
 
 $form->input('titre')
-     ->label('Nom de la recette')
+     ->setLabel('Nom de la recette')
      ->addClass('input-block-level')
-     ->description('Essayez de donner un titre explicite à votre recette : ça doit faire envie !');
+     ->setDescription('Essayez de donner un titre explicite à votre recette : ça doit faire envie !');
 
 $form->select('type')
-     ->label('Type de plat')
-     ->options(array('Entrée froide', 'Entrée chaude', 'Soupe', 'Plat principal', 'Dessert', 'Astuce'));
+     ->setLabel('Type de plat')
+     ->setOptions(array('Entrée froide', 'Entrée chaude', 'Soupe', 'Plat principal', 'Dessert', 'Astuce'));
 
 $form->select('difficulte')
-     ->label('Difficulté')
-     ->options(array('Très facile', 'Facile', 'Moyenne', 'Difficile'));
+     ->setLabel('Difficulté')
+     ->setOptions(array('Très facile', 'Facile', 'Moyenne', 'Difficile'));
 
 $form->select('cout')
-     ->label('Coût')
-     ->options(array('Bon marché', 'Moyen', 'Cher', 'Honteusement luxueux'));
+     ->setLabel('Coût')
+     ->setOptions(array('Bon marché', 'Moyen', 'Cher', 'Honteusement luxueux'));
 
 $form->checkbox('vegetarien')
-     ->label('Végétarien')
-     ->description('Cochez cette case si votre recette est compatible avec un régime végétarien.');
+     ->setLabel('Végétarien')
+     ->setDescription('Cochez cette case si votre recette est compatible avec un régime végétarien.');
 
 $form->table('temps')
-     ->label('Temps de préparation')
-     ->repeatable(true)
-     ->description('Indiquez les différentes étapes de préparation et la durée (en minutes) de chaque étape.', false)
+     ->setLabel('Temps de préparation')
+     ->setRepeatable(true)
+     ->setDescription('Indiquez les différentes étapes de préparation et la durée (en minutes) de chaque étape.', false)
         ->select('type')
-        ->label('Etape')
+        ->setLabel('Etape')
         ->addClass('input-block-level')
-        ->options(array('Temps de préparation', 'Temps de repos', 'Temps de cuisson', 'Temps de glaçage', 'Durée totale'))
-     ->parent()
+        ->setOptions(array('Temps de préparation', 'Temps de repos', 'Temps de cuisson', 'Temps de glaçage', 'Durée totale'))
+     ->getParent()
         ->input('duree')
-        ->label('Durée (en minutes)')
+        ->setLabel('Durée (en minutes)')
         ->addClass('input-mini');
 
 $form->input('quantite')
-     ->label('Quantité')
+     ->setLabel('Quantité')
      ->addClass('input-block-level')
-     ->description('Exemple : pour 4 personnes, pour 10 pièces, pour un litre, etc.');
+     ->setDescription('Exemple : pour 4 personnes, pour 10 pièces, pour un litre, etc.');
 
-$form->fieldset('Liste d\'ingrédients')
-     ->name('ingredients')
-     ->repeatable(true)
+$form->fieldset()->setLabel('Liste d\'ingrédients')
+     ->setName('ingredients')
+     ->setRepeatable(true)
         ->input('part')
-        ->label('Partie de la recette')
+        ->setLabel('Partie de la recette')
         ->addClass('input-block-level')
-     ->parent()
+     ->getParent()
         ->table('liste')
-        ->label('Ingrédients')
-        ->description('Listez <strong>tous</strong> les ingrédients nécessaires à la réalisation de votre recette. Vous pouvez ajouter une nouvelle liste d\'ingrédients avec le bouton ci-dessous.', true)
-        ->repeatable(true)
+        ->setLabel('Ingrédients')
+        ->setDescription('Listez <strong>tous</strong> les ingrédients nécessaires à la réalisation de votre recette. Vous pouvez ajouter une nouvelle liste d\'ingrédients avec le bouton ci-dessous.', true)
+        ->setRepeatable(true)
              ->input('nom')
-             ->label('Nom de l\'ingrédient')
+             ->setLabel('Nom de l\'ingrédient')
              ->addClass('input-block-level')
-         ->parent()
+         ->getParent()
              ->input('quantite')
-             ->label('Quantité ')
+             ->setLabel('Quantité ')
              ->addClass('input-medium')
-         ->parent()
+         ->getParent()
              ->input('remarque')
-             ->label('Remarque (qualité, alternative...)')
+             ->setLabel('Remarque (qualité, alternative...)')
              ->addClass('input-block-level')
          ;
 
 $form->table('preparation')
-     ->label('Préparation')
-     ->repeatable(true)
-     ->description('Listez les différentes étapes de la préparation', false)
+     ->setLabel('Préparation')
+     ->setRepeatable(true)
+     ->setDescription('Listez les différentes étapes de la préparation', false)
          ->input('step')
-         ->label('Nom de cette étape')
+         ->setLabel('Nom de cette étape')
          ->addClass('input-block-level')
-     ->parent()
+     ->getParent()
          ->textarea('description')
-         ->label('Description')
+         ->setLabel('Description')
          ->addClass('input-block-level')
          ;
 

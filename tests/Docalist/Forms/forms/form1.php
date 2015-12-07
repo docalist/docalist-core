@@ -2,16 +2,16 @@
 use Docalist\Forms\Form;
 
 $form = new Form();
-$form->label('Ecrivez-moi !')->description('Utilisez le formulaire ci-dessous pour nous adresser un message.');
+$form->setLabel('Ecrivez-moi !')->setDescription('Utilisez le formulaire ci-dessous pour nous adresser un message.');
 
-$form->select('civilite')->label('Civilité :')->options(array(
+$form->select('civilite')->setLabel('Civilité :')->setOptions(array(
     'Mme',
     'Mle',
     'M.' => 'Monsieur'
 ));
-$form->input('surname')->label('Nom : ');
-$form->input('firstname')->label('Prénom : ');
-$form->textarea('message')->label('Votre message : ');
+$form->input('surname')->setLabel('Nom : ');
+$form->input('firstname')->setLabel('Prénom : ');
+$form->textarea('message')->setLabel('Votre message : ');
 
 $form->submit('Go !');
 

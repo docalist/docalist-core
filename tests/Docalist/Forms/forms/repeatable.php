@@ -2,16 +2,16 @@
 use Docalist\Forms\Form;
 
 $form = new Form();
-$form->label('Champs répétables');
+$form->setLabel('Champs répétables');
 
 // -----------------------------------------------------------------------------
 
-$form->table('un')->label('Répétable niveau 1')->repeatable(true)
-     ->table('deux')->label('Répétable niveau 2')->repeatable(true)
-     ->table('trois')->label('Répétable niveau 3')->repeatable(true)
-     ->table('quatre')->label('Répétable niveau 4')->repeatable(true)
-     ->table('cinq')->label('Répétable niveau 5')->repeatable(true)
-     ->input('data')->repeatable(true);
+$form->table('un')->setLabel('Répétable niveau 1')->setRepeatable(true)
+     ->table('deux')->setLabel('Répétable niveau 2')->setRepeatable(true)
+     ->table('trois')->setLabel('Répétable niveau 3')->setRepeatable(true)
+     ->table('quatre')->setLabel('Répétable niveau 4')->setRepeatable(true)
+     ->table('cinq')->setLabel('Répétable niveau 5')->setRepeatable(true)
+     ->input('data')->setRepeatable(true);
 
 // -----------------------------------------------------------------------------
 $form->submit('Go !');
