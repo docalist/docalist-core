@@ -586,7 +586,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
 
         // Erreur
         elseif (!is_null($options)) {
-            die('here');
             throw new InvalidArgumentException('Invalid options, expected Schema or array, got ' . gettype($options));
         }
 
