@@ -80,16 +80,6 @@ class AdminNotices
     }
 
     /**
-     * Retourne le nombre de notices qui ont été enregistrées.
-     *
-     * @return int
-     */
-//     public function count()
-//     {
-//         return count($this->notices);
-//     }
-
-    /**
      * Enregistre une notice de type "info".
      *
      * @param string|closure $content Le contenu de la notice.
