@@ -99,7 +99,7 @@ class Plugin
     protected function setupServices()
     {
         // Enregistre les services docalist par défaut
-        $services = [
+        docalist('services')->add([
 
             // Gestion des Settings
             'settings-repository' => function () {
@@ -135,14 +135,15 @@ class Plugin
             'lookup' => function () {
                 return new Lookup();
             },
-        ];
 
-        // Le service admin-notices n'est disponible que dans le back-office
-        if (is_admin()) {
-            $services['admin-notices'] = new AdminNotices();
-        }
+            // Admin Notices
+            'admin-notices' => function () {
+                return new AdminNotices();
+            },
+        ]);
 
-        docalist('services')->add($services);
+        // Active l'affichage des admin notices si on est dans le back-office
+        is_admin() && docalist('admin-notices'); // force l'instantiation
 
         return $this;
     }
