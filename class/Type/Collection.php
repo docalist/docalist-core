@@ -19,6 +19,7 @@ use Countable;
 use IteratorAggregate;
 use Docalist\Forms\Choice;
 use Docalist\Type\Interfaces\Categorizable;
+use Docalist\MappingBuilder;
 use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
 
@@ -494,6 +495,23 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Ok
         return $form;
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Indexable
+    // -------------------------------------------------------------------------
+
+    public function setupMapping(MappingBuilder $mapping)
+    {
+        // Une collection n'a pas de mapping spécifique, son mapping, c'est celui des éléments qu'elle contient
+        $this->createTemporaryItem()->setupMapping($mapping);
+    }
+
+    public function mapData(array & $document)
+    {
+        foreach ($this->value as $item) { /* @var Any $item */
+            $item->mapData($document);
+        }
     }
 
     /**
