@@ -67,7 +67,7 @@ class Checklist extends Choice
             $theme
                 ->start('li')
                     ->start('label', $attributes)
-                        ->tag('input', $attr)->text($label)
+                        ->tag('input', $attr)->html($label)
                     ->end('label')
                 ->end('li');
         }
