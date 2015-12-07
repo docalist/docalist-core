@@ -16,6 +16,7 @@ namespace Docalist\Schema;
 use Docalist\Type\Composite;
 use Docalist\Type\Collection;
 use InvalidArgumentException;
+use Docalist\AdminNotices;
 
 /**
  * Un schéma est un {@link Docalist\Type\Composite objet composite} qui permet de
@@ -77,7 +78,14 @@ class Schema extends Composite
             }
 
             // Si le type indiqué est un alias, on le traduit en nom de classe
-            isset(self::$alias[$type]) && $type = self::$alias[$type];
+            if (isset(self::$alias[$type])) {
+                $type = self::$alias[$type];
+                $notices = docalist('admin-notices'); /* @var AdminNotices $notices */
+                $notices->warning(
+                    '<pre>' . htmlspecialchars(var_export($value, true)) . '</pre>',
+                    'Schemas : type aliases (int, string...) are deprecated'
+                );
+            }
 
             // Si le type indiqué est une collection, c'est la collection qui fournit le type des éléments
             if (is_a($type, 'Docalist\Type\Collection', true)) {
