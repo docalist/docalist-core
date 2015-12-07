@@ -103,6 +103,7 @@ if (   in_array(pathinfo($file, PATHINFO_EXTENSION), $allowedExtensions)
 }
 
 // Détermine son titre
+$match = null;
 $title = preg_match('~#\s*(.*)~', $content, $match) ? $match[1] : $file;
 
 ?>
@@ -112,5 +113,7 @@ $title = preg_match('~#\s*(.*)~', $content, $match) ? $match[1] : $file;
 <meta charset="utf-8" />
 <title><?php echo $package, $title ?></title>
 <base href="<?php echo $baseUrl ?>/">
-<xmp theme="<?php echo $theme ?>" style="display:none;"><?php echo $content ?></xmp>
+<?php
+    echo '<xmp theme="', $theme, '" style="display:none;">', $content, '</xmp>';
+?>
 <script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
