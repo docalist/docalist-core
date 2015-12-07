@@ -20,7 +20,7 @@ namespace Docalist\Forms;
  * {@link http://www.w3.org/TR/html5/forms.html#radio-button-state-(type=radio)
  * input type=radio}.
  */
-class Radio extends Input
+class Radio extends Checkbox
 {
     protected $attributes = ['type' => 'radio'];
 }
