@@ -31,7 +31,7 @@ use Docalist\Table\TableManager;
  * @var string $order Ordre de tri en cours.
  */
 
-$tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
+$tableManager = docalist('table-manager'); /* @var TableManager $tableManager */
 ?>
 <style>
     .fixed .column-readonly {width: 10%}
