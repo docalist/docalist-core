@@ -129,6 +129,6 @@ class Lookup
         $json->send();
 
         // Termine la requête et empêche WP de générer un exit code (cf. fin de admin-ajax.php)
-        exit();
+        exit(0);
     }
 }
