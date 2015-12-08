@@ -18,17 +18,16 @@ use Docalist\Controller;
 /**
  * Affiche un message d'information.
  *
- * @var Controller $this
- * @var string $h2 Titre de la page (optionnel).
- * @var string $h3 Titre de la boite (optionnel).
- * @var string $message Message à afficher.
- * @var string $back Url du lien 'annuler' (optionnel)
+ * @var Controller  $this
+ * @var string      $h2         Titre de la page (optionnel).
+ * @var string      $h3         Titre de la boite (optionnel).
+ * @var string      $message    Message à afficher.
+ * @var string      $back       Url du lien 'annuler' (optionnel)
  */
 ! isset($h2) && $h2 = __('Information', 'docalist-core');
 ! isset($h3) && $h3 = __('Information', 'docalist-core');
 $href = isset($back) ? esc_url($back) : 'javascript:history.go(-1)'
 ?>
-
 <div class="wrap">
     <h1><?= $h2 ?></h1>
 

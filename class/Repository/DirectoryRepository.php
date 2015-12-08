@@ -1,13 +1,15 @@
 <?php
 /**
- * This file is part of a "Docalist Core" plugin.
+ * This file is part of the "Docalist Core" plugin.
+ *
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
  *
- * @package Docalist
- * @subpackage Core
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @package     Docalist
+ * @subpackage  Core
+ * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Repository;
 
@@ -22,7 +24,8 @@ use InvalidArgumentException;
  * Ce dépôt accepte des entités dont la clé est un entier ou une chaine
  * (composée de lettres, de chiffres et de tirets).
  */
-class DirectoryRepository extends Repository {
+class DirectoryRepository extends Repository
+{
     /**
      * Le répertoire du dépôt (path complet avec un slash à la fin).
      *
@@ -43,7 +46,8 @@ class DirectoryRepository extends Repository {
      * @throws InvalidArgumentException Si le répertoire indiqué nest pas
      * valide.
      */
-    public function __construct($directory, $type = 'Docalist\Type\Entity') {
+    public function __construct($directory, $type = 'Docalist\Type\Entity')
+    {
         // Initialise le dépôt
         parent::__construct($type);
 
@@ -52,8 +56,7 @@ class DirectoryRepository extends Repository {
         $directory = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         // Crée le répertoire s'il n'existe pas déjà
-        if (! is_dir($directory) && ! @mkdir($directory, 0770, true))
-        {
+        if (! is_dir($directory) && ! @mkdir($directory, 0770, true)) {
             $msg = __('Unable to create the directory %s', 'docalist-core');
             throw new RepositoryException(sprintf($msg, $directory));
         }
@@ -72,11 +75,13 @@ class DirectoryRepository extends Repository {
      *
      * @return string
      */
-    public function directory() {
+    public function directory()
+    {
         return $this->directory;
     }
 
-    protected function checkId($id) {
+    protected function checkId($id)
+    {
         // On n'accepte que des chaines de catactères
         if (!is_string($id)) {
             throw new BadIdException($id, 'string');
@@ -106,11 +111,13 @@ class DirectoryRepository extends Repository {
      *
      * @return string
      */
-    public function path($id) {
+    public function path($id)
+    {
         return $this->directory . $id . '.json';
     }
 
-    public function has($id) {
+    public function has($id)
+    {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
 
@@ -118,7 +125,8 @@ class DirectoryRepository extends Repository {
         return file_exists($this->path($id));
     }
 
-    protected function loadData($id) {
+    protected function loadData($id)
+    {
         // Vérifie que le fichier existe
         if (! file_exists($path = $this->path($id))) {
             throw new EntityNotFoundException($id);
@@ -134,7 +142,8 @@ class DirectoryRepository extends Repository {
         return $data;
     }
 
-    protected function saveData($id, $data) {
+    protected function saveData($id, $data)
+    {
         // Alloue un ID si nécessaire
         is_null($id) && $id = uniqid();
 
@@ -156,7 +165,8 @@ class DirectoryRepository extends Repository {
         return $id;
     }
 
-    protected function deleteData($id) {
+    protected function deleteData($id)
+    {
         // Détermine le path du fichier
         $path = $this->path($id);
 
@@ -172,11 +182,13 @@ class DirectoryRepository extends Repository {
         }
     }
 
-    public function count() {
+    public function count()
+    {
         throw new \Exception(__METHOD__ . " n'est pas encore implémenté.");
     }
 
-    public function deleteAll() {
+    public function deleteAll()
+    {
         throw new \Exception(__METHOD__ . " n'est pas encore implémenté.");
     }
 }

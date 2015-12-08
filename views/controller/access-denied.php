@@ -18,8 +18,8 @@ use Docalist\Controller;
 /**
  * Génère une page "Accès non autorisé".
  *
- * @var Controller $this
- * @var string $action Le nom de l'action exécutée.
+ * @var Controller  $this
+ * @var string      $action Le nom de l'action exécutée.
  */
 
 $title = __('Accès refusé', 'docalist-core');

@@ -11,7 +11,6 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist;
 
 use Docalist\Http\Response;
@@ -21,7 +20,8 @@ use Docalist\Http\CallbackResponse;
 /**
  * Une page d'administration dans le back-office.
  */
-class AdminPage extends Controller {
+class AdminPage extends Controller
+{
     /**
      * {@inheritdoc}
      */
@@ -33,12 +33,12 @@ class AdminPage extends Controller {
     protected $menuTitle;
 
     /**
-     *
      * @param string $id Identifiant unique de la page.
      * @param string $parentPage Url de la page parent.
      * @param string $menuTitle Libellé de la page utilisé dans le menu.
      */
-    public function __construct($id, $parentPage = '', $menuTitle = '') {
+    public function __construct($id, $parentPage = '', $menuTitle = '')
+    {
         $this->menuTitle = $menuTitle ?: $id;
         parent::__construct($id, $parentPage);
     }
@@ -48,14 +48,16 @@ class AdminPage extends Controller {
      *
      * @return string
      */
-    protected function menuTitle() {
+    protected function menuTitle()
+    {
         return $this->menuTitle;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function register() {
+    protected function register()
+    {
         // On ne fait rien si l'utilisateur n'a pas les droits requis
         if (! $this->canRun()) {
             return;
@@ -83,9 +85,9 @@ class AdminPage extends Controller {
         $title = $this->menuTitle();
         $capability = $this->capability();
         if (empty($parent)) {
-            $page = add_menu_page($title, $title, $capability, $this->id(), function() {});
+            $page = add_menu_page($title, $title, $capability, $this->id(), function () {});
         } else {
-            $page = add_submenu_page($parent, $title, $title, $capability, $this->id(), function() {});
+            $page = add_submenu_page($parent, $title, $title, $capability, $this->id(), function () {});
         }
 
         /*
@@ -121,13 +123,13 @@ class AdminPage extends Controller {
             Wordpress de continuer son exécution. Dans ce cas, seul le contenu
             de la réponse est envoyé au navigateur (pas de menu wp, etc.)
         */
-        add_action("load-$page", function() use($page) {
+        add_action("load-$page", function () use ($page) {
             // Indique à l'écran en cours qui est le parent de notre page
             // Normallement, c'est admin-header.php:119 qui fait ça, mais
             // dans notre cas il n'a pas encore été appellé. Ca pose
             // problème car dans ce cas, les vues qui appellent
             // screen_icon() ne récupèrent pas la bonne icone (wp 3.6).
-            get_current_screen()->set_parentage( $this->parentPage );
+            get_current_screen()->set_parentage($this->parentPage);
 
             // Exécute l'action, récupère la réponse générée et le garbage éventuel
             ob_start();
@@ -136,14 +138,14 @@ class AdminPage extends Controller {
 
             // Erreur : l'action n'a pas retourné de réponse
             if (!($response instanceof Response)) {
-                add_action($page, function() use($response, $garbage) {
+                add_action($page, function () use ($response, $garbage) {
                     // En mode debug, on signale l'erreur
                     if (WP_DEBUG) {
                         $h3 = __("Erreur dans l'action %s", 'docalist-core');
                         $h3 = sprintf($h3, $this->action());
 
-                        $msg = __("La méthode <code>%s()</code> devait générer un objet <code>Response</code> mais a retourné :<pre>%s</pre>", 'docalist-core');
-                        $msg = sprintf($msg, $this->method(), var_export($response,true));
+                        $msg = __('La méthode <code>%s()</code> devait générer un objet <code>Response</code> mais a retourné :<pre>%s</pre>', 'docalist-core');
+                        $msg = sprintf($msg, $this->method(), var_export($response, true));
                         printf('<div class="error"><h3>%s</h3><p>%s</p></div>', $h3, $msg);
                     }
 
@@ -170,19 +172,19 @@ class AdminPage extends Controller {
                 if (preg_match('~<h2>(.*?)</h2>~', $body, $matches)) {
                     $title = strip_tags($matches[1]);
                     // @see admin-header.php:36
-                    add_filter('admin_title', function() use ($title) {
+                    add_filter('admin_title', function () use ($title) {
                         return $title;
                     });
                 }
 
                 // Affiche la réponse après que wp a généré le header et les menus
-                add_action($page, function() use($body, $garbage) {
+                add_action($page, function () use ($body, $garbage) {
                     // Si on a du garbage, on le signale en mode WP_DEBUG
                     if ($garbage && WP_DEBUG) {
                         $h3 = __("Garbage dans l'action %s", 'docalist-core');
                         $h3 = sprintf($h3, $this->action());
 
-                        $msg = __("La méthode <code>%s()</code> a généré le contenu suivant en plus de sa réponse :<pre>%s</pre>", 'docalist-core');
+                        $msg = __('La méthode <code>%s()</code> a généré le contenu suivant en plus de sa réponse :<pre>%s</pre>', 'docalist-core');
                         $msg = sprintf($msg, $this->method(), $garbage);
                         printf('<div class="error"><h3>%s</h3><p>%s</p></div>', $h3, $msg);
                     }
@@ -192,14 +194,12 @@ class AdminPage extends Controller {
                 });
 
                 // Laisse wp générer le footer
-            }
-
-            elseif ($response instanceof CallbackResponse && $response->adminPage()) {
+            } elseif ($response instanceof CallbackResponse && $response->adminPage()) {
                 // contrairement au cas précédent, pas de bufferisation (exemple réindexation)
                 // on ne peut pas faire des enqueue (il faut le faire avant de retourner l'objet Response)
                 // et on ne peut pas mettre le titre exact dans la balise <title>
                 $response->sendHeaders();
-                add_action($page, function() use($response) {
+                add_action($page, function () use ($response) {
                     $response->sendContent();
                 });
             }
@@ -215,7 +215,8 @@ class AdminPage extends Controller {
         });
     }
 
-    protected function view($view, array $viewArgs = array(), $status = 200, $headers = array()){
+    protected function view($view, array $viewArgs = [], $status = 200, $headers = [])
+    {
         return parent::view($view, $viewArgs, $status, $headers)->adminPage(true);
     }
 
@@ -231,10 +232,11 @@ class AdminPage extends Controller {
      *
      * @return ViewResponse
      */
-    protected function confirm($message = null, $title = null) {
+    protected function confirm($message = null, $title = null)
+    {
         return $this->view(
             'docalist-core:confirm',
-            [ 'h2' => $title, 'message' => $message ]
+            ['h2' => $title, 'message' => $message]
         );
     }
 
@@ -248,10 +250,11 @@ class AdminPage extends Controller {
      *
      * @return ViewResponse
      */
-    protected function info($message = null, $title = null) {
+    protected function info($message = null, $title = null)
+    {
         return $this->view(
             'docalist-core:info',
-            [ 'h2' => $title, 'message' => $message ]
+            ['h2' => $title, 'message' => $message]
         );
     }
 
@@ -265,15 +268,16 @@ class AdminPage extends Controller {
      *
      * @return ViewResponse
      */
-    protected function error($message = null, $title = null) {
+    protected function error($message = null, $title = null)
+    {
         return $this->view(
             'docalist-core:error',
-            [ 'h2' => $title, 'message' => $message ]
+            ['h2' => $title, 'message' => $message]
         );
     }
 
     /**
-     * Liste des outils disponibles
+     * Liste des outils disponibles.
      *
      * Liste toutes les actions publiques du module.
      *
@@ -281,12 +285,13 @@ class AdminPage extends Controller {
      * "action", et qui peuvent être appellées sans paramètres (aucun
      * paramètre ou paramètres ayant une valeur par défaut).
      */
-    protected function actionIndex() {
+    protected function actionIndex()
+    {
         return $this->view(
             'docalist-core:controller/actions-list',
             [
                 'title' => $this->menuTitle(),
-                'actions' => $this->actions()
+                'actions' => $this->actions(),
             ]
         );
     }

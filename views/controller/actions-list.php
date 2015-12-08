@@ -18,9 +18,9 @@ use Docalist\Controller;
 /**
  * Liste les actions disponibles dans un contrôleur.
  *
- * @var Controller $this
- * @var string $title Titre de la page
- * @var string[] $actions Liste des actions à affficher.
+ * @var Controller  $this
+ * @var string      $title Titre de la page
+ * @var string[]    $actions Liste des actions à affficher.
  */
 ?>
 <div class="wrap">
@@ -30,7 +30,7 @@ use Docalist\Controller;
         <p><?= __("Aucune action n'est disponible dans ce module.", 'docalist-core') ?></p>
     <?php else: ?>
         <ul class="ul-disc">
-        <?php foreach($actions as $action): ?>
+        <?php foreach ($actions as $action): ?>
             <li>
                 <h2>
                     <a href="<?= $this->url($action) ?>"><?= $action ?></a>

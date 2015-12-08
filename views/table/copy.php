@@ -21,9 +21,9 @@ use Docalist\Table\TableInfo;
  * Crée une nouvelle table par recopie d'une table existante.
  *
  * @var AdminTables $this
- * @var string $tableName Nom de la table à recopier.
- * @var TableInfo $tableInfo Infos sur la table à créer.
- * @var string $error Message d'erreur éventuel à afficher.
+ * @var string      $tableName  Nom de la table à recopier.
+ * @var TableInfo   $tableInfo  Infos sur la table à créer.
+ * @var string      $error      Message d'erreur éventuel à afficher.
  */
 ?>
 <div class="wrap">

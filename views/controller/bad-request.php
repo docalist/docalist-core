@@ -18,8 +18,8 @@ use Docalist\Controller;
 /**
  * Génère une page "Bad Request".
  *
- * @var Controller $this
- * @var string $message Le message à afficher.
+ * @var Controller  $this
+ * @var string      $message Le message à afficher.
  */
 
 $title = __('Requête incorrecte', 'docalist-core');

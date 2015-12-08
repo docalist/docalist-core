@@ -18,14 +18,15 @@ use Exception;
 /**
  * Autoloader de Docalist.
  */
-class Autoloader {
+class Autoloader
+{
     /**
      * @var array Liste des espaces de noms enregistrés.
      *
      * Les clés du tableau contiennent l'espace de nom, les valeurs contiennent
      * le path du répertoire qui contient les classes php de cet espace de noms.
      */
-    protected $path = array();
+    protected $path = [];
 
     /**
      * Crée un nouvel autoloader en enregistrant les espaces de noms passés en
@@ -35,9 +36,10 @@ class Autoloader {
      * forme :
      * namespace => path du répertoire contenant les classes de ce namespace.
      */
-    public function __construct(array $namespaces = array()) {
+    public function __construct(array $namespaces = [])
+    {
         $this->path = $namespaces;
-        spl_autoload_register(array($this, 'autoload'), true);
+        spl_autoload_register([$this, 'autoload'], true);
     }
 
     /**
@@ -52,7 +54,8 @@ class Autoloader {
      * @throws Exception Si le namespace est déjà enregistré avec un path
      * différent.
      */
-    public function add($namespace, $path) {
+    public function add($namespace, $path)
+    {
         // Vérifie que ce namespace n'a pas déjà été enregistré
         if (isset($this->path[$namespace]) && $this->path[$namespace] !== $path) {
             $msg = __('Le namespace %s est déjà enregistré (%s).', 'docalist-core');
@@ -69,7 +72,8 @@ class Autoloader {
      *
      * @param string $class Nom complet de la classe à charger.
      */
-    protected function autoload($class) {
+    protected function autoload($class)
+    {
         $namespace = $class;
         while (false !== $pt = strrpos($namespace, '\\')) {
             $namespace = substr($class, 0, $pt);
@@ -80,6 +84,7 @@ class Autoloader {
                 $path = $this->path[$namespace] . $file;
 
                 require_once $path;
+
                 return;
             }
         }

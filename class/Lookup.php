@@ -11,7 +11,6 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist;
 
 use Docalist\Http\JsonResponse;
@@ -31,8 +30,8 @@ use Exception;
  * Lorsqu'un lookup de ce type est demandé, le service exécute le filtre
  * "docalist_{type}_lookup" et retourne les résultats obtenus.
  */
-class Lookup {
-
+class Lookup
+{
     /**
      * Recherche des entrées dans une table d'autorité ou dans un index
      * docalist-search.
@@ -65,9 +64,9 @@ class Lookup {
      *
      * Chaque entrée du tableau est un objet. Les champs retournés dépendent
      * de la source utilisée.
-     *
      */
-    public function lookup($source, $search) {
+    public function lookup($source, $search)
+    {
         $type = strtok($source, ':');
         $source = strtok('');
 
@@ -91,7 +90,8 @@ class Lookup {
      * - source : source de données à utiliser
      * - search : chaine recherchée.
      */
-    public function ajaxLookup() {
+    public function ajaxLookup()
+    {
         // Récupère la source de données
         if (empty($_REQUEST['source'])) {
             throw new Exception('source is required');

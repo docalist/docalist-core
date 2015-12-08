@@ -2,7 +2,7 @@
 /**
  * Markdown-viewer : liseuse de documentation au format markdown.
  *
- * Copyright (C) 2013 Daniel Ménard
+ * Copyright (C) 2013-2015 Daniel Ménard
  *
  * Ce petit script php permet d'afficher sous forme de pages html joliment
  * stylées (bootstrap) les fichiers markdown présents dans un répertoire.

@@ -21,11 +21,11 @@ use Docalist\Controller;
  * Si l'utilisateur clique "ok", la requête en cours est relancée avec en plus
  * le paramètre confirm=1.
  *
- * @var Controller $this
- * @var string $h2 Titre de la page (optionnel).
- * @var string $h3 Titre de la boite de confirmation (optionnel).
- * @var string $message Message à afficher.
- * @var string $back Url du lien 'annuler' (optionnel)
+ * @var Controller  $this
+ * @var string      $h2         Titre de la page (optionnel).
+ * @var string      $h3         Titre de la boite de confirmation (optionnel).
+ * @var string      $message    Message à afficher.
+ * @var string      $back       Url du lien 'annuler' (optionnel)
  */
 
 ! isset($h2) && $h2 = __('Confirmation', 'docalist-core');
@@ -36,7 +36,6 @@ $href = add_query_arg('confirm', '1');
 // classes ".notice-xxx" de wordpress :
 // https://core.trac.wordpress.org/ticket/32244
 ?>
-
 <div class="wrap">
     <h1><?= $h2 ?></h1>
 

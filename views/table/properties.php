@@ -21,9 +21,9 @@ use Docalist\Forms\Form;
  * Modifie les propriétés d'une table d'autorité.
  *
  * @var AdminTables $this
- * @var string $tableName Nom de la table à modifier.
- * @var TableInfo $tableInfo Infos sur la table.
- * @var string $error Message d'erreur éventuel à afficher.
+ * @var string      $tableName  Nom de la table à modifier.
+ * @var TableInfo   $tableInfo  Infos sur la table.
+ * @var string      $error      Message d'erreur éventuel à afficher.
  */
 ?>
 <div class="wrap">

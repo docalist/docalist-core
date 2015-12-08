@@ -11,20 +11,21 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Core;
 
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInfo;
+
 /**
  * Installation/désinstallation de docalist-core.
  */
-class Installer {
-
+class Installer
+{
     /**
      * Initialise l'installateur.
      */
-    public function __construct() {
+    public function __construct()
+    {
         // Charge le plugin docalist-core si ce n'est pas encore fait : quand wp
         // exécute "plugin_sandbox_scrape", plugins_loaded n'a pas encore été appellé
         if (! docalist('services')->has('docalist-core')) {
@@ -34,13 +35,13 @@ class Installer {
 
     /**
      * Activation : enregistre les tables prédéfinies.
-     *
      */
-    public function activate() {
+    public function activate()
+    {
         $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
 
         // Enregistre les tables prédéfinies
-        foreach($this->tables() as $name => $table) {
+        foreach ($this->tables() as $name => $table) {
             $table['name'] = $name;
             $table['lastupdate'] = date_i18n('Y-m-d H:i:s', filemtime($table['path']));
             $tableManager->register(new TableInfo($table));
@@ -50,11 +51,12 @@ class Installer {
     /**
      * Désactivation : supprime les tables prédéfinies.
      */
-    public function deactivate() {
+    public function deactivate()
+    {
         $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
 
         // Supprime les tables prédéfinies
-        foreach(array_keys($this->tables()) as $table) {
+        foreach (array_keys($this->tables()) as $table) {
             $tableManager->unregister($table);
         }
     }
@@ -65,8 +67,10 @@ class Installer {
      *
      * @return array
      */
-    protected function tables() {
+    protected function tables()
+    {
         $dir = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'tables'  . DIRECTORY_SEPARATOR;
+
         return [
             // Tables des langues complète
             'ISO-639-2_alpha3_fr' => [

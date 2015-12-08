@@ -18,8 +18,8 @@ use Docalist\Controller;
 /**
  * Génère une page "Action non trouvée".
  *
- * @var Controller $this
- * @var string $action Le nom de l'action qui n'a pas été trouvée.
+ * @var Controller  $this
+ * @var string      $action Le nom de l'action qui n'a pas été trouvée.
  */
 
 $title = __('Action non trouvée', 'docalist-core');

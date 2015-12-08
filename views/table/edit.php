@@ -20,11 +20,11 @@ use Docalist\Table\TableInfo;
  * Edite ou affiche le contenu d'une table d'autorité.
  *
  * @var AdminTables $this
- * @var string $tableName Nom de la table à modifier.
- * @var TableInfo $tableInfo Infos sur la table.
- * @var string[] $fields Liste des champs de la table.
- * @var object[] $data Liste des enregistrements de la table.
- * @var bool $readonly True si la table est en lecture seule.
+ * @var string      $tableName  Nom de la table à modifier.
+ * @var TableInfo   $tableInfo  Infos sur la table.
+ * @var string[]    $fields     Liste des champs de la table.
+ * @var object[]    $data       Liste des enregistrements de la table.
+ * @var bool        $readonly   True si la table est en lecture seule.
  */
 
 // l'ID de la table est dynamique pour pouvoir éventuellement utiliser

@@ -11,16 +11,14 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist;
 
 use Docalist\Http\Response;
 use Docalist\Http\ViewResponse;
 use Docalist\Http\RedirectResponse;
 use Docalist\Http\JsonResponse;
-
-use ReflectionObject, ReflectionMethod;
-
+use ReflectionObject;
+use ReflectionMethod;
 use Exception;
 
 /**
@@ -71,7 +69,8 @@ use Exception;
  * - http://core.trac.wordpress.org/ticket/7283
  * - http://core.trac.wordpress.org/changeset/8315
  */
-class Controller {
+class Controller
+{
     /**
      * Identifiant unique de ce contrôleur.
      *
@@ -149,7 +148,8 @@ class Controller {
      * @param string $id Identifiant unique du contrôleur.
      * @param string $parentPage Url de la page parent.
      */
-    public function __construct($id, $parentPage = 'admin.php') {
+    public function __construct($id, $parentPage = 'admin.php')
+    {
         $this->id = $id;
         $this->parentPage = $parentPage;
         $this->register();
@@ -158,9 +158,10 @@ class Controller {
     /**
      * Enregistre le contrôleur dans Wordpress.
      */
-    protected function register() {
+    protected function register()
+    {
         if ($this->canRun()) {
-            add_action('admin_action_' . $this->id(), function() {
+            add_action('admin_action_' . $this->id(), function () {
                 $this->run()->send();
                 exit();
             });
@@ -172,7 +173,8 @@ class Controller {
      *
      * @return string
      */
-    protected function id() {
+    protected function id()
+    {
         return $this->id;
     }
 
@@ -181,7 +183,8 @@ class Controller {
      *
      * @return string
      */
-    protected function parentPage() {
+    protected function parentPage()
+    {
         return $this->parentPage;
     }
 
@@ -193,7 +196,8 @@ class Controller {
      *
      * @return string
      */
-    protected function defaultAction() {
+    protected function defaultAction()
+    {
         return $this->defaultAction;
     }
 
@@ -202,7 +206,8 @@ class Controller {
      *
      * @return string
      */
-    protected function action() {
+    protected function action()
+    {
         if (isset($_REQUEST[$this->actionParameter])) {
             return $_REQUEST[$this->actionParameter];
         }
@@ -222,7 +227,8 @@ class Controller {
      *
      * @return string
      */
-    protected function method($action = null) {
+    protected function method($action = null)
+    {
         return 'action' . ($action ?: $this->action());
     }
 
@@ -250,7 +256,8 @@ class Controller {
      *
      * @return array
      */
-    protected function actions($callableOnly = true, $hasCapacity = true, $publicOnly = true, $includeDefault = false) {
+    protected function actions($callableOnly = true, $hasCapacity = true, $publicOnly = true, $includeDefault = false)
+    {
         $actions = [];
 
         $class = new ReflectionObject($this);
@@ -269,7 +276,7 @@ class Controller {
             $action = substr($name, 6);
 
             // Ignore les méthodes action() et actions()
-            if (empty($action) || $action==='s') {
+            if (empty($action) || $action === 's') {
                 continue;
             }
 
@@ -305,7 +312,8 @@ class Controller {
      *
      * @see http://codex.wordpress.org/Roles_and_Capabilities
      */
-    protected function capability($what = 'default') {
+    protected function capability($what = 'default')
+    {
         // Teste si un droit a été indiqué pour cette action
         if (isset($this->capability[$what])) {
             return $this->capability[$what];
@@ -328,12 +336,13 @@ class Controller {
      *
      * @return bool
      */
-    protected function canRun($what = 'default') {
+    protected function canRun($what = 'default')
+    {
         return current_user_can($this->capability($what));
     }
 
     /**
-     * Construit un tableau avec les paramètres à transmettre à la méthode
+     * Construit un tableau avec les paramètres à transmettre à la méthode.
      *
      * @param ReflectionMethod $method
      * @param array $args
@@ -349,7 +358,8 @@ class Controller {
      * - s'il y a trop de paramètres et que $checkTooManyArgs est à true
      * - s'il n'y a pas assez de paramètres et que $checkMissing est à true
      */
-    protected function matchParameters(ReflectionMethod $method, array $args, $checkTooManyArgs = false, $checkMissing = true) {
+    protected function matchParameters(ReflectionMethod $method, array $args, $checkTooManyArgs = false, $checkMissing = true)
+    {
         $params = $method->getParameters();
         $result = [];
         foreach ($params as $i => $param) {
@@ -367,7 +377,7 @@ class Controller {
 
                 // La méthode attend un tableau, caste en array
                 if ($param->isArray() && !is_array($value)) {
-                    $value = array($value);
+                    $value = [$value];
                 }
 
                 // Tout est ok
@@ -379,7 +389,7 @@ class Controller {
             // Paramètre non fourni : utilise la valeur par défaut s'il y en a une
             if (!$param->isDefaultValueAvailable()) {
                 if ($checkMissing) {
-                    $msg = __("Paramètre requis : %s.", 'docalist-core');
+                    $msg = __('Paramètre requis : %s.', 'docalist-core');
                     throw new Exception(sprintf($msg, $name));
                 }
                 continue;
@@ -404,7 +414,8 @@ class Controller {
      *
      * @return Response la valeur retournée par la méthode exécutée.
      */
-    protected function run() {
+    protected function run()
+    {
         // Récupère l'action à exécuter
         $action = $this->action();
 
@@ -426,6 +437,7 @@ class Controller {
         if ($method->isPrivate() || $method->isStatic()) {
             $msg = __('La méthode <code>%s</code> est "%s".', 'docalist-core');
             $msg = sprintf($msg, $name, $method->isPrivate() ? 'private' : 'static');
+
             return $this->view(
                 'docalist-core:controller/bad-request',
                 ['message' => $msg],
@@ -498,7 +510,8 @@ class Controller {
      * - s'il y a trop de paramètres fournis ou des paramètres qui ne sont pas
      *   dans la signature de la méthode de l'action.
      */
-    protected function url($action = null, $args = null) {
+    protected function url($action = null, $args = null)
+    {
         // Récupère l'action et le nom de la méthode correspondante
         empty($action) && $action = $this->action();
         $name = $this->method($action);
@@ -547,7 +560,8 @@ class Controller {
      *
      * @return string
      */
-    protected function baseUrl() {
+    protected function baseUrl()
+    {
         return add_query_arg(
             [$this->controllerParameter => $this->id()],
             admin_url($this->parentPage())
@@ -557,18 +571,20 @@ class Controller {
     /**
      * Indique si la requête en cours est une requête POST.
      *
-     * @return boolean
+     * @return bool
      */
-    protected function isPost() {
+    protected function isPost()
+    {
         return $_SERVER['REQUEST_METHOD'] == 'POST';
     }
 
     /**
      * Indique si la requête en cours est une requête GET.
      *
-     * @return boolean
+     * @return bool
      */
-    protected function isGet() {
+    protected function isGet()
+    {
         return $_SERVER['REQUEST_METHOD'] == 'GET';
     }
 
@@ -582,8 +598,10 @@ class Controller {
      *
      * @return ViewResponse
      */
-    protected function view($view, array $viewArgs = array(), $status = 200, $headers = array()){
+    protected function view($view, array $viewArgs = [], $status = 200, $headers = [])
+    {
         !isset($viewArgs['this']) && $viewArgs['this'] = $this;
+
         return new ViewResponse($view, $viewArgs, $status, $headers);
     }
 
@@ -596,7 +614,8 @@ class Controller {
      *
      * @return RedirectResponse
      */
-    protected function redirect($url, $status = 302, $headers = array()) {
+    protected function redirect($url, $status = 302, $headers = [])
+    {
         return new RedirectResponse($url, $status, $headers);
     }
 
@@ -609,7 +628,8 @@ class Controller {
      *
      * @return JsonResponse
      */
-    protected function json($content = '', $status = 200, $headers = array()) {
+    protected function json($content = '', $status = 200, $headers = [])
+    {
         return new JsonResponse($content, $status, $headers);
     }
 }

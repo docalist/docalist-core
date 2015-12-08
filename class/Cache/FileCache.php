@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,23 +11,24 @@
  * @subpackage  Cache
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Cache;
+
 use Exception;
 
 /**
  * Un cache permettant de stocker des fichiers (template compilé, version
- * SQLite d'une table d'autorité, etc.)
+ * SQLite d'une table d'autorité, etc.).
  */
-class FileCache {
-	/**
-	 * @var int Permissions des fichiers ajoutés au cache.
-	 */
+class FileCache
+{
+    /**
+     * @var int Permissions des fichiers ajoutés au cache.
+     */
     const FILE_MASK = 0660;
 
-	/**
-	 * @var int Permissions des répertoires qui sont créés.
-	 */
+    /**
+     * @var int Permissions des répertoires qui sont créés.
+     */
     const DIR_MASK = 0770;
 
     /**
@@ -65,7 +66,8 @@ class FileCache {
      *
      * @param string $directory Path du répertoire cache.
      */
-    public function __construct($root, $directory) {
+    public function __construct($root, $directory)
+    {
         $root = strtr($root, '/\\', DIRECTORY_SEPARATOR);
         $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->root = $root;
@@ -80,7 +82,8 @@ class FileCache {
      *
      * @return string
      */
-    public function root() {
+    public function root()
+    {
         return $this->root;
     }
 
@@ -89,7 +92,8 @@ class FileCache {
      *
      * @return string
      */
-    public function directory() {
+    public function directory()
+    {
         return $this->directory;
     }
 
@@ -106,8 +110,9 @@ class FileCache {
      * @throws Exception si le fichier indiqué ne peut pas figurer dans le
      * cache.
      */
-    public function path($file) {
-    	$file = strtr($file, '/\\', DIRECTORY_SEPARATOR);
+    public function path($file)
+    {
+        $file = strtr($file, '/\\', DIRECTORY_SEPARATOR);
         if (0 !== strncasecmp($this->root, $file, strlen($this->root))) {
             $msg = __('Le fichier %s ne peut pas être dans le cache', 'docalist-core');
             throw new Exception(sprintf($msg, $file));
@@ -127,14 +132,14 @@ class FileCache {
      * @return bool true si le fichier est dans le cache et est à jour, false
      * sinon.
      */
-    public function has($file, $time = 0) {
+    public function has($file, $time = 0)
+    {
         $path = $this->path($file);
         if (! file_exists($path)) {
             return false;
         }
 
         return ($time === 0) || (filemtime($path) >= $time);
-
     }
 
     /**
@@ -146,13 +151,13 @@ class FileCache {
      *
      * @throws Exception si le fichier ne peut pas être mis en cache.
      */
-    public function put($file, $data) {
+    public function put($file, $data)
+    {
         $path = $this->path($file);
 
         // Crée le répertoire du fichier si besoin
         $directory = dirname($path);
-        if (! is_dir($directory) && ! @mkdir($directory, self::DIR_MASK, true))
-        {
+        if (! is_dir($directory) && ! @mkdir($directory, self::DIR_MASK, true)) {
             $msg = __('Impossible de créer le répertoire FileCache %s', 'docalist-core');
             throw new Exception(sprintf($msg, $directory));
         }
@@ -170,7 +175,8 @@ class FileCache {
      * @return string|null les données lues ou null si le fichier n'existe
      * pas ou ne peut pas être lu.
      */
-    public function get($file) {
+    public function get($file)
+    {
         $path = $this->path($file);
 
         return file_exists($path) ? file_get_contents($path) : null;
@@ -187,29 +193,28 @@ class FileCache {
      * @param string $file le path du fichier ou du répertoire à supprimer
      * (vide = tout le cache).
      */
-    public function clear($file = '') {
-    	$file === '' && $file = $this->root;
+    public function clear($file = '')
+    {
+        $file === '' && $file = $this->root;
         $path = $this->path($file);
 
         // Suppression d'un répertoire complet
         if (is_dir($path)) {
-
             return $this->rmTree($path);
         }
 
         // Suppression d'un fichier
         if (! @unlink($path)) {
-
-        	return false;
+            return false;
         }
 
         // Le répertoire est peut-être vide, maintenant, essaie de le supprimer
         $path = dirname($path);
         while (strlen($path) > strlen($this->directory)) {
-        	if (! @rmdir($path)) {
-        	    return true; // on ne peut pas supprimer le dir, mais le fichier l'a été lui, donc true
-        	}
-        	$path = dirname($path);
+            if (! @rmdir($path)) {
+                return true; // on ne peut pas supprimer le dir, mais le fichier l'a été lui, donc true
+            }
+            $path = dirname($path);
         }
 
         // Ok
@@ -217,48 +222,24 @@ class FileCache {
     }
 
     /**
-	 * Indique si le path passé en paramètre est un chemin relatif.
-	 *
-	 * Remarque : aucun test d'existence du path indiqué n'est fait.
-	 *
-	 * @param string $path le path à tester
-     *
-	 * @return bool true si path est un chemin relatif, false sinon
-	 */
-/*
-    protected function isRelativePath($path) {
-        if (0 === $len = strlen($path)) {
-        	return true;
-        }
-
-        if ($path[0] === '/' || $path[0] === '\\') {
-        	return false;
-        }
-
-        if ($len > 2 && ctype_alpha($path[0]) && $path[1] === ':') return false;
-
-        return true;
-    }
-*/
-
-    /**
-     * Supprime un répertoire et son contenu
+     * Supprime un répertoire et son contenu.
      *
      * @param string $directory
      */
-    protected function rmTree($directory) {
-        $files = array_diff(scandir($directory), array('.','..'));
+    protected function rmTree($directory)
+    {
+        $files = array_diff(scandir($directory), ['.', '..']);
         foreach ($files as $file) {
-        	$path = $directory . DIRECTORY_SEPARATOR . $file;
-    		if (is_dir($path)) {
-    			if (! $this->rmTree($path)) {
-    			    return false;
-    			}
-    		} else {
-    		    if (! unlink($path)) {
-    		        return false;
-    		    }
-    		}
+            $path = $directory . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($path)) {
+                if (! $this->rmTree($path)) {
+                    return false;
+                }
+            } else {
+                if (! unlink($path)) {
+                    return false;
+                }
+            }
         }
 
         return @rmdir($directory);

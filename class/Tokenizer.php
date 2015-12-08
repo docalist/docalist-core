@@ -14,13 +14,14 @@
 namespace Docalist;
 
 /**
- * Tokenizer
+ * Tokenizer.
  *
  * Convertit un texte en minuscules non accentuées
  *
  * TODO : transformer cette classe statique en service de gestion de texte.
  */
-class Tokenizer {
+class Tokenizer
+{
     /**
      * Table de conversion des caractères pour le tokenizer.
      *
