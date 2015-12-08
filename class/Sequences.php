@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,7 +11,6 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist;
 
 use InvalidArgumentException;
@@ -38,8 +37,8 @@ use InvalidArgumentException;
  * champ option_name dans la table wp_options). Une exception sera générée en
  * cas de dépassement.
  */
-class Sequences {
-
+class Sequences
+{
     /**
      * Retourne le nom de la séquence.
      *
@@ -54,7 +53,8 @@ class Sequences {
      * @throws InvalidArgumentException Si la longueur totale du nom de la
      * séquence est supérieure à 64 caractères.
      */
-    public function name($group, $sequence) {
+    public function name($group, $sequence)
+    {
         // Valide le nom du groupe
         if (!preg_match('~^[a-z][a-z0-9-]*$~', $group)) {
             throw new InvalidArgumentException("Invalid sequence group : $group");
@@ -86,8 +86,9 @@ class Sequences {
      * @return int La valeur actuelle de la séquence (0 si la séquence n'existe
      * pas encore dans la table wp_options).
      */
-    public function get($group, $sequence) {
-        global $wpdb;
+    public function get($group, $sequence)
+    {
+        $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
         $name = $this->name($group, $sequence);
@@ -110,8 +111,9 @@ class Sequences {
      * @param int $value La valeur de la séquence.
      * @return int $value.
      */
-    public function set($group, $sequence, $value) {
-        global $wpdb;
+    public function set($group, $sequence, $value)
+    {
+        $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
         $name = $this->name($group, $sequence);
@@ -122,8 +124,8 @@ class Sequences {
         // Requête SQL à exécuter. Adapté de :
         // @see http://stackoverflow.com/a/10081527
         $sql = "INSERT INTO `$wpdb->options` (`option_name`, `option_value`, `autoload`) "
-        . "VALUES('$name', $value, 'no') "
-        . "ON DUPLICATE KEY UPDATE `option_value` = VALUES(`option_value`)";
+             . "VALUES('$name', $value, 'no') "
+             . 'ON DUPLICATE KEY UPDATE `option_value` = VALUES(`option_value`)';
 
         // Exécute la requête (pas de prepare car on contrôle les paramètres)
         $wpdb->query($sql);
@@ -143,8 +145,9 @@ class Sequences {
      *
      * @return int La valeur de la séquence.
      */
-    public function increment($group, $sequence) {
-        global $wpdb;
+    public function increment($group, $sequence)
+    {
+        $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
         $name = $this->name($group, $sequence);
@@ -153,7 +156,7 @@ class Sequences {
         // @see http://answers.oreilly.com/topic/172-how-to-use-sequence-generators-as-counters-in-mysql/
         $sql = "INSERT INTO `$wpdb->options` (`option_name`, `option_value`, `autoload`) "
              . "VALUES('$name', 1, 'no') "
-             . "ON DUPLICATE KEY UPDATE `option_value` = LAST_INSERT_ID(`option_value` + 1)";
+             . 'ON DUPLICATE KEY UPDATE `option_value` = LAST_INSERT_ID(`option_value` + 1)';
 
         // Exécute la requête (pas de prepare car on contrôle les paramètres)
         $affectedRows = $wpdb->query($sql);
@@ -193,8 +196,9 @@ class Sequences {
      *
      * @return int Le nombre de séquences supprimées.
      */
-    public function clear($group, $sequence = null) {
-        global $wpdb;
+    public function clear($group, $sequence = null)
+    {
+        $wpdb = docalist('wordpress-database');
 
         if ($sequence) {
             $op = '=';
@@ -237,8 +241,9 @@ class Sequences {
      * - 2 : la séquence a été mise à jour (la séquence existait mais sa valeur
      *       était inférieure à $value, elle a été initialisée à $value).
      */
-    public function setIfGreater($group, $sequence, $value) {
-        global $wpdb;
+    public function setIfGreater($group, $sequence, $value)
+    {
+        $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
         $name = $this->name($group, $sequence);
@@ -250,7 +255,7 @@ class Sequences {
         // @see http://stackoverflow.com/a/10081527
         $sql = "INSERT INTO `$wpdb->options` (`option_name`, `option_value`, `autoload`) "
              . "VALUES('$name', $value, 'no') "
-             . "ON DUPLICATE KEY UPDATE `option_value` = GREATEST(CAST(`option_value` AS SIGNED), VALUES(`option_value`))";
+             . 'ON DUPLICATE KEY UPDATE `option_value` = GREATEST(CAST(`option_value` AS SIGNED), VALUES(`option_value`))';
 
         // Exécute la requête (pas de prepare car on contrôle les paramètres)
         return $wpdb->query($sql);
