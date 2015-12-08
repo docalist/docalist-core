@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of the "Docalist Core" plugin.
  *
@@ -100,6 +99,9 @@ class Plugin
     {
         // Enregistre les services docalist par défaut
         docalist('services')->add([
+
+            // La base wordpress (pour éviter d'accéder directement à $wpdb)
+            'wordpress-database' => $GLOBALS['wpdb'],
 
             // Gestion des Settings
             'settings-repository' => function () {
