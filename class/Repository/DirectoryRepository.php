@@ -56,7 +56,7 @@ class DirectoryRepository extends Repository
         $directory = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         // Crée le répertoire s'il n'existe pas déjà
-        if (! is_dir($directory) && ! @mkdir($directory, 0770, true)) {
+        if (! is_dir($directory) && ! mkdir($directory, 0770, true)) {
             $msg = __('Unable to create the directory %s', 'docalist-core');
             throw new RepositoryException(sprintf($msg, $directory));
         }
@@ -133,7 +133,7 @@ class DirectoryRepository extends Repository
         }
 
         // Charge les données de l'entité
-        if (false === $data = @file_get_contents($path)) {
+        if (false === $data = file_get_contents($path)) {
             $error = error_get_last();
             throw new RepositoryException($error['message']);
         }
@@ -151,12 +151,12 @@ class DirectoryRepository extends Repository
         $path = $this->path($id);
 
         // L'entité est stockée dans un fichier
-        if (! @file_put_contents($path, $data, LOCK_EX)) { // false:failure, 0:rien écrit
+        if (! file_put_contents($path, $data, LOCK_EX)) { // false:failure, 0:rien écrit
             $error = error_get_last();
             throw new RepositoryException($error['message']);
         }
 
-        if (! @chmod($path, 0660)) {
+        if (! chmod($path, 0660)) {
             $error = error_get_last();
             throw new RepositoryException($error['message']);
         }
@@ -176,7 +176,7 @@ class DirectoryRepository extends Repository
         }
 
         // Supprime le fichier
-        if (! @unlink($path)) {
+        if (! unlink($path)) {
             $error = error_get_last();
             throw new RepositoryException($error['message']);
         }
