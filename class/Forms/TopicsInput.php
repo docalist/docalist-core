@@ -21,7 +21,7 @@ namespace Docalist\Forms;
  * étend wordpress, mais comme wordpress étend déjà base, on se retrouve avec
  * trois niveaux et actuellement ce n'est pas géré.
  */
-class TopicsInput extends Container
+class TopicsInput extends Element
 {
     protected $table;
 
@@ -29,6 +29,15 @@ class TopicsInput extends Container
     {
         parent::__construct($name);
         $this->table = $table;
+    }
+
+    public function getTable() {
+        return $this->table;
+    }
+
+    protected function isMultivalued()
+    {
+        return true;
     }
 
     public function repeatable($repeatable = null)
