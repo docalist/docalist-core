@@ -42,6 +42,16 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return [];
     }
 
+    /*
+     * On doit surcharger l'implémentation par défaut car ça retourne la valeur par défaut du schéma.
+     * Comme le schéma d'une collection, c'est le schéma de ses éléments, ça crée systématiquement un
+     * élément vide (par exemple on se retrouve avec une base vide dans biblio).
+     */
+    public function getDefaultValue()
+    {
+        return [];
+    }
+
     /**
      * Retourne le type (le nom de classe complet) des éléments de cette
      * collection.
@@ -125,56 +135,25 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function offsetSet($offset, $value)
     {
-        // Cas d'une collection typée (avec un schéma)
-        if ($this->schema) {
-            // Détermine le type des éléments de cette collection
-            $type = $this->schema->type() ?: 'Docalist\Type\Any';
+        // Détermine le type des éléments de cette collection
+        $type = $this->schema->type() ?: 'Docalist\Type\Any';
 
-            // Si value est un objet du bon type, ok
-            if ($value instanceof $type) {
-                $item = $value;
-            }
-
-            // Sinon instancie l'élément
-            else {
-                if (is_a($type, 'Docalist\Type\Composite', true)) {
-                    $item = new $type($value); /* @var $item Composite */
-
-                    if (! is_null($item->schema)) {
-                        // Un objet a déjà un schéma, donc on ne peut pas lui fournir le notre
-                        // On se contente de recopier les propriétés qu'il n'a pas (format, etc.)
-                        $item->schema->value += $this->schema->value;
-                    }
-                } else {
-                    $item = new $type($value, $this->schema);
-                }
-            }
+        // Si value n'est pas du bon type, on l'instancie
+        if (! $value instanceof $type) {
+            $value = new $type($value, $this->schema);
         }
 
-        // Cas d'une collection libre (sans schéma associé)
-        else {
-            // Si value est déjà un Type, ok
-            if ($value instanceof Any) {
-                $item = $value;
-            }
-
-            // Sinon, essaie de créer un Type à partir de la valeur
-            else {
-                $item = self::fromPhpType($value);
-            }
-        }
-
-        // Si c'est une collection à clé, ignore offset et utilise le sous-champ
-        if ($this->schema && $key = $this->schema->key()) {
-            $this->value[$item->$key()] = $item;
+        // Si c'est une collection indexée, ignore offset et utilise le champ indiqué comme clé
+        if ($key = $this->schema->key()) {
+            $this->value[$value->$key()] = $value;
         }
 
         // Collection sans clés
         else {
             if (is_null($offset)) {
-                $this->value[] = $item;
+                $this->value[] = $value;
             } else {
-                $this->value[$offset] = $item;
+                $this->value[$offset] = $value;
             }
         }
     }
@@ -481,7 +460,12 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $form;
     }
 
-    public function getEditorForm(array $options = null)
+    public function getAvailableEditors()
+    {
+        return $this->createTemporaryItem()->getAvailableEditors();
+    }
+
+    public function getEditorForm($options = null)
     {
         // Crée un item et récupére son formulaire
         $form = $this->createTemporaryItem()->getEditorForm($options);
