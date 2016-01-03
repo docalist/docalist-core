@@ -31,7 +31,7 @@ use Docalist\Type\Boolean;
  */
 class TableInfo extends Composite
 {
-    protected static function loadSchema()
+    public static function loadSchema()
     {
         return [
             'fields' => [
