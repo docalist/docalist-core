@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of a "Docalist Core" plugin.
  *
@@ -42,7 +41,7 @@ class Entity extends Composite
      */
     public function __construct(array $value = null, Schema $schema = null, $id = null)
     {
-        parent::__construct($value, $schema ?: $this::defaultSchema());
+        parent::__construct($value, $schema);
         ! is_null($id) && $this->id($id);
     }
 
@@ -102,14 +101,14 @@ class Entity extends Composite
 
     public function setupMapping(MappingBuilder $mapping)
     {
-        foreach($this->schema()->getFieldNames() as $field) {
+        foreach ($this->schema()->getFieldNames() as $field) {
             $this->__get($field)->setupMapping($mapping);
         }
     }
 
     public function mapData(array & $document)
     {
-        foreach($this->getFields() as $field) {
+        foreach ($this->getFields() as $field) {
             $field->mapData($document);
         }
     }
