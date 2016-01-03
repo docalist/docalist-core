@@ -14,7 +14,6 @@
 namespace Docalist\Type;
 
 use Docalist\Type\Interfaces\Categorizable;
-use Docalist\Forms\Table;
 
 /**
  * Un MultiField est un composite qui permet de regrouper plusieurs champs
@@ -100,22 +99,5 @@ class MultiField extends Composite implements Categorizable
         }
 
         return __('catégorie', 'docalist-core');
-    }
-
-    // -------------------------------------------------------------------------
-    // Interface Editable
-    // -------------------------------------------------------------------------
-
-    public function getEditorForm(array $options = null)
-    {
-        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
-
-        $editor = new Table($name);
-        $class = $name . '-';
-        foreach ($this->schema->getFieldNames() as $name) {
-            $editor->add($this->__get($name)->getEditorForm()->addClass($class . $name));
-        }
-
-        return $editor;
     }
 }
