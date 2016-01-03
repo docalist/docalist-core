@@ -32,6 +32,7 @@ use Docalist\Forms\Fieldset;
 use Docalist\Forms\Table;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Container;
+use Docalist\Forms\Div;
 
 /**
  * Ce trait contient des méthodes qui permettent de créer tous les types d'items.
@@ -96,19 +97,6 @@ trait ItemFactoryTrait
     public function tag($tag = 'div', $content = null, array $attributes = null)
     {
         return new Tag($tag, $content, $attributes, $this);
-    }
-
-    /**
-     * Crée un tag <div> et l'ajoute au container.
-     *
-     * @param string $content Optionnel, le contenu de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
-     *
-     * @return Tag
-     */
-    public function div($content = null, array $attributes = null)
-    {
-        return new Tag('div', $content, $attributes, $this);
     }
 
     /**
@@ -333,5 +321,18 @@ trait ItemFactoryTrait
     public function fieldset($name = null, array $attributes = null)
     {
         return new Fieldset($name, $attributes, $this);
+    }
+
+    /**
+     * Crée un élément Div et l'ajoute au container.
+     *
+     * @param string $name Le nom de l'élément.
+     * @param array $attributes Optionnel, les attributs de l'élément.
+     *
+     * @return Div
+     */
+    public function div($name = null, array $attributes = null)
+    {
+        return new Div($name, $attributes, $this);
     }
 }
