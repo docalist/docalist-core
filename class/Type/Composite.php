@@ -17,6 +17,7 @@ use Docalist\Schema\Schema;
 use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Container;
 use InvalidArgumentException;
+use Docalist\Forms\Table;
 
 /**
  * Type Composite.
@@ -47,107 +48,9 @@ use InvalidArgumentException;
  */
 class Composite extends Any
 {
-    /**
-     * Cache des schémas.
-     *
-     * @var Schema[]
-     */
-    private static $cache = [];
-    public static $cacheHit=0, $cacheMiss=0, $wpCacheHit=0, $wpCacheMiss=0;
-
-
     public static function getClassDefault()
     {
         return [];
-    }
-
-    /**
-     * Charge le schéma par défaut de l'objet.
-     *
-     * Cette méthode est destinée à être surchargée par les classes
-     * descendantes.
-     *
-     * @return array Un tableau représentant les données du schéma.
-     */
-    protected static function loadSchema()
-    {
-        return null;
-    }
-
-    /**
-     * Retourne le schéma par défaut de l'objet.
-     *
-     * La méthode gère un cache des schémas déjà chargés. Si le schéma n'est pas
-     * encore dans le cache, elle appelle loadSchema().
-     *
-     * @return Schema
-     */
-    final public static function defaultSchema()
-    {
-        $useCache = false;
-        $useWPCache = false; // = !WP_DEBUG
-        $wpCacheGroup = 'docalist-schemas';
-
-        // Détermine la clé du schéma
-        $key = get_called_class();
-
-        // Si on a déjà le schéma en cache, terminé
-        if ($useCache && isset(self::$cache[$key])) {
-            ++self::$cacheHit;
-            return self::$cache[$key];
-        }
-        ++self::$cacheMiss;
-
-        // Essaie de charger le schéma à partir du cache WordPress
-        if ($useWPCache) {
-            $schema = wp_cache_get($key, $wpCacheGroup);
-            if ($schema !== false) {
-                ++self::$wpCacheHit;
-                $useCache && self::$cache[$key] = $schema;
-
-                return $schema;
-            }
-        }
-        ++self::$wpCacheMiss;
-
-        // Charge le schéma
-        $schema = static::loadSchema();
-
-        // Si loadSchema nous a retourné un tableau, on le compile
-        if (is_array($schema)) {
-            try {
-                $schema = new Schema($schema);
-            } catch (InvalidArgumentException $e) {
-                throw new InvalidArgumentException("$e::loadchema(): " .$e->getMessage());
-            }
-        }
-
-/*
-        $t = array_intersect($schema->getFieldNames(), get_class_methods(__CLASS__));
-        if ($t) {
-            echo 'WARNING : schema(', get_called_class(), ') conflit nom de champ / nom de méthode : ', implode(', ', $t), '<br />';
-        }
-*/
-
-        // Stocke le schéma en cache pour la prochaine fois
-        $useCache && self::$cache[$key] = $schema;
-        if ($useWPCache){
-            wp_cache_set($key, $schema, $wpCacheGroup);
-        }
-
-        return $schema;
-    }
-
-    /**
-     * Construit un nouvel objet.
-     *
-     * @param array $value
-     * @param Schema $schema
-     */
-    public function __construct(array $value = null, Schema $schema = null)
-    {
-        // Initialise le schéma (utilise le schéma par défaut si besoin)
-        parent::__construct($value, $schema ?: $this::defaultSchema());
     }
 
     public function assign($value)
@@ -214,63 +117,33 @@ class Composite extends Any
             return $this;
         }
 
-        // Il faut initialiser le champ
-
-        // Cas d'un objet typé (ayant un schéma)
-        if ($this->schema) {
-            // Vérifie que le champ existe et récupère son schéma
-            if ($this->schema->hasField($name)) {
-                $field = $this->schema->getField($name);
+        // Vérifie que le champ existe et récupère son schéma
+        if ($this->schema->hasField($name)) {
+            $field = $this->schema->getField($name);
+        } else {
+            $schema = static::getDefaultSchema();
+            if ($schema->hasField($name)) {
+                $field = $schema->getField($name);
             } else {
-                $defaultSchema = $this->defaultSchema();
-                if ($defaultSchema->hasField($name)) {
-                    $field = $defaultSchema->getField($name);
-                } else {
-                    $msg = 'Field %s does not exist';
-                    throw new InvalidArgumentException(sprintf($msg, $name));
-                }
-            }
-
-            // Crée une collection si le champ est répétable
-            if ($collection = $field->collection()) {
-                // Si value est déjà une Collection, on prend tel quel
-                if ($value instanceof Collection) {
-                    $this->value[$name] = $value;
-                }
-
-                // Sinon, on instancie
-                else {
-                    $this->value[$name] = new $collection($value, $field);
-                }
-            }
-
-            // Crée un type simple sinon
-            else {
-                $type = $field->type();
-
-                // Si value est déjà du bon type, on le prend tel quel
-                if ($value instanceof $type) {
-                    $this->value[$name] = $value;
-                }                 // Sinon, on instancie
-                else {
-                    $this->value[$name] = new $type($value, $field);
-                }
+                $msg = 'Field %s does not exist';
+                throw new InvalidArgumentException(sprintf($msg, $name));
             }
         }
 
-        // Cas d'un objet libre (sans schéma associé)
+        // Détermine le type du champ
+        $type = $field->collection() ?: $field->type();
+
+        // Si value est déjà du bon type, on le prend tel quel
+        if ($value instanceof $type) {
+            $this->value[$name] = $value;
+        }
+
+        // Sinon, on instancie
         else {
-            // Si value est déjà un Type, rien à faire
-            if ($value instanceof Any) {
-                $this->value[$name] = $value;
-            }
-
-            // Sinon, essaie de créer le Type le plus adapté
-            else {
-                $this->value[$name] = Any::fromPhpType($value);
-            }
+            $this->value[$name] = new $type($value, $field);
         }
 
+        // Ok
         return $this;
     }
 
@@ -396,14 +269,43 @@ class Composite extends Any
         return ! isset($this->value[$name]) || $this->value[$name]->filterEmpty($strict);
     }
 
-    public function getEditorForm(array $options = null)
+    public function getAvailableEditors()
     {
-        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+        return [
+            'container' => __('Container', 'docalist-core'),
+            'table' => __('Table', 'docalist-core'),
+        ];
+    }
 
-        $editor = new Container($name);
+    public function getEditorForm($options = null)
+    {
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
 
-        foreach ($this->schema->getFieldNames() as $name) {
-            $editor->add($this->__get($name)->getEditorForm());
+        switch ($editor) {
+            case 'container':
+                $editor = new Container();
+                break;
+
+            case 'table':
+                $editor = new Table();
+                break;
+
+            default:
+                throw new InvalidArgumentException("Invalid Composite editor '$editor'");
+        }
+
+        $editor
+            ->setName($this->schema->name())
+            ->setLabel($this->getOption('label', $options))
+            ->setDescription($this->getOption('description', $options));
+
+        foreach ($options->getFieldNames() as $name) { // TODO : si $options n'est pas une grille
+            $fieldOptions = $this->getFieldOptions($name, $options);
+            $field = $this->__get($name);
+            $unused = $field->getOption('unused', $fieldOptions, false);
+            if (!$unused) {
+                $editor->add($field->getEditorForm($fieldOptions));
+            }
         }
 
         return $editor;
@@ -436,7 +338,7 @@ class Composite extends Any
         }
 
         // Erreur
-        elseif( !is_null($options)) {
+        elseif (!is_null($options)) {
             throw new InvalidArgumentException('Invalid options, expected Schema or array, got ' . gettype($options));
         }
 
@@ -446,7 +348,7 @@ class Composite extends Any
         }
 
         // Champ trouvé nulle part
-        return null;
+        return;
     }
 
     protected function formatField($name, $options = null)
