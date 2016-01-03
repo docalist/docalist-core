@@ -41,5 +41,4 @@ class Scalar extends Any
     {
         return (string) $this->value;
     }
-
 }
