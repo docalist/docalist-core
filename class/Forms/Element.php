@@ -90,7 +90,7 @@ abstract class Element extends Item
      */
     protected function hasLayout()
     {
-        return true;
+         return true;
     }
 
     /**
@@ -180,6 +180,17 @@ abstract class Element extends Item
 
         // Ok
         return $name;
+    }
+
+    final public function getPath($separator = '/')
+    {
+        $path = $this->parent ? $this->parent->getPath($separator) : '';
+        if ($this->name) {
+            $path && $path .= $separator;
+            $path .= $this->name;
+        }
+
+        return $path;
     }
 
     /**
@@ -380,10 +391,10 @@ abstract class Element extends Item
             $data === [] && $data = null;
 
             // Si c'est un tableau, il ne doit contenir que des scalaires ou null
-            $badType = null;
-            if (is_array($data) && true !== $badType = $this->isScalarArray($data)) {
-                return $this->invalidArgument('All values of element %s must be scalar, got %s', $badType);
-            }
+//             $badType = null;
+//             if (is_array($data) && true !== $badType = $this->isScalarArray($data)) {
+//                 return $this->invalidArgument('All values of element %s must be scalar, got %s', $badType);
+//             }
         }
 
         // Stocke les données

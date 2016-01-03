@@ -123,6 +123,25 @@ abstract class Item
     }
 
     /**
+     * Retourne le path complet de l'item.
+     *
+     * Le path est construit en concaténant le nom des éléments de la hiérarchie de
+     * la racine à l'élément en cours. Seuls les éléments qui ont un nom apparaissent
+     * dans le path retourné.
+     *
+     * @parameter string $separator Séparateur à utiliser pour délimiter chaque niveau.
+     *
+     * Remarque : le séparateur est ajouté entre les noms, pas au début ni à la fin
+     * (par exemple, on obtiendra 'person/name', pas '/person/name' ou 'person/name/').
+     *
+     * @return string
+     */
+    public function getPath($separator = '/')
+    {
+        return $this->parent ? $this->parent->getPath($separator) : '';
+    }
+
+    /**
      * Génère le code html de l'item et le retourne sous forme de chaine.
      *
      * @param Theme|string|null $theme Optionnel, le thème de formulaire à utiliser.
