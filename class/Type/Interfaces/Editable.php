@@ -14,6 +14,7 @@
 namespace Docalist\Type\Interfaces;
 
 use Docalist\Forms\Element;
+use Docalist\Schema\Schema;
 
 /**
  * API permettant de saisir et modifier un type de données docalist.
@@ -90,9 +91,9 @@ interface Editable
     /**
      * Retourne un élément de formulaire permettant de saisir ce champ.
      *
-     * @param array $options Options à appliquer à l'éditeur.
+     * @param array|Schema $options Options à appliquer à l'éditeur.
      *
      * @return Element Un élément de formulaire.
      */
-    public function getEditorForm(array $options = null);
+    public function getEditorForm($options = null);
 }
