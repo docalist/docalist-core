@@ -128,10 +128,11 @@ class MasterTable extends CsvTable
     {
         $this->log && $this->log->notice('creating master table');
         $template = file_get_contents(__DIR__ . '/master-template.txt');
+        $schema = TableInfo::getDefaultSchema();
         $template = strtr($template, [
             '{year}' => date('Y'),
             '{path}' => $this->relativePath($path),
-            '{fields}' => implode(';', TableInfo::defaultSchema()->getFieldNames()),
+            '{fields}' => implode(';', $schema->getFieldNames()),
         ]);
         file_put_contents($path, $template);
     }
