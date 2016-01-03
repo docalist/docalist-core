@@ -14,6 +14,7 @@
 namespace Docalist\Type\Interfaces;
 
 use Docalist\Forms\Element;
+use Docalist\Schema\Schema;
 
 /**
  * API permettant de formatter un type de données docalist.
@@ -91,7 +92,7 @@ interface Formattable
     /**
      * Formatte le type.
      *
-     * @param array|object $options Options de formattage.
+     * @param array|Schema $options Options de formattage.
      *
      * @return string|array Par défaut, la méthode retourne une chaine
      * contenant la valeur formattée selon les options indiquées.
