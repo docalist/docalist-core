@@ -25,22 +25,63 @@ class LargeText extends Text
     public function getAvailableEditors()
     {
         return [
-            'textarea'          => __('Zone de texte sur plusieurs lignes', 'docalist-core'),
-            'wpeditor'          => __('Editeur WordPress', 'docalist-core'),
-            'wpeditor-teeny'    => __('Editeur WordPress simplifié', 'docalist-core'),
+            'textarea'       => __('Zone de texte sur plusieurs lignes', 'docalist-core'),
+            'wpeditor'       => __('Editeur WordPress', 'docalist-core'),
+            'wpeditor-teeny' => __('Editeur WordPress simplifié', 'docalist-core'),
         ];
     }
 
-    public function getEditorForm(array $options = null)
+    public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+
         switch ($editor) {
-            case 'textarea':        return new Textarea($name);
-            case 'wpeditor':        return new WPEditor($name);
-            case 'wpeditor-teeny':  return (new WPEditor($name))->setTeeny();
+            case 'textarea':
+                $editor = new Textarea();
+                break;
+
+            case 'wpeditor':
+                $editor = new WPEditor();
+                break;
+
+            case 'wpeditor-teeny':
+                $editor = new WPEditor();
+                $editor->setTeeny();
+                break;
+
+            default:
+                throw new InvalidArgumentException("Invalid LargeText editor '$editor'");
         }
 
-        throw new InvalidArgumentException('Invalid editor');
+        return $editor
+            ->setName($this->schema->name())
+            ->setLabel($this->getOption('label', $options))
+            ->setDescription($this->getOption('description', $options))
+            ->setAttribute('rows', '2');
+    }
+
+    public function getFormattedValue($options = null)
+    {
+        $value = $this->value;
+        if (trim($value) === '') {
+            return $value;
+        }
+        true && $value = wpautop($value);
+        true && $value = wp_make_content_images_responsive($value);
+
+        return $value;
+
+        // Filtres wordpress (4.4) par défaut pour "the_content" (dans default-filters.php) :
+        // Nom                                  Priorité    Rôle
+        // capital_P_dangit()                   11          Change 'wordpress' en 'wordPress'...
+        // wptexturize()                        10          Transforme les guillemets, apostrophes, etc.
+        // convert_smilies()                    10          Convertit les smileys
+        // wpautop()                            10          Remplace \n\n par des tags <p>..</p>
+        // shortcode_unautop()                  10          Supprime les <p></p> en trop autour des shortcodes
+        // prepend_attachment()                 10          Attachments uniquement : ajoute un lien
+        // wp_make_content_images_responsive()  10          Ajoute des attr 'srcsets' et 'sizes' aux images
+        // do_shortcode()                       11          Exécute les shortcodes
+
+        // Voir s'il faut ou non ajouter des options à LargeText pour activer ou non ces filtres.
     }
 }
