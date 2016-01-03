@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2016 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -33,6 +33,7 @@ use Docalist\Forms\Table;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Container;
 use Docalist\Forms\Div;
+use Docalist\Forms\Radiolist;
 
 /**
  * Ce trait contient des méthodes qui permettent de créer tous les types d'items.
@@ -269,6 +270,19 @@ trait ItemFactoryTrait
     public function checklist($name = null, array $attributes = null)
     {
         return new Checklist($name, $attributes, $this);
+    }
+
+    /**
+     * Crée un élément Radiolist et l'ajoute au container.
+     *
+     * @param string $name Optionnel, le nom de l'élément.
+     * @param array $attributes Optionnel, les attributs de l'élément.
+     *
+     * @return Radiolist
+     */
+    public function radiolist($name = null, array $attributes = null)
+    {
+        return new Radiolist($name, $attributes, $this);
     }
 
     /**
