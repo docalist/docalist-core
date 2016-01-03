@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2016 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -51,6 +51,8 @@ class Autoloader
      * @param string $path Chemin absolu du dossier qui contient les classes
      * pour le namespace indiqué.
      *
+     * @return self
+     *
      * @throws Exception Si le namespace est déjà enregistré avec un path
      * différent.
      */
@@ -64,6 +66,8 @@ class Autoloader
 
         // Enregistre le path
         $this->path[$namespace] = $path;
+
+        return $this;
     }
 
     /**
