@@ -44,14 +44,22 @@ class Text extends Scalar
         ];
     }
 
-    public function getEditorForm(array $options = null)
+    public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+
         switch ($editor) {
-            case 'input': return new Input($name);
+            case 'input':
+                $editor = new Input();
+                break;
+
+            default:
+                throw new InvalidArgumentException("Invalid Text editor '$editor'");
         }
 
-        throw new InvalidArgumentException("Invalid editor '$editor'");
+        return $editor
+            ->setName($this->schema->name())
+            ->setLabel($this->getOption('label', $options))
+            ->setDescription($this->getOption('description', $options));
     }
 }
