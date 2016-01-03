@@ -14,8 +14,10 @@
 namespace Docalist\Type;
 
 use Docalist\Schema\Schema;
-use Docalist\Forms\EntryPicker;
 use Docalist\Table\TableManager;
+use Docalist\Forms\EntryPicker;
+use Docalist\Forms\Select;
+use Docalist\Forms\Radiolist;
 use InvalidArgumentException;
 
 /**
@@ -39,6 +41,14 @@ class TableEntry extends Text
         }
     }
 
+    public static function loadSchema()
+    {
+        return [
+            'label' => __('Entrée', 'docalist-core'),
+            'description' => __('Choisissez dans la liste.', 'docalist-core'),
+        ];
+    }
+
     public function getSettingsForm()
     {
         // Récupère le formulaire par défaut
@@ -56,12 +66,48 @@ class TableEntry extends Text
         return $form;
     }
 
-    public function getEditorForm(array $options = null)
+    public function getAvailableEditors()
     {
-        $picker = new EntryPicker($this->schema->name());
-        $picker->setOptions($this->schema->table());
+        return [
+            'lookup' => __('Lookup dynamique', 'docalist-core'),
+            'select' => __('Menu déroulant contenant toutes les entrées', 'docalist-core'),
+            'radio' => __('Liste de boutons radios avec toutes les entrées', 'docalist-core'),
+            'radio-inline' => __("Boutons radios 'inline'", 'docalist-core'),
+        ];
+    }
 
-        return $picker;
+    public function getEditorForm($options = null)
+    {
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+
+        switch ($editor) {
+            case 'lookup':
+                $editor = new EntryPicker();
+                break;
+
+            case 'select':
+                $editor = new Select();
+                break;
+
+            case 'radio':
+                $editor = new Radiolist();
+                break;
+
+            case 'radio-inline':
+                $editor = new Radiolist();
+                $editor->addClass('inline');
+                break;
+
+            default:
+                throw new InvalidArgumentException("Invalid TableEntry editor '$editor'");
+        }
+
+        /* @var EntryPicker $ui */
+        return $editor
+            ->setName($this->schema->name())
+            ->setOptions($this->schema->table())
+            ->setLabel($this->getOption('label', $options))
+            ->setDescription($this->getOption('description', $options));
     }
 
     public function getAvailableFormats()
