@@ -36,7 +36,7 @@ class Integer extends Number
         return $this;
     }
 
-    public function getEditorForm(array $options = null)
+    public function getEditorForm($options = null)
     {
         return parent::getEditorForm($options)->setAttribute('step', '1');
     }
