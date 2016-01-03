@@ -16,11 +16,11 @@ namespace Docalist\Schema;
 use Docalist\Type\Composite;
 use Docalist\Type\Collection;
 use InvalidArgumentException;
-use Docalist\AdminNotices;
+use JsonSerializable;
 
 /**
- * Un schéma est un {@link Docalist\Type\Composite objet composite} qui permet de
- * décrire les attributs d'un {@link Docalist\Type\Any type de données Docalist}.
+ * Un schéma permet de décrire les attributs d'un
+ * {@link Docalist\Type\Any type de données Docalist}.
  *
  * Sur le principe, c'est juste un moyen simple de stocker une liste de propriétés
  * de la forme clé => valeur.
@@ -35,108 +35,171 @@ use Docalist\AdminNotices;
  * Les schémas sont notamment utilisés pour définir la liste des champs des composites
  * et pour définir les grilles (affichage, saisie, etc.) des entités.
  */
-class Schema extends Composite
+class Schema implements JsonSerializable
 {
-    // Alias courts pour les types de base docalist (deprecated)
-    private static $alias = [
-        'any' => 'Docalist\Type\Any',
-
-        'bool' => 'Docalist\Type\Boolean',
-        'boolean' => 'Docalist\Type\Boolean',
-
-        'float' => 'Docalist\Type\Decimal',
-        'double' => 'Docalist\Type\Decimal',
-        'real' => 'Docalist\Type\Decimal',
-
-        'int' => 'Docalist\Type\Integer',
-        'integer' => 'Docalist\Type\Integer',
-        'long' => 'Docalist\Type\Integer',
-
-        'scalar' => 'Docalist\Type\Scalar',
-
-        'string' => 'Docalist\Type\Text',
-        'text' => 'Docalist\Type\Text',
-    ];
+    /**
+     * Liste des propriétés du schéma.
+     *
+     * @var array
+     */
+    protected $properties;
 
     /**
      * Construit un nouveau schéma.
      *
-     * @param array $value Propriétés du schéma.
+     * @param array $properties Propriétés du schéma.
+     * @param string $parent Optionnel, nom de la classe parent.
      *
      * @throws InvalidArgumentException Si le schéma contient des erreurs.
      */
-    public function __construct(array $value)
+    public function __construct(array $properties = null)
     {
-        // Valide le type
-        if (isset($value['type'])) {
-            $type = (string) $value['type'];
+        // Cas particulier : schéma vide
+        if (empty($properties)) {
+            $this->properties = [];
 
-            // Répétable : type='xx*' équivaut à type='xx' + repeatable=true
-            if (substr($type, -1) === '*') {
-                $type = substr($type, 0, -1);
-                $value['repeatable'] = true;
-            }
-
-            // Si le type indiqué est un alias, on le traduit en nom de classe
-            if (isset(self::$alias[$type])) {
-                $type = self::$alias[$type];
-                $notices = docalist('admin-notices'); /* @var AdminNotices $notices */
-                $notices->warning(
-                    '<pre>' . htmlspecialchars(var_export($value, true)) . '</pre>',
-                    'Schemas : type aliases (int, string...) are deprecated'
-                );
-            }
-
-            // Si le type indiqué est une collection, c'est la collection qui fournit le type des éléments
-            if (is_a($type, 'Docalist\Type\Collection', true)) {
-                $value['collection'] = $type;
-                $type = $type::type();
-            }
-
-            // Au final, le type doit désigner un nom de classe de type complet
-            if (! is_a($type, 'Docalist\Type\Any', true)) {
-                $msg = 'Invalid type "%s" for field "%s"';
-
-                throw new InvalidArgumentException(sprintf($msg, $type, isset($value['name']) ? $value['name'] : '(noname)'));
-            }
-
-            // Ok
-            $value['type'] = $type;
+            return;
         }
 
-        // Valide repeatable et collection
-        if (isset($value['repeatable']) && $value['repeatable'] && !isset($value['collection'])) {
-            $value['collection'] = 'Docalist\Type\Collection';
-        }
-        unset($value['repeatable']);
+        // Valide et normalise les propriétés du schéma
+        $this->validate($properties);
 
-        // On court-circuite parent::__construct pour éviter les appels à defaultSchema, loadSchema, etc.
-        $this->assign($value);
+        // Gère l'héritage si la propriété 'type' est définie
+        if (isset($properties['type'])) {
+            $parent = $properties['type']::getDefaultSchema();
+            $properties = $this->mergeProperties($parent->value(), $properties);
+        }
+
+        // Compile la liste des champs
+        if (isset($properties['fields'])) {
+            foreach ($properties['fields'] as & $field) {
+                $field = new self($field);
+            }
+        }
+
+        // Trie les propriétés
+        $this->properties = $this->sortProperties($properties);
     }
 
-    public function __set($name, $value)
+    /**
+     * Valide et normalise les propriétés passées en paramètre.
+     *
+     * @param array $properties
+     *
+     * @return self
+     */
+    protected function validate(array & $properties)
     {
-        // Si la propriété existe déjà, on change simplement sa valeur
-        if (isset($this->value[$name])) {
-            $this->value[$name]->assign($value);
+        return $this->validateType($properties)
+                    ->validateCollection($properties)
+                    ->validateFields($properties);
+    }
 
+    /**
+     * Valide la propriété 'type'.
+     *
+     * @param array $properties
+     *
+     * @return self
+     */
+    protected function validateType(array & $properties)
+    {
+        if (!isset($properties['type'])) {
             return $this;
         }
 
-        // Propriétés génériques
-        if ($name !== 'fields') {
-            $this->value[$name] = self::fromPhpType($value);
+        $type = $properties['type'];
+        if (! is_string($type)) {
+            throw new InvalidArgumentException("Invalid 'type': expected string, got " . gettype($type));
+        }
 
+        // type='xx*' équivaut à type='xx' + collection
+        if (substr($type, -1) === '*') {
+            $type = $properties['type'] = substr($type, 0, -1);
+            if (! isset($properties['collection'])) {
+                $properties['collection'] = 'Docalist\Type\Collection';
+            }
+        }
+
+        // Si le type indiqué est une collection, c'est la collection qui fournit le type des éléments
+        if (is_a($type, 'Docalist\Type\Collection', true)) {
+            if (isset($properties['collection'])) {
+                throw new InvalidArgumentException('Collection defined twice (in type and in collection)');
+            }
+            $properties['collection'] = $type;
+            $type = $properties['type'] = $type::type();
+        }
+
+        // Le type doit désigner un type docalist (ou un schéma)
+        if (! is_a($type, 'Docalist\Type\Any', true) && ! is_a($type, self::class, true)) {
+            throw new InvalidArgumentException('Invalid type');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Valide la propriété 'collection'.
+     *
+     * @param array $properties
+     *
+     * @return self
+     */
+    protected function validateCollection(array & $properties)
+    {
+        if (!isset($properties['collection'])) {
             return $this;
         }
 
-        // Propriété 'fields'
-        if (! is_array($value)) {
-            throw new InvalidArgumentException("Invalid value for property 'fields', expected array");
+        $collection = $properties['collection'];
+        if (! is_string($collection)) {
+            throw new InvalidArgumentException("Invalid 'collection': expected string, got " . gettype($collection));
+        }
+
+        // La collection indiquée doit être une classe descendante de Collection
+        if (!is_a($collection, 'Docalist\Type\Collection', true)) {
+            throw new InvalidArgumentException("$collection is not a Collection");
+        }
+
+        // Si on a un type, il doit être compatible avec le type indiqué par la collection
+        $type = $collection::type();
+        if (isset($properties['type'])) {
+            if (!is_a($properties['type'], $type, true) && !is_a($properties['type'], self::class, true)) {
+                throw new InvalidArgumentException("Type '{$properties['type']}' is not compatible with collection type '$type'");
+            }
+        }
+
+        // Sinon, c'est la collection qui indique le type des items
+        else {
+            $properties['type'] = $collection::type();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Valide la liste de champs.
+     *
+     * @param array $properties
+     *
+     * @return self
+     */
+    protected function validateFields(array & $properties)
+    {
+        if (!isset($properties['fields'])) {
+            return $this;
+        }
+
+        if (isset($properties['type']) && ! is_a($properties['type'], 'Docalist\Type\Composite', true)) {
+            throw new InvalidArgumentException('Scalar type can not have fields');
+        }
+
+        if (!is_array($properties['fields'])) {
+            throw new InvalidArgumentException("Property 'fields' must be an array");
         }
 
         $fields = [];
-        foreach ($value as $key => $field) {
+        foreach ($properties['fields'] as $key => $field) {
             // Si $field est une chaine, on a soit int => name, soit name => type
             if (is_string($field)) {
                 $field = is_int($key) ? ['name' => $field] : ['name' => $key, 'type' => $field];
@@ -144,14 +207,23 @@ class Schema extends Composite
 
             // Champ de la forme : nom => array(propriétés)
             elseif (is_string($key)) {
+                if (!is_array($field)) {
+                    throw new InvalidArgumentException("Invalid properties for field '$key', expected array");
+                }
+
                 $field['name'] = $key;
             }
 
-            // Crée le schéma du champ
-            $field = new self($field);
+            // Valide les propriétés du champ
+            $this->validate($field);
+
+            // Vérifie que le champ a un nom
+            if (!isset($field['name'])) {
+                throw new InvalidArgumentException('Field without name');
+            }
 
             // Vérifie que le nom du champ est unique
-            $name = $field->name();
+            $name = $field['name'];
             if (isset($fields[$name])) {
                 throw new InvalidArgumentException("Field $name defined twice");
             }
@@ -159,11 +231,158 @@ class Schema extends Composite
             // Stocke le champ
             $fields[$name] = $field;
         }
-        $collection = new Collection();
-        $collection->value = $fields;
-        $this->value['fields'] = $collection;
+
+        $properties['fields'] = $fields;
 
         return $this;
+    }
+
+    /**
+     * Fusionne les propriétés passées en paramètre ($data) avec les propriétés existantes ($properties).
+     *
+     * @param array $properties Propriétés existantes.
+     * @param array $data Nouveaux paramètres.
+     *
+     * @return array Propriétés mises à jour.
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function mergeProperties(array $properties, array $data)
+    {
+        // Supprime la liste des champs pour ne conserver que les propriétés simples
+        $fields = [];
+        if (isset($data['fields'])) {
+            $fields = $data['fields'];
+            unset($data['fields']);
+        }
+
+        // Met à jour les propriétés
+        foreach ($data as $name => $value) {
+            $value = $this->filterProperty($value);
+            if (is_null($value)) {
+                unset($properties[$name]);
+            } else {
+                $properties[$name] = $value;
+            }
+        }
+
+        // Met à jour la liste des champs
+        if ($fields) {
+            $result = [];
+            foreach ($fields as $name => $data) {
+                // Changement des paramétres d'un champ qui existait déjà
+                if (isset($properties['fields'][$name])) {
+                    $data = $this->mergeProperties($properties['fields'][$name], $data);
+                }
+
+                // Vérifie que le nom du champ est unique
+                $name = isset($data['name']) ? $data['name'] : $name; // nouveau nom si renommage autorisé dans le formulaire, ancien sinon
+                if (isset($result[$name])) {
+                    throw new InvalidArgumentException("Field '$name' defined twice");
+                }
+
+                // Stocke le champ
+                $result[$name] = $data;
+            }
+
+            $properties['fields'] = isset($properties['fields']) ? ($result + $properties['fields']) : $result;
+        }
+
+        // Ok
+        return $properties;
+    }
+
+    /**
+     * Filtre la propriété passée en paramètre si elle est vide.
+     *
+     * Une propriété est vide si sa valeur est null, une chaine vide ou un tableau vide.
+     *
+     * Si la propriété est un tableau, chacun des éléments du tableau est filtré récursivement et la
+     * propriété sera supprimée si le tableau obtenu est vide.
+     *
+     * @param mixed $property La valeur à filtrer.
+     */
+    protected function filterProperty($property)
+    {
+        is_array($property) && $property = array_filter($property, [$this, 'filterProperty']);
+        if (is_null($property) || $property === '' || $property === []) {
+            return;
+        }
+
+        return $property;
+    }
+
+    /**
+     * Trie les propriétés du schéma dans un ordre prévisible.
+     *
+     * Du fait de l'héritage, les propriétés se retrouventt dans un ordre qui n'est pas très logique
+     * (les propriétés héritées se retrouvent après les propriétés locales).
+     *
+     * Cette méthode y remédie en triant les propriétés qu'on connaît pour que l'ordre soit à
+     * peu près toujours le même.
+     *
+     * Cela simplifie notamment les comparaisons de grilles (pour voir ce qui a été changé).
+     *
+     * @param array $properties
+     *
+     * @return array
+     */
+    protected function sortProperties(array $properties)
+    {
+        $order = [
+            'name',
+            'unused',
+            'gridtype',
+            'type','collection',
+            'state',
+            'label', 'description',
+            'linked-type','table',
+            'default',
+            'explode',
+            'editor',
+            'before', 'format', 'after',
+        ];
+
+        // Propriétés qu'on connaît
+        $result = [];
+        foreach ($order as $name) {
+            if (isset($properties[$name])) {
+                $result[$name] = $properties[$name];
+                unset($properties[$name]);
+            }
+        }
+
+        // Propriétés qu'on veut en dernier
+        $last = [];
+        foreach (['fields'] as $name) {
+            if (isset($properties[$name])) {
+                $last[$name] = $properties[$name];
+                unset($properties[$name]);
+            }
+        }
+
+        // Les propriétés qu'on ne connaît pas (celles qui restent) vont entre les deux
+        return $result + $properties + $last;
+    }
+
+    /**
+     * Retourne la liste des propriétés du schéma.
+     *
+     * @return array
+     */
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+
+    /**
+     * Indique si le schéma a des champs.
+     *
+     * @return bool
+     */
+    public function hasFields()
+    {
+        return isset($this->properties['fields']);
     }
 
     /**
@@ -173,34 +392,7 @@ class Schema extends Composite
      */
     public function getFields()
     {
-        /*
-            On initialise fields tardivement (plutôt que dans le constructeur)
-            pour pouvoir gérer les schémas récursifs (par exemple un objet Money
-            qui contient des conversions Money*). Si on initialise dès le
-            constructeur, on obtient une boucle infinie sur defaultSchema.
-            Du coup on le fait içi, c'est-à-dire une fois que le format a été
-            chargé et compilé.
-        */
-
-        // Si 'fields' est déjà initialisé, terminé
-        if (array_key_exists('fields', $this->value)) {
-            return is_null($this->value['fields']) ? [] : $this->value['fields']->value;
-        }
-
-        // Si on n'a pas de type ou si n'est pas un composite, impossible d'aller consulter un schéma
-        $type = isset($this->value['type']) ? $this->value['type']->value() : '';
-        if (! is_a($type, 'Docalist\Type\Composite', true)) { // inutile de tester empty($type), is_a le fait
-            $this->value['fields'] = null;
-
-            return [];
-        }
-
-        // Ok, Récupère la liste des champs du composite
-        $this->value['fields'] = $type::defaultSchema()->value['fields'];
-
-        return $this->value['fields']->value;
-
-        /* remarque: c'est la même collection qui est partagée entre plusieurs schémas. Problème ? */
+        return isset($this->properties['fields']) ? $this->properties['fields'] : [];
     }
 
     /**
@@ -210,42 +402,37 @@ class Schema extends Composite
      */
     public function getFieldNames()
     {
-        return array_keys($this->getFields());
+        return isset($this->properties['fields']) ? array_keys($this->properties['fields']) : [];
     }
 
     /**
      * Retourne le schéma du champ indiqué.
      *
-     * @param string $field Le nom du champ.
+     * @param string $name Le nom du champ.
      *
-     * @throws Exception Une exception est générée si le champ indiqué n'existe
-     * pas.
+     * @return Schema
      *
-     * @return Field
+     * @throws InvalidArgumentException si le champ indiqué n'existe pas.
      */
-    public function getField($field)
+    public function getField($name)
     {
-        $fields = $this->getFields();
-        if (!isset($fields[$field])) {
-            $msg = 'Field %s does not exist';
-            throw new InvalidArgumentException(sprintf($msg, $field));
+        if (isset($this->properties['fields'][$name])) {
+            return $this->properties['fields'][$name];
         }
 
-        return $fields[$field];
+        throw new InvalidArgumentException("Field '$name' does not exist");
     }
 
     /**
      * Indique si le schéma contient le champ indiqué.
      *
-     * @param string $field Le nom du champ à tester.
+     * @param string $name Le nom du champ à tester.
      *
      * @return bool
      */
-    public function hasField($field)
+    public function hasField($name)
     {
-        $fields = $this->getFields();
-
-        return isset($fields[$field]);
+        return isset($this->properties['fields'][$name]);
     }
 
     /**
@@ -261,17 +448,70 @@ class Schema extends Composite
      */
     public function getDefaultValue()
     {
-        if (isset($this->value['fields'])) {
-            $result = [];
-            foreach ($this->value['fields'] as $name => $field) {
-                if ($name && ! is_null($default = $field->getDefaultValue())) {
-                    $result[$name] = $default;
-                }
+        $result = null;
+        if (isset($this->properties['fields'])) {
+            foreach ($this->properties['fields'] as $name => $field) {
+                $default = $field->getDefaultValue();
+                !empty($default) && $result[$name] = $default;
             }
-
-            return $result;
+        } else {
+            isset($this->properties['default']) && $result = $this->properties['default'];
         }
 
-        return isset($this->value['default']) ? $this->value['default']->value() : null;
+        return !is_null($result) && isset($this->properties['collection']) ? [$result] : $result;
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface JsonSerializable
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retourne les données à prendre en compte lorsque ce type est sérialisé
+     * au format JSON.
+     *
+     * @return mixed
+     */
+    final public function jsonSerialize()
+    {
+        // utilisé uniquement par biblio/exporter paramètres
+        return $this->properties;
+    }
+
+    /**
+     * Permet d'accéder aux propriétés du schéma comme s'il sagissait de méthodes.
+     *
+     * @param string $name nom du champ
+     * @param unknown $arguments
+     * @throws InvalidArgumentException
+     */
+    public function __call($name, $arguments = null)
+    {
+        if ($arguments) {
+            throw new InvalidArgumentException('Schema::_call() called with arguments');
+        }
+
+        // Le champ existe déjà, retourne sa valeur
+        if (isset($this->properties[$name])) {
+            return $this->properties[$name];
+        }
+
+        return;
+    }
+
+    /**
+     * Convertit le schéma en tableau php.
+     *
+     * @return array
+     */
+    public function value()
+    {
+        $value = $this->properties;
+        if (isset($value['fields'])) {
+            foreach ($value['fields'] as &$field) {
+                $field = $field->value();
+            }
+        }
+
+        return $value;
     }
 }
