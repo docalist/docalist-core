@@ -15,7 +15,7 @@ namespace Docalist\Tests;
 
 use WP_UnitTestCase;
 use Docalist\Schema\Schema;
-use Docalist\Type\TypedText;
+use Docalist\Tests\Type\Fixtures\Money;
 
 class SchemaTest extends WP_UnitTestCase
 {
@@ -73,54 +73,54 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertSame($result, $schema->getProperties());
     }
 
-    // Héritage simple depuis le composite TypedText
-    public function testInheritTypedText()
+    // Héritage simple depuis le composite Money
+    public function testInheritMoney()
     {
-        $schema = new Schema(['type' => 'Docalist\Type\TypedText']);
-        $parent = TypedText::getDefaultSchema();
+        $schema = new Schema(['type' => 'Docalist\Tests\Type\Fixtures\Money']);
+        $parent = Money::getDefaultSchema();
 
-        $this->assertSame($schema->type(), 'Docalist\Type\TypedText');
+        $this->assertSame($schema->type(), 'Docalist\Tests\Type\Fixtures\Money');
         $this->assertSame($schema->label(), $parent->label());
         $this->assertSame($schema->description(), $parent->description());
 
-        $this->assertInstanceOf(Schema::class, $schema->getField('type'));
-        $this->assertInstanceOf(Schema::class, $schema->getField('value'));
+        $this->assertInstanceOf(Schema::class, $schema->getField('amount'));
+        $this->assertInstanceOf(Schema::class, $schema->getField('currency'));
 
-        $this->assertEquals($schema->getField('type'), $parent->getField('type'));
-        $this->assertEquals($schema->getField('value'), $parent->getField('value'));
+        $this->assertEquals($schema->getField('amount'), $parent->getField('amount'));
+        $this->assertEquals($schema->getField('currency'), $parent->getField('currency'));
     }
 
-    // Héritage du composite TypedText + surcharge propriétés + nouvelles propriétés
-    public function testInheritTypedTextAndOverride()
+    // Héritage du composite Money + surcharge propriétés + nouvelles propriétés
+    public function testInheritMoneyAndOverride()
     {
         $schema = new Schema([
-            'type' => 'Docalist\Type\TypedText',
+            'type' => 'Docalist\Tests\Type\Fixtures\Money',
             'label' => 'new label',
             'editor' => 'other-editor',
             'fields' => [
-                'type' => [
-                    'label' => 'type de titre',
-                    'table' => 'my-table',
+                'amount' => [
+                    'label' => 'montant',
+                    'zz' => 'ZZ',
                 ],
             ],
         ]);
 
-        $parent = TypedText::getDefaultSchema();
+        $parent = Money::getDefaultSchema();
 
-        $this->assertSame($schema->type(), 'Docalist\Type\TypedText');
+        $this->assertSame($schema->type(), 'Docalist\Tests\Type\Fixtures\Money');
         $this->assertSame($schema->label(), 'new label');
         $this->assertSame($schema->description(), $parent->description());
         $this->assertSame($schema->editor(), 'other-editor');
 
-        $this->assertInstanceOf(Schema::class, $schema->getField('type'));
-        $this->assertInstanceOf(Schema::class, $schema->getField('value'));
+        $this->assertInstanceOf(Schema::class, $schema->getField('amount'));
+        $this->assertInstanceOf(Schema::class, $schema->getField('currency'));
 
-        $this->assertSame($schema->getField('type')->label(), 'type de titre');
-        $this->assertSame($schema->getField('type')->table(), 'my-table');
-        $this->assertSame($schema->getField('type')->description(), $parent->getField('type')->description());
-        $this->assertSame($schema->getField('type')->type(), 'Docalist\Type\TableEntry');
+        $this->assertSame($schema->getField('amount')->label(), 'montant');
+        $this->assertSame($schema->getField('amount')->zz(), 'ZZ');
+        $this->assertSame($schema->getField('currency')->description(), $parent->getField('currency')->description());
+        $this->assertSame($schema->getField('currency')->type(), 'Docalist\Type\Text');
 
-        $this->assertEquals($schema->getField('value'), $parent->getField('value'));
+        $this->assertEquals($schema->getField('currency'), $parent->getField('currency'));
     }
 
     public function testFieldsShortcuts()
@@ -220,7 +220,7 @@ class SchemaTest extends WP_UnitTestCase
         $schema = new Schema(['fields' => ['a', 'b']]);
         $this->assertTrue($schema->hasFields());
 
-        $schema = new Schema(['type' => 'Docalist\Type\TypedText']);
+        $schema = new Schema(['type' => 'Docalist\Tests\Type\Fixtures\Money']);
         $this->assertTrue($schema->hasFields());
     }
 

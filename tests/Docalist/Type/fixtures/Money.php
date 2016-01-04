@@ -19,6 +19,7 @@ use Docalist\Type\Composite;
 class Money extends Composite {
     static public function loadSchema() {
         return [
+            'label' => 'prix',
             'fields' => [
                 'amount' => [
                     'type' => 'Docalist\Type\Decimal',
