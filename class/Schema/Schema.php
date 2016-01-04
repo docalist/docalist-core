@@ -461,7 +461,7 @@ class Schema implements JsonSerializable
         if (isset($this->properties['fields'])) {
             foreach ($this->properties['fields'] as $name => $field) {
                 $default = $field->getDefaultValue();
-                !empty($default) && $result[$name] = $default;
+                !is_null($default) && $result[$name] = $default;
             }
         }
 
