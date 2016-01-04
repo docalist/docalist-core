@@ -437,16 +437,16 @@ abstract class Element extends Item
      * @return true|string Retourne true si tous les éléments du tableau sont des scalaires ou null,
      * le nom du premier type incorrect trouvé sinon.
      */
-    private function isScalarArray(array $array)
-    {
-        foreach ($array as $value) {
-            if (! is_scalar($value) && ! is_null($value)) {
-                return gettype($value);
-            }
-        }
+//     private function isScalarArray(array $array)
+//     {
+//         foreach ($array as $value) {
+//             if (! is_scalar($value) && ! is_null($value)) {
+//                 return gettype($value);
+//             }
+//         }
 
-        return true;
-    }
+//         return true;
+//     }
 
     /**
      * Retourne les données de l'élément.
