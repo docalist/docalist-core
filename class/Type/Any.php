@@ -217,7 +217,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
      */
     final public function serialize()
     {
-        return serialize($this->value);
+        return serialize([$this->value, $this->schema]);
     }
 
     /**
@@ -228,7 +228,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
      */
     final public function unserialize($serialized)
     {
-        $this->value = unserialize($serialized);
+        list($this->value, $this->schema) = unserialize($serialized);
     }
 
     // -------------------------------------------------------------------------
