@@ -65,7 +65,7 @@ class Schema implements JsonSerializable
         $this->validate($properties);
 
         // Gère l'héritage si la propriété 'type' est définie
-        if (isset($properties['type'])) {
+        if (isset($properties['type']) && is_a($properties['type'], 'Docalist\Type\Any', true)) {
             $parent = $properties['type']::getDefaultSchema();
             $properties = $this->mergeProperties($parent->value(), $properties);
         }
@@ -211,6 +211,9 @@ class Schema implements JsonSerializable
                     throw new InvalidArgumentException("Invalid properties for field '$key', expected array");
                 }
 
+                if (isset($field['name']) && $field['name'] !== $key) {
+                    throw new InvalidArgumentException("Field name defined twice");
+                }
                 $field['name'] = $key;
             }
 
@@ -276,6 +279,8 @@ class Schema implements JsonSerializable
                 }
 
                 // Vérifie que le nom du champ est unique
+                // remarque : ne peut arriver que lors de la sauvegarde d'une grille
+                // pour un schéma, validate() garantit déjà que les noms sont uniques
                 $name = isset($data['name']) ? $data['name'] : $name; // nouveau nom si renommage autorisé dans le formulaire, ancien sinon
                 if (isset($result[$name])) {
                     throw new InvalidArgumentException("Field '$name' defined twice");
@@ -448,33 +453,19 @@ class Schema implements JsonSerializable
      */
     public function getDefaultValue()
     {
+        if (isset($this->properties['default'])) {
+            return $this->properties['default'];
+        }
+
         $result = null;
         if (isset($this->properties['fields'])) {
             foreach ($this->properties['fields'] as $name => $field) {
                 $default = $field->getDefaultValue();
                 !empty($default) && $result[$name] = $default;
             }
-        } else {
-            isset($this->properties['default']) && $result = $this->properties['default'];
         }
 
         return !is_null($result) && isset($this->properties['collection']) ? [$result] : $result;
-    }
-
-    // -------------------------------------------------------------------------
-    // Interface JsonSerializable
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retourne les données à prendre en compte lorsque ce type est sérialisé
-     * au format JSON.
-     *
-     * @return mixed
-     */
-    final public function jsonSerialize()
-    {
-        // utilisé uniquement par biblio/exporter paramètres
-        return $this->properties;
     }
 
     /**
@@ -514,4 +505,21 @@ class Schema implements JsonSerializable
 
         return $value;
     }
+
+    // -------------------------------------------------------------------------
+    // Interface JsonSerializable
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retourne les données à prendre en compte lorsque ce type est sérialisé
+     * au format JSON.
+     *
+     * @return mixed
+     */
+    final public function jsonSerialize()
+    {
+        // utilisé uniquement par biblio/exporter paramètres
+        return $this->properties;
+    }
+
 }
