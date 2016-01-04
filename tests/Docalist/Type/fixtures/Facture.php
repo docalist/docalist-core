@@ -17,7 +17,7 @@ namespace Docalist\Tests\Type\Fixtures;
 use Docalist\Type\Composite;
 
 class Facture extends Composite {
-    protected static function loadSchema() {
+    static public function loadSchema() {
         return [
             'fields' => [
                 'code' => 'Docalist\Type\Text',

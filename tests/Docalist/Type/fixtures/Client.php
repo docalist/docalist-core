@@ -17,7 +17,7 @@ namespace Docalist\Tests\Type\Fixtures;
 use Docalist\Type\Entity;
 
 class Client extends Entity {
-    protected static function loadSchema() {
+    static public function loadSchema() {
         return [
             'fields' => [
                 'name' => [
