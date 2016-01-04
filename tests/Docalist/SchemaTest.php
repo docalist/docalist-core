@@ -152,9 +152,9 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertSame('Docalist\Type\Collection', $schema->getField('code')->collection());
         $this->assertNull($schema->getField('code')->repeatable());
 
-        $schema = new Schema(['fields' => ['code' => 'Docalist\Tests\TextCollection']]);
+        $schema = new Schema(['fields' => ['code' => 'Docalist\Tests\Type\Fixtures\TextCollection']]);
         $this->assertSame('Docalist\Type\Text', $schema->getField('code')->type());
-        $this->assertSame('Docalist\Tests\TextCollection', $schema->getField('code')->collection());
+        $this->assertSame('Docalist\Tests\Type\Fixtures\TextCollection', $schema->getField('code')->collection());
         $this->assertNull($schema->getField('code')->repeatable());
 
         $schema = new Schema(['fields' => ['code' => ['collection' => 'Docalist\Type\Collection']]]);
@@ -206,8 +206,8 @@ class SchemaTest extends WP_UnitTestCase
         new Schema(['fields' => [
             [
                 'name' => 'test',
-                'type' => 'Docalist\Tests\TextCollection',
-                'collection' => 'Docalist\Tests\TextCollection',
+                'type' => 'Docalist\Tests\Type\Fixtures\TextCollection',
+                'collection' => 'Docalist\Tests\Type\Fixtures\TextCollection',
             ],
         ]]);
     }
@@ -361,12 +361,12 @@ class SchemaTest extends WP_UnitTestCase
     {
         new Schema([
             'type' => 'Docalist\Type\Text',
-            'collection' => 'Docalist\Tests\TextCollection',
+            'collection' => 'Docalist\Tests\Type\Fixtures\TextCollection',
         ]);
 
         new Schema([
             'type' => 'Docalist\Type\LargeText',
-            'collection' => 'Docalist\Tests\TextCollection',
+            'collection' => 'Docalist\Tests\Type\Fixtures\TextCollection',
         ]);
     }
 
@@ -380,7 +380,7 @@ class SchemaTest extends WP_UnitTestCase
     {
         new Schema([
             'type' => 'Docalist\Type\Any',
-            'collection' => 'Docalist\Tests\TextCollection',
+            'collection' => 'Docalist\Tests\Type\Fixtures\TextCollection',
         ]);
     }
 
