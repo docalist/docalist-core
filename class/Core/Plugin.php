@@ -16,6 +16,7 @@ namespace Docalist\Core;
 use Docalist\Repository\SettingsRepository;
 use Docalist\LogManager;
 use Docalist\Views;
+use Docalist\Cache\ObjectCache;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\AdminNotices;
@@ -121,6 +122,11 @@ class Plugin
             // Gestion du cache
             'file-cache' => function () {
                 return new FileCache(docalist('root-dir'), docalist('cache-dir'));
+            },
+
+            // Cache des schémas
+            'cache' => function () {
+                return new ObjectCache();
             },
 
             // Gestion des tables
