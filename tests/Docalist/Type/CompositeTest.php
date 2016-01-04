@@ -16,7 +16,6 @@ namespace Docalist\Tests\Type;
 use WP_UnitTestCase;
 use Docalist\Type\Composite;
 use Docalist\Tests\Type\Fixtures\Money;
-use Docalist\Type\Any;
 
 class CompositeTest extends WP_UnitTestCase
 {
