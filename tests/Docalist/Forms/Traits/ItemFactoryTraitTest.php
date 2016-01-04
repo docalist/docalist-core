@@ -59,7 +59,6 @@ class ItemFactoryTraitTest extends WP_UnitTestCase
             ['comment'  , ['c']         , 'Comment'     , ['getContent'             ]],
             ['html'     , ['c']         , 'Html'        , ['getContent'             ]],
             ['tag'      , ['t', 'c', $a], 'Tag'         , ['getTag'     , 'getContent'          , 'getAttributes'   , 'getTag' => 'div' ]],
-            ['div'      , ['c', $a]     , 'Tag'         , ['getContent' , 'getAttributes'       , 'getTag' => 'div'                     ]],
             ['p'        , ['c', $a]     , 'Tag'         , ['getContent' , 'getAttributes'       , 'getTag' => 'p'                       ]],
             ['span'     , ['c', $a]     , 'Tag'         , ['getContent' , 'getAttributes'       , 'getTag' => 'span'                    ]],
             ['input'    , ['n', $a]     , 'Input'       , ['getName'    , 'getAttributes' => $ai                                        ]],
@@ -75,6 +74,7 @@ class ItemFactoryTraitTest extends WP_UnitTestCase
             ['checklist', ['a', $a]     , 'checklist'   , ['getName'    , 'getAttributes'                                        ]],
 //          ['fieldset' , ['a']         , 'Fieldset'    , ['getName'                ]],
             ['table'    , ['a']         , 'Table'       , ['getName'                ]],
+            ['div'      , ['n', $a]     , 'Div'         , ['getName' , 'getAttributes'                                        ]],
         ];
     }
 

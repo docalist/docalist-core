@@ -305,10 +305,10 @@ class ElementTest extends WP_UnitTestCase
      * @expectedException InvalidArgumentException
      * @expectedExceptionMessage must be scalar
      */
-    public function testBindRepeatWithBadPhpArray()
-    {
-        $this->getElement()->setRepeatable(true)->bind(['daniel', []]);
-    }
+//     public function testBindRepeatWithBadPhpArray()
+//     {
+//         $this->getElement()->setRepeatable(true)->bind(['daniel', []]);
+//     }
 
     /**
      * Teste le binding d'un champ monovalué avec un scalaire Docalist sans schéma.
@@ -325,18 +325,20 @@ class ElementTest extends WP_UnitTestCase
         $this->assertSame($element, $element->bind($type));
 
         // Vérifie que les propriétés n'ont pas été modifiées
-        $this->assertNull($element->getRepeatable());
         $this->assertNull($element->getLabel());
         $this->assertNull($element->getDescription());
+
+        // Par contre, repeat est passé à false
+        $this->assertFalse($element->getRepeatable());
 
         // Vérifie que data a été correctement initialisé
         $this->assertSame($type->value(), $element->getData());
 
         // Si les propriétés étaient déjà initialisées, elle ne sont pas modifiées
         $element = $this->getElement()->setLabel('lbl')->setDescription('dsc')->bind($type);
-        $this->assertNull($element->getRepeatable());
         $this->assertSame('lbl', $element->getLabel());
         $this->assertSame('dsc', $element->getDescription());
+        $this->assertFalse($element->getRepeatable());
     }
 
     /**

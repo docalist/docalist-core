@@ -28,10 +28,6 @@ class Money extends Composite {
                     'type' => 'Docalist\Type\Text',
                     'default' => 'EUR'
                 ],
-                'conversion' => 'Docalist\Tests\Type\Fixtures\Money*',
-                'timestamp' => [
-                    'type' => 'Docalist\Type\Integer'
-                ]
             ]
         ];
     }
