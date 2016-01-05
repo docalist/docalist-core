@@ -136,6 +136,26 @@ class Container extends Element implements Countable, IteratorAggregate
     }
 
     /**
+     * Retourne un item
+     *
+     * @param string|Item $item L'item à retourner (soit un objet Item, soit son nom).
+     *
+     * @return Item|null
+     */
+    public function get($item)
+    {
+        $isSame = $this->getComparator($item);
+
+        foreach ($this->items as $item) {
+            if ($isSame($item)) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Teste si le container contient des items.
      *
      * @return bool
