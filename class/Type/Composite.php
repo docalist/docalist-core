@@ -317,32 +317,18 @@ class Composite extends Any
      * @param string $name
      * @param Schema $options
      *
-     * @return Schema|array|null
+     * @return Schema|null
      *
      * @throws InvalidArgumentException
      */
-    protected function getFieldOptions($name, Schema $options = null) // TODO : Schema $options ?
+    protected function getFieldOptions($name, Schema $options = null)
     {
-        // Les options ont été passées sous forme de Schema, retourne le schéma du champ
-        if ($options instanceof Schema) {
-            if ($options->hasField($name)) {
-                return $options->getField($name);
-            }
+        // Teste si le champ figure dans les options
+        if ($options && $options->hasField($name)) {
+            return $options->getField($name);
         }
 
-        // Tableau d'options, teste si on a quelque chose pour le champ demandé
-        elseif (is_array($options)) {
-            if (isset($options['fields'][$name])) {
-                return $options['fields'][$name];
-            }
-        }
-
-        // Erreur
-        elseif (!is_null($options)) {
-            throw new InvalidArgumentException('Invalid options, expected Schema or array, got ' . gettype($options));
-        }
-
-        // Le champ demandé ne figure pas dans les options, regarde dans le schéma
+        // Teste dans le schéma sinon
         if ($this->schema->hasField($name)) {
             return $this->schema->getField($name);
         }
