@@ -132,7 +132,7 @@ class Schema implements JsonSerializable
 
         // Le type doit désigner un type docalist (ou un schéma)
         if (! is_a($type, 'Docalist\Type\Any', true) && ! is_a($type, self::class, true)) {
-            throw new InvalidArgumentException('Invalid type');
+            throw new InvalidArgumentException("Invalid type '$type'");
         }
 
         return $this;
