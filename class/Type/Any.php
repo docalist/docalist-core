@@ -504,7 +504,15 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
     public function mapData(array & $document)
     {
         $value = $this->value();
-        ! empty($value) && $document[$this->schema->name()][] = $this->value();
+        if (is_null($value)) {
+            return;
+        }
+
+        if ($this->schema->collection()) {
+            $document[$this->schema->name()][] = $value;
+        } else {
+            $document[$this->schema->name()] = $this->value();
+        }
     }
 
     // -------------------------------------------------------------------------
