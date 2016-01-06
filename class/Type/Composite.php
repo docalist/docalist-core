@@ -274,6 +274,7 @@ class Composite extends Any
         return [
             'container' => __('Container', 'docalist-core'),
             'table' => __('Table', 'docalist-core'),
+            'integrated' => __('Intégré (tous les champs ensemble)', 'docalist-core'),
         ];
     }
 
@@ -283,11 +284,16 @@ class Composite extends Any
 
         switch ($editor) {
             case 'container':
-                $editor = new Container();
+                $wrapper = $editor = new Container();
                 break;
 
             case 'table':
-                $editor = new Table();
+                $wrapper = $editor = new Table();
+                break;
+
+            case 'integrated':
+                $editor = new Container();
+                $wrapper = $editor->div();
                 break;
 
             default:
@@ -304,7 +310,7 @@ class Composite extends Any
             $field = $this->__get($name);
             $unused = $field->getOption('unused', $fieldOptions, false);
             if (!$unused) {
-                $editor->add($field->getEditorForm($fieldOptions));
+                $wrapper->add($field->getEditorForm($fieldOptions));
             }
         }
 
