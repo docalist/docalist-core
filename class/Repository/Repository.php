@@ -91,9 +91,6 @@ abstract class Repository
      *
      * @param scalar $id L'identifiant de l'entité à charger.
      *
-     * @param string $type Le type de l'entité à retourner (le nom complet de
-     * la classe de l'entité) ou vide pour utiliser le type par défaut du dépôt.
-     *
      * @return Entity Retourne l'entité.
      *
      * @throws BadIdException Si l'identifiant indiqué est invalide (ID manquant
@@ -103,12 +100,9 @@ abstract class Repository
      *
      * @throws RepositoryException Si une erreur survient durant le chargement.
      */
-    public function load($id, $type = null)
+    public function load($id)
     {
-        // Utilise le type par défaut si aucun type n'a été indiqué
-        empty($type) && $type = $this->type;
-
-        // Charge l'entité
+        $type = $this->type;
         return new $type($this->loadRaw($id), null, $id);
     }
 
