@@ -126,7 +126,7 @@ class Plugin
 
             // Cache des schémas
             'cache' => function () {
-                return new ObjectCache();
+                return new ObjectCache(defined('DOCALIST_USE_WP_CACHE') ? DOCALIST_USE_WP_CACHE : false);
             },
 
             // Gestion des tables
