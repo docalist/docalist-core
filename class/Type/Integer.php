@@ -18,12 +18,12 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type entier.
  */
-class Integer extends Scalar {
-    static protected $default = 0;
-
-    public function assign($value) {
+class Integer extends Number
+{
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_int($value)){
+        if (! is_int($value)) {
             if ($value === '') {
                 $value = 0;
             } elseif (false === $value = filter_var($value, FILTER_VALIDATE_INT)) {
@@ -34,5 +34,10 @@ class Integer extends Scalar {
         $this->value = $value;
 
         return $this;
+    }
+
+    public function getEditorForm($options = null)
+    {
+        return parent::getEditorForm($options)->setAttribute('step', '1');
     }
 }

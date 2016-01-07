@@ -2,18 +2,18 @@
 use Docalist\Forms\Form;
 
 $form = new Form();
-$form->label('Un formulaire tout simple')->description('Deux inputs text et un bouton submit.');
-$form->input('surname')->label('Nom : ');
+$form->setLabel('Un formulaire tout simple')->setDescription('Deux inputs text et un bouton submit.');
+$form->input('surname')->setLabel('Nom : ');
 /*
-$form->input('firstname')->label('Prénom : ');
-$form->textarea('message')->label('Votre message : ');
-$form->select('m')->label('Civilité :')->options(array(
+$form->input('firstname')->setLabel('Prénom : ');
+$form->textarea('message')->setLabel('Votre message : ');
+$form->select('m')->setLabel('Civilité :')->setOptions(array(
     'Mme',
     'Mle',
     'M' => 'Monsieur'
 ));
 
-$form->select('n')->label('Couleurs :')->multiple(true)->options(array(
+$form->select('n')->setLabel('Couleurs :')->multiple(true)->setOptions(array(
     'sombres' => array(
         'noir',
         'gris',

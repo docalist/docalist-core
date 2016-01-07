@@ -2,14 +2,14 @@
 use Docalist\Forms\Form;
 
 $form = new Form();
-$form->label('Saisie des auteurs dans une table');
+$form->setLabel('Saisie des auteurs dans une table');
 
-$form->input('test')->label('test');
+$form->input('test')->setLabel('test');
 
-$author = $form->table('author')->repeatable(true)->label('Personnes');
-$author->input('surname')->label('Nom');
-$author->input('firstname')->label('Prenom')->repeatable(true);
-$author->select('role')->label('Rôle')->options(array(
+$author = $form->table('author')->setRepeatable(true)->setLabel('Personnes');
+$author->input('surname')->setLabel('Nom');
+$author->input('firstname')->setLabel('Prenom')->setRepeatable(true);
+$author->select('role')->setLabel('Rôle')->setOptions(array(
     'trad.',
     'pref.',
 ));

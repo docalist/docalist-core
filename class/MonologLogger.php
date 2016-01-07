@@ -11,7 +11,6 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist;
 
 use Monolog\Logger;
@@ -40,8 +39,10 @@ use DateTimeZone;
  * faire de l'extérieur car la variable statique Monolog\Logger::$timezone est
  * protected.
  */
-class MonologLogger extends Logger {
-    public function __construct($name, array $handlers = array(), array $processors = array()) {
+class MonologLogger extends Logger
+{
+    public function __construct($name, array $handlers = [], array $processors = [])
+    {
         if (!static::$timezone) {
             $timezone = ini_get('date.timezone');
             $timezone && static::$timezone = new DateTimeZone($timezone);

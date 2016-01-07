@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -13,18 +13,24 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Type\Interfaces\Stringable;
+use Docalist\Type\Interfaces\Configurable;
+use Docalist\Type\Interfaces\Formattable;
+use Docalist\Type\Interfaces\Editable;
+use Docalist\Type\Interfaces\Indexable;
+use Serializable;
+use JsonSerializable;
+use Docalist\MappingBuilder;
 use Docalist\Schema\Schema;
-use Serializable, JsonSerializable;
-use Docalist\Type\Exception\InvalidTypeException;
-
-/*
- * Inspiration : https://github.com/nicolopignatelli/valueobjects
- */
+use Docalist\Forms\Container;
+use Docalist\Forms\Input;
+use InvalidArgumentException;
 
 /**
  * Classe de base pour les différents types de données.
  */
-class Any implements Serializable, JsonSerializable {
+class Any implements Stringable, Configurable, Formattable, Editable, Indexable, Serializable, JsonSerializable
+{
     /**
      * La valeur du type.
      *
@@ -39,28 +45,12 @@ class Any implements Serializable, JsonSerializable {
      */
     protected $schema;
 
-    /**
-     * La valeur par défaut du type.
-     *
-     * Cette valeur n'est utilisée que si le type n'a pas de schéma (si on a
-     * un schéma, defaultValue() retourne la valeur par défaut indiquée dans
-     * le schéma).
-     *
-     * @var mixed
-     */
-    static protected $default = null;
+    // -------------------------------------------------------------------------
+    // Constructeurs
+    // -------------------------------------------------------------------------
 
     /**
-     * Indentation en cours, utilisé uniquement pour __toString() dans les
-     * classes Object et Collection.
-     *
-     * @var string
-     */
-    static protected $indent = '';
-    // TODO A réfléchir : introduire une classe Composite pour Object et Collection ?
-
-    /**
-     * Crée un nouveau type.
+     * Crée un nouveau type docalist.
      *
      * @param mixed $value La valeur initiale. Pour les scalaires, vous devez
      * passer un type php natif correspondant au type de l'objet (int, bool,
@@ -68,42 +58,102 @@ class Any implements Serializable, JsonSerializable {
      * passer un tableau.
      * @param Schema $schema Optionnel, le schéma du type.
      */
-    public function __construct($value = null, Schema $schema = null) {
-        $this->schema = $schema;
-        $this->assign(is_null($value) ? $this->defaultValue() : $value);
+    public function __construct($value = null, Schema $schema = null)
+    {
+        $this->schema = $schema ?: static::getDefaultSchema();
+        $this->assign(is_null($value) ? $this->getDefaultValue() : $value);
     }
 
     /**
-     * Retourne la valeur par défaut de la classe.
+     * Charge le schéma par défaut de l'objet.
      *
-     * Cette méthode est statique, elle indique la valeur par défaut de cette
-     * classe de type.
+     * Cette méthode est destinée à être surchargée par les classes descendantes.
+     *
+     * @return array Un tableau représentant les données du schéma.
+     */
+    public static function loadSchema()
+    {
+        return;
+    }
+
+    /**
+     * Retourne le schéma par défaut de l'objet.
+     *
+     * La méthode gère un cache des schémas déjà chargés.
+     * Si le schéma n'est pas encore dans le cache, elle appelle loadSchema() et compile le schéma
+     * obtenu.
+     *
+     * @return Schema
+     */
+    public static function getDefaultSchema()
+    {
+        $key = get_called_class();
+
+        // Si le schéma est déjà en cache, terminé
+        if ($schema = docalist('cache')->get($key)) {
+            return $schema;
+        }
+
+        // Charge le schéma
+        $data = static::loadSchema();
+        if (isset($data['type'])) {
+            throw new InvalidArgumentException("Property 'type' must not be set for a biblio type");
+        }
+
+        // Compile le schéma
+        $parent = get_parent_class($key);
+        $parent && $data['type'] = $parent;
+        $schema = new Schema($data);
+
+        // Stocke le schéma en cache
+        docalist('cache')->set($key, $schema);
+
+        // Ok
+        return $schema;
+    }
+
+    // -------------------------------------------------------------------------
+    // Valeur par défaut
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retourne la valeur par défaut du type.
+     *
+     * La méthode statique getClassDefault() retourne la valeur par défaut des
+     * instances de ce type. Les classes descendantes (Boolean, Integer, etc.)
+     * surchargent cette méthode et retournent leur propre valeur par défaut.
      *
      * @return mixed
      */
-    static public final function classDefault() {
-        return static::$default;
+    public static function getClassDefault()
+    {
+        return;
     }
 
     /**
      * Retourne la valeur par défaut de l'objet.
      *
      * La méthode retourne la valeur par défaut indiquée dans le schéma associé
-     * à l'objet ou la valeur par défaut du type (classDefault) si aucun schéma
-     * n'est associé ou s'il n'indique pas de valeur par défaut.
+     * à l'objet ou la {@link getClassDefault() valeur par défaut du type} si
+     * aucun schéma n'est associé ou s'il n'indique pas de valeur par défaut.
      *
      * @return mixed
      */
-    public function defaultValue() {
+    public function getDefaultValue()
+    {
         if ($this->schema) {
-            $default = $this->schema->defaultValue();
+            $default = $this->schema->getDefaultValue();
             if (! is_null($default)) {
                 return $default;
             }
         }
 
-        return static::$default;
+        return static::getClassDefault();
     }
+
+    // -------------------------------------------------------------------------
+    // Initialisation de la valeur
+    // -------------------------------------------------------------------------
 
     /**
      * Assigne une valeur au type.
@@ -111,15 +161,18 @@ class Any implements Serializable, JsonSerializable {
      * @param mixed $value La valeur à assigner.
      *
      * @return self $this
-     *
-     * @throws InvalidTypeException Si $value est invalide.
      */
-    public function assign($value) {
-        ($value instanceof Any) && $value = $value->value();
+    public function assign($value)
+    {
+        ($value instanceof self) && $value = $value->value();
         $this->value = $value;
 
         return $this;
     }
+
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
 
     /**
      * Retourne la valeur sous la forme d'un type php natif (string, int, float
@@ -128,17 +181,9 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return mixed
      */
-    public function value() {
+    public function value()
+    {
         return $this->value;
-    }
-
-    /**
-     * Réinitialise le type à sa valeur par défaut.
-     *
-     * @return self $this
-     */
-    public final function reset() {
-        return $this->assign($this->defaultValue());
     }
 
     /**
@@ -146,134 +191,64 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return Schema le schéma ou null si le type n'a pas de schéma associé.
      */
-    public final function schema() {
+    final public function schema()
+    {
         return $this->schema;
     }
 
-    /**
-     * Teste si deux types sont identiques.
-     *
-     * Par défaut, les types sont identiques si ils ont la même classe et
-     * la même valeur.
-     *
-     * @param Any $other
-     *
-     * @return boolean
-     */
-    public function equals(Any $other) {
-        return get_class($this) === get_class($other) && $this->value() === $other->value();
-    }
+    // -------------------------------------------------------------------------
+    // Interface Stringable
+    // -------------------------------------------------------------------------
 
-    /**
-     * Retourne une représentation de la valeursous forme de chaine de
-     * caractères.
-     *
-     * @return string
-     */
-    public function __toString() {
+    final public function __toString()
+    {
         return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
+    // -------------------------------------------------------------------------
+    // Interface Serializable
+    // -------------------------------------------------------------------------
+
     /**
-     * Sérialise la valeur (implémentation de l'interface Serializable).
+     * Retourne une chaine contenant la version sérialisée au format PHP de la
+     * valeur du type.
      *
      * @return string
      */
-    public final function serialize() {
-        return serialize($this->value());
+    final public function serialize()
+    {
+        return serialize([$this->value, $this->schema]);
     }
 
     /**
-     * Désérialise le type (implémentation de l'interface Serializable).
+     * Initialise la valeur du type à partir d'une chaine contenant une valeur
+     * sérialisée au format PHP.
      *
      * @param string $serialized
      */
-    public final function unserialize($serialized) {
-        $this->assign(unserialize($serialized));
+    final public function unserialize($serialized)
+    {
+        list($this->value, $this->schema) = unserialize($serialized);
     }
 
+    // -------------------------------------------------------------------------
+    // Interface JsonSerializable
+    // -------------------------------------------------------------------------
+
     /**
-     * Spécifie les données qui doivent être sérialisées en JSON
-     * (implémentation de l'interface JsonSerializable).
+     * Retourne les données à prendre en compte lorsque ce type est sérialisé
+     * au format JSON.
      *
      * @return mixed
      */
-    public final function jsonSerialize () {
-        return $this->value();
-    }
-//+is ?
-
-    /**
-     * Retourne le nom de la classe.
-     *
-     * @return string Retourne le nom de classe complet du type (incluant le
-     * namespace).
-     */
-    static public final function className() {
-        return get_called_class();
+    final public function jsonSerialize()
+    {
+        return $this->value;
     }
 
-    /**
-     * Retourne le namespace de la classe du type.
-     *
-     * @return string Le namespace de la classe ou une chaine vide s'il s'agit
-     * d'une classe globale.
-     */
-    static public final function ns() {
-        $class = get_called_class();
-        $pt = strrpos($class, '\\');
-        return $pt === false ? '' : substr($class, 0, $pt);
-    }
-
-    /**
-     * Essaie de créer un Type à partir de la valeur php passée en paramètre.
-     *
-     * La méthode essaie de déterminer la classe Type la plus adaptée en
-     * fonction du type php de la valeur indiquée.
-     *
-     * @param mixed $value
-     * @return Any
-     *
-     * @throws InvalidTypeException Si le type de la valeur passée en paramètre
-     * n'est pas reconnu.
-     */
-    static protected final function guessType($value) {
-        if (is_array($value)) {
-            // ça peut être une collection ou un tableau
-            // pour tester si les clés sont des int (0..n) on pourrait utiliser
-            // array_values($value) === $value
-            // cf. https://gist.github.com/Thinkscape/1965669
-            // mais dans notre cas, il suffit de tester la clé du 1er élément
-            if (is_int(key($value))) { // tableau numérique
-                return new Collection($value);
-            } else {
-                return new Object($value); // tableau associatif
-            }
-        }
-
-        if (is_string($value)) {
-            return new String($value);
-        }
-
-        if (is_int($value)) {
-            return new Integer($value);
-        }
-
-        if (is_bool($value)) {
-            return new Boolean($value);
-        }
-
-        if (is_float($value)) {
-            return new Float($value);
-        }
-
-        if (is_null($value)) {
-            return new Any();
-        }
-
-        throw new InvalidTypeException('a php type that I can guess');
-    }
-
+    // -------------------------------------------------------------------------
+    // Interface Filterable
+    // -------------------------------------------------------------------------
 
     /**
      * Filtre les valeurs vides.
@@ -306,7 +281,300 @@ class Any implements Serializable, JsonSerializable {
      *
      * @return bool true si le champ est vide, false sinon.
      */
-    public function filterEmpty($strict = true) {
+    public function filterEmpty($strict = true)
+    {
         return empty($this->value);
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Configurable
+    // -------------------------------------------------------------------------
+
+    public function getSettingsForm()
+    {
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+
+        $form = new Container($name);
+
+        $form->input('label')
+            ->setAttribute('id', $name . '-label')
+            ->addClass('label regular-text')
+            ->setLabel(__('Libellé', 'docalist-core'))
+            ->setDescription(__('Libellé utilisé pour désigner ce champ.', 'docalist-core'));
+
+        $form->textarea('description')
+            ->setAttribute('id', $name . '-description')
+            ->addClass('description large-text')
+            ->setAttribute('rows', 2)
+            ->setLabel(__('Description', 'docalist-core'))
+            ->setDescription(__('Description : rôle, particularités, format...', 'docalist-core'));
+
+        $form->input('capability')
+            ->setAttribute('id', $name . '-capability')
+            ->addClass('capability regular-text')
+            ->setLabel(__('Droit requis', 'docalist-core'))
+            ->setDescription(
+                __('Capacité WordPress requise pour pouvoir accéder au champ.', 'docalist-core') .
+                ' ' .
+                __("Si vous n'indiquez rien, aucun droit particulier ne sera nécessaire.", 'docalist-core')
+            );
+
+        return $form;
+    }
+
+    public function validateSettings(array $settings)
+    {
+        return $settings;
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Formattable
+    // -------------------------------------------------------------------------
+
+    public function getAvailableFormats()
+    {
+        return [];
+    }
+
+    public function getDefaultFormat()
+    {
+        return key($this->getAvailableFormats()); // key() retourne null si tableau vide
+    }
+
+    public function getFormatSettingsForm()
+    {
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+
+        $form = new Container($name);
+
+        $form->input('label')
+            ->setAttribute('id', $name . '-label')
+            ->addClass('label regular-text')
+            ->setAttribute('placeholder', $this->schema->label())
+            ->setLabel(__('Libellé', 'docalist-core'))
+            ->setDescription(
+                __('Libellé qui sera affiché devant le champ.', 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est le libellé indiqué dans la grille de base qui est utilisé.", 'docalist-core')
+            );
+
+        $form->input('capability')
+            ->setAttribute('id', $name . '-capability')
+            ->addClass('capability regular-text')
+            ->setAttribute('placeholder', $this->schema->capability())
+            ->setLabel(__('Droit requis', 'docalist-core'))
+            ->setDescription(
+                __('Capacité WordPress requise pour que ce champ soit affiché.', 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est la capacité indiquée dans la grille de base qui est utilisée.", 'docalist-core')
+            );
+
+        $form->input('before')
+            ->setAttribute('id', $name . '-before')
+            ->addClass('before regular-text')
+            ->setLabel(__('Avant le champ', 'docalist-core'))
+            ->setDescription(__('Texte ou code html à insérer avant le contenu du champ.', 'docalist-core'));
+
+        // Propose le choix du format si plusieurs formats sont disponibles
+        $formats = $this->getAvailableFormats();
+        if (count($formats)) {
+            $form->select('format')
+                ->setAttribute('id', $name . '-format')
+                ->addClass('format regular-text')
+                ->setLabel(__("Format d'affichage", 'docalist-core'))
+                ->setDescription(__("Choisissez dans la liste le format d'affichage à utiliser.", 'docalist-core'))
+                ->setOptions($formats)
+                ->setFirstOption(__('(format par défaut)', 'docalist-core'));
+        }
+
+        $form->input('after')
+            ->setAttribute('id', $name . '-after')
+            ->addClass('after regular-text')
+            ->setLabel(__('Après le champ', 'docalist-core'))
+            ->setDescription(__('Texte ou code html à insérer après le contenu du champ.', 'docalist-core'));
+
+        return $form;
+    }
+
+    public function validateFormatSettings(array $settings)
+    {
+        return $settings;
+    }
+
+    public function getFormattedValue($options = null)
+    {
+        return get_class($this) . '::getFormattedValue() not implemented';
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Editable
+    // -------------------------------------------------------------------------
+
+    public function getAvailableEditors()
+    {
+        return [];
+    }
+
+    public function getDefaultEditor()
+    {
+        return key($this->getAvailableEditors()); // key() retourne null si tableau vide
+    }
+
+    public function getEditorSettingsForm()
+    {
+        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
+
+        $form = new Container($name);
+
+        $form->input('label')
+            ->setAttribute('id', $name . '-label')
+            ->addClass('label regular-text')
+            ->setAttribute('placeholder', $this->schema->label())
+            ->setLabel(__('Libellé en saisie', 'docalist-core'))
+            ->setDescription(
+                __('Libellé qui sera affiché pour saisir ce champ.', 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est le libellé du champ qui est utilisé.", 'docalist-core')
+            );
+
+        $form->textarea('description')
+            ->setAttribute('id', $name . '-description')
+            ->addClass('description large-text')
+            ->setAttribute('rows', 2)
+            ->setAttribute('placeholder', $this->schema->description())
+            ->setLabel(__('Aide à la saisie', 'docalist-core'))
+            ->setDescription(
+                __("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ.", 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est la description du champ qui est utilisée.", 'docalist-core')
+            );
+
+        $form->input('capability')
+            ->setAttribute('id', $name . '-capability')
+            ->addClass('capability regular-text')
+            ->setAttribute('placeholder', $this->schema->capability())
+            ->setLabel(__('Droit requis', 'docalist-core'))
+            ->setDescription(
+                __('Capacité WordPress requise pour que ce champ apparaisse dans le formulaire.', 'docalist-core') .
+                ' ' .
+                __("Par défaut, c'est la capacité du champ qui est utilisée.", 'docalist-core')
+            );
+
+        // Propose le choix si plusieurs éditeurs sont disponibles
+        $editors = $this->getAvailableEditors();
+        if (count($editors) > 1) {
+            $default = $this->schema()->editor() ?: $this->getDefaultEditor() ?: 'default';
+            $default = sprintf(__('Éditeur par défaut indiqué dans le type (%s)', 'docalist-core'), $default);
+            $form->select('editor')
+                ->setAttribute('id', $name . '-editor')
+                ->addClass('editor regular-text')
+                ->setLabel(__('Éditeur', 'docalist-core'))
+                ->setDescription(__('Choisissez dans la liste le contrôle qui sera utilisé pour saisir et modifier ce champ.', 'docalist-core'))
+                ->setOptions($editors)
+                ->setFirstOption($default);
+        }
+
+        return $form;
+    }
+
+    public function validateEditorSettings(array $settings)
+    {
+        return $settings;
+    }
+
+    public function getEditorForm($options = null)
+    {
+        $editor = new Input();
+
+        return $editor
+            ->setName($this->schema->name())
+            ->setLabel($this->getOption('label', $options))
+            ->setDescription($this->getOption('description', $options));
+    }
+
+    // -------------------------------------------------------------------------
+    // Interface Indexable
+    // -------------------------------------------------------------------------
+
+    public function setupMapping(MappingBuilder $mapping)
+    {
+        return [];
+    }
+
+    public function mapData(array & $document)
+    {
+        $value = $this->value();
+        if (is_null($value)) {
+            return;
+        }
+
+        if ($this->schema->collection()) {
+            $document[$this->schema->name()][] = $value;
+        } else {
+            $document[$this->schema->name()] = $this->value();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Privé
+    // -------------------------------------------------------------------------
+
+    /**
+     * Génère un nom aléatoire composé de lettres minuscules.
+     *
+     * @param number $length Longueur du nom à générer. Une longueur de 4 permet
+     * de générer environ 30000 id différents.
+     *
+     * @return string
+     */
+    protected function randomId($length = 4)
+    {
+        return substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), - $length);
+    }
+
+    /**
+     * Retourne la valeur d'une option.
+     *
+     * La méthode détermine la valeur de l'option indiquée en paramètre en examinant successivement :
+     *
+     * - les options passées en paramètre,
+     * - le schéma du type,
+     * - la valeur par défaut passée en paramètre.
+     *
+     * Cette méthode utilitaire permet aux classes descendantes de gérer facilement les options qui sont
+     * passées en paramètre à des méthodes comme {@link getEditorForm()} ou {@link getFormattedValue()}.
+     *
+     * Exemple :
+     *
+     * <code>
+     * public function getFormattedValue($options = null) {
+     *     $sep = $this->getOption('sep', $options,  ', ');
+     *     ...
+     * }
+     * </code>
+     *
+     * @param string $name Le nom de l'option recherchée.
+     * @param Schema|null $options Le schéma (la grille) contenant les options.
+     * @param mixed $default La valeur par défaut de l'option.
+     *
+     * @return scalar
+     */
+    protected function getOption($name, Schema $options = null, $default = null)
+    {
+        // Teste si l'option figure dans les options
+        if ($options) {
+            $value = $options->__call($name);
+            if (! is_null($value)) {
+                return $value;
+            }
+        }
+
+        // Teste le schéma sinon
+        $value = $this->schema->__call($name);
+        if (! is_null($value)) {
+            return $value;
+        }
+
+        return $default;
     }
 }

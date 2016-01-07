@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
      * @param DomElement note l'élément à highlighter
      */
     function highlight(node) {
-        // Principe : on crée une div jaune avec exactment les mêmes dimensions
+        // Principe : on crée une div jaune avec exactement les mêmes dimensions
         // que l'élément et on la place au dessus en absolute puis on l'estompe
         // (fadeout) gentiment avant de la supprimer.
         // Adapté de : http://stackoverflow.com/a/13106698

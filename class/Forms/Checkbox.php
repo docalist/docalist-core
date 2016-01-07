@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012,2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,7 +11,6 @@
  * @subpackage  Forms
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Forms;
 
 /**
@@ -21,12 +20,19 @@ namespace Docalist\Forms;
  * {@link http://www.w3.org/TR/html5/forms.html#checkbox-state-(type=checkbox)
  * input type=checkbox}.
  */
-class Checkbox extends Input {
+class Checkbox extends Input
+{
+    protected $attributes = ['type' => 'checkbox', 'value' => 1];
+
     /**
-     * @inheritdoc
+     * Pour un checkbox unique, la description est utilisée comme un second label :
+     * label : [ ] description.
+     * Indique au containeur qu'il ne doit pas générer de bloc description.
+     *
+     * @return bool
      */
-    protected $attributes = array(
-        'type' => 'checkbox',
-        'value' => 1
-    );
+    protected function hasDescriptionBlock()
+    {
+        return false;
+    }
 }

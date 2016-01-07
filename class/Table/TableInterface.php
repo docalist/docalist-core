@@ -13,16 +13,11 @@
  */
 namespace Docalist\Table;
 
-use Docalist\Cache\FileCache;
-use Docalist\Tokenizer;
-use PDO;
-
 /**
- * Une table
- *
+ * Une table.
  */
-interface TableInterface {
-
+interface TableInterface
+{
     /**
      * Retourne le type de la table.
      *
@@ -52,7 +47,7 @@ interface TableInterface {
      * jour. Les tables "compilées" (<code>csv</code> ou <code>php</code>) ne
      * peuvent pas être modifiées.
      *
-     * @return boolean
+     * @return bool
      */
     public function readOnly();
 

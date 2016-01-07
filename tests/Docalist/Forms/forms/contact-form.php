@@ -5,26 +5,26 @@ use Docalist\Forms\Form;
 // http://reactiveraven.github.com/jqBootstrapValidation/
 
 $form = new Form();
-$form->label('Into this')
-     ->description('Reproduction du formulaire affiché en haut de <a href="http://reactiveraven.github.com/jqBootstrapValidation/">cette page</a>', false);
+$form->setLabel('Into this')
+     ->setDescription('Reproduction du formulaire affiché en haut de <a href="http://reactiveraven.github.com/jqBootstrapValidation/">cette page</a>', false);
 
 $form->input('email')
-     ->label('Email address')
-     ->description('Email address we can contact you on');
+     ->setLabel('Email address')
+     ->setDescription('Email address we can contact you on');
 
 $form->input('emailAgain')
-     ->label('Email again')
-     ->description('And again, to check for speeling miskates');
+     ->setLabel('Email again')
+     ->setDescription('And again, to check for speeling miskates');
 
 $form->checklist('terms-and-conditions')
-     ->label('Legal')
-     ->options(array(
+     ->setLabel('Legal')
+     ->setOptions(array(
         'on' => 'I agree to the <a href="#">terms and conditions</a>'
      ));
 
 $form->checklist('qualityControl')
-     ->label('Quality Control')
-     ->options(array(
+     ->setLabel('Quality Control')
+     ->setOptions(array(
         'fast' => 'Fast',
         'cheap' => 'Cheap',
         'good' => 'Good',
@@ -32,6 +32,6 @@ $form->checklist('qualityControl')
 
 $form->submit('Test Validation')
      ->addClass('btn-primary')
-     ->description('(go ahead, nothing is sent anywhere)');
+     ->setDescription('(go ahead, nothing is sent anywhere)');
 
 return $form;

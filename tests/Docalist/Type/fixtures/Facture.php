@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -14,13 +14,15 @@
 
 namespace Docalist\Tests\Type\Fixtures;
 
-use Docalist\Type\Object;
+use Docalist\Type\Composite;
 
-class Facture extends Object {
-    protected static function loadSchema() {
+class Facture extends Composite {
+    static public function loadSchema() {
         return [
             'fields' => [
-                'code', 'label', 'total' => 'int'
+                'code' => 'Docalist\Type\Text',
+                'label' => 'Docalist\Type\Text',
+                'total'  => 'Docalist\Type\Integer'
             ]
         ];
     }

@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012, 2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -22,7 +22,8 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
  * L'implémentation actuelle est basée sur l'objet Response du composant
  * Symfony HttpFoundation.
  */
-class Response extends SymfonyResponse {
+class Response extends SymfonyResponse
+{
     /**
      * Entête http par défaut pour ce type de réponse.
      *
@@ -38,17 +39,20 @@ class Response extends SymfonyResponse {
      */
     protected $adminPage = false;
 
-    public function __construct($content = '', $status = 200, $headers = array()) {
+    public function __construct($content = '', $status = 200, $headers = [])
+    {
         $this->defaultHeaders && $headers += $this->defaultHeaders;
 
         parent::__construct($content, $status, $headers);
     }
 
-    public function prepare(SymfonyRequest $request = null) {
+    public function prepare(SymfonyRequest $request = null)
+    {
         return parent::prepare($request ?: Request::createFromGlobals());
     }
 
-    public function adminPage($adminPage = null) {
+    public function adminPage($adminPage = null)
+    {
         if (is_null($adminPage)) {
             return $this->adminPage;
         }

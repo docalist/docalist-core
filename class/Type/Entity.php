@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -14,15 +14,17 @@
 namespace Docalist\Type;
 
 use Docalist\Schema\Schema;
-use LogicException;
 use Docalist\Repository\Repository;
+use Docalist\MappingBuilder;
+use LogicException;
 
 /**
  * Classe de base pour les entités.
  *
  * Une entité est un objet qui dispose d'une identité (un ID unique).
  */
-class Entity extends Object {
+class Entity extends Composite
+{
     /**
      * L'identifiant de l'entité.
      *
@@ -37,8 +39,9 @@ class Entity extends Object {
      * @param Schema $schema
      * @param scalar $id
      */
-    public function __construct(array $value = null, Schema $schema = null, $id = null) {
-        parent::__construct($value, $schema ?: $this::defaultSchema());
+    public function __construct(array $value = null, Schema $schema = null, $id = null)
+    {
+        parent::__construct($value, $schema);
         ! is_null($id) && $this->id($id);
     }
 
@@ -57,7 +60,8 @@ class Entity extends Object {
      * @throws LogicException Si vous essayer de modifier l'identifiant d'une
      * entité qui a déjà un id.
      */
-    public function id($id = null) {
+    public function id($id = null)
+    {
         // Getter
         if (is_null($id)) {
             return $this->id;
@@ -79,15 +83,33 @@ class Entity extends Object {
      * Cette méthode est appellée juste avant que l'entité ne soit enregistrée
      * dans un dépôt.
      */
-    public function beforeSave(Repository $repository) {
-
+    public function beforeSave(Repository $repository)
+    {
     }
 
     /**
      * Cette méthode est appellée juste après que l'entité a été enregistrée
      * dans un dépôt.
      */
-    public function afterSave(Repository $repository) {
+    public function afterSave(Repository $repository)
+    {
+    }
 
+    // -------------------------------------------------------------------------
+    // Interface Indexable
+    // -------------------------------------------------------------------------
+
+    public function setupMapping(MappingBuilder $mapping)
+    {
+        foreach ($this->schema()->getFieldNames() as $field) {
+            $this->__get($field)->setupMapping($mapping);
+        }
+    }
+
+    public function mapData(array & $document)
+    {
+        foreach ($this->getFields() as $field) {
+            $field->mapData($document);
+        }
     }
 }

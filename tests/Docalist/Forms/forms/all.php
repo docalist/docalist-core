@@ -4,73 +4,74 @@ use Docalist\Forms\Form;
 $repeat = true;
 
 $form = new Form();
-$form->label('Un formulaire avec tous les types de champs');
+$form->setLabel('Un formulaire avec tous les types de champs');
 
 $form->button()
-     ->label('button')
-     ->repeatable($repeat);
+     ->setLabel('button')
+     ->setRepeatable($repeat);
 
 $form->checkbox('checkbox')
-     ->label('checkbox')
-     ->repeatable($repeat);
+     ->setLabel('checkbox')
+     ->setRepeatable($repeat);
 
 $form->checklist('checklist')
-     ->label('checklist')
-     ->repeatable($repeat)
-     ->options(array(
+     ->setLabel('checklist')
+     ->setRepeatable($repeat)
+     ->setOptions(array(
         'un',
         'deux'
      ));
 
-$form->fieldset('un fieldset')
-     ->repeatable($repeat);
+$form->fieldset()->setLabel('un fieldset')
+     ->setRepeatable($repeat);
 
 $form->hidden('hidden')
-     ->label('hidden')
-     ->repeatable($repeat);
+     ->setLabel('hidden')
+     ->setRepeatable($repeat);
 
 $form->input('input')
-     ->label('input')
-     ->repeatable($repeat);
+     ->setLabel('input')
+     ->setRepeatable($repeat);
 
 $form->password('password')
-     ->label('password')
-     ->repeatable($repeat);
+     ->setLabel('password')
+     ->setRepeatable($repeat);
 
 $form->radio('radio')
-     ->label('radio')
-     ->repeatable($repeat);
+     ->setLabel('radio')
+     ->setRepeatable($repeat);
 /*
 $form->radiolist('radiolist')
-     ->label('radio')
-     ->repeatable($repeat)
-     ->options(array(
+     ->setLabel('radio')
+     ->setRepeatable($repeat)
+     ->setOptions(array(
         'un',
         'deux'
      ));
 */
 $form->reset()
-     ->label('reset')
-     ->repeatable($repeat);
+     ->setLabel('reset')
+     ->setRepeatable($repeat);
 
 $form->select('select')
-     ->label('select')
-     ->repeatable($repeat);
+     ->setLabel('select')
+     ->setRepeatable($repeat);
 
 $form->submit()
-     ->label('submit')
-     ->repeatable($repeat);
+     ->setLabel('submit')
+     ->setRepeatable($repeat);
 
 $form->table('table')
-     ->label('table')
-     ->repeatable($repeat);
+     ->setLabel('table')
+     ->setRepeatable($repeat);
 
 $form->tag('p', 'tag p')
-     ->repeatable($repeat);
+//     ->setRepeatable($repeat)
+;
 
 $form->textarea('textarea')
-     ->label('textarea')
-     ->repeatable($repeat);
+     ->setLabel('textarea')
+     ->setRepeatable($repeat);
 
 $form->submit('Go !');
 

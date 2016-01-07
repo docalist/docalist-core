@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012,2013 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,21 +11,21 @@
  * @subpackage  Forms
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Forms;
 
 /**
- * Un bloc div.
+ * Une div.
  *
  */
-class Div extends Fields {
-    /**
-     * Crée une nouvelle div.
-     *
-     * @param string $name Le nom du champ.
-     */
-    public function __construct($name = null) {
-        parent::__construct($name);
+class Div extends Container
+{
+    protected function hasLayout()
+    {
+        return false;
     }
 
+    protected function hasDescriptionBlock()
+    {
+        return false;
+    }
 }

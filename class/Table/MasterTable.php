@@ -13,17 +13,15 @@
  */
 namespace Docalist\Table;
 
-use Docalist\Cache\FileCache;
 use Docalist\Tokenizer;
-use PDO;
 use Psr\Log\LoggerInterface;
 use InvalidArgumentException;
 
 /**
  * La master table.
- *
  */
-class MasterTable extends CsvTable {
+class MasterTable extends CsvTable
+{
     /**
      * Le logger utilisé.
      *
@@ -31,7 +29,8 @@ class MasterTable extends CsvTable {
      */
     protected $log;
 
-    public function __construct($path) {
+    public function __construct($path)
+    {
         // Initialise notre log
         $this->log = docalist('logs')->get('tables');
 
@@ -49,13 +48,14 @@ class MasterTable extends CsvTable {
             $table = new TableInfo([
                 'name' => 'master',
                 'path' => $this->path,
-                'label' => __('Table des tables (master table)','docalist-core')
+                'label' => __('Table des tables (master table)', 'docalist-core'),
             ]);
             $this->register($table);
         }
     }
 
-    protected function commit() {
+    protected function commit()
+    {
         if ($this->commit) {
             // Commit les modifs
             $this->log && $this->log->debug('commit changes to master table');
@@ -74,7 +74,8 @@ class MasterTable extends CsvTable {
      *
      * @return self
      */
-    protected function syncBack() {
+    protected function syncBack()
+    {
         $fields = $this->fields();
 
         $header = $this->getFileHeader();
@@ -83,7 +84,7 @@ class MasterTable extends CsvTable {
         fputcsv($file, $fields, ';', '"');
 
         $records = $this->search('rowid,' . implode(',', $fields), '', 'rowid');
-        foreach($records as $record) {
+        foreach ($records as $record) {
             fputcsv($file, (array) $record, ';', '"');
         }
         fclose($file);
@@ -92,14 +93,15 @@ class MasterTable extends CsvTable {
     }
 
     /**
-     * Retourne les lignes de commentaire qui figure dans l'entête du fichier
+     * Retourne les lignes de commentaire qui figure dans l'entête du fichier.
      *
      * @return string
      */
-    protected function getFileHeader() {
+    protected function getFileHeader()
+    {
         $lines = file($this->path, FILE_IGNORE_NEW_LINES);
         $count = 0;
-        foreach($lines as $line) {
+        foreach ($lines as $line) {
             $line = trim($line);
 
             if ($line === '' || $line[0] === '#') {
@@ -112,7 +114,6 @@ class MasterTable extends CsvTable {
             $header && $header .= "\n";
 
             return $header;
-
         }
     }
 
@@ -123,13 +124,15 @@ class MasterTable extends CsvTable {
      *
      * @param string $path
      */
-    protected function createMasterTable($path) {
+    protected function createMasterTable($path)
+    {
         $this->log && $this->log->notice('creating master table');
         $template = file_get_contents(__DIR__ . '/master-template.txt');
+        $schema = TableInfo::getDefaultSchema();
         $template = strtr($template, [
             '{year}' => date('Y'),
             '{path}' => $this->relativePath($path),
-            '{fields}' => implode(';', TableInfo::defaultSchema()->fieldNames())
+            '{fields}' => implode(';', $schema->getFieldNames()),
         ]);
         file_put_contents($path, $template);
     }
@@ -151,7 +154,8 @@ class MasterTable extends CsvTable {
      *
      * @throws InvalidArgumentException
      */
-    protected function relativePath($path) {
+    protected function relativePath($path)
+    {
         $root = docalist('root-dir');
         if (0 !== strncmp($path, $root, strlen($root))) {
             throw new InvalidArgumentException('Table path does not start with site path');
@@ -171,7 +175,8 @@ class MasterTable extends CsvTable {
      *
      * @throws InvalidArgumentException
      */
-    protected function prepare(TableInfo $table) {
+    protected function prepare(TableInfo $table)
+    {
         $name = $table->name();
 
         if (! file_exists($table->path())) {
@@ -190,8 +195,7 @@ class MasterTable extends CsvTable {
         $fields['readonly'] = $fields['readonly'] ? '1' : '0';
 
         // Tokenize les champs
-        foreach($fields as $name => $value)
-        {
+        foreach ($fields as $name => $value) {
             $fields["_$name"] = implode(' ', Tokenizer::tokenize($value));
         }
 
@@ -206,7 +210,8 @@ class MasterTable extends CsvTable {
      *
      * @throws InvalidArgumentException
      */
-    public function checkName($name) {
+    public function checkName($name)
+    {
         // Vérifie que le nom est correct
         if (! preg_match('~^[a-zA-Z0-9_-]+$~', $name)) {
             throw new InvalidArgumentException("Invalid table name '$name' (allowed chars: a-z, 0-9, '-' and '_')");
@@ -228,7 +233,8 @@ class MasterTable extends CsvTable {
      *
      * @return self
      */
-    public function register(TableInfo $table) {
+    public function register(TableInfo $table)
+    {
         $this->log && $this->log->notice("Register table '{$table->name()}'", ['table' => $table]);
 
         // Si la table est déjà enregistrée (même nom), on met à jour
@@ -264,7 +270,8 @@ class MasterTable extends CsvTable {
      *
      * @return self
      */
-    public function update($rowid, TableInfo $table) {
+    public function update($rowid, TableInfo $table)
+    {
         $this->log && $this->log->notice("Update properties of table #$rowid", ['table' => $table]);
 
         // Prépare les données à insérer
@@ -272,7 +279,7 @@ class MasterTable extends CsvTable {
 
         // Prépare la requête sql
         $set = [];
-        foreach($fields as $name => $value) {
+        foreach ($fields as $name => $value) {
             $set[] = $name . '=' . $this->db->quote($value);
         }
         $set = implode(',', $set);
@@ -298,7 +305,8 @@ class MasterTable extends CsvTable {
      *
      * @return self
      */
-    public function unregister($name) {
+    public function unregister($name)
+    {
         $this->log && $this->log->notice("Unregister table '$name'");
 
         // On ne sait jamais
@@ -327,7 +335,8 @@ class MasterTable extends CsvTable {
      *
      * @return int|false L'ID de la table ou false si elle n'existe pas.
      */
-    public function rowid($name) {
+    public function rowid($name)
+    {
         $id = $this->find('rowid', 'name=' . $this->db->quote($name));
 
         return ($id === false) ? false : (int) $id;
@@ -340,7 +349,8 @@ class MasterTable extends CsvTable {
      *
      * @return bool
      */
-    public function has($name) {
+    public function has($name)
+    {
         return false !== $this->rowid($name);
     }
 
@@ -354,7 +364,8 @@ class MasterTable extends CsvTable {
      * @throws InvalidArgumentException Si la table indiquée n'existe pas dans
      * la master table.
      */
-    public function table($name) {
+    public function table($name)
+    {
         $fields = 'ROWID,' . implode(',', $this->fields());
         $table = $this->find($fields, 'name=' . $this->db->quote($name));
 
@@ -384,7 +395,8 @@ class MasterTable extends CsvTable {
      *
      * @return TableInfo[]
      */
-    public function tables($type = null, $format = null, $readonly = null, $sort = '_label') {
+    public function tables($type = null, $format = null, $readonly = null, $sort = '_label')
+    {
         $where = '';
         if ($type) {
             $where = 'type=' . $this->db->quote($type);
@@ -400,11 +412,10 @@ class MasterTable extends CsvTable {
         $fields = 'ROWID,' . implode(',', $this->fields());
         $tables = $this->search($fields, $where, $sort);
 
-        foreach($tables as & $table) {
+        foreach ($tables as & $table) {
             $table = new TableInfo((array) $table);
         }
 
         return $tables;
     }
-
 }

@@ -11,12 +11,12 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Core;
 
 use Docalist\Repository\SettingsRepository;
 use Docalist\LogManager;
 use Docalist\Views;
+use Docalist\Cache\ObjectCache;
 use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\AdminNotices;
@@ -24,17 +24,16 @@ use Docalist\Sequences;
 use Docalist\Lookup;
 use InvalidArgumentException;
 
-// use for migration
-use Docalist\Table\TableInfo;
-
 /**
  * Plugin Docalist-Core.
  */
-class Plugin {
+class Plugin
+{
     /**
      * Initialise le plugin.
      */
-    public function __construct() {
+    public function __construct()
+    {
         // Charge les fichiers de traduction du plugin
         load_plugin_textdomain('docalist-core', false, 'docalist-core/languages');
 
@@ -44,150 +43,46 @@ class Plugin {
         // Enregistre les services docalist de base
         $this->setupServices();
 
-        if (isset($_REQUEST['migrate'])) {
-            $s = get_option('docalist-core-settings');
-            if ($s !== false) {
-                $this->migrate($s);
-            }
-        }
-
-        // Charge la configuration de docalist-core
-        docalist('services')->add('docalist-core-settings', function() {
-            return new Settings(docalist('settings-repository'));
-            // TODO : à supprimer, n'est utilisé que pour les tables personnalisées
-        });
-
         // Définit les actions et les filtres par défaut
         $this->setupHooks();
-
-        // Gestion des admin notices - à revoir, pas içi
-//         add_action('admin_notices', function(){
-//             $this->showAdminNotices();
-//         });
-    }
-
-    protected function migrate($option) {
-        error_reporting(E_ALL);
-
-        $go = isset($_REQUEST['go']);
-        $ok = true;
-
-        header('Content-Type: text/html; charset=UTF8');
-        echo "<h1>Les tables perso doivent être migrées.</h1>";
-        echo '
-            <style>
-                .error {font-weight: bold; color: red;}
-            </style>
-            ';
-
-        echo "<p>", $go ? "**MODE REEL**" : 'mode test', '</p>';
-
-        $tables = json_decode($option);
-        if (! is_object($tables)) {
-            var_dump($option);
-            var_dump($tables);
-            die("l'option existe mais json_decode ne retourne pas un objet");
-        }
-        $tables = $tables->tables;
-
-        $manager = docalist('table-manager'); /* @var $manager TableManager */
-
-        foreach($tables as $table) { /* @var $table TableInfo */
-            echo '<h2>', $table->name, '</h2>';
-            var_dump($table);
-
-            // Vérifie que l'ancien fichier table existe
-            if (!file_exists($table->path)) {
-                echo "<p class='error'>La table n'existe pas.</p>";
-                $ok = false;
-                continue;
-            }
-
-            // Vérifie que le nouveau fichier table n'existe pas
-            $path = docalist('tables-dir') . DIRECTORY_SEPARATOR . basename($table->path);
-            if (file_exists($path)) {
-                echo "<p class='error'>La nouvelle table existe déjà.</p>";
-                echo "<p>Path de la nouvelle table : <code>$path</code></p>";
-                $ok = false;
-            }
-
-            // Vérifie qu'il n'existe pas déjà une table avec ce nom
-            if ($manager->has($table->name)) {
-                echo "<p class='error'>Le manager a déjà une table avec ce nom.</p>";
-                $ok = false;
-            }
-
-            if (!$ok) {
-                continue;
-            }
-
-            if ($go) {
-                echo "- Copie de la table...";
-                if (true !== copy($table->path, $path)) {
-                    echo "<p class='error'>Impossible de copier $table->path vers $path.</p>";
-                    die();
-                }
-                echo 'ok<br />';
-
-                // Crée la structure TableInfo de la nouvelle table
-                $table->path = $path;
-                unset($table->user);
-                $table->readonly = false;
-                $table = new TableInfo((array)$table);
-
-                echo "- register...";
-                $manager->register($table);
-                echo 'ok<br />';
-            } else {
-                echo "<p>OK</p>";
-            }
-        }
-
-        if ($ok) {
-            echo "<h1>Tout à l'air OK. Vous pouvez lancer la migration</h1>";
-            echo "<p><a href='?migrate&go'>Go</p>";
-        } else {
-            echo "<h1>Une ou plusieurs erreurs détectées.</h1>";
-        }
-
-        die();
     }
 
     /**
      * Définit les path docalist par défaut (racine du site, répertoire des
-     * données, des logs, des tables, etc.)
+     * données, des logs, des tables, etc.).
      *
      * @return self
      */
-    protected function setupPaths() {
+    protected function setupPaths()
+    {
         docalist('services')->add([
             // Répertoire racine du site (/)
-            'root-dir' => function() {
+            'root-dir' => function () {
                 return $this->rootDirectory();
             },
 
             // Répertoire de base (WP_CONTENT_DIR/data)
-            'data-dir' => function() {
+            'data-dir' => function () {
                 return $this->dataDirectory();
             },
 
             // Répertoire de config (WP_CONTENT_DIR/data/config)
-            'config-dir' => function() {
+            'config-dir' => function () {
                 return $this->dataDirectory('config');
             },
 
             // Répertoire de cache de docalist (docalist-cache : dans /tmp ou fixé)
-            'cache-dir' => function() {
+            'cache-dir' => function () {
                 return $this->cacheDirectory();
             },
 
             // Répertoire des logs (WP_CONTENT_DIR/data/log)
-            'log-dir' => function() {
+            'log-dir' => function () {
                 return $this->dataDirectory('log');
             },
 
             // Répertoire des tables (WP_CONTENT_DIR/data/tables)
-            'tables-dir' => function() {
+            'tables-dir' => function () {
                 return $this->dataDirectory('tables');
             },
         ]);
@@ -197,56 +92,66 @@ class Plugin {
 
     /**
      * Enregistre les services docalist de base (gestionnaire de vues,
-     * gestionnaire de cache, gestionnaire de tables, etc.)
+     * gestionnaire de cache, gestionnaire de tables, etc.).
      *
      * @return self
      */
-    protected function setupServices() {
+    protected function setupServices()
+    {
         // Enregistre les services docalist par défaut
-        $services = [
+        docalist('services')->add([
+
+            // La base wordpress (pour éviter d'accéder directement à $wpdb)
+            'wordpress-database' => $GLOBALS['wpdb'],
 
             // Gestion des Settings
-            'settings-repository' => function() {
+            'settings-repository' => function () {
                 return new SettingsRepository();
             },
 
             // Gestion des logs
-            'logs' => function() {
+            'logs' => function () {
                 return new LogManager();
             },
 
             // Gestion des vues
-            'views' => function() {
+            'views' => function () {
                 return new Views();
             },
 
             // Gestion du cache
-            'file-cache' => function() {
+            'file-cache' => function () {
                 return new FileCache(docalist('root-dir'), docalist('cache-dir'));
             },
 
+            // Cache des schémas
+            'cache' => function () {
+                return new ObjectCache(defined('DOCALIST_USE_WP_CACHE') ? DOCALIST_USE_WP_CACHE : false);
+            },
+
             // Gestion des tables
-            'table-manager' => function() {
+            'table-manager' => function () {
                 return new TableManager();
             },
 
             // Gestion des séquences
-            'sequences' => function() {
+            'sequences' => function () {
                 return new Sequences();
             },
 
             // Gestion des lookups
-            'lookup' => function() {
+            'lookup' => function () {
                 return new Lookup();
             },
-        ];
 
-        // Le service admin-notices n'est disponible que dans le back-office
-        if (is_admin()) {
-            $services['admin-notices'] = new AdminNotices();
-        }
+            // Admin Notices
+            'admin-notices' => function () {
+                return new AdminNotices();
+            },
+        ]);
 
-        docalist('services')->add($services);
+        // Active l'affichage des admin notices si on est dans le back-office
+        is_admin() && docalist('admin-notices'); // force l'instantiation
 
         return $this;
     }
@@ -256,25 +161,26 @@ class Plugin {
      *
      * @return self
      */
-    protected function setupHooks() {
+    protected function setupHooks()
+    {
         // Définit les lookups de type "table"
-        add_filter('docalist_table_lookup', function($value, $source, $search) {
+        add_filter('docalist_table_lookup', function ($value, $source, $search) {
             return docalist('table-manager')->lookup($source, $search, false);
         }, 10, 3);
 
         // Définit les lookups de type "thesaurus"
-        add_filter('docalist_thesaurus_lookup', function($value, $source, $search) {
+        add_filter('docalist_thesaurus_lookup', function ($value, $source, $search) {
             return docalist('table-manager')->lookup($source, $search, true);
         }, 10, 3);
 
         // Crée l'action ajax "docalist-lookup"
-        add_action('wp_ajax_docalist-lookup', $ajaxLookup = function() {
+        add_action('wp_ajax_docalist-lookup', $ajaxLookup = function () {
             docalist('lookup')->ajaxLookup();
         });
         add_action('wp_ajax_nopriv_docalist-lookup', $ajaxLookup);
 
         // Déclare les JS et les CSS inclus dans docalist-core
-        add_action('init', function() {
+        add_action('init', function () {
             $this->registerAssets();
         });
 
@@ -301,7 +207,8 @@ class Plugin {
      *
      * @return string
      */
-    protected function rootDirectory() {
+    protected function rootDirectory()
+    {
         // Version 1, basée sur SCRIPT_FILENAME : pas dispo en mode cli
         // if (PHP_SAPI === 'cli' || PHP_SAPI === 'cli-server') {
         //     throw new \Exception('root-dir is not available with CLI SAPI');
@@ -314,9 +221,9 @@ class Plugin {
         // Version 2, basée sur l'emplacement de wp-config.php
         // Adapté de wordpress/wp-load.php
         $root = rtrim(ABSPATH, '/\\'); // ABSPATH contient un slash final
-        if (!file_exists($root . '/wp-config.php') ) {
+        if (!file_exists($root . '/wp-config.php')) {
             $root = dirname($root);
-            if (! file_exists($root . '/wp-config.php' ) || file_exists($root . '/wp-settings.php')) {
+            if (! file_exists($root . '/wp-config.php') || file_exists($root . '/wp-settings.php')) {
                 throw new InvalidArgumentException('Unable to find root dir');
             }
         }
@@ -327,7 +234,7 @@ class Plugin {
     /**
      * Retourne le path du répertoire "data" de docalist, c'est-à-dire le
      * répertoire qui contient toutes les données docalist (tables, config,
-     * logs, user-data, etc.)
+     * logs, user-data, etc.).
      *
      * Par défaut, il s'agit du répertoire "docalist-data" situé dans le
      * répertoire uploads de WordPress.
@@ -342,8 +249,9 @@ class Plugin {
      *
      * @return string Le path absolu du répertoire demandé.
      */
-    public function dataDirectory($subdir = null) {
-     // $directory = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'docalist-data';
+    public function dataDirectory($subdir = null)
+    {
+        // $directory = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'docalist-data';
         $directory = wp_upload_dir();
         $directory = $directory['basedir'];
         $directory = strtr($directory, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR);
@@ -374,7 +282,8 @@ class Plugin {
      *
      * @return string
      */
-    protected function cacheDirectory() {
+    protected function cacheDirectory()
+    {
         // Par défaut on prend le path indiqué dans wp-config
         if (defined('DOCALIST_CACHE_DIR')) {
             $directory = DOCALIST_CACHE_DIR;
@@ -412,7 +321,8 @@ class Plugin {
      *
      * @return self
      */
-    public function createProtectedDirectory($directory) {
+    public function createProtectedDirectory($directory)
+    {
         if (! @mkdir($directory, 0700, true)) {
             throw new InvalidArgumentException('Unable to create ' . basename($directory) . ' directory');
         }
@@ -439,7 +349,8 @@ class Plugin {
      *
      * @return self
      */
-    public function protectDirectory($directory) {
+    public function protectDirectory($directory)
+    {
         $path = $directory . '/index.php';
         file_put_contents($path, '<?php // Silence is golden.');
 
@@ -454,7 +365,8 @@ class Plugin {
      *
      * @return self
      */
-    protected function registerAssets() {
+    protected function registerAssets()
+    {
         $js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? 'js' : 'min.js';
 
         $url = plugins_url('docalist-core');
@@ -489,7 +401,7 @@ class Plugin {
         wp_register_script(
             'docalist-forms',
             "$url/views/forms/docalist-forms.js", // TODO: version min.js
-            ['jquery','jquery-ui-sortable','selectize'],
+            ['jquery', 'jquery-ui-sortable', 'selectize'],
             '150527',
             false // TODO: Passer à true (position top)
         );
@@ -520,28 +432,4 @@ class Plugin {
 
         return $this;
     }
-
-    /**
-     * Affiche les admin-notices qui ont été enregistrés
-     * (cf AbstractPlugin::adminNotice).
-     */
-/*
-    protected function showAdminNotices() {
-        // Adapté de : http://www.dimgoto.com/non-classe/wordpress-admin_notice/
-        if (false === $notices = get_transient(self::ADMIN_NOTICE_TRANSIENT)) {
-            return;
-        }
-
-        foreach($notices as $notice) {
-            list($message, $isError) = $notice;
-            printf(
-                '<div class="%s"><p>%s</p></div>',
-                $isError ? 'error' : 'updated',
-                $message
-            );
-        }
-
-        delete_transient(self::ADMIN_NOTICE_TRANSIENT);
-    }
-*/
 }

@@ -14,13 +14,14 @@
 namespace Docalist\Core;
 
 use Docalist\AdminPage;
-use Docalist\Table\TableManager;
+use Docalist\Table\TableInfo;
 use Exception;
 
 /**
- * Gestion des tables d'autorité
+ * Gestion des tables d'autorité.
  */
-class AdminTables extends AdminPage {
+class AdminTables extends AdminPage
+{
     /**
      * {@inheritdoc}
      */
@@ -30,14 +31,13 @@ class AdminTables extends AdminPage {
         'default' => 'manage_options',
     ];
 
-    public function __construct() {
-        // @formatter:off
+    public function __construct()
+    {
         parent::__construct(
             'docalist-tables',                          // ID
             'options-general.php',                      // page parent
-            __("Tables d'autorité", 'docalist-core')  // libellé menu
+            __("Tables d'autorité", 'docalist-core')    // libellé menu
         );
-        // @formatter:on
     }
 
     /**
@@ -47,14 +47,16 @@ class AdminTables extends AdminPage {
      *
      * @return TableInfo
      */
-    protected function tableInfo($tableName) {
+    protected function tableInfo($tableName)
+    {
         return docalist('table-manager')->table($tableName);
     }
 
     /**
      * Liste des tables d'autorité.
      */
-    public function actionTablesList() {
+    public function actionTablesList()
+    {
         // Format en cours
         $format = empty($_GET['format']) ? null : $_GET['format'];
 
@@ -77,21 +79,22 @@ class AdminTables extends AdminPage {
         $order = isset($_GET['order']) ? $_GET['order'] : 'asc';
 
         return $this->view('docalist-core:table/list', [
-            'tables'    => docalist('table-manager')->tables($type, $format, $readonly, "$sort $order" ),
-            'formats'   => $formats,
-            'types'     => $types,
-            'format'    => $format,
-            'type'      => $type,
-            'readonly'  => $readonly,
-            'sort'      => $sort,
-            'order'     => $order
+            'tables' => docalist('table-manager')->tables($type, $format, $readonly, "$sort $order"),
+            'formats' => $formats,
+            'types' => $types,
+            'format' => $format,
+            'type' => $type,
+            'readonly' => $readonly,
+            'sort' => $sort,
+            'order' => $order,
         ]);
     }
 
     /**
      * Modifie le contenu d'une table d'autorité.
      */
-    public function actionTableEdit($tableName) {
+    public function actionTableEdit($tableName)
+    {
         // Vérifie que la table à modifier existe
         $tableInfo = $this->tableInfo($tableName);
 
@@ -104,7 +107,7 @@ class AdminTables extends AdminPage {
             if (! isset($_POST['data'])) {
                 return $this->json([
                     'success' => false,
-                    'error' => __('Aucune donnée transmise', 'docalist-core')
+                    'error' => __('Aucune donnée transmise', 'docalist-core'),
                 ]);
             }
             $data = wp_unslash($_POST['data']);
@@ -114,16 +117,15 @@ class AdminTables extends AdminPage {
             if (! isset($_POST['count'])) {
                 return $this->json([
                     'success' => false,
-                    'error' => __('count non transmis', 'docalist-core')
+                    'error' => __('count non transmis', 'docalist-core'),
                 ]);
             }
             $count = $_POST['count'];
             if ($count != count($data)) {
                 return $this->json([
                     'success' => false,
-                    'error' => 'count error : reçu : ' . count($data) . ', attendu : ' . $count
+                    'error' => 'count error : reçu : ' . count($data) . ', attendu : ' . $count,
                 ]);
-
             }
 
             // Enregistre les données de la table
@@ -132,13 +134,13 @@ class AdminTables extends AdminPage {
             } catch (Exception $e) {
                 return $this->json([
                     'success' => false,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
 
             return $this->json([
                 'success' => true,
-                'url' => $this->url('TablesList')
+                'url' => $this->url('TablesList'),
             ]);
         }
 
@@ -156,14 +158,15 @@ class AdminTables extends AdminPage {
             'tableInfo' => $tableInfo,
             'fields' => $fields,
             'data' => $data,
-            'readonly' => $tableInfo->readonly()
+            'readonly' => $tableInfo->readonly(),
         ]);
     }
 
     /**
      * Copie une table.
      */
-    public function actionTableCopy($tableName) {
+    public function actionTableCopy($tableName)
+    {
         $tableInfo = $this->tableInfo($tableName);
 
         // Requête post : copie la table
@@ -185,7 +188,7 @@ class AdminTables extends AdminPage {
         }
 
         // Suggère un nouveau nom pour la table
-        for($i=2; ; $i++) {
+        for ($i = 2;; ++$i) {
             $name = "$tableName-$i";
             if (! docalist('table-manager')->has($name)) {
                 break;
@@ -197,14 +200,15 @@ class AdminTables extends AdminPage {
         return $this->view('docalist-core:table/copy', [
             'tableName' => $tableName,
             'tableInfo' => $tableInfo,
-            'error' => $error
+            'error' => $error,
         ]);
     }
 
     /**
      * Modifie les propriétés d'une table d'autorité.
      */
-    public function actionTableProperties($tableName) {
+    public function actionTableProperties($tableName)
+    {
         $tableInfo = $this->tableInfo($tableName);
 
         $error = '';
@@ -228,20 +232,21 @@ class AdminTables extends AdminPage {
         return $this->view('docalist-core:table/properties', [
             'tableName' => $tableName,
             'tableInfo' => $tableInfo,
-            'error' => $error
+            'error' => $error,
         ]);
     }
 
     /**
      * Supprime une table d'autorité.
      */
-    public function actionTableDelete($tableName, $confirm = false) {
+    public function actionTableDelete($tableName, $confirm = false)
+    {
         // Vérifie que la table existe
         $this->tableInfo($tableName);
 
         // Demande confirmation
         if (! $confirm) {
-            $msg  = __('La table "%s" va être supprimée. ', 'docalist-core');
+            $msg = __('La table "%s" va être supprimée. ', 'docalist-core');
             $msg .= __('Cette action ne peut pas être annulée.', 'docalist-core');
             $msg .= '<br />';
             $msg .= __('Assurez-vous que cette table n\'est plus utilisée. ', 'docalist-core');

@@ -22,7 +22,8 @@ use Docalist\Repository\Exception\EntityNotFoundException;
  * Un dépôt permettant de stocker des entités dans la table wp_posts de
  * WordPress.
  */
-class PostTypeRepository extends Repository {
+class PostTypeRepository extends Repository
+{
     /**
      * Le nom du custom post type, c'est-à-dire la valeur qui sera stockée dans
      * le champ post_type de la table wp_posts pour chacune des entités de ce
@@ -74,7 +75,8 @@ class PostTypeRepository extends Repository {
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      */
-    public function __construct($postType, $type = 'Docalist\Type\Entity') {
+    public function __construct($postType, $type = 'Docalist\Type\Entity')
+    {
         // Initialise le dépôt
         parent::__construct($type);
 
@@ -89,11 +91,13 @@ class PostTypeRepository extends Repository {
      *
      * @return string
      */
-    public function postType() {
+    public function postType()
+    {
         return $this->postType;
     }
 
-    protected function checkId($id) {
+    protected function checkId($id)
+    {
         // On n'accepte que des entiers positifs non nuls
         if (is_int($id) && $id > 0) {
             return $id;
@@ -110,7 +114,8 @@ class PostTypeRepository extends Repository {
         throw new BadIdException($id, 'int > 0');
     }
 
-    public function has($id) {
+    public function has($id)
+    {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
 
@@ -118,18 +123,20 @@ class PostTypeRepository extends Repository {
         return false !== WP_Post::get_instance($id);
     }
 
-    protected function loadData($id) {
+    protected function loadData($id)
+    {
         // Charge le post wordpress
         if (false === $post = WP_Post::get_instance($id)) {
             throw new EntityNotFoundException($id);
         }
-// TODO : if post_type pas bon -> Exception
+
         // Ok
         return (array) $post;
     }
 
-    protected function saveData($id, $post) {
-        global $wpdb;
+    protected function saveData($id, $post)
+    {
+        $wpdb = docalist('wordpress-database');
 
         // Injecte les valeurs par défaut (uniquement celles qui sont indispensables)
         $this->postDefaults($post);
@@ -170,7 +177,8 @@ class PostTypeRepository extends Repository {
      *
      * @param array $post
      */
-    protected function postDefaults(array & $post) {
+    protected function postDefaults(array & $post)
+    {
         /*
          * Remarques :
          * - get_default_post_to_edit() n'est pas adaptée : cela prend en compte
@@ -250,39 +258,21 @@ class PostTypeRepository extends Repository {
         }
     }
 
-    protected function deleteData($id) {
+    protected function deleteData($id)
+    {
         if (! wp_delete_post($id, true)) {
             throw new EntityNotFoundException($id);
         }
     }
 
-    /**
-     * Indique si la base est vide.
-     *
-     * @return boolean
-     */
-/*
-    public function isEmpty() {
-        global $wpdb;
-
-        $sql = "SELECT ID FROM $wpdb->posts WHERE post_type='$this->postType' LIMIT 1";
-        $count = $wpdb->query($sql); // false=error, 0=vide, 1=non vide
-        if ($count === false) {
-            die("ERREUR SQL : <code>$sql</code>");
-        }
-
-        return $count ? false : true; // ! $count
-    }
-*/
-    public function count() {
-        global $wpdb;
+    public function count()
+    {
+        $wpdb = docalist('wordpress-database');
 
         $type = $this->postType();
         $sql = "SELECT count(*) FROM $wpdb->posts WHERE post_type='$type'";
 
         return (int) $wpdb->get_var($sql);
-        // à voir wp_count_posts() retourne un objet = count par post_status
-        // faire la somme pour éviter la requête sql içi ?
     }
 
     /**
@@ -291,23 +281,23 @@ class PostTypeRepository extends Repository {
      * @param string $sql Requête sql à exécuter.
      * @param string $msg Message à afficher.
      */
-
-    private function sql($sql, $msg) {
-        global $wpdb;
+    private function sql($sql, $msg)
+    {
+        $wpdb = docalist('wordpress-database');
 
         $wpdb->query($sql);
         if ($wpdb->last_error) {
             $msg .= ". Erreur dans la requête SQL <code>$sql</code>";
             do_action('docalist_biblio_deleteall_progress', $msg);
-        }
-        else {
+        } else {
             $msg .= ' (' . $wpdb->rows_affected . ')';
             do_action('docalist_biblio_deleteall_progress', $msg);
         }
     }
 
-    public function deleteAll() {
-        global $wpdb;
+    public function deleteAll()
+    {
+        $wpdb = docalist('wordpress-database');
 
         $type = $this->postType();
         $count = $this->count();
@@ -388,11 +378,12 @@ class PostTypeRepository extends Repository {
      *
      * @return array Un post wordpress sous la forme d'un tableau.
      */
-    protected function encode(array $data) {
+    protected function encode(array $data)
+    {
         $post = [];
 
         // Transfère les champs mappés de la notice dans le post wordpress
-        foreach(static::$fieldMap as $dst => $src) {
+        foreach (static::$fieldMap as $dst => $src) {
             if (isset($data[$src])) {
                 $post[$dst] = $data[$src];
                 unset($data[$src]);
@@ -414,7 +405,8 @@ class PostTypeRepository extends Repository {
      *
      * @return array Les données de l'entité.
      */
-    protected function decode($post, $id) {
+    protected function decode($post, $id)
+    {
         // Si c'est un nouveau post, il se peut que post_excerpt soit vide
         if (empty($post['post_excerpt'])) {
             //die('post_excerpt vide ' . __FILE__ . ':' . __LINE__);
@@ -427,7 +419,7 @@ class PostTypeRepository extends Repository {
         }
 
         // Initialise les champs virtuels de la notice à partir des champs wordpress
-        foreach(static::$fieldMap as $src => $dst) {
+        foreach (static::$fieldMap as $src => $dst) {
             if (isset($post[$src]) && $post[$src] !== '') {
                 $data[$dst] = $post[$src];
             }

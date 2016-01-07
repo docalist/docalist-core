@@ -24,7 +24,8 @@ use Docalist\Services;
  *
  * @return mixed
  */
-function docalist($service) {
+function docalist($service)
+{
     static $services = null; /* @var $services Services */
 
     // Initialise le gestionnaire de services lors du premier appel
@@ -32,16 +33,16 @@ function docalist($service) {
         // Initialise l'autoloader
         require_once __DIR__ . '/class/Autoloader.php';
         $autoloader = new Autoloader([
-            'Docalist'       => __DIR__ . '/class',
-            'Symfony'        => __DIR__ . '/lib/Symfony',
-            'Psr\Log'        => __DIR__ . '/lib/psr/log/Psr/Log',
-            'Monolog'        => __DIR__ . '/lib/monolog/monolog/src/Monolog',
-            'Docalist\Tests' => __DIR__ . '/tests/Docalist'
+            'Docalist' => __DIR__ . '/class',
+            'Symfony' => __DIR__ . '/lib/Symfony',
+            'Psr\Log' => __DIR__ . '/lib/psr/log/Psr/Log',
+            'Monolog' => __DIR__ . '/lib/monolog/monolog/src/Monolog',
+            'Docalist\Tests' => __DIR__ . '/tests/Docalist',
         ]);
 
         // Initialise le gestionnaire de services
         $services = new Services([
-            'autoloader' => $autoloader
+            'autoloader' => $autoloader,
         ]);
 
         // Le gestionnaire de services est lui-même un service

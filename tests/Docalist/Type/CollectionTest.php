@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,20 +11,17 @@
  * @subpackage  Tests
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Tests\Type;
 
 use WP_UnitTestCase;
-
-use Docalist\Type\Object;
 use Docalist\Type\Collection;
-
 use Docalist\Tests\Type\Fixtures\Client;
-use Docalist\Tests\Type\Fixtures\Facture;
 use Docalist\Type\Any;
 
-class CollectionTest extends WP_UnitTestCase {
-    public function testNew() {
+class CollectionTest extends WP_UnitTestCase
+{
+    public function testNew()
+    {
         $c = new Collection();
         $this->assertSame([], $c->value());
 
@@ -38,7 +35,8 @@ class CollectionTest extends WP_UnitTestCase {
         new Collection('12');
     }
 
-    public function testSet() {
+    public function testSet()
+    {
         $c = new Collection();
         $c[12] = 12;
         $this->assertSame(12, $c[12]->value());
@@ -46,13 +44,14 @@ class CollectionTest extends WP_UnitTestCase {
         $c[] = 13;
         $this->assertSame(13, $c[13]->value());
 
-        $this->assertSame([12,13], $c->value());
+        $this->assertSame([12, 13], $c->value());
 
         $c[] = new Any('aa');
-        $this->assertSame([12,13,'aa'], $c->value());
+        $this->assertSame([12, 13, 'aa'], $c->value());
     }
 
-    public function testIsset() {
+    public function testIsset()
+    {
         $c = new Collection();
         $this->assertFalse(isset($c[0]));
 
@@ -68,16 +67,17 @@ class CollectionTest extends WP_UnitTestCase {
 
         $init = new Collection(['a']);
         $c = new Collection($init);
-        $this->assertTrue($c->equals($init));
+        $this->assertTrue($c == $init);
     }
 
-    public function testGet() {
+    public function testGet()
+    {
         $t = ['a', true, 5, 3.14];
         $c = new Collection($t);
 
-        foreach($t as $i => $v) {
+        foreach ($t as $i => $v) {
             $this->assertInstanceOf('Docalist\Type\Any', $c[$i]);
-            $this->assertSame($t[$i], $c[$i]->value());
+            $this->assertSame($v, $c[$i]->value());
         }
     }
 
@@ -88,7 +88,8 @@ class CollectionTest extends WP_UnitTestCase {
         echo $a[0];
     }
 
-    public function testCount() {
+    public function testCount()
+    {
         $c = new Collection();
         $this->assertSame(0, $c->count());
 
@@ -99,12 +100,13 @@ class CollectionTest extends WP_UnitTestCase {
         $this->assertSame(3, $c->count());
     }
 
-    public function testGetIterator() {
+    public function testGetIterator()
+    {
         $c = new Collection();
         $this->assertInstanceOf('Iterator', $c->getIterator());
 
         $gotit = false;
-        foreach($c->getIterator() as $i) {
+        foreach ($c->getIterator() as $i) {
             $gotit = true;
         }
         $this->assertFalse($gotit);
@@ -113,13 +115,14 @@ class CollectionTest extends WP_UnitTestCase {
         $this->assertInstanceOf('Iterator', $c->getIterator());
 
         $t = [];
-        foreach($c->getIterator() as $i => $v) {
+        foreach ($c->getIterator() as $i => $v) {
             $t[$i] = $v->value();
         }
         $this->assertSame(['a', true, 5, 3.14], $t);
     }
 
-    public function testFirst() {
+    public function testFirst()
+    {
         $c = new Collection();
         $this->assertFalse($c->first());
         $this->assertFalse($c->current());
@@ -133,7 +136,8 @@ class CollectionTest extends WP_UnitTestCase {
         $this->assertSame(0, $c->key());
     }
 
-    public function testLast() {
+    public function testLast()
+    {
         $c = new Collection();
         $this->assertFalse($c->last());
         $this->assertFalse($c->current());
@@ -147,7 +151,8 @@ class CollectionTest extends WP_UnitTestCase {
         $this->assertSame(3, $c->key());
     }
 
-    public function testNext() {
+    public function testNext()
+    {
         $c = new Collection();
         $this->assertFalse($c->next());
         $this->assertFalse($c->current());
@@ -165,37 +170,39 @@ class CollectionTest extends WP_UnitTestCase {
 
     // key() et current() déjà testés avec first, last, next
 
-    public function testKeys() {
+    public function testKeys()
+    {
         $c = new Collection();
         $this->assertSame([], $c->keys());
 
         $c = new Collection(['a', true, 5, 3.14]);
-        $this->assertSame([0,1,2,3], $c->keys());
+        $this->assertSame([0, 1, 2, 3], $c->keys());
 
         unset($c[1]);
         unset($c[3]);
-        $this->assertSame([0,2], $c->keys());
+        $this->assertSame([0, 2], $c->keys());
 
         $c[9] = 'neuf';
-        $this->assertSame([0,2,9], $c->keys());
+        $this->assertSame([0, 2, 9], $c->keys());
 
         $c->refreshKeys();
-        $this->assertSame([0,1,2], $c->keys());
+        $this->assertSame([0, 1, 2], $c->keys());
     }
 
-    public function testKeyedCollection() {
+    public function testKeyedCollection()
+    {
         $client = new Client([
             'name' => 'Dupont',
             'factures' => [
-                [ 'code' => 'f1', 'label' => 'facture 1', 'total' => 12],
-                [ 'code' => 'f2', 'label' => 'facture 2', 'total' => 24],
-                [ 'code' => 'f3', 'label' => 'facture 3', 'total' => 36],
-            ]
+                ['code' => 'f1', 'label' => 'facture 1', 'total' => 12],
+                ['code' => 'f2', 'label' => 'facture 2', 'total' => 24],
+                ['code' => 'f3', 'label' => 'facture 3', 'total' => 36],
+            ],
         ]);
 
         $this->assertSame(['f1', 'f2', 'f3'], $client->factures->keys());
 
-        $client->factures['willNotBeUsed'] = [ 'code' => 'f4', 'label' => 'facture 4', 'total' => 48];
+        $client->factures['willNotBeUsed'] = ['code' => 'f4', 'label' => 'facture 4', 'total' => 48];
         $this->assertSame(['f1', 'f2', 'f3', 'f4'], $client->factures->keys());
 
         $this->assertTrue(isset($client->factures['f1']));
@@ -216,11 +223,12 @@ class CollectionTest extends WP_UnitTestCase {
         $this->assertSame(['f1', 'f3', 'f999'], $client->factures->keys());
     }
 
-    public function testToString() {
+    public function testToString()
+    {
         $a = new Collection();
         $b = new Collection(['a', 'b']);
 
-        $this->assertSame("[ ]", $a->__toString());
-        $this->assertStringMatchesFormat('[%w"a"%w"b"%w]', $b->__toString());
+        $this->assertSame('[]', $a->__toString());
+        $this->assertStringMatchesFormat('[%w"a",%w"b"%w]', $b->__toString());
     }
 }

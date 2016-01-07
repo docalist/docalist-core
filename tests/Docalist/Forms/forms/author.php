@@ -2,14 +2,14 @@
 use Docalist\Forms\Form;
 
 $form = new Form();
-$form->label('Saisie d\'un auteur');
+$form->setLabel('Saisie d\'un auteur');
 
-$form->input('test')->label('test');
+$form->input('test')->setLabel('test');
 
-$author = $form->fieldset('auteur répétable+prénom répétable')->name('author')->repeatable("fdsfsd");
-$author->input('surname')->label('Nom');
-$author->input('firstname')->label('Prenom')->repeatable(true);
-$author->select('role')->label('Rôle')->options(array(
+$author = $form->fieldset()->setLabel('auteur répétable+prénom répétable')->setName('author')->setRepeatable("fdsfsd");
+$author->input('surname')->setLabel('Nom');
+$author->input('firstname')->setLabel('Prenom')->setRepeatable(true);
+$author->select('role')->setLabel('Rôle')->setOptions(array(
     'trad.',
     'pref.',
 ));

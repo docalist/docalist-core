@@ -1,8 +1,9 @@
 <?php
+
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -11,7 +12,6 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist;
 
 use Exception;
@@ -39,7 +39,8 @@ use Exception;
  * Remarque : l'extension '.php' est ajoutée automatiquement au path de la vue
  * et ne doit pas être indiquée dans le nom de la vue.
  */
-class Views {
+class Views
+{
     /**
      * Exécute une vue et affiche le résultat.
      *
@@ -80,7 +81,8 @@ class Views {
      *
      * @throws Exception si la vue n'existe pas.
      */
-    public function display($view, array $data = []) {
+    public function display($view, array $data = [])
+    {
         // Détermine le path de la vue
         if (false === $path = $this->path($view)) {
             $msg = __('Vue non trouvée "%s"', 'docalist-core');
@@ -88,8 +90,9 @@ class Views {
         }
 
         // La closure qui exécute le template (sandbox)
-        $render = function(array $view) {
+        $render = function (array $view) {
             extract($view, EXTR_OVERWRITE | EXTR_REFS);
+
             return require $view['path'];
         };
 
@@ -116,9 +119,11 @@ class Views {
      *
      * @throws Exception si la vue n'existe pas.
      */
-    public function render($view, array $data = []) {
+    public function render($view, array $data = [])
+    {
         ob_start();
         $this->display($view, $data);
+
         return ob_get_clean();
     }
 
@@ -134,7 +139,8 @@ class Views {
      *
      * @return string|false Le path de la vue ou false si la vue n'existe pas.
      */
-    public function path($view) {
+    public function path($view)
+    {
         static $themeDir = null;
 
         // Initialise themeDir au premier appel
@@ -151,7 +157,7 @@ class Views {
         $view = substr($view, $pt + 1);
 
         // Teste si la vue existe dans le thème en cours
-        $path = "$themeDir/views/$plugin/$view.php" ;
+        $path = "$themeDir/views/$plugin/$view.php";
         if (file_exists($path)) {
             return $path;
         }
@@ -167,13 +173,14 @@ class Views {
     }
 
     /**
-     * Détermine si une vue existe
+     * Détermine si une vue existe.
      *
      * @param string $view Le nom de la vue à tester
      *
      * @return bool
      */
-    public function has($view) {
+    public function has($view)
+    {
         return false !== $this->path($view);
     }
 }

@@ -13,76 +13,77 @@
  */
 namespace Docalist\Table;
 
-use Docalist\Type\Object;
-use Docalist\Type\String;
+use Docalist\Type\Composite;
+use Docalist\Type\Text;
 use Docalist\Type\Boolean;
 
 /**
  * Paramètres d'une table d'autorité.
  *
- * @property String $name Nom de la table
- * @property String $path Path (absolu) de la table
- * @property String $label Libellé de la table
- * @property String $format Format de la table (structure)
- * @property String $type Type de la table (nature)
+ * @property Text $name Nom de la table
+ * @property Text $path Path (absolu) de la table
+ * @property Text $label Libellé de la table
+ * @property Text $format Format de la table (structure)
+ * @property Text $type Type de la table (nature)
  * @property Boolean $readonly true : table prédéfinie, false : table utilisateur
- * @property String $creation Date de création
- * @property String $lastupdate Date de dernière modification
+ * @property Text $creation Date de création
+ * @property Text $lastupdate Date de dernière modification
  */
-class TableInfo extends Object {
-    // TODO : Gère l'ancien champ user, à enlever quand les settings auront ét éréenregistrés
-    public function assign($value) {
-        unset($value['user']);
-        return parent::assign($value);
-    }
-
-    protected static function loadSchema() {
-        // @formatter:off
+class TableInfo extends Composite
+{
+    public static function loadSchema()
+    {
         return [
             'fields' => [
                 'name' => [
+                    'type' => 'Docalist\Type\Text',
                     'label' => __('Nom', 'docalist-core'),
                     'description' => __('Nom de code de la table (doit être unique)', 'docalist-core'),
                 ],
 
                 'path' => [
+                    'type' => 'Docalist\Type\Text',
                     'label' => __('Path', 'docalist-core'),
                     'description' => __('Path (absolu) de la table.', 'docalist-core'),
                 ],
 
                 'label' => [
+                    'type' => 'Docalist\Type\Text',
                     'label' => __('Libellé', 'docalist-core'),
                     'description' => __('Libellé de la table', 'docalist-core'),
                 ],
 
                 'format' => [
+                    'type' => 'Docalist\Type\Text',
                     'label' => __('Format', 'docalist-core'),
                     'description' => __('Format de la table (table, thesaurus, conversion, etc.)', 'docalist-core'),
                 ],
 
                 'type' => [
+                    'type' => 'Docalist\Type\Text',
                     'label' => __('Type', 'docalist-core'),
                     'description' => __('Type de table (pays, langues, etc.)', 'docalist-core'),
                 ],
 
                 'readonly' => [
-                    'type' => 'bool',
+                    'type' => 'Docalist\Type\Boolean',
                     'default' => true,
                     'label' => __('Table en lecture seule', 'docalist-core'),
                     'description' => __("Indique s'il s'agit d'une table prédéfinie ou d'une table personnalisée.", 'docalist-core'),
                 ],
 
                 'creation' => [
+                    'type' => 'Docalist\Type\DateTime',
                     'label' => __('Date de création', 'docalist-core'),
-                    'description' => __("Date/heure à laquelle la table a été créée.", 'docalist-core'),
+                    'description' => __('Date/heure à laquelle la table a été créée.', 'docalist-core'),
                 ],
 
                 'lastupdate' => [
+                    'type' => 'Docalist\Type\DateTime',
                     'label' => __('Dernière création', 'docalist-core'),
-                    'description' => __("Date/heure à laquelle la table a modifiée pour la dernière fois.", 'docalist-core'),
-                ]
-            ]
+                    'description' => __('Date/heure à laquelle la table a modifiée pour la dernière fois.', 'docalist-core'),
+                ],
+            ],
         ];
-        // @formatter:on
     }
 }

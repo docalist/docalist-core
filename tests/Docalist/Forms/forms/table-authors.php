@@ -2,32 +2,32 @@
 use Docalist\Forms\Form;
 
 $form = new Form();
-$form->label('Saisie des auteurs dans une table')
-     ->description('Indiquez les auteurs du document en séparant les auteurs physiques (personnes) des auteurs moraux (organismes).');
+$form->setLabel('Saisie des auteurs dans une table')
+     ->setDescription('Indiquez les auteurs du document en séparant les auteurs physiques (personnes) des auteurs moraux (organismes).');
 
-$form->input('test')->label('test');
+$form->input('test')->setLabel('test');
 
 $author = $form->table('author')
-    ->repeatable(true)
-    ->label('Personnes')
-    ->description('Indiquez les personnes auteurs du document.');
+    ->setRepeatable(true)
+    ->setLabel('Personnes')
+    ->setDescription('Indiquez les personnes auteurs du document.');
 
-$author->input('surname')->label('Nom');
-$author->input('firstname')->label('Prénom')->repeatable(true);
-$author->select('role')->label('Rôle')->options(array(
+$author->input('surname')->setLabel('Nom');
+$author->input('firstname')->setLabel('Prénom')->setRepeatable(true);
+$author->select('role')->setLabel('Rôle')->setOptions(array(
     'trad.',
     'pref.',
 ));
 
 $org = $form->table('organisation')
-    ->repeatable(true)
-    ->label('Organismes')
-    ->description('Indiquez les organismes auteurs du document.');
+    ->setRepeatable(true)
+    ->setLabel('Organismes')
+    ->setDescription('Indiquez les organismes auteurs du document.');
 
-$org->input('name')->label('Nom');
-$org->input('city')->label('Ville');
-$org->input('country')->label('Pays');
-$org->select('role')->label('Rôle')->options(array(
+$org->input('name')->setLabel('Nom');
+$org->input('city')->setLabel('Ville');
+$org->input('country')->setLabel('Pays');
+$org->select('role')->setLabel('Rôle')->setOptions(array(
     'com.',
     'financ.',
 ));

@@ -1,22 +1,35 @@
 <?php
-    use Docalist\Forms\Form, Docalist\Forms\Themes, Docalist\Forms\Assets;
+    use Docalist\Forms\Form;
 
+    define('WP_USE_THEMES', false);
+    require(__DIR__ . '/../../../../../wordpress/wp-load.php');
+/*
+function __($x) {return $x;}
+function load_plugin_textdomain() {}
+function is_admin() {return false;}
+function add_filter() {}
+function add_action() {}
+function apply_filters($tag, $value) {return $value;}
+function wp_upload_dir() {}
+function get_template_directory() {return realpath(__DIR__ . '/../../../../../themes/Prisme2012');}
+define('WP_PLUGIN_DIR', realpath(__DIR__ . '/../../../../'));
+*/
     // charge docalist-form
-    require __DIR__ . '/../src/autoload.php';
+//    require __DIR__ . '/../../../docalist.php';
+//    new Docalist\Core\Plugin();
 
     $_GET += array(
         'file' => 'form1',
-        'theme' => 'default',
-        'options' => array(),
+        'theme' => 'base',
+        'options' => [],
     );
 
     // Si un nom de formulaire a été indiqué, on le charge
     $file = $_GET['file']; // nom du formulaire
     $theme = $_GET['theme']; // le thème à utiliser pour le rendu
-    $options = array_fill_keys($_GET['options'], true); // options
+//    $options = array_fill_keys($_GET['options'], true); // options
     $form = null; // l'objet formulaire
     $path = null; // son path
-    $error = null; // message d'erreur
     $isPost = $_SERVER['REQUEST_METHOD'] === 'POST';
 
     $path = __DIR__ . '/forms/' . $file . '.php';
@@ -25,14 +38,11 @@
         die("Le formulaire '$form' indiqué en paramètre n'existe pas.");
 
     // Charge le formulaire
-    $form = require $path;
+    $form = require $path; /* @var Form $form */
     $source = file_get_contents($path);
 
     // Prépare le rendu du formulaire, fait le bind
     if ($isPost) $form->bind($_POST);
-
-    $assets = Themes::assets($theme)->add($form->assets());
-
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -41,7 +51,9 @@
     <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <?php assets($assets, 'top') ?>
+    <?php
+        wp_head();
+    ?>
     <script src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js" type="text/javascript"></script>
     <link href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css" type="text/css" rel="stylesheet" />
     <link href="docalist-forms-tests.css" type="text/css" rel="stylesheet" />
@@ -62,7 +74,7 @@
             <li>
                 <a href="#html" data-toggle="tab">Code html généré</a>
             </li>
-
+<!--
             <li>
                 <a href="#assets" data-toggle="tab">Assets</a>
             </li>
@@ -70,7 +82,7 @@
             <li>
                 <a href="#dump" data-toggle="tab">Dump</a>
             </li>
-
+ -->
             <?php if ($isPost): ?>
             <li>
                 <a href="#data" data-toggle="tab">$_POST</a>
@@ -82,7 +94,7 @@
             <div id="render" class="well">
                 <?php
                     ob_start();
-                    $form->render($theme, $options);
+                    $form->display($theme);
                     $html = ob_get_flush();
                 ?>
             </div>
@@ -101,22 +113,22 @@
                 </p>
                 <?php prettyPrint($html) ?>
             </div>
-
+<!--
             <div id="assets">
                 <p>
                     Voici la liste des assets (fichiers javascript et feuilles de style CSS)
                     qui sont déclarés par ce formulaire et/ou par le thème utilisé:
                 </p>
-                <?php dumpArray($assets, '// Tableau retourné par $form->assets()') ?>
+                <?php //dumpArray($assets, '// Tableau retourné par $form->assets()') ?>
             </div>
 
             <div id="dump">
                 <p>
                     Voici un dump du formulaire tel qu'il est stocké en mémoire :
                 </p>
-                <?php dumpArray($form->toArray(true), '// Tableau retourné par $form->toArray(true)') ?>
+                <?php //dumpArray($form->toArray(true), '// Tableau retourné par $form->toArray(true)') ?>
             </div>
-
+ -->
             <?php if ($isPost): ?>
             <div id="data">
                 <p>
@@ -134,11 +146,11 @@
         </div>
     </div>
 
-    <?php assets($assets, 'bottom') ?>
+    <?php //assets($assets, 'bottom') ?>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
     <script src="docalist-forms-tests.js" type="text/javascript"></script>
-
+    <?php wp_footer(); ?>
 </body>
 </html>
 <?php
@@ -147,37 +159,41 @@ function choose() {
     // Crée la liste des formulaires dispos
     $files = glob(__DIR__ . '/forms/*.php', GLOB_NOSORT);
     foreach($files as &$file) $file = basename($file, '.php');
+    $files = array_combine($files, $files);
 
     $form = new Form('', 'get');
 
     $form->select('file')
-         ->label('Formulaire à tester :')
-         ->options($files)
-         ->attribute('size', 20);
+         ->setLabel('Formulaire à tester :')
+         ->setOptions($files)
+         ->setAttribute('size', 20);
 
     $form->select('theme')
-         ->label('Thème à utiliser :')
-         ->options(Themes::all())
-         ->attribute('size', 3);
+         ->setLabel('Thème à utiliser :')
+         ->setOptions(['base' => 'base', 'wordpress' => 'wordpress'])
+         ->setFirstOption(false)
+         ->setAttribute('size', 3);
 
     $form->checklist('options')
-         ->label('Options')
-         ->options(array(
+         ->setLabel('Options')
+         ->setOptions(array(
                'indent'  => ' Indenter le code html',
                'comment' => ' Nom des templates'
            ));
 
     $form->submit('Tester ce formulaire »»»');
 
-    $form->bind($_GET)->render();
+    $form->bind($_GET)->display();
 }
-
+/*
 function assets($assets, $pos) {
+        var_dump($assets); die();
     foreach($assets->get(null, $pos) as $asset) {
         extract($asset);
 
-        if ( false === strpos($src, '//')) {
-            $src = '../src/' . $src;
+        if (isset($src) && false === strpos($src, '//')) {
+            $src = plugins_url('docalist-core/views/forms/'.$src);
+            var_dump($src); die();
         }
 
         if ($condition) echo "<!--[if $condition]>\n";
@@ -189,8 +205,8 @@ function assets($assets, $pos) {
         if ($condition) echo "<![endif]-->\n";
 
     }
-
 }
+*/
 
 function prettyPrint($h, $lang='php') {
     echo '<pre class="prettyprint lang-', $lang, '">';

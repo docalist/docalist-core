@@ -11,7 +11,6 @@
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist;
 
 use Closure;
@@ -21,7 +20,8 @@ use Psr\Log\LoggerInterface;
 /**
  * Gestionnaire de services Docalist.
  */
-class Services {
+class Services
+{
     /**
      * Liste des services déclarés.
      *
@@ -30,7 +30,6 @@ class Services {
     protected $services;
 
     /**
-     *
      * @var LoggerInterface
      */
     protected $log;
@@ -40,8 +39,9 @@ class Services {
      *
      * @param array $services
      */
-    public function __construct(array $services = []) {
-       $this->services = $services;
+    public function __construct(array $services = [])
+    {
+        $this->services = $services;
     }
 
     /**
@@ -63,11 +63,13 @@ class Services {
      *
      * @return self
      */
-    public function add($id, $service = null) {
+    public function add($id, $service = null)
+    {
         if (is_array($id)) {
-            foreach($id as $id => $service) {
+            foreach ($id as $id => $service) {
                 $this->add($id, $service);
             }
+
             return $this;
         }
 
@@ -94,7 +96,8 @@ class Services {
      *
      * @return bool
      */
-    public function has($id) {
+    public function has($id)
+    {
         return isset($this->services[$id]);
     }
 
@@ -111,7 +114,8 @@ class Services {
      *
      * @return bool
      */
-    public function isLoaded($id) {
+    public function isLoaded($id)
+    {
         return isset($this->services[$id])
             && ! ($this->services[$id] instanceof Closure);
     }
@@ -129,7 +133,8 @@ class Services {
      *
      * @return mixed
      */
-    public function get($id) {
+    public function get($id)
+    {
         if (! isset($this->services[$id])) {
             $message = __('Service "%s" non trouvé.', 'docalist-core');
             throw new LogicException(sprintf($message, $id));
@@ -151,7 +156,8 @@ class Services {
      * @return array un tableau contenant les noms de tous les services, dans
      * l'ordre dans lequel ils ont été déclarés.
      */
-    public function names() {
+    public function names()
+    {
         return array_keys($this->services);
     }
 
@@ -160,9 +166,10 @@ class Services {
      *
      * @eturn array un tableau contenant les noms de tous les services.
      */
-    public function state() {
+    public function state()
+    {
         $t = $this->services;
-        foreach($t as $id => & $state) {
+        foreach ($t as $id => & $state) {
             $state = $this->isLoaded($id);
         }
         unset($state);

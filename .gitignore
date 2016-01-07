@@ -1,7 +1,6 @@
 # From https://github.com/github/gitignore/blob/master/Global/Eclipse.gitignore
 
 *.pydevproject
-.metadata
 .gradle
 bin/
 tmp/
@@ -39,3 +38,6 @@ local.properties
 
 # TeXlipse plugin
 .texlipse
+
+# Doc sur l'api générée par apigen
+apidoc/

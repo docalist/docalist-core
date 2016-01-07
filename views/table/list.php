@@ -12,21 +12,26 @@
  * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Views;
+
+use Docalist\Core\AdminTables;
 use Docalist\Table\TableInfo;
 use Docalist\Table\TableManager;
 
 /**
  * Liste des tables d'autorité.
  *
- * @param TableInfo[] $tables Liste des tables.
- * @param string[] $formats Formats de tables disponibles.
- * @param string[] $types Types de tables disponibles.
- * @param string $format Format en cours.
- * @param string $type Type en cours.
- * @param string $readonly Readonly ?
+ * @var AdminTables $this
+ * @var TableInfo[] $tables     Liste des tables.
+ * @var string[]    $formats    Formats de tables disponibles.
+ * @var string[]    $types      Types de tables disponibles.
+ * @var string      $format     Format en cours.
+ * @var string      $type       Type en cours.
+ * @var string      $readonly   Critère readonly en cours.
+ * @var string      $sort       Critère de tri en cours.
+ * @var string      $order      Ordre de tri en cours.
  */
 
-$tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
+$tableManager = docalist('table-manager'); /* @var TableManager $tableManager */
 ?>
 <style>
     .fixed .column-readonly {width: 10%}
@@ -50,15 +55,14 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
     }
 </style>
 <div class="wrap">
-    <?= screen_icon() ?>
-    <h2>
+    <h1>
         <?= $format ? formatFormat($format) : __("Gestion des tables d'autorité", 'docalist-core') ?>
         <?php
             if ($type) {
                 echo ' - ', formatType($type);
             }
         ?>
-    </h2>
+    </h1>
 
     <p class="description"><?= __("
         Cette page vous permet de gérer les tables Docalist.
@@ -89,11 +93,11 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
 
                 <?php
                 /** --------------------------------------------------------------
-                 *  Sélecteur Readonly
+                 *  Sélecteur Readonly.
                  *  --------------------------------------------------------------*/
                 ?>
                 <select name="readonly" onchange="this.form.submit()">
-                    <?php foreach([null, '0', '1'] as $mode): ?>
+                    <?php foreach ([null, '0', '1'] as $mode): ?>
                         <?php
                             $count = count($tableManager->tables($type, $format, $mode));
                             if ($count === 0) {
@@ -109,12 +113,12 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
 
                 <?php
                 /** --------------------------------------------------------------
-                 *  Sélecteur Format
+                 *  Sélecteur Format.
                  *  --------------------------------------------------------------*/
                 ?>
                 <?php prepareSelect($formats, 'formatFormat'); ?>
                 <select name="format" onchange="this.form.submit()">
-                    <?php foreach($formats as $fmt => $label): ?>
+                    <?php foreach ($formats as $fmt => $label): ?>
                         <?php
                             $count = count($tableManager->tables($type, $fmt, $readonly));
                             if ($count === 0) {
@@ -129,12 +133,12 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
 
                 <?php
                 /** --------------------------------------------------------------
-                 *  Sélecteur type
+                 *  Sélecteur type.
                  *  --------------------------------------------------------------*/
                 ?>
                 <?php prepareSelect($types, 'formatType'); ?>
                 <select name="type" onchange="this.form.submit()">
-                    <?php foreach($types as $typ => $label): ?>
+                    <?php foreach ($types as $typ => $label): ?>
                         <?php
                             $count = count($tableManager->tables($typ, $format, $readonly));
                             if ($count === 0) {
@@ -149,7 +153,7 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
 
                 <?php
                 /** --------------------------------------------------------------
-                 *  Bouton "réinitialiser les filtres"
+                 *  Bouton "réinitialiser les filtres".
                  *  --------------------------------------------------------------*/
                 ?>
                 <?php if ($format || $type || !is_null($readonly) || !($sort === 'label' && $order === 'asc')): ?>
@@ -171,15 +175,15 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
 
         <?php
         $nb = 0;
-        foreach($tables as $table) : /* @var $table TableInfo */
+        foreach ($tables as $table) : /* @var $table TableInfo */
             ++$nb;
 
             $tableName = $table->name();
 
             $edit = esc_url($this->url('TableEdit', $tableName));
-            $copy = esc_url($this->url('TableCopy',$tableName));
+            $copy = esc_url($this->url('TableCopy', $tableName));
             $properties = esc_url($this->url('TableProperties', $tableName));
-            $delete = esc_url($this->url('TableDelete',$tableName)); ?>
+            $delete = esc_url($this->url('TableDelete', $tableName)); ?>
 
             <tr class="<?= $nb % 2 ? 'alternate' : '' ?>">
                 <td class="column-title">
@@ -265,17 +269,18 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
     </form>
 </div>
 <?php
-    function prepareSelect(&$array, $formatter) {
-//        var_dump($array);
-        $array = array_combine($array, array_map(function($e) use($formatter) {
+    function prepareSelect(&$array, $formatter)
+    {
+        $array = array_combine($array, array_map(function ($e) use ($formatter) {
             return $formatter === 'formatType' ? formatType($e) : formatFormat($e);
         }, $array));
         asort($array, SORT_NATURAL | SORT_FLAG_CASE);
         array_unshift($array, $formatter === 'formatType' ? formatType(null) : formatFormat(null));
     }
 
-    function formatFormat($format) {
-        switch($format) {
+    function formatFormat($format)
+    {
+        switch ($format) {
             case null:
                 return __('Tous les formats', 'docalist-core');
 
@@ -296,8 +301,9 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
         }
     }
 
-    function formatType($type) {
-        switch($type) {
+    function formatType($type)
+    {
+        switch ($type) {
             case null:
                 return __('Tous les contenus', 'docalist-core');
 
@@ -357,12 +363,13 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
         }
     }
 
-    function formatReadonly($readonly) {
+    function formatReadonly($readonly)
+    {
         if (is_null($readonly)) { // switch=loose comparision donc '' = '0' = null
             return __('Tous les types', 'docalist-core');
         }
 
-        switch($readonly) {
+        switch ($readonly) {
             case '0':
                 return __('Personnalisée', 'docalist-core');
 
@@ -374,11 +381,14 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
         }
     }
 
-    function formatDate($date) {
-        return '<abbr title="'. substr($date, 11) .'">' . substr($date, 0, 10) . '</abbr>';
+    function formatDate($date)
+    {
+        return '<abbr title="' . substr($date, 11) . '">' . substr($date, 0, 10) . '</abbr>';
     }
 
-    function tableHeader($sort, $order) { ?>
+    function tableHeader($sort, $order)
+    {
+        ?>
         <tr>
             <?php sortableColumn($sort, $order, 'label', __('Nom', 'docalist-core'), 'asc') ?>
             <th class="column-readonly"><?= __('Type', 'docalist-core') ?></th>
@@ -387,19 +397,23 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
             <?php sortableColumn($sort, $order, 'creation', __('Création', 'docalist-core'), 'desc') ?>
             <?php sortableColumn($sort, $order, 'lastupdate', __('Mise à jour', 'docalist-core'), 'desc') ?>
         </tr>
-    <?php }
+    <?php
 
-    function sortableColumn($sort, $order, $name, $label, $default = 'asc') { ?>
+    }
+
+    function sortableColumn($sort, $order, $name, $label, $default = 'asc')
+    {
+        ?>
         <?php
             $sorted = $sort === $name; // la colonne en cours est triée ?
             $order = ($sorted && $order) ? $order : $default;
-            $reverse = ($order === 'asc') ? 'desc' : 'asc';
+        $reverse = ($order === 'asc') ? 'desc' : 'asc';
 
-            if ($sort === 'label' && $order === 'asc') { // c'est le tri par défaut, simplifie l'url
+        if ($sort === 'label' && $order === 'asc') { // c'est le tri par défaut, simplifie l'url
                 $href = add_query_arg(['sort' => null, 'order' => null]);
-            } else {
-                $href = add_query_arg(['sort' => $name, 'order' => $sorted ? $reverse : $order]);
-            }
+        } else {
+            $href = add_query_arg(['sort' => $name, 'order' => $sorted ? $reverse : $order]);
+        }
         ?>
         <th class="manage-column column-<?=$name?> <?=$sorted ? 'sorted' : 'sortable'?> <?=$sorted ? $order : $reverse ?>">
             <a href="<?=esc_url($href)?>">
@@ -408,5 +422,5 @@ $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
             </a>
         </th>
         <?php
+
     }
-?>

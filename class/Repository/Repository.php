@@ -1,15 +1,15 @@
 <?php
 /**
- * This file is part of a "Docalist Core" plugin.
+ * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
  *
- * @package Docalist
- * @subpackage Core
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @package     Docalist
+ * @subpackage  Core
+ * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Repository;
 
@@ -21,8 +21,8 @@ use Docalist\Repository\Exception\EntityNotFoundException;
 /**
  * Un repository est un dépôt dans lequel on peut stocker des entités.
  */
-abstract class Repository {
-
+abstract class Repository
+{
     /**
      * Le type par défaut des entités de ce dépôt.
      *
@@ -37,7 +37,8 @@ abstract class Repository {
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      */
-    public function __construct($type = 'Docalist\Type\Entity') {
+    public function __construct($type = 'Docalist\Type\Entity')
+    {
         $this->type = $type;
     }
 
@@ -46,7 +47,8 @@ abstract class Repository {
      *
      * @return string Le nom de classe complet des entités.
      */
-    public final function type() {
+    final public function type()
+    {
         return $this->type;
     }
 
@@ -64,7 +66,8 @@ abstract class Repository {
      *
      * @throws BadIdException Si l'identifiant est invalide.
      */
-    protected function checkId($id) {
+    protected function checkId($id)
+    {
         // L'implémentation par défaut accepte les entiers et les chaines
         if (is_int($id) || is_string($id)) {
             return $id;
@@ -88,9 +91,6 @@ abstract class Repository {
      *
      * @param scalar $id L'identifiant de l'entité à charger.
      *
-     * @param string $type Le type de l'entité à retourner (le nom complet de
-     * la classe de l'entité) ou vide pour utiliser le type par défaut du dépôt.
-     *
      * @return Entity Retourne l'entité.
      *
      * @throws BadIdException Si l'identifiant indiqué est invalide (ID manquant
@@ -100,11 +100,9 @@ abstract class Repository {
      *
      * @throws RepositoryException Si une erreur survient durant le chargement.
      */
-    public function load($id, $type = null) {
-        // Utilise le type par défaut si aucun type n'a été indiqué
-        empty($type) && $type = $this->type;
-
-        // Charge l'entité
+    public function load($id)
+    {
+        $type = $this->type;
         return new $type($this->loadRaw($id), null, $id);
     }
 
@@ -122,7 +120,8 @@ abstract class Repository {
      *
      * @throws RepositoryException Si une erreur survient durant le chargement.
      */
-    public final function loadRaw($id) {
+    final public function loadRaw($id)
+    {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
 
@@ -156,7 +155,8 @@ abstract class Repository {
      * @throws RepositoryException Si une erreur survient durant
      * l'enregistrement.
      */
-    public final function save(Entity $entity) {
+    final public function save(Entity $entity)
+    {
         // Vérifie que l'ID de l'entité est correct
         ! is_null($id = $entity->id()) && $id = $this->checkId($id);
 
@@ -203,7 +203,8 @@ abstract class Repository {
      *
      * @throws RepositoryException Si une erreur survient durant la suppression.
      */
-    public final function delete($id) {
+    final public function delete($id)
+    {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
 
@@ -230,7 +231,8 @@ abstract class Repository {
      *
      * @return mixed
      */
-    protected function encode(array $data) {
+    protected function encode(array $data)
+    {
         return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
@@ -246,7 +248,8 @@ abstract class Repository {
      *
      * @throws RepositoryException Si les données ne peuvent pas être décodées.
      */
-    protected function decode($data, $id) {
+    protected function decode($data, $id)
+    {
         if (! is_string($data)) {
             $msg = __('Invalid JSON data in entity %s (%s)', 'docalist-core');
             throw new RepositoryException(sprintf($msg, $id, gettype($data)));

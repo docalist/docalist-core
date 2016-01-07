@@ -2,26 +2,26 @@
 use Docalist\Forms\Form;
 
 $form = new Form();
-$form->label('Formulaire de test pour les select');
+$form->setLabel('Formulaire de test pour les select');
 $t = array('Multiple=false' => false, 'Multiple=true' => true);
 
 foreach ($t as $title=>$multiple) {
 
     $form->tag('h4', $title);
 
-    $form->select('m')->label('que des options, pas de value :')->multiple($multiple)->options(array(
+    $form->select('m')->setLabel('que des options, pas de value :')->setAttribute('multiple', $multiple)->setOptions(array(
         'Mme',
         'Mle',
         'Monsieur'
     ));
 
-    $form->select('m')->label('que des options, monsieur a une value :')->multiple($multiple)->options(array(
+    $form->select('m')->setLabel('que des options, monsieur a une value :')->setAttribute('multiple', $multiple)->setOptions(array(
         'Mme',
         'Mle',
         'M' => 'Monsieur'
     ));
 
-    $form->select('n')->label('que des optgroup, value pour jaune')->multiple($multiple)->options(array(
+    $form->select('n')->setLabel('que des optgroup, value pour jaune')->setAttribute('multiple', $multiple)->setOptions(array(
         'sombres' => array(
             'noir',
             'gris',
@@ -34,7 +34,7 @@ foreach ($t as $title=>$multiple) {
         ),
     ));
 
-    $form->select('n')->label('trois options puis un optgroup puis deux options')->multiple($multiple)->options(array(
+    $form->select('n')->setLabel('trois options puis un optgroup puis deux options')->setAttribute('multiple', $multiple)->setOptions(array(
         'noir',
         'gris',
         'marron',

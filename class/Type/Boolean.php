@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2015 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -18,13 +18,19 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type booléen.
  */
-class Boolean extends Scalar {
-    static protected $default = true;
+class Boolean extends Scalar
+{
+    public static function getClassDefault()
+    {
+        return true;
+    }
 
-    public function assign($value) {
+    public function assign($value)
+    {
         ($value instanceof Any) && $value = $value->value();
-        if (! is_bool($value)){
-            if (is_null($value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))) {
+        if (! is_bool($value)) {
+            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if (is_null($value)) {
                 throw new InvalidTypeException('boolean');
             }
         }
@@ -34,7 +40,8 @@ class Boolean extends Scalar {
         return $this;
     }
 
-    public function __toString() {
-        return $this->value ? 'true' : 'false';
+    public function getEditorForm($options = null)
+    {
+        return parent::getEditorForm($options)->setAttribute('type', 'checkbox');
     }
 }

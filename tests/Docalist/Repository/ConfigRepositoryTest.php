@@ -24,7 +24,7 @@ use Docalist\Type\Settings;
  * @property int $timeout
  */
 class MySettings extends Settings {
-    protected static function loadSchema() {
+    static public function loadSchema() {
         return [
             'fields' => [
                 'url' => [ 'default' => 'http://127.0.0.1:9200/' ],

@@ -10,12 +10,8 @@
  * @package     Docalist
  * @subpackage  Core
  * @author      Daniel Ménard <daniel.menard@laposte.net>
- * @version     SVN: $Id$
  */
-
 namespace Docalist;
-
-use InvalidArgumentException;
 
 /**
  * Service "admin notices".
@@ -27,7 +23,8 @@ use InvalidArgumentException;
  * - warning : message d'avertissement, confirmation, etc. (en orange)
  * - error : message d'erreur, opération qui a échouée, etc. (en rouge).
  */
-class AdminNotices {
+class AdminNotices
+{
     /*
      * Principes :
      * - Le service admin-notices n'est disponible que dans le back-office de
@@ -46,15 +43,7 @@ class AdminNotices {
      *
      * @var string
      */
-    const META = 'docalist-admin-notices';
-
-    /**
-     * Liste des notices enregistrées.
-     *
-     * @var array[] Un tableau de tableau : chaque notice du tableau contient
-     * les éléments 'type', 'content' et 'title'.
-     */
-    protected $notices = [];
+    const META = 'docalist-admin-notice';
 
     // https://core.trac.wordpress.org/ticket/27418
     // https://core.trac.wordpress.org/ticket/31233
@@ -62,12 +51,10 @@ class AdminNotices {
     /**
      * Crée le service admin-notices.
      */
-    public function __construct() {
-        $meta = get_user_meta(get_current_user_id(), self::META, true);
-        is_array($meta) && $this->notices = $meta;
-
-        add_action('admin_notices', function() {
-            ! empty($this->notices) && $this->render();
+    public function __construct()
+    {
+        is_admin() && add_action('admin_notices', function () {
+            $this->render();
         });
     }
 
@@ -81,22 +68,15 @@ class AdminNotices {
      *
      * @return self
      */
-    public function add($type, $content, $title = null) {
-        // Stocke la notice
-        $this->notices[] = [$type, $content, $title];
-        add_user_meta(get_current_user_id(), self::META, $this->notices, true);
+    public function add($type, $content, $title = null)
+    {
+        // Si on n'a pas de user en cours, on ne peut rien faire
+        if ($user = get_current_user_id()) {
+            add_user_meta($user, self::META, [$type, $content, $title], false);
+        }
 
         // Ok
         return $this;
-    }
-
-    /**
-     * Retourne le nombre de notices qui ont été enregistrées.
-     *
-     * @return int
-     */
-    public function count() {
-        return count($this->notices);
     }
 
     /**
@@ -107,7 +87,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function info($content, $title = null) {
+    public function info($content, $title = null)
+    {
         return $this->add('info', $content, $title);
     }
 
@@ -119,7 +100,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function success($content, $title = null) {
+    public function success($content, $title = null)
+    {
         return $this->add('success', $content, $title);
     }
 
@@ -131,7 +113,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function warning($content, $title = null) {
+    public function warning($content, $title = null)
+    {
         return $this->add('warning', $content, $title);
     }
 
@@ -143,7 +126,8 @@ class AdminNotices {
      *
      * @return self
      */
-    public function error($content, $title = null) {
+    public function error($content, $title = null)
+    {
         return $this->add('error', $content, $title);
     }
 
@@ -152,9 +136,21 @@ class AdminNotices {
      *
      * @return self
      */
-    protected function render() {
+    protected function render()
+    {
+        // Si on n'a pas de user en cours, on ne peut rien faire
+        if (0 === $user = get_current_user_id()) {
+            return $this;
+        }
+
+        // Charge les notices enregistrées
+        $notices = get_user_meta($user, self::META, false);
+        if (empty($notices)) {
+            return $this;
+        }
+
         // Affiche les notices dans l'ordre où elles ont été ajoutées
-        foreach($this->notices as $notice) {
+        foreach ($notices as $notice) {
             list($type, $content, $title) = $notice;
 
             printf('<div class="notice notice-%s is-dismissible">', $type);
@@ -175,8 +171,7 @@ class AdminNotices {
         }
 
         // Réinitialise la liste des notices enregistrées
-        $this->notices = [];
-        delete_user_meta(get_current_user_id(), self::META);
+        delete_user_meta($user, self::META);
 
         // Ok
         return $this;
