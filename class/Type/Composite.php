@@ -280,9 +280,9 @@ class Composite extends Any
 
     public function getEditorForm($options = null)
     {
-        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editorName = $this->getOption('editor', $options, $this->getDefaultEditor());
 
-        switch ($editor) {
+        switch ($editorName) {
             case 'container':
                 $wrapper = $editor = new Container();
                 break;
@@ -297,13 +297,24 @@ class Composite extends Any
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid Composite editor '$editor'");
+                throw new InvalidArgumentException("Invalid Composite editor '$editorName'");
         }
 
         $editor
             ->setName($this->schema->name())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
+
+        $class = get_class($this);
+        $class = substr($class, strrpos($class, '\\') + 1);
+        $class = preg_replace_callback('/[A-Z][a-z]+/', function($match) {
+            return '-' . strtolower($match[0]);
+        }, $class);
+        $class = ltrim($class, '-');
+
+//        $class .= ' editor-' . $editorName; bof, renvoie l'éditeur du container, pas WPEditor par exemple
+        $class .= ' ' . $this->schema->name();
+        $editor->addClass($class);
 
         foreach ($options->getFieldNames() as $name) { // TODO : si $options n'est pas une grille
             $fieldOptions = $this->getFieldOptions($name, $options);
