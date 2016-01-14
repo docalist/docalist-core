@@ -14,6 +14,8 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Forms\Input;
+
 /**
  * Une date/heure stockée sous forme de chaine au format 'yyyy-MM-dd HH:mm:ss'.
  *
@@ -21,5 +23,34 @@ namespace Docalist\Type;
  */
 class DateTime extends Text
 {
-    // générer un date/time picker pour getEditorForm()
+    public function getAvailableEditors()
+    {
+        return  parent::getAvailableEditors() + [
+            'datetime-local' => __('Champ date/heure', 'docalist-core'),
+            'datetime' => __('Champ date/heure + fuseau horaire', 'docalist-core'),
+        ];
+    }
+
+    public function getEditorForm($options = null)
+    {
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+
+        switch ($editor) {
+            case 'datetime':
+            case 'datetime-local':
+                $type = $editor;
+                break;
+
+            default:
+                return parent::getEditorForm($options);
+        }
+
+        $editor = new Input();
+
+        return $editor
+            ->setName($this->schema->name())
+            ->setLabel($this->getOption('label', $options))
+            ->setDescription($this->getOption('description', $options))
+            ->setAttribute('type', $type);
+    }
 }
