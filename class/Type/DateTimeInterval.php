@@ -19,6 +19,9 @@ use Docalist\Type\DateTime;
  * Une période composée d'un DateTime de début et de fin.
  *
  * Exemple : "2016-01-19 09:00","2016-01-20 17:00"
+ *
+ * @property DateTime $start    Date/heure de début
+ * @property DateTime $end      Date/heure de fin
  */
 class DateTimeInterval extends Composite
 {
