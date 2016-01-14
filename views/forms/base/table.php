@@ -61,4 +61,4 @@ $theme->start('tbody');
 
 // Fin de la table
 $theme->end('table');
-$this->isRepeatable() && $theme->display($this, '_add');
+$this->isRepeatable() && $theme->display($this, '_add', ['data-clone' => '<tbody>tr:last-child']);
