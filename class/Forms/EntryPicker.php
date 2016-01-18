@@ -35,7 +35,7 @@ class EntryPicker extends Select
     {
         // Rien à faire si les lookups ne portent pas sur un table
         if (! is_string($this->options) || substr($this->options, 0, 5) === 'index') {
-            return $data;
+            return array_combine($data, $data);
         }
 
         // Ouvre la table
