@@ -35,8 +35,14 @@ class Radiolist extends Choice
         foreach ($options as $value => $label) {
             // Si label est un tableau c'est un optgroup : value contient le libellé du optgroup et label les options
             if (is_array($label)) {
-                $theme->start('li', ['class' => 'optgroup'])->tag('span', ['class' => 'optgroup-label'], $value)->start('ul');
-                $visited += $this->displayOptions($theme, $label, $data);
+                $theme
+                    ->start('li', ['class' => 'optgroup'])
+                    ->tag('p', ['class' => 'optgroup-label'], sprintf(__('%s :', 'docalist-core'), $value))
+                    ->start('ul');
+                $this->displayOptions($theme, $label, $data);
+                foreach($label as $value => $label) {
+                    $visited[$value] = $value;
+                }
                 $theme->end('ul')->end('li');
                 continue;
             }
