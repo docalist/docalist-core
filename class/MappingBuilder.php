@@ -58,13 +58,6 @@ interface MappingBuilder
     public function setDefaultAnalyzer($defaultAnalyzer);
 
     /**
-     * Retourne la liste des analyseurs disponibles.
-     *
-     * @return string[]
-     */
-    public function getAvailableAnalyzers();
-
-    /**
      * Crée un nouveau champ dans le mapping.
      *
      * Toutes les méthodes qui seront appellées ensuite (text, filter...) s'appliqueront au champ créé.
