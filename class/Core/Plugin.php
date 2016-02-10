@@ -427,7 +427,7 @@ class Plugin
             'docalist-forms-wordpress',
             "$url/views/forms/wordpress/wordpress-theme.css",
             ['wp-admin'],
-            '140927'
+            '160210'
         );
 
         return $this;

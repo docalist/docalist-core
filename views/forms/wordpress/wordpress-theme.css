@@ -184,3 +184,15 @@ button.cloner:hover {
 .selectize-dropdown b[rel]:hover {
     text-decoration: underline;
 }
+
+ul.checklist .optgroup-label, 
+ul.radiolist .optgroup-label 
+{
+    margin: 4px 0;
+}
+
+ul.checklist li.optgroup > ul, 
+ul.radiolist li.optgroup > ul 
+{
+    margin-left: 1.8em;
+}
