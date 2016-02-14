@@ -73,9 +73,9 @@ class AdminPage extends Controller
          * pas d'avoir un titre statique qui sera le même pour toutes les
          * actions.
          * A la place, nous générons dynamiquement le titre (quand la réponse
-         * retournée est une adminPage) en récupérant le premier <h2>
+         * retournée est une adminPage) en récupérant le premier <h1>
          * généré par l'action (cf. plus bas add_filter 'admin_title').
-         * Si jamais la page n'a pas généré de h2, il faut quand même avoir un
+         * Si jamais la page n'a pas généré de h1, il faut quand même avoir un
          * titre. Dans ce cas, c'est le libellé utilisé pour le menu qui sera
          * utilisé : c'est ce qu'on passe en paramètre à add_(sub)_menu_page().
          */
@@ -166,10 +166,10 @@ class AdminPage extends Controller
                 $response->sendContent();
                 $body = ob_get_clean();
 
-                // Récupère le titre (h2) de la page et le fournit à wp pour
+                // Récupère le titre (h1) de la page et le fournit à wp pour
                 // qu'on ait le bon titre dans la balise <title> de la page
                 $matches = null; // évite warning "variable not initialized"
-                if (preg_match('~<h2>(.*?)</h2>~', $body, $matches)) {
+                if (preg_match('~<h1>(.*?)</h1>~', $body, $matches)) {
                     $title = strip_tags($matches[1]);
                     // @see admin-header.php:36
                     add_filter('admin_title', function () use ($title) {
