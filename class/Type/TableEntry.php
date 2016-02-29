@@ -102,7 +102,6 @@ class TableEntry extends Text
                 throw new InvalidArgumentException("Invalid TableEntry editor '$editor'");
         }
 
-        /* @var EntryPicker $ui */
         return $editor
             ->setName($this->schema->name())
             ->setOptions($this->schema->table())
