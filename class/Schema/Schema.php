@@ -341,7 +341,7 @@ class Schema implements JsonSerializable
             'type','collection',
             'state',
             'label', 'description',
-            'linked-type','table',
+            'reltype', 'relfilter','table',
             'default',
             'explode',
             'editor',
