@@ -21,7 +21,9 @@ use Docalist\Cache\FileCache;
 use Docalist\Table\TableManager;
 use Docalist\AdminNotices;
 use Docalist\Sequences;
-use Docalist\Lookup;
+use Docalist\Lookup\LookupManager;
+use Docalist\Lookup\TableLookup;
+use Docalist\Lookup\ThesaurusLookup;
 use InvalidArgumentException;
 
 /**
@@ -141,7 +143,15 @@ class Plugin
 
             // Gestion des lookups
             'lookup' => function () {
-                return new Lookup();
+                return new LookupManager();
+            },
+
+            'table-lookup' => function () {
+                return new TableLookup();
+            },
+
+            'thesaurus-lookup' => function () {
+                return new ThesaurusLookup();
             },
 
             // Admin Notices
@@ -163,16 +173,6 @@ class Plugin
      */
     protected function setupHooks()
     {
-        // Définit les lookups de type "table"
-        add_filter('docalist_table_lookup', function ($value, $source, $search) {
-            return docalist('table-manager')->lookup($source, $search, false);
-        }, 10, 3);
-
-        // Définit les lookups de type "thesaurus"
-        add_filter('docalist_thesaurus_lookup', function ($value, $source, $search) {
-            return docalist('table-manager')->lookup($source, $search, true);
-        }, 10, 3);
-
         // Crée l'action ajax "docalist-lookup"
         add_action('wp_ajax_docalist-lookup', $ajaxLookup = function () {
             docalist('lookup')->ajaxLookup();
