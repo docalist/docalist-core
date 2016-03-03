@@ -24,7 +24,9 @@ class Decimal extends Number
     {
         ($value instanceof Any) && $value = $value->value();
         if (! is_float($value)) {
-            if (false === $value = filter_var($value, FILTER_VALIDATE_FLOAT)) {
+            if ($value === '') {
+                $value = 0.;
+            } elseif (false === $value = filter_var($value, FILTER_VALIDATE_FLOAT)) {
                 throw new InvalidTypeException('float');
             }
         }
