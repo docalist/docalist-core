@@ -50,7 +50,7 @@ abstract class Choice extends Element
             return $this;
         }
 
-        return $this->invalidArgument('%s: invalid options (%s)', gettype($this->options));
+        return $this->invalidArgument('%s: invalid options (%s)', gettype($options));
     }
 
     /**
