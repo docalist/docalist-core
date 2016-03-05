@@ -304,9 +304,6 @@ jQuery.fn.tableLookup = function() {
         // Les paramètres figurent en attributs "data-" du select
         var settings = $(this).data();
             
-        // Détermine le type de lookup
-        settings.lookupType = settings.table.split(':')[0];
-
         settings = $.extend({
             valueField: settings.lookupType === 'index' ? 'text' : 'code',  // Nom du champ qui contient le code
             labelField: settings.lookupType === 'index' ? 'text' : 'label'  // Nom du champ qui contient le libellé
@@ -357,7 +354,8 @@ jQuery.fn.tableLookup = function() {
                 var url = ajaxurl + '?action=docalist-lookup';
                 
                 // Paramètres de la requête : cf. Docalist-core\Plugin\tableLookup()
-                url += '&source=' + settings.table;
+                url += '&type=' + encodeURIComponent(settings.lookupType);
+                url += '&source=' + encodeURIComponent(settings.lookupSource);
                 if (query.length) {
                     url += '&search=' + encodeURIComponent(query);
                 }
