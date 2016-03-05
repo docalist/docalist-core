@@ -47,7 +47,8 @@ $options = $this->prepareData($data);
 $id = $this->generateId();
 
 // Détermine les attributs du select
-$attributes = ['name' => $this->getControlName(), 'data-table' => $this->getOptions()];
+list($type, $source) = explode(':', $this->getOptions(), 2);
+$attributes = ['name' => $this->getControlName(), 'data-lookup-type' => $type, 'data-lookup-source' => $source];
 // $valueField !== 'code' && $attributes['data-value-field'] = $valueField; // valueField/labelField en js
 // $labelField !== 'label' && $attributes['data-label-field'] = $labelField; // (cf. http://stackoverflow.com/a/22753630)
 $attributes += $this->getAttributes();
