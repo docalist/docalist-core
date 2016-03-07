@@ -34,7 +34,7 @@ class TableLookup implements LookupInterface
     public function getDefaultSuggestions($source = '')
     {
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var $table TableInterface */
+        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
 
         // Lance la recherche
         $result = $table->search($this->getFields(), '', '_label', 100);
@@ -46,7 +46,7 @@ class TableLookup implements LookupInterface
     public function getSuggestions($search, $source = '')
     {
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var $table TableInterface */
+        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
 
         // Tokenize la chaine de recherche pour être insensible aux accents, etc.
         $arg = implode(' ', Tokenizer::tokenize($search));
@@ -95,5 +95,35 @@ class TableLookup implements LookupInterface
 
         // Supprime la clé ROWID, pour que json_encode génère bien un tableau
         return array_values($result);
+    }
+
+    public function convertCodes(array $data, $source = '')
+    {
+        // Sanity check
+        if (empty($data)) {
+            return $data;
+        }
+
+        // Récupère la table
+        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+
+        // Construit la clause WHERE ... IN (...)
+        $codes = [];
+        foreach ($data as $code) {
+            $codes[] = $table->quote($code);
+        }
+        $where = 'code IN (' . implode(',', $codes) . ')';
+
+        // Recherche toutes les entrées, on obtient un tableau de la forme 'code => label'
+        $results = $table->search('code,label', $where);
+
+        // Construit le tableau résultat, en respectant l'ordre initial des données
+        $codes = [];
+        foreach ($data as $code) {
+            $codes[$code] = isset($results[$code]) ? $results[$code] : __('Invalid: ', 'docalist-core') . $code;
+        }
+
+        // Ok
+        return $codes;
     }
 }
