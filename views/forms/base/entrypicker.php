@@ -41,7 +41,7 @@ if ($this->data instanceof Collection) {
 }
 
 // Si les lookups portent sur une table, il faut convertir les codes en libellés
-$options = $this->prepareData($data);
+$options = $this->convertCodes($data);
 
 // Garantit que le contrôle a un ID, pour y accèder dans le tag <script>
 $id = $this->generateId();
