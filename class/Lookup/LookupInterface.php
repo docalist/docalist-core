@@ -76,4 +76,19 @@ interface LookupInterface
      * lookup utilisé.
      */
     public function getSuggestions($search, $source = '');
+
+    /**
+     * Détermine le libellé à afficher pour la liste de codes passés en paramètres.
+     *
+     * Cette méthode est utilisée pour réafficher des données qui ont été saisies via un système de lookups.
+     *
+     * Typiquement, les données à convertir sont des codes (par exemple issus d'une table) et la conversion va
+     * consister à indiquer le libellé de chacun des codes.
+     *
+     * @param array     $data   Un tableau contenant les données à convertir (par exemple ['FR', 'DE']).
+     * @param string    $source La source à utiliser (pour un service multi-sources uniquement).
+     *
+     * @return array Les données converties (par exemple ['FR' => 'France', 'DE' => 'Allemagne']).
+     */
+    public function convertCodes(array $data, $source = '');
 }
