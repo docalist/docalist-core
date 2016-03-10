@@ -38,6 +38,7 @@ class LargeText extends Text
         switch ($editor) {
             case 'textarea':
                 $editor = new Textarea();
+                $editor->addClass('autosize');
                 break;
 
             case 'wpeditor':
