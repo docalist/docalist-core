@@ -255,6 +255,9 @@ jQuery(document).ready(function($) {
         // 1. Détermine le noeud qu'on doit cloner
         var node = nodeToClone(this);
         
+        // Génère l'événement "before-clone" en passant le noeud qui va être cloné
+        $(document).trigger('docalist:forms:before-clone', node);
+        
         // 2. Clone le noeud
         var clone = createClone(node);
         
@@ -267,14 +270,37 @@ jQuery(document).ready(function($) {
         // 6. Insère le clone juste après le noeud d'origine, avec un espace entre deux
         node.after(' ', clone);
 
+        // Génère l'événement "after-clone" en passant le noeud d'origine et le clone
+        // Remarque : quand l'evt est généré, le clone a déjà été inséré dans le DOM
+        // C'est important, par exemple pour que autosize puisse faire un calcul exact.
+        $(document).trigger('docalist:forms:after-clone', [node, clone]);
+        
         // Donne le focus au premier champ trouvé dans le clone
         var first = clone.is(':input') ? clone : $(':input:first', clone);
         first.is('.selectized') ? first[0].selectize.focus() : first.focus();
         
         // 7. Fait flasher le clone pour que l'utilisateur voit l'élément inséré
         highlight(clone);
-        
     });
+    
+    // Autosize des textarea
+    if (typeof autosize === 'function') {
+        // Autosize sur les textareas qui existent initiallement
+        autosize($('textarea.autosize'));
+        
+        // Autosize sur les textarea qui sont clonées
+        $(document).on('docalist:forms:after-clone', function(event, node, clone) {
+            autosize($('textarea.autosize', clone));
+        });
+    }
+    
+//    $(document).on('docalist:forms:before-clone', function(event, node) {
+//        console.log(event.type, node);
+//    });
+//    
+//    $(document).on('docalist:forms:after-clone', function(event, node, clone) {
+//        console.log(event.type, node, clone);
+//    });
 });
 
 // Libellé des relations.
