@@ -430,6 +430,15 @@ class Plugin
             '160210'
         );
 
+        // Auto resize des textarea
+        wp_register_script(
+            'docalist-textarea-autosize',
+            "$url/lib/autosize/autosize.$js",
+            ['jquery'],
+            '3.0.15',
+            true
+        );
+
         return $this;
     }
 }
