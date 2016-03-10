@@ -21,6 +21,10 @@ use Docalist\Forms\Theme;
  * @var Theme    $theme Le thème de formulaire en cours.
  * @var array    $args  Paramètres transmis à la vue.
  */
+
+// Envoie le js autosize
+$this->hasClass('autosize') && $theme->enqueueScript('docalist-textarea-autosize');
+
 foreach($this->getOccurences() as $key => $data) {
     $this->setOccurence($key);
     $attributes = ['name' => $this->getControlName()] + $this->getAttributes();
