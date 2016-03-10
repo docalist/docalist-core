@@ -196,3 +196,11 @@ ul.radiolist li.optgroup > ul
 {
     margin-left: 1.8em;
 }
+
+.typed-large-text textarea {
+    width: 100%;
+}
+
+.typed-large-text>div + div {
+    margin-top: 0.5em;
+}
