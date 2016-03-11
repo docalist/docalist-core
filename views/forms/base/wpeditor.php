@@ -28,8 +28,13 @@ foreach($this->getOccurences() as $key => $data) {
 
     // Settings de base
     $settings = [
-        'textarea_name' => $this->getControlName(),
-        'drag_drop_upload' => true,
+        'textarea_name'     => $this->getControlName(),
+        'drag_drop_upload'  => true,
+        'quicktags'         => false, // en mode teeny, on n'en veux pas, en mode full on ne sait pas les cloner (cf. forms.js)
+        'tinymce' => [
+            'resize'            => false,
+            'wp_autoresize_on'  => true,
+        ],
     ];
 
     // Attributs de l'item qu'on peut transmettre à l'éditeur
@@ -40,18 +45,17 @@ foreach($this->getOccurences() as $key => $data) {
 
     // Editeur en version simplifiée (cf. wp-admin/includes/class-wp-press-this.php:1403)
     if ($this->getTeeny()) {
-        $settings['teeny'] = true;
-        $settings['media_buttons'] = false;
-        $settings['tinymce'] = [
-            'resize'                => false,
-            'wordpress_adv_hidden'  => false,
-            'add_unload_trigger'    => false,
-            'statusbar'             => false,
-            'wp_autoresize_on'      => true,
-            'plugins'               => 'lists,media,paste,tabfocus,fullscreen,wordpress,wpautoresize,wpeditimage,wpgallery,wplink,wptextpattern,wpview',
-            'toolbar1'              => 'bold,italic,bullist,numlist,blockquote,link,unlink,undo,redo',
-        ];
-        $settings['quicktags'] = false;
+        $settings = array_merge_recursive($settings, [
+            'teeny' => true,
+            'media_buttons' => false,
+            'tinymce' => [
+                'wordpress_adv_hidden'  => false,
+                'add_unload_trigger'    => false,
+                'statusbar'             => false,
+                'plugins'               => 'lists,media,paste,tabfocus,fullscreen,wordpress,wpautoresize,wpeditimage,wpgallery,wplink,wptextpattern,wpview',
+                'toolbar1'              => 'bold,italic,bullist,numlist,blockquote,link,unlink,undo,redo',
+            ]
+        ]);
     }
 
     wp_editor($data, $id, $settings);
