@@ -402,7 +402,7 @@ class Plugin
             'docalist-forms',
             "$url/views/forms/docalist-forms.js", // TODO: version min.js
             ['jquery', 'jquery-ui-sortable', 'selectize'],
-            '160310',
+            '160311',
             false // TODO: Passer à true (position top)
         );
 
