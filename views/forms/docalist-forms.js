@@ -202,7 +202,7 @@ jQuery(document).ready(function($) {
      * @return DomElement le noeud final.
      */
     function renumber(clone, level) {
-        $(':input,label', clone).addBack().each(function(){
+        $(':input,label,div', clone).addBack().each(function(){
             var input = $(this);
 
             // Renomme l'attribut name
@@ -218,7 +218,7 @@ jQuery(document).ready(function($) {
             });
             
             // Renomme les attributs id et for
-            $.each(['id', 'for'], function(i, name){
+            $.each(['id', 'for', 'data-editor'], function(i, name) { // data-editor : bouton "add media" de wp-editor
                 var value = input.attr(name); // valeur de l'attribut name, id ou for
                 if (! value) return;
                 var curLevel = 0;
@@ -283,7 +283,9 @@ jQuery(document).ready(function($) {
         highlight(clone);
     });
     
-    // Autosize des textarea
+    /* ------------------------------------------------------------------------
+     * Autosize des textarea (celles d'origine et celles qu'on clone)
+     * ------------------------------------------------------------------------*/
     if (typeof autosize === 'function') {
         // Autosize sur les textareas qui existent initiallement
         autosize($('textarea.autosize'));
@@ -293,6 +295,49 @@ jQuery(document).ready(function($) {
             autosize($('textarea.autosize', clone));
         });
     }
+    
+    /* ------------------------------------------------------------------------
+     * Gère le clonage de l'éditeur wordpress / tinymce
+     * ------------------------------------------------------------------------*/
+    $(document).on('docalist:forms:before-clone', function(event, node) {
+        // Désactive les tinymce qui existent dans le noeud d'origine
+        $('.wp-editor-area', node).each(function(index, textarea) {
+            tinymce.execCommand("mceRemoveEditor",false, textarea.id);
+        });
+    });
+    
+    $(document).on('docalist:forms:after-clone', function(event, node, clone) {
+        // Lors du premier appel, WP fait un wp_print_styles('editor-button-css')
+        // On ne veut pas cloner ces liens, donc on les supprimer
+        $('link', clone).remove(); // <link> id='dashicons-css' + 'editor-buttons-css' +
+        
+        // Les quicktags ne fonctionnent pas une fois cloné. Si on a une toolbar, on la supprime 
+        $('div.quicktags-toolbar', clone).remove();
+        
+        // Ré-active les tinymce qui existaient dans le noeud d'origine
+        $('.wp-editor-area', node).each(function(index, textarea) {
+            tinymce.execCommand("mceAddEditor",false, textarea.id);
+        });
+        
+        // Active les tinymce qui existent dans le clone
+        $('.wp-editor-area', clone).each(function(index, textarea) {
+            tinymce.execCommand("mceAddEditor",false, textarea.id);
+            
+            // pour les quicktags, la config est stockée dans la var globale tinyMCEPreInit 
+            // le tableaut qtInit contient la config de chacun des éditeurs sous la forme 
+            // [{id => {id:"dbref-content-0-value", buttons:"strong, em, ..."}}]
+            // Dans notre cas, tous les éditeurs ont la même config, donc on prend juste le premier item
+            // Mais au final, les quicktags clonés ne fonctionnent pas, dasactivation
+//            for (var i in tinyMCEPreInit.qtInit) {
+//                var config = tinyMCEPreInit.qtInit[i];
+//                config.id = textarea.id;
+//                tinyMCEPreInit.qtInit[config.id] = config;
+//                quicktags(config);
+//                break;
+//            }
+        });
+
+    });
     
 //    $(document).on('docalist:forms:before-clone', function(event, node) {
 //        console.log(event.type, node);
