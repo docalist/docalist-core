@@ -63,7 +63,7 @@ class LargeText extends Text
 
     public function getFormattedValue($options = null)
     {
-        $value = $this->value;
+        $value = $this->phpValue;
         if (trim($value) === '') {
             return $value;
         }
