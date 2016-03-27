@@ -35,7 +35,7 @@ $theme->enqueueStyle('selectize')->enqueueScript('selectize');
 // Récupère les données du champ
 if ($this->data instanceof Collection) {
     // par exemple si on a passé un objet "Settings" ou Property comme valeur actuelle du champ
-    $data = $this->data->value();
+    $data = $this->data->getPhpValue();
 } else {
     $data = (array)$this->data;
 }
