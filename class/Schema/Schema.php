@@ -506,6 +506,17 @@ class Schema implements JsonSerializable
         return $value;
     }
 
+    /**
+     * Hack : comme un schéma (une grille) se comporte "comme" un type docalist (mais sans en être un)
+     * on est obligé d'avoir une méthode getPhpValue() sinon les schémas ne sont pas récupérés quand on
+     * enregistre un type (repository appelle Schema->getPhpValue(), qui appelle Schema->call('getPhpValue')
+     * qui retourne vide) et du coup on perd toutes les grilles.
+     */
+    public function getPhpValue()
+    {
+        return $this->value();
+    }
+
     // -------------------------------------------------------------------------
     // Interface JsonSerializable
     // -------------------------------------------------------------------------
