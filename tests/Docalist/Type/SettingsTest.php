@@ -44,7 +44,7 @@ class SettingsTest extends WP_UnitTestCase
         $s = new MySettings($repo);
         $this->assertSame('docalist-tests-type-fixtures-mysettings', $s->id(), "L'id correspond au nom de la classe");
         $this->assertFalse($repo->has($s->id()), 'Les paramètres ne figurent pas déjà dans le dépôt');
-        $this->assertSame($s->getDefaultValue(), $s->value(), 'Les paramètres ont leur valeur par défaut');
+        $this->assertSame($s->getDefaultValue(), $s->getPhpValue(), 'Les paramètres ont leur valeur par défaut');
         $this->assertSame($repo, $s->repository(), 'Le dépôt retourné est celui pasé en paramètre');
 
         // delete quand les settings n'existe pas
@@ -56,17 +56,17 @@ class SettingsTest extends WP_UnitTestCase
         $this->assertTrue($repo->has($s->id()), 'Les paramètres ont été enregistrés dans le dépôt');
 
         $s = new MySettings($repo);
-        $this->assertSame('value1', $s->a->value(), 'Les paramètres ont été chargés depuis le dépôt');
+        $this->assertSame('value1', $s->a->getPhpValue(), 'Les paramètres ont été chargés depuis le dépôt');
 
         // reload
         $s->a = 'value2';
         $s->reload();
-        $this->assertSame('value1', $s->a->value(), 'Les paramètres ont été rechargés depuis le dépôt');
+        $this->assertSame('value1', $s->a->getPhpValue(), 'Les paramètres ont été rechargés depuis le dépôt');
 
         // delete
         $s->delete();
         $this->assertFalse($repo->has($s->id()), 'Les paramètres ont été supprimés dépôt');
-        $this->assertSame('default', $s->a->value(), 'Les paramètres ont repris leur valeur par défaut');
+        $this->assertSame('default', $s->a->getPhpValue(), 'Les paramètres ont repris leur valeur par défaut');
 
         // new en indiquant l'id
         $s = new MySettings($repo, 'myid');

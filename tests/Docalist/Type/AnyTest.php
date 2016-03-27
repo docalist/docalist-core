@@ -22,10 +22,10 @@ class AnyTest extends WP_UnitTestCase
     public function testValue()
     {
         $type = new Any();
-        $this->assertNull($type->value());
+        $this->assertNull($type->getPhpValue());
 
         $type = new Any(12);
-        $this->assertSame(12, $type->value());
+        $this->assertSame(12, $type->getPhpValue());
     }
 
     public function testSchema()
@@ -51,7 +51,7 @@ class AnyTest extends WP_UnitTestCase
     {
         $a = new Any([1, false, 0.12, 'fd']);
 
-        $this->assertSame($a->serialize(), serialize([$a->value(), $a->schema()]));
+        $this->assertSame($a->serialize(), serialize([$a->getPhpValue(), $a->schema()]));
     }
 
     public function testUnserialize()
@@ -66,6 +66,6 @@ class AnyTest extends WP_UnitTestCase
     {
         $a = new Any([1, false, 0.12, 'fd']);
 
-        $this->assertSame($a->value(), $a->jsonSerialize());
+        $this->assertSame($a->getPhpValue(), $a->jsonSerialize());
     }
 }
