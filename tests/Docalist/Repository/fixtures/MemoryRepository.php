@@ -52,4 +52,12 @@ class MemoryRepository extends Repository {
         }
         unset($this->data[$id]);
     }
+
+    public function count() {
+        return count($this->data);
+    }
+
+    public function deleteAll() {
+        $this->data = [];
+    }
 }
