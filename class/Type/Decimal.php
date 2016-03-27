@@ -22,7 +22,7 @@ class Decimal extends Number
 {
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->value();
+        ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_float($value)) {
             if ($value === '') {
                 $value = 0.;
@@ -31,7 +31,7 @@ class Decimal extends Number
             }
         }
 
-        $this->value = $value;
+        $this->phpValue = $value;
 
         return $this;
     }
