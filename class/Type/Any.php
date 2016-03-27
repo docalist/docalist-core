@@ -17,10 +17,8 @@ use Docalist\Type\Interfaces\Stringable;
 use Docalist\Type\Interfaces\Configurable;
 use Docalist\Type\Interfaces\Formattable;
 use Docalist\Type\Interfaces\Editable;
-use Docalist\Type\Interfaces\Indexable;
 use Serializable;
 use JsonSerializable;
-use Docalist\MappingBuilder;
 use Docalist\Schema\Schema;
 use Docalist\Forms\Container;
 use Docalist\Forms\Input;
@@ -29,7 +27,7 @@ use InvalidArgumentException;
 /**
  * Classe de base pour les différents types de données.
  */
-class Any implements Stringable, Configurable, Formattable, Editable, Indexable, Serializable, JsonSerializable
+class Any implements Stringable, Configurable, Formattable, Editable, Serializable, JsonSerializable
 {
     /**
      * La valeur du type.
@@ -490,29 +488,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
             ->setName($this->schema->name())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
-    }
-
-    // -------------------------------------------------------------------------
-    // Interface Indexable
-    // -------------------------------------------------------------------------
-
-    public function setupMapping(MappingBuilder $mapping)
-    {
-        return [];
-    }
-
-    public function mapData(array & $document)
-    {
-        $value = $this->value();
-        if (is_null($value)) {
-            return;
-        }
-
-        if ($this->schema->collection()) {
-            $document[$this->schema->name()][] = $value;
-        } else {
-            $document[$this->schema->name()] = $this->value();
-        }
     }
 
     // -------------------------------------------------------------------------
