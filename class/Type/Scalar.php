@@ -27,18 +27,18 @@ class Scalar extends Any
 
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->value();
+        ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_scalar($value)) {
             throw new InvalidTypeException('scalar');
         }
 
-        $this->value = $value;
+        $this->phpValue = $value;
 
         return $this;
     }
 
     public function getFormattedValue($options = null)
     {
-        return (string) $this->value;
+        return (string) $this->phpValue;
     }
 }
