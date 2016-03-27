@@ -20,7 +20,7 @@ use LogicException;
 /**
  * Classe de base pour les entités.
  *
- * Une entité est un objet qui dispose d'une identité (un ID unique).
+ * Une entité est un composite qui dispose d'une identité (un ID unique).
  */
 class Entity extends Composite
 {
