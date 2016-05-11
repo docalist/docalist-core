@@ -21,7 +21,7 @@ class TextTest extends WP_UnitTestCase
     public function testNew()
     {
         $a = new Text();
-        $this->assertSame('', $a->value());
+        $this->assertSame('', $a->getPhpValue());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */

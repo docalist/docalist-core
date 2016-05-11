@@ -19,7 +19,6 @@ use Countable;
 use IteratorAggregate;
 use Docalist\Forms\Choice;
 use Docalist\Type\Interfaces\Categorizable;
-use Docalist\MappingBuilder;
 use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
 
@@ -65,12 +64,12 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->value();
+        ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_array($value)) {
             throw new InvalidTypeException('array');
         }
 
-        $this->value = [];
+        $this->phpValue = [];
         foreach ($value as $item) {
             $this->offsetSet(null, $item);
         }
@@ -78,11 +77,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $this;
     }
 
-    public function value()
+    public function getPhpValue()
     {
         $result = [];
-        foreach ($this->value as $item) { // faut-il conserver la clé ?
-            $result[] = $item->value();
+        foreach ($this->phpValue as $item) { // faut-il conserver la clé ?
+            $result[] = $item->getPhpValue();
         }
 
         return $result;
@@ -98,7 +97,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function offsetExists($offset)
     {
-        return isset($this->value[$offset]);
+        return isset($this->phpValue[$offset]);
     }
 
     /**
@@ -114,8 +113,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function offsetGet($offset)
     {
-        if (isset($this->value[$offset])) {
-            return $this->value[$offset];
+        if (isset($this->phpValue[$offset])) {
+            return $this->phpValue[$offset];
         }
 
         $msg = __('Offset %s does not exist in the collection.', 'docalist-core');
@@ -145,15 +144,15 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Si c'est une collection indexée, ignore offset et utilise le champ indiqué comme clé
         if ($key = $this->schema->key()) {
-            $this->value[$value->$key()] = $value;
+            $this->phpValue[$value->$key()] = $value;
         }
 
         // Collection sans clés
         else {
             if (is_null($offset)) {
-                $this->value[] = $value;
+                $this->phpValue[] = $value;
             } else {
-                $this->value[$offset] = $value;
+                $this->phpValue[$offset] = $value;
             }
         }
     }
@@ -166,7 +165,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function offsetUnset($offset)
     {
-        unset($this->value[$offset]);
+        unset($this->phpValue[$offset]);
     }
 
     /**
@@ -177,7 +176,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function count()
     {
-        return count($this->value);
+        return count($this->phpValue);
     }
 
     /**
@@ -188,7 +187,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->value);
+        return new ArrayIterator($this->phpValue);
     }
 
     /**
@@ -199,7 +198,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function first()
     {
-        return reset($this->value);
+        return reset($this->phpValue);
     }
 
     /**
@@ -210,7 +209,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function last()
     {
-        return end($this->value);
+        return end($this->phpValue);
     }
 
     /**
@@ -221,7 +220,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function key()
     {
-        return key($this->value);
+        return key($this->phpValue);
     }
 
     /**
@@ -231,7 +230,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function current()
     {
-        return current($this->value);
+        return current($this->phpValue);
     }
 
     /**
@@ -241,7 +240,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function next()
     {
-        return next($this->value);
+        return next($this->phpValue);
     }
 
     /**
@@ -251,7 +250,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      */
     public function keys()
     {
-        return array_keys($this->value);
+        return array_keys($this->phpValue);
     }
 
     /**
@@ -269,29 +268,29 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         // Cas d'une collection à clé
         if ($this->schema && $key = $this->schema->key()) {
             $result = [];
-            foreach ($this->value as $item) {
-                $result[$item->$key->value()] = $item;
+            foreach ($this->phpValue as $item) {
+                $result[$item->$key->getPhpValue()] = $item;
             }
-            $this->value = $result;
+            $this->phpValue = $result;
 
             return $this;
         }
 
         // Collection sans clés
-        $this->value = array_values($this->value);
+        $this->phpValue = array_values($this->phpValue);
 
         return $this;
     }
 
     public function filterEmpty($strict = true)
     {
-        foreach ($this->value as $key => $item) { /* @var Any $item */
+        foreach ($this->phpValue as $key => $item) { /* @var Any $item */
             if ($item->filterEmpty($strict)) {
-                unset($this->value[$key]);
+                unset($this->phpValue[$key]);
             }
         }
 
-        return empty($this->value);
+        return empty($this->phpValue);
     }
 
     public function getSettingsForm()
@@ -310,7 +309,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $ellipsis = $this->getOption('ellipsis', $options, '');
 
         // Les items à formatter
-        $items = $this->value;
+        $items = $this->phpValue;
 
         // Le résultat
         $result = [];
@@ -479,23 +478,6 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Ok
         return $form;
-    }
-
-    // -------------------------------------------------------------------------
-    // Interface Indexable
-    // -------------------------------------------------------------------------
-
-    public function setupMapping(MappingBuilder $mapping)
-    {
-        // Une collection n'a pas de mapping spécifique, son mapping, c'est celui des éléments qu'elle contient
-        $this->createTemporaryItem()->setupMapping($mapping);
-    }
-
-    public function mapData(array & $document)
-    {
-        foreach ($this->value as $item) { /* @var Any $item */
-            $item->mapData($document);
-        }
     }
 
     /**

@@ -202,7 +202,7 @@ jQuery(document).ready(function($) {
      * @return DomElement le noeud final.
      */
     function renumber(clone, level) {
-        $(':input,label', clone).addBack().each(function(){
+        $(':input,label,div', clone).addBack().each(function(){
             var input = $(this);
 
             // Renomme l'attribut name
@@ -218,7 +218,7 @@ jQuery(document).ready(function($) {
             });
             
             // Renomme les attributs id et for
-            $.each(['id', 'for'], function(i, name){
+            $.each(['id', 'for', 'data-editor'], function(i, name) { // data-editor : bouton "add media" de wp-editor
                 var value = input.attr(name); // valeur de l'attribut name, id ou for
                 if (! value) return;
                 var curLevel = 0;
@@ -255,6 +255,9 @@ jQuery(document).ready(function($) {
         // 1. Détermine le noeud qu'on doit cloner
         var node = nodeToClone(this);
         
+        // Génère l'événement "before-clone" en passant le noeud qui va être cloné
+        $(document).trigger('docalist:forms:before-clone', node);
+        
         // 2. Clone le noeud
         var clone = createClone(node);
         
@@ -267,14 +270,82 @@ jQuery(document).ready(function($) {
         // 6. Insère le clone juste après le noeud d'origine, avec un espace entre deux
         node.after(' ', clone);
 
+        // Génère l'événement "after-clone" en passant le noeud d'origine et le clone
+        // Remarque : quand l'evt est généré, le clone a déjà été inséré dans le DOM
+        // C'est important, par exemple pour que autosize puisse faire un calcul exact.
+        $(document).trigger('docalist:forms:after-clone', [node, clone]);
+        
         // Donne le focus au premier champ trouvé dans le clone
         var first = clone.is(':input') ? clone : $(':input:first', clone);
         first.is('.selectized') ? first[0].selectize.focus() : first.focus();
         
         // 7. Fait flasher le clone pour que l'utilisateur voit l'élément inséré
         highlight(clone);
-        
     });
+    
+    /* ------------------------------------------------------------------------
+     * Autosize des textarea (celles d'origine et celles qu'on clone)
+     * ------------------------------------------------------------------------*/
+    if (typeof autosize === 'function') {
+        // Autosize sur les textareas qui existent initiallement
+        autosize($('textarea.autosize'));
+        
+        // Autosize sur les textarea qui sont clonées
+        $(document).on('docalist:forms:after-clone', function(event, node, clone) {
+            autosize($('textarea.autosize', clone));
+        });
+    }
+    
+    /* ------------------------------------------------------------------------
+     * Gère le clonage de l'éditeur wordpress / tinymce
+     * ------------------------------------------------------------------------*/
+    $(document).on('docalist:forms:before-clone', function(event, node) {
+        // Désactive les tinymce qui existent dans le noeud d'origine
+        $('.wp-editor-area', node).each(function(index, textarea) {
+            tinymce.execCommand("mceRemoveEditor",false, textarea.id);
+        });
+    });
+    
+    $(document).on('docalist:forms:after-clone', function(event, node, clone) {
+        // Lors du premier appel, WP fait un wp_print_styles('editor-button-css')
+        // On ne veut pas cloner ces liens, donc on les supprimer
+        $('link', clone).remove(); // <link> id='dashicons-css' + 'editor-buttons-css' +
+        
+        // Les quicktags ne fonctionnent pas une fois cloné. Si on a une toolbar, on la supprime 
+        $('div.quicktags-toolbar', clone).remove();
+        
+        // Ré-active les tinymce qui existaient dans le noeud d'origine
+        $('.wp-editor-area', node).each(function(index, textarea) {
+            tinymce.execCommand("mceAddEditor",false, textarea.id);
+        });
+        
+        // Active les tinymce qui existent dans le clone
+        $('.wp-editor-area', clone).each(function(index, textarea) {
+            tinymce.execCommand("mceAddEditor",false, textarea.id);
+            
+            // pour les quicktags, la config est stockée dans la var globale tinyMCEPreInit 
+            // le tableaut qtInit contient la config de chacun des éditeurs sous la forme 
+            // [{id => {id:"dbref-content-0-value", buttons:"strong, em, ..."}}]
+            // Dans notre cas, tous les éditeurs ont la même config, donc on prend juste le premier item
+            // Mais au final, les quicktags clonés ne fonctionnent pas, dasactivation
+//            for (var i in tinyMCEPreInit.qtInit) {
+//                var config = tinyMCEPreInit.qtInit[i];
+//                config.id = textarea.id;
+//                tinyMCEPreInit.qtInit[config.id] = config;
+//                quicktags(config);
+//                break;
+//            }
+        });
+
+    });
+    
+//    $(document).on('docalist:forms:before-clone', function(event, node) {
+//        console.log(event.type, node);
+//    });
+//    
+//    $(document).on('docalist:forms:after-clone', function(event, node, clone) {
+//        console.log(event.type, node, clone);
+//    });
 });
 
 // Libellé des relations.
@@ -304,9 +375,6 @@ jQuery.fn.tableLookup = function() {
         // Les paramètres figurent en attributs "data-" du select
         var settings = $(this).data();
             
-        // Détermine le type de lookup
-        settings.lookupType = settings.table.split(':')[0];
-
         settings = $.extend({
             valueField: settings.lookupType === 'index' ? 'text' : 'code',  // Nom du champ qui contient le code
             labelField: settings.lookupType === 'index' ? 'text' : 'label'  // Nom du champ qui contient le libellé
@@ -357,7 +425,8 @@ jQuery.fn.tableLookup = function() {
                 var url = ajaxurl + '?action=docalist-lookup';
                 
                 // Paramètres de la requête : cf. Docalist-core\Plugin\tableLookup()
-                url += '&source=' + settings.table;
+                url += '&type=' + encodeURIComponent(settings.lookupType);
+                url += '&source=' + encodeURIComponent(settings.lookupSource);
                 if (query.length) {
                     url += '&search=' + encodeURIComponent(query);
                 }

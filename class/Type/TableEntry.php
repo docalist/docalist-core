@@ -102,7 +102,6 @@ class TableEntry extends Text
                 throw new InvalidArgumentException("Invalid TableEntry editor '$editor'");
         }
 
-        /* @var EntryPicker $ui */
         return $editor
             ->setName($this->schema->name())
             ->setOptions($this->schema->table())
@@ -125,21 +124,21 @@ class TableEntry extends Text
 
         switch ($format) {
             case 'code':
-                return $this->value;
+                return $this->phpValue;
 
             case 'label':
-                return $this->getEntry('label') ?: $this->value;
+                return $this->getEntry('label') ?: $this->phpValue;
 
             case 'label+description':
                 $entry = $this->getEntry();
                 if ($entry === false) {
-                    return $this->value;
+                    return $this->phpValue;
                 }
 
                 return sprintf(
                     '<abbr title="%s">%s</abbr>',
                     esc_attr($entry->description),
-                    $entry->label ?: $this->value
+                    $entry->label ?: $this->phpValue
                 );
         }
 
@@ -162,7 +161,7 @@ class TableEntry extends Text
         $table = docalist('table-manager')->get($table);
 
         // Recherche le code et retourne l'entrée correspondante
-        return $table->find($returns, 'code=' . $table->quote($this->value));
+        return $table->find($returns, 'code=' . $table->quote($this->phpValue));
     }
 
     /**
@@ -173,7 +172,7 @@ class TableEntry extends Text
      */
     public function getEntryLabel()
     {
-        return $this->getEntry('label') ?: $this->value;
+        return $this->getEntry('label') ?: $this->phpValue;
     }
 
     /**

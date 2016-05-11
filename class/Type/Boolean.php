@@ -27,7 +27,7 @@ class Boolean extends Scalar
 
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->value();
+        ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_bool($value)) {
             $value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
             if (is_null($value)) {
@@ -35,7 +35,7 @@ class Boolean extends Scalar
             }
         }
 
-        $this->value = $value;
+        $this->phpValue = $value;
 
         return $this;
     }

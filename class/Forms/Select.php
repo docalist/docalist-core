@@ -101,8 +101,11 @@ class Select extends Choice
             if (is_array($label)) {
                 $depth && $this->invalidArgument('%s: options groups cannot be nested.');
                 ++$depth;
-                $theme->start('optgroup', ['label' => $value]);
-                $visited += $this->displayOptions($theme, $label, $data);
+                $theme->start('optgroup', ['label' => sprintf(__('%s :', 'docalist-core'), $value)]);
+                $this->displayOptions($theme, $label, $data);
+                foreach($label as $value => $label) {
+                    $visited[$value] = $value;
+                }
                 $theme->end('optgroup');
                 --$depth;
                 continue;

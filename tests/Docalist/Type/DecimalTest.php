@@ -21,10 +21,10 @@ class DecimalTest extends WP_UnitTestCase
     public function testNew()
     {
         $a = new Decimal();
-        $this->assertSame(0.0, $a->value());
+        $this->assertSame(0.0, $a->getPhpValue());
 
         $a = new Decimal(12);
-        $this->assertSame(12., $a->value());
+        $this->assertSame(12., $a->getPhpValue());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */

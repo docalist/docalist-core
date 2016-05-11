@@ -27,8 +27,8 @@ class MySettings extends Settings {
     static public function loadSchema() {
         return [
             'fields' => [
-                'url' => [ 'default' => 'http://127.0.0.1:9200/' ],
-                'timeout' => [ 'type' => 'int', 'default' => 30 ],
+                'url' => [ 'type' => 'Docalist\Type\Text', 'default' => 'http://127.0.0.1:9200/' ],
+                'timeout' => [ 'type' => 'Docalist\Type\Integer', 'default' => 30 ],
             ]
         ];
     }
@@ -41,7 +41,8 @@ class ConfigRepositoryTest extends WP_UnitTestCase {
         $dir = docalist('config-dir');
         $this->assertTrue(is_dir($dir));
 
-        $repo->save(new MySettings);
+        $settings = new MySettings($repo);
+        $repo->save($settings);
 
         $this->assertFileExists($dir . '/docalist-tests-repository-mysettings.json');
     }

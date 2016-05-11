@@ -332,7 +332,7 @@ class ElementTest extends WP_UnitTestCase
         $this->assertFalse($element->getRepeatable());
 
         // Vérifie que data a été correctement initialisé
-        $this->assertSame($type->value(), $element->getData());
+        $this->assertSame($type->getPhpValue(), $element->getData());
 
         // Si les propriétés étaient déjà initialisées, elle ne sont pas modifiées
         $element = $this->getElement()->setLabel('lbl')->setDescription('dsc')->bind($type);
@@ -379,7 +379,7 @@ class ElementTest extends WP_UnitTestCase
         $this->assertSame($element, $element->bind($type));
 
         // Vérifie que data a été correctement initialisé
-        $this->assertSame($type->value(), $element->getData());
+        $this->assertSame($type->getPhpValue(), $element->getData());
 
         // Vérifie que les propriétés ont été initialisées à partir du schéma
         $this->assertFalse($element->getRepeatable()); // repeat est passé de null à false
@@ -403,7 +403,7 @@ class ElementTest extends WP_UnitTestCase
         $this->assertSame($element, $element->bind($type));
 
         // Vérifie que data a été correctement initialisé
-        $this->assertSame($type->value(), $element->getData());
+        $this->assertSame($type->getPhpValue(), $element->getData());
 
         // Vérifie que les propriétés ont été initialisées à partir du schéma
         $this->assertTrue($element->getRepeatable()); // repeat est passé de null à true

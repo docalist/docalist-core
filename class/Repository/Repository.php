@@ -164,7 +164,7 @@ abstract class Repository
         $entity->beforeSave($this);
 
         // Ecrit les données de l'entité
-        $newId = $this->saveData($id, $this->encode($entity->value()));
+        $newId = $this->saveData($id, $this->encode($entity->getPhpValue()));
 
         // Si un ID a été alloué, on l'indique à l'entité
         is_null($id) && $entity->id($newId);

@@ -32,7 +32,7 @@ use InvalidArgumentException;
  *
  * En interne, les séquences sont stockées dans la table wp_options de
  * wordpress avec des clés se la forme "{groupe}_last_{sequence}" (par
- * exemple "dclrefprisme_last_ref"). Pour cette raison, la longueur totale du
+ * exemple "dbprisme_last_ref"). Pour cette raison, la longueur totale du
  * nom de la séquence ne doit pas dépasser 64 caractères (taille actuelle du
  * champ option_name dans la table wp_options). Une exception sera générée en
  * cas de dépassement.

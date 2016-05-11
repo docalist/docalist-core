@@ -86,7 +86,7 @@ class MultiField extends Composite implements Categorizable
 
     public function getCategoryCode()
     {
-        return $this->__get($this->getCategoryField())->value();
+        return $this->__get($this->getCategoryField())->getPhpValue();
     }
 
     public function getCategoryLabel()

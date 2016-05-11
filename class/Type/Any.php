@@ -17,10 +17,8 @@ use Docalist\Type\Interfaces\Stringable;
 use Docalist\Type\Interfaces\Configurable;
 use Docalist\Type\Interfaces\Formattable;
 use Docalist\Type\Interfaces\Editable;
-use Docalist\Type\Interfaces\Indexable;
 use Serializable;
 use JsonSerializable;
-use Docalist\MappingBuilder;
 use Docalist\Schema\Schema;
 use Docalist\Forms\Container;
 use Docalist\Forms\Input;
@@ -29,14 +27,14 @@ use InvalidArgumentException;
 /**
  * Classe de base pour les différents types de données.
  */
-class Any implements Stringable, Configurable, Formattable, Editable, Indexable, Serializable, JsonSerializable
+class Any implements Stringable, Configurable, Formattable, Editable, Serializable, JsonSerializable
 {
     /**
-     * La valeur du type.
+     * La valeur php du type.
      *
      * @var mixed
      */
-    protected $value;
+    protected $phpValue;
 
     /**
      * Le schéma du type.
@@ -164,8 +162,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
      */
     public function assign($value)
     {
-        ($value instanceof self) && $value = $value->value();
-        $this->value = $value;
+        $this->phpValue = ($value instanceof self) ? $value->getPhpValue() : $value;
 
         return $this;
     }
@@ -181,9 +178,9 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
      *
      * @return mixed
      */
-    public function value()
+    public function getPhpValue()
     {
-        return $this->value;
+        return $this->phpValue;
     }
 
     /**
@@ -202,7 +199,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
 
     final public function __toString()
     {
-        return json_encode($this->value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        return json_encode($this->phpValue, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
     // -------------------------------------------------------------------------
@@ -217,7 +214,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
      */
     final public function serialize()
     {
-        return serialize([$this->value, $this->schema]);
+        return serialize([$this->phpValue, $this->schema]);
     }
 
     /**
@@ -228,7 +225,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
      */
     final public function unserialize($serialized)
     {
-        list($this->value, $this->schema) = unserialize($serialized);
+        list($this->phpValue, $this->schema) = unserialize($serialized);
     }
 
     // -------------------------------------------------------------------------
@@ -243,7 +240,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
      */
     final public function jsonSerialize()
     {
-        return $this->value;
+        return $this->phpValue;
     }
 
     // -------------------------------------------------------------------------
@@ -283,7 +280,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
      */
     public function filterEmpty($strict = true)
     {
-        return empty($this->value);
+        return empty($this->phpValue);
     }
 
     // -------------------------------------------------------------------------
@@ -490,29 +487,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Indexable,
             ->setName($this->schema->name())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
-    }
-
-    // -------------------------------------------------------------------------
-    // Interface Indexable
-    // -------------------------------------------------------------------------
-
-    public function setupMapping(MappingBuilder $mapping)
-    {
-        return [];
-    }
-
-    public function mapData(array & $document)
-    {
-        $value = $this->value();
-        if (is_null($value)) {
-            return;
-        }
-
-        if ($this->schema->collection()) {
-            $document[$this->schema->name()][] = $value;
-        } else {
-            $document[$this->schema->name()] = $this->value();
-        }
     }
 
     // -------------------------------------------------------------------------

@@ -15,13 +15,12 @@ namespace Docalist\Type;
 
 use Docalist\Schema\Schema;
 use Docalist\Repository\Repository;
-use Docalist\MappingBuilder;
 use LogicException;
 
 /**
  * Classe de base pour les entités.
  *
- * Une entité est un objet qui dispose d'une identité (un ID unique).
+ * Une entité est un composite qui dispose d'une identité (un ID unique).
  */
 class Entity extends Composite
 {
@@ -93,23 +92,5 @@ class Entity extends Composite
      */
     public function afterSave(Repository $repository)
     {
-    }
-
-    // -------------------------------------------------------------------------
-    // Interface Indexable
-    // -------------------------------------------------------------------------
-
-    public function setupMapping(MappingBuilder $mapping)
-    {
-        foreach ($this->schema()->getFieldNames() as $field) {
-            $this->__get($field)->setupMapping($mapping);
-        }
-    }
-
-    public function mapData(array & $document)
-    {
-        foreach ($this->getFields() as $field) {
-            $field->mapData($document);
-        }
     }
 }

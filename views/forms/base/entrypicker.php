@@ -35,19 +35,20 @@ $theme->enqueueStyle('selectize')->enqueueScript('selectize');
 // Récupère les données du champ
 if ($this->data instanceof Collection) {
     // par exemple si on a passé un objet "Settings" ou Property comme valeur actuelle du champ
-    $data = $this->data->value();
+    $data = $this->data->getPhpValue();
 } else {
     $data = (array)$this->data;
 }
 
 // Si les lookups portent sur une table, il faut convertir les codes en libellés
-$options = $this->prepareData($data);
+$options = $this->convertCodes($data);
 
 // Garantit que le contrôle a un ID, pour y accèder dans le tag <script>
 $id = $this->generateId();
 
 // Détermine les attributs du select
-$attributes = ['name' => $this->getControlName(), 'data-table' => $this->getOptions()];
+list($type, $source) = explode(':', $this->getOptions(), 2);
+$attributes = ['name' => $this->getControlName(), 'data-lookup-type' => $type, 'data-lookup-source' => $source];
 // $valueField !== 'code' && $attributes['data-value-field'] = $valueField; // valueField/labelField en js
 // $labelField !== 'label' && $attributes['data-label-field'] = $labelField; // (cf. http://stackoverflow.com/a/22753630)
 $attributes += $this->getAttributes();

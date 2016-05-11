@@ -27,14 +27,14 @@ class Number extends Scalar
 
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->value();
+        ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_numeric($value)) {
             if (false === $value = filter_var($value, FILTER_VALIDATE_FLOAT)) {
                 throw new InvalidTypeException('number');
             }
         }
 
-        $this->value = $value;
+        $this->phpValue = $value;
 
         return $this;
     }

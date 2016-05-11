@@ -190,7 +190,7 @@ class MasterTable extends CsvTable
         !isset($table->creation) && $table->creation = date_i18n('Y-m-d H:i:s');
         !isset($table->lastupdate) && $table->lastupdate = date_i18n('Y-m-d H:i:s');
 
-        $fields = $table->value();
+        $fields = $table->getPhpValue();
 
         $fields['readonly'] = $fields['readonly'] ? '1' : '0';
 

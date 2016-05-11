@@ -125,7 +125,7 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
         // test avec une entité qui a déjà un ID
         $client = new Client(['name' => 'daniel']);
         $repo->save($client);
-        $client2 = $repo->load($client->id(), Client::className());
+        $client2 = $repo->load($client->id());
         $this->assertTrue($client2->equals($client));
     }
 

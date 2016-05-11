@@ -38,6 +38,7 @@ class LargeText extends Text
         switch ($editor) {
             case 'textarea':
                 $editor = new Textarea();
+                $editor->addClass('autosize');
                 break;
 
             case 'wpeditor':
@@ -62,7 +63,7 @@ class LargeText extends Text
 
     public function getFormattedValue($options = null)
     {
-        $value = $this->value;
+        $value = $this->phpValue;
         if (trim($value) === '') {
             return $value;
         }

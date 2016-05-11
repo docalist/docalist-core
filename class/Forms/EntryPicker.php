@@ -13,7 +13,7 @@
  */
 namespace Docalist\Forms;
 
-use Docalist\Table\TableInterface;
+use Docalist\Lookup\LookupManager;
 
 /**
  * Un contrôle qui permet à l'utilisateur de choisir une ou plusieurs valeurs
@@ -23,42 +23,39 @@ use Docalist\Table\TableInterface;
  */
 class EntryPicker extends Select
 {
-    /**
-     * Si les lookups portent sur une table, convertit les données passées en
-     * paramètre en tableau d'options.
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function prepareData($data)
+    public function setOptions($options)
     {
-        // Rien à faire si les lookups ne portent pas sur un table
-        if (! is_string($this->options) || substr($this->options, 0, 5) === 'index') {
-            return array_combine($data, $data);
+        // Dans Choice, on peut définir les options via un array, un callable ou une chaine de lookup("type:source")
+        // Dans un EntryPicker, seul les chaines de lookup sont valides.
+        if (is_string($options) && false !== strpos($options, ':')) {
+            return parent::setOptions($options);
         }
 
-        // Ouvre la table
-        list(, $name) = explode(':', $this->options); // TODO à virer
-        $table = docalist('table-manager')->get($name); /* @var TableInterface $table */
+        return $this->invalidArgument('%s: invalid lookup options, expected string ("type:source")');
+    }
 
-        // Construit la clause WHERE ... IN (...)
-        $options = [];
-        foreach ($data as $option) {
-            $options[] = $table->quote($option);
-        }
-        $where = 'code IN (' . implode(',', $options) . ')';
-
-        // Recherche toutes les entrées, on obtient un tableau de la forme 'code => label'
-        $results = $table->search('code,label', $where);
-
-        // Construit le tableau d'options, en respectant l'ordre initial des articles
-        $options = [];
-        foreach ($data as $key) {
-            $options[$key] = isset($results[$key]) ? $results[$key] : __('Invalid: ', 'docalist-core') . $key;
+    /**
+     * Convertit les codes passés en paramètre et détermine le libellé à afficher pour chacun des codes.
+     *
+     * @param array $data Un tableau de codes (par exemple ['FR', 'DE']).
+     *
+     * @return array Le tableau converti (par exemple ['FR' => 'France', 'DE' => 'Allemagne']).
+     */
+    protected function convertCodes($data)
+    {
+        // Sanity check
+        if (empty($data)) {
+            return $data;
         }
 
-        // Ok
-        return $options;
+        // Détermine le type et la source des lookups
+        list($type, $source) = explode(':', $this->options, 2);
+
+        // Récupère le service de lookups qui gère les lookups de ce type
+        $lookupManager = docalist('lookup'); /* @var LookupManager $lookupManager */
+        $lookup = $lookupManager->getLookupService($type);
+
+        // Convertit les données
+        return $lookup->convertCodes($data, $source);
     }
 }

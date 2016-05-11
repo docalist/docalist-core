@@ -22,19 +22,19 @@ class CompositeTest extends WP_UnitTestCase
     public function testNew()
     {
         $a = new Composite();
-        $this->assertSame([], $a->value());
+        $this->assertSame([], $a->getPhpValue());
 
         // valeurs par défaut (amount : 0, currency : EUR)
         $euro = new Money();
-        $this->assertSame(['amount' => 0.0, 'currency' => 'EUR'], $euro->value());
+        $this->assertSame(['amount' => 0.0, 'currency' => 'EUR'], $euro->getPhpValue());
 
         // conversion entier -> float
         $euro = new Money(['amount' => 12]); // rem : la valeur par défaut ne s'applique pas dans ce cas
-        $this->assertSame(['amount' => 12.], $euro->value());
+        $this->assertSame(['amount' => 12.], $euro->getPhpValue());
 
         // data() retourne les champs dans l'ordre du schéma (currency <-> amount)
         $euro = new Money(['currency' => 'USD', 'amount' => 12]);
-        $this->assertSame(['amount' => 12., 'currency' => 'USD'], $euro->value());
+        $this->assertSame(['amount' => 12., 'currency' => 'USD'], $euro->getPhpValue());
     }
 
     /**
@@ -50,11 +50,11 @@ class CompositeTest extends WP_UnitTestCase
         $a = new Money();
 
         $a->amount = 12.0;
-        $this->assertSame(['amount' => 12., 'currency' => 'EUR'], $a->value());
+        $this->assertSame(['amount' => 12., 'currency' => 'EUR'], $a->getPhpValue());
 
         $a->amount = 16; // conversion int -> float
         $a->currency = '$'; // modifie champ déjà initialisé
-        $this->assertSame(['amount' => 16., 'currency' => '$'], $a->value());
+        $this->assertSame(['amount' => 16., 'currency' => '$'], $a->getPhpValue());
     }
 
     public function testGet()
@@ -64,8 +64,8 @@ class CompositeTest extends WP_UnitTestCase
         $this->assertInstanceOf('Docalist\Type\Decimal', $a->amount);
         $this->assertInstanceOf('Docalist\Type\Text', $a->currency);
 
-        $this->assertSame(16., $a->amount->value());
-        $this->assertSame('$', $a->currency->value());
+        $this->assertSame(16., $a->amount->getPhpValue());
+        $this->assertSame('$', $a->currency->getPhpValue());
     }
 
     /** @expectedException InvalidArgumentException */

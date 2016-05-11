@@ -63,7 +63,7 @@ class FuzzyDate extends Text
      * @return array Retourne un tableau de 1, 2 ou 3 éléments.
      */
     protected function parse() {
-        $date = $this->value;
+        $date = $this->phpValue;
         $parts = [];
 
         $parts[0] = substr($date, 0, 4); // year

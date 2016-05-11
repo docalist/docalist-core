@@ -24,7 +24,7 @@ class Text extends Scalar
 {
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->value();
+        ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_string($value)) {
             if (! is_scalar($value)) {
                 throw new InvalidTypeException('string');
@@ -32,7 +32,7 @@ class Text extends Scalar
             $value = (string) $value;
         }
 
-        $this->value = $value;
+        $this->phpValue = $value;
 
         return $this;
     }

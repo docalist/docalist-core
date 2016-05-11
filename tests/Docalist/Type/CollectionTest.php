@@ -23,10 +23,10 @@ class CollectionTest extends WP_UnitTestCase
     public function testNew()
     {
         $c = new Collection();
-        $this->assertSame([], $c->value());
+        $this->assertSame([], $c->getPhpValue());
 
         $c = new Collection(['a', true, 5, 3.14]);
-        $this->assertSame(['a', true, 5, 3.14], $c->value());
+        $this->assertSame(['a', true, 5, 3.14], $c->getPhpValue());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
@@ -39,15 +39,15 @@ class CollectionTest extends WP_UnitTestCase
     {
         $c = new Collection();
         $c[12] = 12;
-        $this->assertSame(12, $c[12]->value());
+        $this->assertSame(12, $c[12]->getPhpValue());
 
         $c[] = 13;
-        $this->assertSame(13, $c[13]->value());
+        $this->assertSame(13, $c[13]->getPhpValue());
 
-        $this->assertSame([12, 13], $c->value());
+        $this->assertSame([12, 13], $c->getPhpValue());
 
         $c[] = new Any('aa');
-        $this->assertSame([12, 13, 'aa'], $c->value());
+        $this->assertSame([12, 13, 'aa'], $c->getPhpValue());
     }
 
     public function testIsset()
@@ -77,7 +77,7 @@ class CollectionTest extends WP_UnitTestCase
 
         foreach ($t as $i => $v) {
             $this->assertInstanceOf('Docalist\Type\Any', $c[$i]);
-            $this->assertSame($v, $c[$i]->value());
+            $this->assertSame($v, $c[$i]->getPhpValue());
         }
     }
 
@@ -116,7 +116,7 @@ class CollectionTest extends WP_UnitTestCase
 
         $t = [];
         foreach ($c->getIterator() as $i => $v) {
-            $t[$i] = $v->value();
+            $t[$i] = $v->getPhpValue();
         }
         $this->assertSame(['a', true, 5, 3.14], $t);
     }
@@ -130,9 +130,9 @@ class CollectionTest extends WP_UnitTestCase
 
         $c = new Collection(['a', true, 5, 3.14]);
         $this->assertInstanceOf('Docalist\Type\Any', $c->first());
-        $this->assertSame('a', $c->first()->value());
+        $this->assertSame('a', $c->first()->getPhpValue());
         $this->assertInstanceOf('Docalist\Type\Any', $c->current());
-        $this->assertSame('a', $c->current()->value());
+        $this->assertSame('a', $c->current()->getPhpValue());
         $this->assertSame(0, $c->key());
     }
 
@@ -145,9 +145,9 @@ class CollectionTest extends WP_UnitTestCase
 
         $c = new Collection(['a', true, 5, 3.14]);
         $this->assertInstanceOf('Docalist\Type\Any', $c->last());
-        $this->assertSame(3.14, $c->last()->value());
+        $this->assertSame(3.14, $c->last()->getPhpValue());
         $this->assertInstanceOf('Docalist\Type\Any', $c->current());
-        $this->assertSame(3.14, $c->current()->value());
+        $this->assertSame(3.14, $c->current()->getPhpValue());
         $this->assertSame(3, $c->key());
     }
 
@@ -162,9 +162,9 @@ class CollectionTest extends WP_UnitTestCase
         $c->first();
         $next = $c->next();
         $this->assertInstanceOf('Docalist\Type\Any', $next);
-        $this->assertSame(true, $next->value());
+        $this->assertSame(true, $next->getPhpValue());
         $this->assertInstanceOf('Docalist\Type\Any', $c->current());
-        $this->assertSame(true, $c->current()->value());
+        $this->assertSame(true, $c->current()->getPhpValue());
         $this->assertSame(1, $c->key());
     }
 

@@ -55,12 +55,12 @@ class Composite extends Any
 
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->value();
+        ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_array($value)) {
             throw new InvalidTypeException('array');
         }
 
-        $this->value = [];
+        $this->phpValue = [];
         foreach ($value as $name => $value) {
             $this->__set($name, $value);
         }
@@ -71,13 +71,13 @@ class Composite extends Any
         // (faire un array_diff + unset de ce qu'on avait et qu'on n'a plus)
     }
 
-    public function value()
+    public function getPhpValue()
     {
-        $fields = $this->schema ? $this->schema->getFieldNames() : array_keys($this->value);
+        $fields = $this->schema ? $this->schema->getFieldNames() : array_keys($this->phpValue);
         $result = [];
         foreach ($fields as $name) {
-            if (isset($this->value[$name])) {
-                $value = $this->value[$name]->value();
+            if (isset($this->phpValue[$name])) {
+                $value = $this->phpValue[$name]->getPhpValue();
                 $value !== [] && $result[$name] = $value;
             }
         }
@@ -88,15 +88,15 @@ class Composite extends Any
     /**
      * Retourne la liste des champs de l'objet.
      *
-     * Remarque : contrairement à value() qui retourne un tableau de valeurs,
-     * fields() retourne un tableau d'objets Any. Cela permet, par exemple,
+     * Remarque : contrairement à getPhpValue() qui retourne un tableau de valeurs php,
+     * getFields() retourne un tableau de types docalist. Cela permet, par exemple,
      * d'itérer sur tous les champs d'un objet.
      *
      * @return Any[]
      */
     public function getFields()
     {
-        return $this->value;
+        return $this->phpValue;
     }
 
     /**
@@ -110,9 +110,9 @@ class Composite extends Any
     public function __set($name, $value)
     {
         // Si la propriété existe déjà, on change simplement sa valeur
-        if (isset($this->value[$name])) {
-            is_null($value) && $value = $this->value[$name]->getDefaultValue();
-            $this->value[$name]->assign($value);
+        if (isset($this->phpValue[$name])) {
+            is_null($value) && $value = $this->phpValue[$name]->getDefaultValue();
+            $this->phpValue[$name]->assign($value);
 
             return $this;
         }
@@ -135,12 +135,12 @@ class Composite extends Any
 
         // Si value est déjà du bon type, on le prend tel quel
         if ($value instanceof $type) {
-            $this->value[$name] = $value;
+            $this->phpValue[$name] = $value;
         }
 
         // Sinon, on instancie
         else {
-            $this->value[$name] = new $type($value, $field);
+            $this->phpValue[$name] = new $type($value, $field);
         }
 
         // Ok
@@ -156,7 +156,7 @@ class Composite extends Any
      */
     public function __isset($name)
     {
-        return isset($this->value[$name]);
+        return isset($this->phpValue[$name]);
     }
 
     /**
@@ -166,7 +166,7 @@ class Composite extends Any
      */
     public function __unset($name)
     {
-        unset($this->value[$name]);
+        unset($this->phpValue[$name]);
     }
 
     /**
@@ -181,10 +181,10 @@ class Composite extends Any
     public function __get($name)
     {
         // Initialise le champ s'il n'existe pas encore
-        ! isset($this->value[$name]) && $this->__set($name, null);
+        ! isset($this->phpValue[$name]) && $this->__set($name, null);
 
         // Retourne l'objet Type
-        return $this->value[$name];
+        return $this->phpValue[$name];
     }
 
     /**
@@ -227,8 +227,8 @@ class Composite extends Any
         // Appel de la forme : $composite->property()
 
         // Le champ existe déjà, retourne sa valeur
-        if (isset($this->value[$name])) {
-            return $this->value[$name]->value();
+        if (isset($this->phpValue[$name])) {
+            return $this->phpValue[$name]->getPhpValue();
         }
 
         // Le champ n'existe pas encore, retourne la valeur par défaut
@@ -248,13 +248,13 @@ class Composite extends Any
 
     public function filterEmpty($strict = true)
     {
-        foreach ($this->value as $key => $item) { /* @var Any $item */
+        foreach ($this->phpValue as $key => $item) { /* @var Any $item */
             if ($item->filterEmpty($strict)) {
-                unset($this->value[$key]);
+                unset($this->phpValue[$key]);
             }
         }
 
-        return empty($this->value);
+        return empty($this->phpValue);
     }
 
     /**
@@ -266,7 +266,7 @@ class Composite extends Any
      */
     protected function filterEmptyProperty($name, $strict = true)
     {
-        return ! isset($this->value[$name]) || $this->value[$name]->filterEmpty($strict);
+        return ! isset($this->phpValue[$name]) || $this->phpValue[$name]->filterEmpty($strict);
     }
 
     public function getAvailableEditors()

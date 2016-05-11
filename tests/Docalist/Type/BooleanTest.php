@@ -21,7 +21,7 @@ class BooleanTest extends WP_UnitTestCase
     public function testNew()
     {
         $a = new Boolean();
-        $this->assertSame(true, $a->value());
+        $this->assertSame(true, $a->getPhpValue());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */

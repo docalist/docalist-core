@@ -21,7 +21,7 @@ class IntegerTest extends WP_UnitTestCase
     public function testNew()
     {
         $a = new Integer();
-        $this->assertSame(0, $a->value());
+        $this->assertSame(0, $a->getPhpValue());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
