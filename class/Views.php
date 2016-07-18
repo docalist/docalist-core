@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
@@ -22,23 +21,72 @@ use InvalidArgumentException;
  * Les vues permettent de séparer (design pattern SOC) la préparation des données (contrôleur) de leur
  * représentation (vue).
  *
- * Les vues sont prédéfinies par les plugins mais peuvent être surchargées par le thème en cours.
- * Pour cela, un système de nom symbolique de la forme "{plugin}:{path}" est utilisé pour désigner les vues
- * (par exemple "docalist-core:table/edit" pour désigner la vue "table/edit" du plugin docalist-core).
+ * Le service 'views' propose essentiellement deux méthodes : display() qui affiche (exécute) une vue en lui
+ * passant des paramètres et render() qui retourne le résultat généré.
  *
- * La vue sera alors recherchée aux emplacements suivants :
- * - wp-content/themes/{theme actuel}/views/{plugin}/{path}.php
- * - wp-content/plugins/{plugin}/views/{path}.path
+ * Pour désigner les vues, le service 'views' utilise un système de noms symboliques de la forme 'group:path'.
  *
- * Par exemple, la vue "docalist-core:table/edit" sera recherchée dans :
- * - wp-content/themes/twentythirteen/views/docalist-core/table/edit.php
- * - wp-content/plugins/docalist-core/views/table/edit.php
+ * Le groupe est un identifiant permettant de regrouper différentes vues (par exemple nom d'un plugin) et le path
+ * est le chemin relatif de la vue au sein de ce groupe (l'extension '.php' est ajoutée automatiquement au path
+ * et ne doit pas être indiqué dans le nom symbolique indiqué). Lors de l'exécution, la vue indiquée sera recherchée
+ * dans tous les répertoires qui sont associés au groupe.
  *
- * Remarque : l'extension '.php' est ajoutée automatiquement au path de la vue et ne doit pas être indiquée dans
- * le nom de la vue.
+ * Remarque : si la vue n'est pas de la forme 'group:path', le service considère qu'il s'agit du groupe ''.
+ *
+ * Ce système permet à un plugin ou à un thème de surcharger les vues par défaut proposées par un autre plugin en
+ * ajoutant un répertoire en tête de liste des répertoires associés à un groupe.
+ *
+ * Remarques :
+ * - docalist-core initialise le service 'views' en associant le groupe '' à la racine du thème du site
+ *   et en créant un groupe pour chaque plugin actif associé au répertoire '/views' du plugin.
+ * - Ainsi, un appel à display('docalist-core:info') exécutera le fichier '/plugins/docalist-core/views/info.php' et
+ *   un appel à display('contact') exécutera le fichier '/contact.php' du thème en cours.
  */
 class Views
 {
+    /**
+     * Liste des groupes, avec pour chaque groupe la liste des répertoires où seront recherchés les vues de ce groupe.
+     *
+     * @var array Un tableau de la forme 'group' => '/répertoire/' ou 'group' => ['/répertoire1/', '/répertoire2/']
+     */
+    protected $groups;
+
+    /**
+     * Initialise le gestionnaire de vues.
+     *
+     * @param array $groups un tableau de la forme 'group' => répertoire ou array(répertoires).
+     * Important : chaque répertoire doit contenir un slash final.
+     */
+    public function __construct($groups = [])
+    {
+        $this->setGroups($groups);
+    }
+
+    /**
+     * Modifie la liste des groupes.
+     *
+     * @param array $groups un tableau de la forme 'group' => répertoire ou array(répertoires).
+     * Important : chaque répertoire doit contenir un slash final.
+     *
+     * @return self
+     */
+    public function setGroups(array $groups)
+    {
+        $this->groups = $groups;
+
+        return $this;
+    }
+
+    /**
+     * Retourne la liste des groupes définis.
+     *
+     * @return array un tableau de la forme 'group' => répertoire ou array(répertoires).
+     */
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+
     /**
      * Exécute une vue et affiche le résultat.
      *
@@ -49,7 +97,7 @@ class Views
      * Chacun des éléments sera disponible dans la vue comme une variable locale :
      *
      *     render('docalist-core:table/edit', ['table' => 'test'])
-     *     >>> /table/edit.php : echo $table;
+     *     dans /table/edit.php, on peut avoir : echo $table;
      *
      * Il est possible également de passer dans le tableau la variable 'this' avec une instance d'un objet existant.
      * Dans ce cas, la vue aura accès à $this et sera exécutée comme s'il s'agissait d'une méthode de l'objet
@@ -59,11 +107,11 @@ class Views
      * paramètres d'exécution de la vue :
      *
      * Par exemple :
-     * array(
+     * [
      *     'name' => 'docalist-core:table/edit',
      *     'path' => '/.../plugins/docalist-core/views/info.php',
      *     'data' => ['table' => 'test'], // les données initiales de la vue
-     * )
+     * ]
      *
      * Dans une vue, $view est pratique pour le débogage mais aussi pour transmettre les données à une autre vue :
      *
@@ -77,8 +125,7 @@ class Views
     {
         // Détermine le path de la vue
         if (false === $path = $this->getPath($view)) {
-            $msg = __('Vue non trouvée "%s"', 'docalist-core');
-            throw new InvalidArgumentException(sprintf($msg, $view));
+            throw new InvalidArgumentException("View not found '$view'");
         }
 
         // La closure qui exécute le template (sandbox)
@@ -120,9 +167,7 @@ class Views
     /**
      * Retourne le path de la vue ont le nom symbolique est passé en paramètre.
      *
-     * La vue est d'abord recherchée dans le répertoire "/views" du thème en cours, ce qui permet de surcharger les
-     * vues par défaut fournies par les plugins en fournissant une version spécialisée, puis dans le répertoire
-     * "views" du plugin.
+     * La vue est recherchée dans tous les répertoires qui sont associés au groupe indiqué dans la vue.
      *
      * @param string $view Nom symbolique de la vue recherchée.
      *
@@ -130,46 +175,29 @@ class Views
      */
     public function getPath($view)
     {
-        static $themeDir = null;
-
-        // Initialise themeDir au premier appel
-        is_null($themeDir) && $themeDir = get_template_directory();
-
-        // Vérifie que le nom de la vue a le format attendu
-        if (false === $pt = strpos($view, ':')) {
-            $msg = __('Nom de vue incorrect "%s" (plugin:view attendu)', 'docalist-core');
-            throw new InvalidArgumentException(sprintf($msg, $view));
+        // Extrait le nom du groupe et le nom de la vue
+        $group = '';
+        $pt = strpos($view, ':');
+        if ($pt !== false) {
+            $group = substr($view, 0, $pt);
+            $view = substr($view, $pt + 1);
         }
 
-        // Sépare le nom du plugin du nom de la vue
-        $plugin = substr($view, 0, $pt);
-        $view = substr($view, $pt + 1);
-
-        // Teste si la vue existe dans le thème en cours
-        $path = "$themeDir/views/$plugin/$view.php";
-        if (file_exists($path)) {
-            return $path;
+        // Vérifie que le groupe indiqué existe
+        if (! isset($this->groups[$group])) {
+            throw new InvalidArgumentException("Invalid group '$group' for view '$view'");
         }
 
-        // Teste si la vue existe dans le plugin
-        $path = WP_PLUGIN_DIR . "/$plugin/views/$view.php";
-        if (file_exists($path)) {
-            return $path;
+        // Teste les différents répertoires du groupe
+        $view .= '.php';
+        foreach((array)$this->groups[$group] as $dir) {
+            $path = $dir . $view;
+            if (file_exists($path)) {
+                return $path;
+            }
         }
 
         // Vue non trouvée
         return false;
-    }
-
-    /**
-     * Détermine si une vue existe.
-     *
-     * @param string $view Le nom de la vue à tester
-     *
-     * @return bool
-     */
-    public function has($view)
-    {
-        return false !== $this->getPath($view);
     }
 }
