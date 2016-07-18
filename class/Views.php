@@ -172,6 +172,9 @@ class Views
      * @param string $view Nom symbolique de la vue recherchée.
      *
      * @return string|false Le path de la vue ou false si la vue n'existe pas.
+     *
+     * @throws InvalidArgumentException si le groupe indiqué dans la vue n'existe pas.
+     *
      */
     public function getPath($view)
     {
