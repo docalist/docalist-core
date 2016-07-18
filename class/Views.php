@@ -14,7 +14,7 @@
  */
 namespace Docalist;
 
-use Exception;
+use InvalidArgumentException;
 
 /**
  * Gestionnaire de vues Docalist.
@@ -71,14 +71,14 @@ class Views
      *
      * @return mixed La méthode retourne ce que retourne la vue (rien en général).
      *
-     * @throws Exception si la vue n'existe pas.
+     * @throws InvalidArgumentException si la vue n'existe pas.
      */
     public function display($view, array $data = [])
     {
         // Détermine le path de la vue
         if (false === $path = $this->getPath($view)) {
             $msg = __('Vue non trouvée "%s"', 'docalist-core');
-            throw new Exception(sprintf($msg, $view));
+            throw new InvalidArgumentException(sprintf($msg, $view));
         }
 
         // La closure qui exécute le template (sandbox)
@@ -107,7 +107,7 @@ class Views
      *
      * @return mixed La méthode retourne ce que retourne la vue (rien en général).
      *
-     * @throws Exception si la vue n'existe pas.
+     * @throws InvalidArgumentException si la vue n'existe pas.
      */
     public function render($view, array $data = [])
     {
@@ -138,7 +138,7 @@ class Views
         // Vérifie que le nom de la vue a le format attendu
         if (false === $pt = strpos($view, ':')) {
             $msg = __('Nom de vue incorrect "%s" (plugin:view attendu)', 'docalist-core');
-            throw new Exception(sprintf($msg, $view));
+            throw new InvalidArgumentException(sprintf($msg, $view));
         }
 
         // Sépare le nom du plugin du nom de la vue
