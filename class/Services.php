@@ -73,8 +73,7 @@ class Services
         }
 
         if (isset($this->services[$id])) {
-            $message = __('%s existe déjà.', 'docalist-core');
-            throw new LogicException(sprintf($message, $id));
+            throw new LogicException("Service '$id' is already registered");
         }
 
         $this->services[$id] = $service;
@@ -132,8 +131,7 @@ class Services
     public function get($id)
     {
         if (! isset($this->services[$id])) {
-            $message = __('Service "%s" non trouvé.', 'docalist-core');
-            throw new LogicException(sprintf($message, $id));
+            throw new LogicException("Service '$id' not found");
         }
 
         $service = $this->services[$id];
