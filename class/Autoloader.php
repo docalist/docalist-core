@@ -55,8 +55,7 @@ class Autoloader
     {
         // Vérifie que ce namespace n'a pas déjà été enregistré
         if (isset($this->path[$namespace]) && $this->path[$namespace] !== $path) {
-            $msg = __('Le namespace %s est déjà enregistré (%s).', 'docalist-core');
-            throw new InvalidArgumentException(sprintf($msg, $namespace, $this->path[$namespace]));
+            throw new InvalidArgumentException("Namespace '$namespace' is already registered with a different path");
         }
 
         // Enregistre le path
