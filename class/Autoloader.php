@@ -41,6 +41,16 @@ class Autoloader
     }
 
     /**
+     * Retourne la liste des espaces de noms enregistrés.
+     *
+     * @eturn array un tableau de la forme namespace => path
+     */
+    public function getNamespaces()
+    {
+        return $this->namespaces;
+    }
+
+    /**
      * Enregistre un espace de noms dans l'autoloader.
      *
      * @param string $namespace Namespace à enregistrer (important : pas d'antislash ni au début, ni à la fin).
@@ -65,37 +75,47 @@ class Autoloader
     }
 
     /**
-     * Retourne la liste des espaces de noms enregistrés.
+     * Essaie de déterminer le path de la classe passée en paramètre.
      *
-     * @eturn array un tableau de la forme namespace => path
+     * La méthode recherche le plus grand espace de noms enregistrés qui correspond au nom de la classe indiquée. Si
+     * une correspondance est trouvée, elle utilise le path obtenu pour déterminer l'emplacement (théorique) de la
+     * classe correspondante.
+     *
+     * Remarque : aucun test n'est fait pour tester si le path obtenu existe ou non.
+     *
+     * @param string $class Nom complet de la classe à tester.
+     *
+     * @return string|false Retourne le path de la classe si son espace de nom correspond à l'un des espaces de nom
+     * enregistrés, false sinon.
      */
-    public function getNamespaces()
-    {
-        return $this->namespaces;
-    }
-
-    /**
-     * Autoloader.
-     *
-     * Cette fonction est appellée automatiquement par spl_autoload_call lorsqu'une classe demandée n'existe pas.
-     *
-     * @param string $class Nom complet de la classe à charger.
-     */
-    protected function autoload($class)
+    public function resolve($class)
     {
         $namespace = $class;
         while (false !== $pt = strrpos($namespace, '\\')) {
             $namespace = substr($class, 0, $pt);
             if (isset($this->namespaces[$namespace])) {
-                $file = substr($class, $pt);
-                $file = strtr($file, '\\', DIRECTORY_SEPARATOR);
-                $file .= '.php';
-                $path = $this->namespaces[$namespace] . $file;
-
-                require_once $path;
-
-                return;
+                return $this->namespaces[$namespace] . strtr(substr($class, $pt), '\\', DIRECTORY_SEPARATOR) . '.php';
             }
         }
+
+        return false;
+    }
+
+    /**
+     * Essaie de charger la classe passée en paramètre.
+     *
+     * Cette fonction est appellée automatiquement par spl_autoload_call() lorsqu'une classe demandée n'existe pas.
+     *
+     * @param string $class Nom complet de la classe à charger.
+     */
+    public function autoload($class)
+    {
+        if (false !== $path = $this->resolve($class)) {
+            require_once $path;
+
+            return true;
+        }
+
+        return false;
     }
 }
