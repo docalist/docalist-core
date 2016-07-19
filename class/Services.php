@@ -14,7 +14,7 @@
 namespace Docalist;
 
 use Closure;
-use LogicException;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -58,7 +58,7 @@ class Services
      *
      * Ce paramètre n'est pas utilisé si vous passez un tableau de services pour $id.
      *
-     * @throws LogicException S'il existe déjà un service avec l'identifiant indiqué.
+     * @throws InvalidArgumentException S'il existe déjà un service avec l'identifiant indiqué.
      *
      * @return self
      */
@@ -73,7 +73,7 @@ class Services
         }
 
         if (isset($this->services[$id])) {
-            throw new LogicException("Service '$id' is already registered");
+            throw new InvalidArgumentException("Service '$id' is already registered");
         }
 
         $this->services[$id] = $service;
@@ -124,14 +124,14 @@ class Services
      *
      * @param string $id L'identifiant de l'objet à retourner.
      *
-     * @throws LogicException Si l'identifiant indiqué n'existe pas.
+     * @throws InvalidArgumentException Si l'identifiant indiqué n'existe pas.
      *
      * @return mixed
      */
     public function get($id)
     {
         if (! isset($this->services[$id])) {
-            throw new LogicException("Service '$id' not found");
+            throw new InvalidArgumentException("Service '$id' not found");
         }
 
         $service = $this->services[$id];
