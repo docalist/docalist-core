@@ -58,19 +58,12 @@ class Services
      */
     public function add($id, $service = null)
     {
-        if (is_array($id)) {
-            foreach ($id as $id => $service) {
-                $this->add($id, $service);
+        foreach(is_array($id) ? $id : [$id => $service] as $id => $service) {
+            if (isset($this->services[$id])) {
+                throw new InvalidArgumentException("Service '$id' is already registered");
             }
-
-            return $this;
+            $this->services[$id] = $service;
         }
-
-        if (isset($this->services[$id])) {
-            throw new InvalidArgumentException("Service '$id' is already registered");
-        }
-
-        $this->services[$id] = $service;
 
         return $this;
     }
