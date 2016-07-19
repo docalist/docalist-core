@@ -48,7 +48,7 @@ class Sequences
      *
      * @throws InvalidArgumentException Si la longueur totale du nom de la séquence est supérieure à 64 caractères.
      */
-    public function name($group, $sequence)
+    public function getSequenceName($group, $sequence)
     {
         // Valide le nom du groupe
         if (!preg_match('~^[a-z][a-z0-9-]*$~', $group)) {
@@ -85,7 +85,7 @@ class Sequences
         $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
-        $name = $this->name($group, $sequence);
+        $name = $this->getSequenceName($group, $sequence);
 
         // Requête SQL à exécuter. Adapté de :
         // @see http://answers.oreilly.com/topic/172-how-to-use-sequence-generators-as-counters-in-mysql/
@@ -112,7 +112,7 @@ class Sequences
         $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
-        $name = $this->name($group, $sequence);
+        $name = $this->getSequenceName($group, $sequence);
 
         // Value doit être un entier
         $value = (int) $value;
@@ -145,7 +145,7 @@ class Sequences
         $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
-        $name = $this->name($group, $sequence);
+        $name = $this->getSequenceName($group, $sequence);
 
         // Requête SQL à exécuter. Adapté de :
         // @see http://answers.oreilly.com/topic/172-how-to-use-sequence-generators-as-counters-in-mysql/
@@ -197,10 +197,10 @@ class Sequences
 
         if ($sequence) {
             $op = '=';
-            $value = $this->name($group, $sequence);
+            $value = $this->getSequenceName($group, $sequence);
         } else {
             $op = ' LIKE ';
-            $value = $this->name($group, '') . '%';
+            $value = $this->getSequenceName($group, '') . '%';
         }
 
         $sql = "DELETE FROM `$wpdb->options` WHERE `option_name` $op '$value'";
@@ -236,7 +236,7 @@ class Sequences
         $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
-        $name = $this->name($group, $sequence);
+        $name = $this->getSequenceName($group, $sequence);
 
         // Value doit être un entier
         $value = (int) $value;

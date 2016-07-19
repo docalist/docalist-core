@@ -18,11 +18,11 @@ use Docalist\Sequences;
 
 class SequencesTest extends WP_UnitTestCase
 {
-    public function testName()
+    public function testGetSequenceName()
     {
         $sequences = new Sequences();
-        $this->assertSame($sequences->name('grp', 'seq'), 'grp_last_seq');
-        $this->assertSame($sequences->name('grp', ''), 'grp_last_');
+        $this->assertSame($sequences->getSequenceName('grp', 'seq'), 'grp_last_seq');
+        $this->assertSame($sequences->getSequenceName('grp', ''), 'grp_last_');
     }
 
     /**
@@ -34,7 +34,7 @@ class SequencesTest extends WP_UnitTestCase
     public function testBadGroupName()
     {
         $sequences = new Sequences();
-        $sequences->name('a,b', 'seq');
+        $sequences->getSequenceName('a,b', 'seq');
     }
 
     /**
@@ -46,7 +46,7 @@ class SequencesTest extends WP_UnitTestCase
     public function testBadSequenceName()
     {
         $sequences = new Sequences();
-        $sequences->name('group', 'a,b');
+        $sequences->getSequenceName('group', 'a,b');
     }
 
     /**
@@ -60,7 +60,7 @@ class SequencesTest extends WP_UnitTestCase
         $sequences = new Sequences();
 
         // total 64 moins 6 pour '_last_' reste 58
-        $sequences->name(str_repeat('a', 59), '');
+        $sequences->getSequenceName(str_repeat('a', 59), '');
     }
 
     public function testIncrement()
