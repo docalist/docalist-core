@@ -13,7 +13,7 @@
  */
 namespace Docalist;
 
-use Exception;
+use InvalidArgumentException;
 
 /**
  * Autoloader de Docalist.
@@ -49,14 +49,14 @@ class Autoloader
      *
      * @return self
      *
-     * @throws Exception Si le namespace est déjà enregistré avec un path différent.
+     * @throws InvalidArgumentException Si le namespace est déjà enregistré avec un path différent.
      */
     public function add($namespace, $path)
     {
         // Vérifie que ce namespace n'a pas déjà été enregistré
         if (isset($this->path[$namespace]) && $this->path[$namespace] !== $path) {
             $msg = __('Le namespace %s est déjà enregistré (%s).', 'docalist-core');
-            throw new Exception(sprintf($msg, $namespace, $this->path[$namespace]));
+            throw new InvalidArgumentException(sprintf($msg, $namespace, $this->path[$namespace]));
         }
 
         // Enregistre le path
