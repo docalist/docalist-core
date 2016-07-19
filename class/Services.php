@@ -31,11 +31,24 @@ class Services
     /**
      * Initialise les services.
      *
-     * @param array $services
+     * @param array $services Un tableau de services de la forme $id => $service.
      */
     public function __construct(array $services = [])
     {
         $this->services = $services;
+    }
+
+    /**
+     * Retourne la liste des services actuellement déclarés.
+     *
+     * @return array Un tableau de la forme $id => $service contenant tous les services dans l'ordre dans lequel
+     * ils ont été déclarés.
+     *
+     * Remarque : les services qui ne sont pas encore instanciés sont représentés par une Closure.
+     */
+    public function getServices()
+    {
+        return $this->services;
     }
 
     /**
@@ -59,7 +72,7 @@ class Services
     public function add($id, $service = null)
     {
         foreach(is_array($id) ? $id : [$id => $service] as $id => $service) {
-            if (isset($this->services[$id])) {
+            if (array_key_exists($id, $this->services)) {
                 throw new InvalidArgumentException("Service '$id' is already registered");
             }
             $this->services[$id] = $service;
@@ -77,7 +90,7 @@ class Services
      */
     public function has($id)
     {
-        return isset($this->services[$id]);
+        return array_key_exists($id, $this->services);
     }
 
     /**
@@ -94,24 +107,24 @@ class Services
      */
     public function isLoaded($id)
     {
-        return isset($this->services[$id]) && ! ($this->services[$id] instanceof Closure);
+        return array_key_exists($id, $this->services) && ! ($this->services[$id] instanceof Closure);
     }
 
     /**
-     * Retourne le service ayant l'identifiant indiqué.
+     * Retourne un service précédement enregistré.
      *
-     * Si le service n'a pas encore été créé, il est instancié en invoquant la Closure utilisée pour le définir,
+     * Si le service n'a pas encore été instancié, il est créé en invoquant la Closure utilisée pour le définir,
      * sinon l'instance existante est retournée.
      *
-     * @param string $id L'identifiant de l'objet à retourner.
+     * @param string $id Le service à retourner.
      *
-     * @throws InvalidArgumentException Si l'identifiant indiqué n'existe pas.
+     * @throws InvalidArgumentException Si le service indiqué n'existe pas.
      *
      * @return mixed
      */
     public function get($id)
     {
-        if (! isset($this->services[$id])) {
+        if (! array_key_exists($id, $this->services)) {
             throw new InvalidArgumentException("Service '$id' not found");
         }
 
@@ -121,31 +134,5 @@ class Services
         }
 
         return $service;
-    }
-
-    /**
-     * Retourne la liste des services déclarés.
-     *
-     * @return array un tableau contenant les noms de tous les services, dans l'ordre dans lequel ils ont été déclarés.
-     */
-    public function names()
-    {
-        return array_keys($this->services);
-    }
-
-    /**
-     * Retourne l'état des services (chargés ou non).
-     *
-     * @return array un tableau contenant les noms de tous les services.
-     */
-    public function state()
-    {
-        $t = $this->services;
-        foreach ($t as $id => & $state) {
-            $state = $this->isLoaded($id);
-        }
-        unset($state);
-
-        return $t;
     }
 }
