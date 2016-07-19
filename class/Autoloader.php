@@ -23,17 +23,15 @@ class Autoloader
     /**
      * @var array Liste des espaces de noms enregistrés.
      *
-     * Les clés du tableau contiennent l'espace de nom, les valeurs contiennent
-     * le path du répertoire qui contient les classes php de cet espace de noms.
+     * Les clés du tableau contiennent l'espace de nom, les valeurs contiennent le path du répertoire qui contient
+     * les classes php de cet espace de noms.
      */
     protected $path = [];
 
     /**
-     * Crée un nouvel autoloader en enregistrant les espaces de noms passés en
-     * paramètre.
+     * Crée un nouvel autoloader en enregistrant les espaces de noms passés en paramètre.
      *
-     * @param array $namespaces un tableau de namespaces à enregistrer, de la
-     * forme :
+     * @param array $namespaces un tableau de namespaces à enregistrer, de la forme :
      * namespace => path du répertoire contenant les classes de ce namespace.
      */
     public function __construct(array $namespaces = [])
@@ -45,16 +43,13 @@ class Autoloader
     /**
      * Enregistre un espace de noms dans l'autoloader.
      *
-     * @param string $namespace Namespace à enregistrer
-     * (remarque : ne pas mettre d'antislash ni au début, ni à la fin).
+     * @param string $namespace Namespace à enregistrer (important : pas d'antislash ni au début, ni à la fin).
      *
-     * @param string $path Chemin absolu du dossier qui contient les classes
-     * pour le namespace indiqué.
+     * @param string $path Chemin absolu du dossier qui contient les classes pour le namespace indiqué.
      *
      * @return self
      *
-     * @throws Exception Si le namespace est déjà enregistré avec un path
-     * différent.
+     * @throws Exception Si le namespace est déjà enregistré avec un path différent.
      */
     public function add($namespace, $path)
     {
@@ -71,8 +66,9 @@ class Autoloader
     }
 
     /**
-     * Autoloader. Cette fonction est appellée automatiquement par
-     * spl_autoload_call lorsqu'une classe demandée n'existe pas.
+     * Autoloader.
+     *
+     * Cette fonction est appellée automatiquement par spl_autoload_call lorsqu'une classe demandée n'existe pas.
      *
      * @param string $class Nom complet de la classe à charger.
      */
