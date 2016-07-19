@@ -1,141 +1,106 @@
 <?php
+/**
+ * This file is part of the "Docalist Core" plugin.
+ *
+ * Copyright (C) 2012-2016 Daniel Ménard
+ *
+ * For copyright and license information, please view the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * @package     Docalist
+ * @subpackage  Tests
+ * @author      Daniel Ménard <daniel.menard@laposte.net>
+ */
 namespace Docalist\Tests;
 
 use WP_UnitTestCase;
+use Docalist\Services;
 
-class ServicesTest extends WP_UnitTestCase {
-    public function testDefault() {
-        $this->assertInstanceOf('Docalist\Services', docalist('services'));
-        $this->assertInstanceOf('Docalist\Autoloader', docalist('autoloader'));
+class ServicesTest extends WP_UnitTestCase
+{
+    public function testAll()
+    {
+        // Vide
+        $services = new Services();
+        $this->assertSame([], $services->getServices());
+        $this->assertFalse($services->has('bool'));
+        $this->assertFalse($services->isLoaded('bool'));
 
-        $this->assertSame(docalist('services'), docalist('services')->get('services'));
-    }
-    public function testNames() {
-        $t = [
-            'services',
-            'autoloader',
-            'settings-repository',
-            'docalist-core-settings',
-            'site-root',
-            'views',
-            'file-cache',
-            'table-manager',
-            'sequences',
-            'lookup',
-            'docalist-core',
-        ] ;
+        // Services
+        $o = (object)['name' => 'smith', 'firstname' => 'john', 'age' => 27];
+        $called = false;
+        $all = [
+            'null' => null, // null peut être un service valide
+            'int' => 1,
+            'bool' => true,
+            'string' => 'hello',
+            'array' => [1, 'a', true],
+            'object' => $o,
+            2016 => 'deux-mille-seize', // un nom de service n'est pas obligatoirement une chaine
+            'closure' => function() use (& $called, $o) {
+                $called = true;
 
-        $this->assertSame($t, docalist('services')->names());
-    }
-
-    public function testState() {
-        $t = [
-            'services' => true,
-            'autoloader' => true,
-            'settings-repository' => false,
-            'docalist-core-settings' => false,
-            'site-root' => false,
-            'views' => false,
-            'file-cache' => false,
-            'table-manager' => false,
-            'sequences' => false,
-            'lookup' => true,
-            'docalist-core' => true,
-        ] ;
-
-        $this->assertSame($t, docalist('services')->state());
-    }
-
-    public function testHas() {
-        $this->assertTrue(docalist('services')->has('services'));
-        $this->assertTrue(docalist('services')->has('autoloader'));
-        $this->assertTrue(docalist('services')->has('site-root'));
-        $this->assertTrue(docalist('services')->has('views'));
-        $this->assertTrue(docalist('services')->has('file-cache'));
-        $this->assertTrue(docalist('services')->has('table-manager'));
-        $this->assertTrue(docalist('services')->has('sequences'));
-
-        $this->assertFalse(docalist('services')->has('inexistant'));
-    }
-
-    public function testIsLoaded() {
-        $this->assertTrue(docalist('services')->isLoaded('services'));
-        $this->assertTrue(docalist('services')->isLoaded('autoloader'));
-
-        $this->assertFalse(docalist('services')->isLoaded('site-root'));
-        $this->assertFalse(docalist('services')->isLoaded('views'));
-        $this->assertFalse(docalist('services')->isLoaded('file-cache'));
-        $this->assertFalse(docalist('services')->isLoaded('table-manager'));
-        $this->assertFalse(docalist('services')->isLoaded('sequences'));
-
-        $this->assertFalse(docalist('services')->isLoaded('inexistant'));
-
-        docalist('views');
-        $this->assertTrue(docalist('services')->isLoaded('views'));
-
-        docalist('table-manager');
-        $this->assertTrue(docalist('services')->isLoaded('table-manager'));
-    }
-
-    public function testGet() {
-        $this->assertInstanceOf('Docalist\Services', docalist('services'));
-        $this->assertInstanceOf('Docalist\Autoloader', docalist('autoloader'));
-//      $this->assertInternalType('string' , docalist('site-root')); NA en CLI
-        $this->assertInstanceOf('Docalist\Views', docalist('views'));
-//      $this->assertInstanceOf('Docalist\Cache\FileCache', docalist('file-cache')); utilise site-root, NA en CLI
-        $this->assertInstanceOf('Docalist\Table\TableManager', docalist('table-manager'));
-        $this->assertInstanceOf('Docalist\Sequences', docalist('sequences'));
-    }
-
-    public function testAdd() {
-        docalist('services')->add('service-test1', 'Hi!');
-        docalist('services')->add('service-test2', function() {
-            return 'Hi!';
-        });
-
-        $this->assertTrue(docalist('services')->has('service-test1'));
-        $this->assertTrue(docalist('services')->has('service-test2'));
-
-        $this->assertTrue(docalist('services')->isLoaded('service-test1'));
-        $this->assertFalse(docalist('services')->isLoaded('service-test2'));
-
-        $this->assertSame('Hi!', docalist('service-test2'));
-        $this->assertTrue(docalist('services')->isLoaded('service-test2'));
-
-        docalist('services')->add([
-            'service-test3' => 'Hop',
-            'service-test4' =>function() {
-                return 'Hip';
+                return $o;
             }
-        ]);
+        ];
 
-        $this->assertTrue(docalist('services')->has('service-test3'));
-        $this->assertTrue(docalist('services')->has('service-test4'));
+        // Vérifie que tous les services simples existent et sont instanciés
+        $services = new Services($all);
+        $this->assertSame($all, $services->getServices());
+        foreach(['null', 'int', 'bool', 'string', 'array', 'object', 2016] as $service) {
+            $this->assertTrue($services->has($service));
+            $this->assertTrue($services->isLoaded($service));
+            $this->assertSame($all[$service], $services->get($service));
+        }
 
-        $this->assertTrue(docalist('services')->isLoaded('service-test3'));
-        $this->assertFalse(docalist('services')->isLoaded('service-test4'));
+        // Vérifie que la closure n'a pas été appellée
+        $this->assertFalse($called);
+        $this->assertTrue($services->has('closure'));
+        $this->assertFalse($services->isLoaded('closure'));
 
-        $this->assertSame('Hop', docalist('service-test3'));
-        $this->assertSame('Hip', docalist('service-test4'));
-        $this->assertTrue(docalist('services')->isLoaded('service-test4'));
+        // Exécute la closute
+        $this->assertSame($o, $services->get('closure'));
+
+        // Vérifie que la closure a été appellée
+        $this->assertTrue($called);
+        $this->assertTrue($services->has('closure'));
+        $this->assertTrue($services->isLoaded('closure'));
+
+        // Vérifie qu'elle n'est pas appellée une seconde fois
+        $called = false;
+        $this->assertSame($o, $services->get('closure'));
+        $this->assertFalse($called);
+
+        // Teste add()
+        $this->assertSame($services, $services->add('other', 'service')); // fluent, retourne self
+        $this->assertTrue($services->has('other'));
+        $this->assertTrue($services->isLoaded('other'));
+        $this->assertSame('service', $services->get('other'));
     }
 
     /**
-     * Service existe déjà
+     * Teste add() avec un service qui existe déjà.
      *
-     * @expectedException LogicException
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage already registered
      */
-    public function testAddExistant() {
-        docalist('services')->add('aaa', 'Hi!');
-        docalist('services')->add('aaa', 'Hi!');
+    public function testAddExistant()
+    {
+        $services = new Services(['aaa' => 'Hi!']);
+
+        $services->add('aaa', 'Oups!');
     }
 
     /**
-     * Service non trouvé
+     * Teste get() avec un service qui n'existe pas.
      *
-     * @expectedException LogicException
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage not found
      */
-    public function testNotFound() {
-        docalist('bbb');
+    public function testNotFound()
+    {
+        $services = new Services(['aaa' => 'Hi!']);
+
+        $services->get('bbb');
     }
 }
