@@ -65,6 +65,16 @@ class Autoloader
     }
 
     /**
+     * Retourne la liste des espaces de noms enregistrés.
+     *
+     * @eturn array un tableau de la forme namespace => path
+     */
+    public function getNamespaces()
+    {
+        return $this->namespaces;
+    }
+
+    /**
      * Autoloader.
      *
      * Cette fonction est appellée automatiquement par spl_autoload_call lorsqu'une classe demandée n'existe pas.
