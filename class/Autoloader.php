@@ -107,6 +107,8 @@ class Autoloader
      * Cette fonction est appellée automatiquement par spl_autoload_call() lorsqu'une classe demandée n'existe pas.
      *
      * @param string $class Nom complet de la classe à charger.
+     *
+     * @return bool Vrai si la classe indiquée a été chargée, false sinon.
      */
     public function autoload($class)
     {
