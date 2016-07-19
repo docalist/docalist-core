@@ -26,7 +26,7 @@ class Autoloader
      * Les clés du tableau contiennent l'espace de nom, les valeurs contiennent le path du répertoire qui contient
      * les classes php de cet espace de noms.
      */
-    protected $path = [];
+    protected $namespaces = [];
 
     /**
      * Crée un nouvel autoloader en enregistrant les espaces de noms passés en paramètre.
@@ -36,7 +36,7 @@ class Autoloader
      */
     public function __construct(array $namespaces = [])
     {
-        $this->path = $namespaces;
+        $this->namespaces = $namespaces;
         spl_autoload_register([$this, 'autoload'], true);
     }
 
@@ -54,12 +54,12 @@ class Autoloader
     public function add($namespace, $path)
     {
         // Vérifie que ce namespace n'a pas déjà été enregistré
-        if (isset($this->path[$namespace]) && $this->path[$namespace] !== $path) {
+        if (isset($this->namespaces[$namespace]) && $this->namespaces[$namespace] !== $path) {
             throw new InvalidArgumentException("Namespace '$namespace' is already registered with a different path");
         }
 
         // Enregistre le path
-        $this->path[$namespace] = $path;
+        $this->namespaces[$namespace] = $path;
 
         return $this;
     }
@@ -76,11 +76,11 @@ class Autoloader
         $namespace = $class;
         while (false !== $pt = strrpos($namespace, '\\')) {
             $namespace = substr($class, 0, $pt);
-            if (isset($this->path[$namespace])) {
+            if (isset($this->namespaces[$namespace])) {
                 $file = substr($class, $pt);
                 $file = strtr($file, '\\', DIRECTORY_SEPARATOR);
                 $file .= '.php';
-                $path = $this->path[$namespace] . $file;
+                $path = $this->namespaces[$namespace] . $file;
 
                 require_once $path;
 
