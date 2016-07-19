@@ -18,40 +18,35 @@ use InvalidArgumentException;
 /**
  * Gestionnaire de sequences.
  *
- * Ce service permet d'implémenter une séquence, c'est un dire un numéro qui ne
- * fait que croître (le champ ref des notices, numéro de batch, etc.)
+ * Ce service permet d'implémenter une séquence, c'est un dire un numéro qui ne fait que croître : le champ ref des
+ * notices, un numéro de batch, un compteur de visites, etc.
  *
- * Les séquences sont organisées en groupes. Chaque groupe a un nom de code
- * unique (par exemple le nom du custom post type).  Au sein de chaque groupe,
- * on peut avoir une ou plusieurs séquences, chacune ayant un nom unique au
- * sein du groupe (par exemple le nom du champ ref).
+ * Les séquences sont organisées en groupes. Chaque groupe a un nom de code unique (par exemple le nom du custom post
+ * type).  Au sein de chaque groupe, on peut avoir une ou plusieurs séquences, chacune ayant un nom unique au sein
+ * du groupe (par exemple le nom du champ ref).
  *
- * Les méthodes de cette classe permettent d'incrémenter une séquence de façon
- * atomique, d'affecter une valeur à une séquence et de réinitialiser une
- * séquence (les séquences commencent à 1).
+ * Les méthodes de cette classe permettent d'incrémenter une séquence de façon atomique, d'affecter une valeur à une
+ * séquence et de réinitialiser une séquence (les séquences commencent à 1).
  *
- * En interne, les séquences sont stockées dans la table wp_options de
- * wordpress avec des clés se la forme "{groupe}_last_{sequence}" (par
- * exemple "dbprisme_last_ref"). Pour cette raison, la longueur totale du
- * nom de la séquence ne doit pas dépasser 64 caractères (taille actuelle du
- * champ option_name dans la table wp_options). Une exception sera générée en
- * cas de dépassement.
+ * En interne, les séquences sont stockées dans la table wp_options de wordpress avec des clés de la forme
+ * "{groupe}_last_{sequence}" (par exemple "dbprisme_last_ref"). Pour cette raison, la longueur totale du nom de
+ * la séquence ne doit pas dépasser 64 caractères (taille actuelle du champ option_name dans la table wp_options).
+ * Une exception sera générée en cas de dépassement.
  */
 class Sequences
 {
     /**
      * Retourne le nom de la séquence.
      *
-     * Le nom de séquence correspond au nom de l'option qui sera créée dans la
-     * table wp_options de wordpress si cette séquence est utilisée.
+     * Le nom de séquence correspond au nom de l'option qui sera créée dans la table wp_options de wordpress si
+     * cette séquence est utilisée.
      *
      * @param string $group Nom du groupe.
      * @param string $sequence Nom de la séquence.
      *
      * @return string
      *
-     * @throws InvalidArgumentException Si la longueur totale du nom de la
-     * séquence est supérieure à 64 caractères.
+     * @throws InvalidArgumentException Si la longueur totale du nom de la séquence est supérieure à 64 caractères.
      */
     public function name($group, $sequence)
     {
@@ -70,7 +65,7 @@ class Sequences
 
         // Le nom de l'option ne doit pas dépasser 64 caractères
         if (strlen($name) > 64) { // Taille maxi du champ option_name dans wp_options
-            throw new InvalidArgumentException("Sequence name too long : $name");
+            throw new InvalidArgumentException("Sequence name too long: $name");
         }
 
         // Ok
@@ -83,8 +78,7 @@ class Sequences
      * @param string $group Nom du groupe.
      * @param string $sequence Nom de la séquence.
      *
-     * @return int La valeur actuelle de la séquence (0 si la séquence n'existe
-     * pas encore dans la table wp_options).
+     * @return int La valeur actuelle de la séquence (0 si la séquence n'existe pas encore dans la table wp_options).
      */
     public function get($group, $sequence)
     {
@@ -100,6 +94,7 @@ class Sequences
         // Exécute la requête (pas de prepare car on contrôle les paramètres)
         $row = $wpdb->get_row($sql);
 
+        // Retourne la valeur de la séquence ou zéro si elle n'existe pas
         return is_object($row) ? (int) $row->option_value : 0;
     }
 
@@ -109,6 +104,7 @@ class Sequences
      * @param string $group Nom du groupe.
      * @param string $sequence Nom de la séquence.
      * @param int $value La valeur de la séquence.
+     *
      * @return int $value.
      */
     public function set($group, $sequence, $value)
@@ -136,9 +132,8 @@ class Sequences
     /**
      * Incrémente une séquence et retourne la valeur obtenue.
      *
-     * Lors du premier appel, la méthode crée la séquence et retourne la valeur
-     * 1. Lors des appels suivants, la séquence est incrémentée et la méthode
-     * retourne sa valeur actuelle.
+     * Lors du premier appel, la méthode crée la séquence et retourne la valeur 1.
+     * Lors des appels suivants, la séquence est incrémentée et la méthode retourne sa valeur actuelle.
      *
      * @param string $group Nom du groupe.
      * @param string $sequence Nom de la séquence.
@@ -188,8 +183,8 @@ class Sequences
     }
 
     /**
-     * Réinitialise (supprime) une séquence, ou toutes les séquences d'un
-     * groupe si aucun nom de séquence n'est passé en paramètre.
+     * Réinitialise (supprime) une séquence, ou toutes les séquences d'un groupe si aucun nom de séquence
+     * n'est passé en paramètre.
      *
      * @param string $group Nom du groupe.
      * @param string $sequence Nom de la séquence.
@@ -214,11 +209,10 @@ class Sequences
     }
 
     /**
-     * Stocke la valeur passée en paramêtre dans la séquence indiquée
-     * si la valeur indiquée est supérieure à la valeur actuelle de la séquence.
+     * Stocke la valeur passée en paramêtre dans la séquence indiquée si la valeur indiquée est supérieure à la
+     * valeur actuelle de la séquence.
      *
-     * Cette méthode permet de mettre à jour une séquence quand le numéro est
-     * fournit par l'extérieur.
+     * Cette méthode permet de mettre à jour une séquence quand le numéro est fournit par l'extérieur.
      *
      * Exemple d'utilisation :
      *
@@ -232,14 +226,10 @@ class Sequences
      * @param int $value Nouvelle valeur de la séquence.
      *
      * @return int Un code indiquant l'opération réalisée :
-     * - 0 : la séquence n'a pas été modifiée (sa valeur actuelle est supérieure
-     *       ou égale à $value).
-     *
-     * - 1 : la séquence n'existait pas encore, elle a été créée et initialisée
-     *       à $value.
-     *
-     * - 2 : la séquence a été mise à jour (la séquence existait mais sa valeur
-     *       était inférieure à $value, elle a été initialisée à $value).
+     * - 0 : la séquence n'a pas été modifiée (sa valeur actuelle est supérieure ou égale à $value).
+     * - 1 : la séquence n'existait pas encore, elle a été créée et initialisée à $value.
+     * - 2 : la séquence a été mise à jour (la séquence existait mais sa valeur était inférieure à $value, elle a
+     *       été initialisée à $value).
      */
     public function setIfGreater($group, $sequence, $value)
     {
@@ -255,7 +245,7 @@ class Sequences
         // @see http://stackoverflow.com/a/10081527
         $sql = "INSERT INTO `$wpdb->options` (`option_name`, `option_value`, `autoload`) "
              . "VALUES('$name', $value, 'no') "
-             . 'ON DUPLICATE KEY UPDATE `option_value` = GREATEST(CAST(`option_value` AS SIGNED), VALUES(`option_value`))';
+             . 'ON DUPLICATE KEY UPDATE `option_value`=GREATEST(CAST(`option_value` AS SIGNED), VALUES(`option_value`))';
 
         // Exécute la requête (pas de prepare car on contrôle les paramètres)
         return $wpdb->query($sql);
