@@ -103,8 +103,16 @@ class Plugin
         // Enregistre les services docalist par défaut
         docalist('services')->add([
 
-            // La base wordpress (pour éviter d'accéder directement à $wpdb)
+            // Variable globales de wordpress
+            // On les déclare comme services pour éviter d'avoir des "global $xxx" dans le code
+            // et pour avoir la possibilité de créer des mocks dans les tests unitaires.
             'wordpress-database' => $GLOBALS['wpdb'],
+            'wordpress-roles' => function() {
+                return $GLOBALS['wp_roles'];
+            },
+            'wordpress-rewrite' => function() {
+                return $GLOBALS['wp_rewrite'];
+            },
 
             // Gestion des Settings
             'settings-repository' => function () {
