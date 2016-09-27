@@ -26,8 +26,7 @@ class CsvTable extends SQLite
     protected function compile()
     {
         // Si la table est en cache et qu'elle est à jour, rien à compiler
-        /* @var $cache FileCache */
-        $cache = docalist('file-cache');
+        $cache = docalist('file-cache'); /** @var FileCache $cache */
         if ($cache->has($this->path, filemtime($this->path))) {
             return $cache->path($this->path);
         }

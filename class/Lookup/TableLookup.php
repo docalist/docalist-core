@@ -34,7 +34,7 @@ class TableLookup implements LookupInterface
     public function getDefaultSuggestions($source = '')
     {
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = docalist('table-manager')->get($source); /** @var TableInterface $table */
 
         // Lance la recherche
         $result = $table->search($this->getFields(), '', '_label', 100);
@@ -46,7 +46,7 @@ class TableLookup implements LookupInterface
     public function getSuggestions($search, $source = '')
     {
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = docalist('table-manager')->get($source); /** @var TableInterface $table */
 
         // Tokenize la chaine de recherche pour être insensible aux accents, etc.
         $arg = implode(' ', Tokenizer::tokenize($search));
@@ -105,7 +105,7 @@ class TableLookup implements LookupInterface
         }
 
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = docalist('table-manager')->get($source); /** @var TableInterface $table */
 
         // Construit la clause WHERE ... IN (...)
         $codes = [];

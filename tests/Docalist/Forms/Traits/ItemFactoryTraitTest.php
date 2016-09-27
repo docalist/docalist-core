@@ -90,7 +90,7 @@ class ItemFactoryTraitTest extends WP_UnitTestCase
             $currentTests = array_slice($tests, 0, $nb, true);
 
             // Appelle la méthode avec $nb parameters
-            $item = call_user_func_array([$form, $method], $currentArgs); /* @var $item Item */
+            $item = call_user_func_array([$form, $method], $currentArgs); /** @var Item $item */
 
             // Vérifie que l'objet obtenu est du bon type
             $this->assertInstanceOf('Docalist\Forms\\' . $class, $item);

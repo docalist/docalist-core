@@ -31,7 +31,7 @@ $theme->start('table', ['class' => 'field-table'] + $this->getAttributes());
 
 // Entête de la table
 $theme->start('thead')->start('tr');
-foreach($this->getItems() as $item) { /* @var Element $item */
+foreach($this->getItems() as $item) { /** @var Element $item */
     $theme->start('th', ['class' => $item->getAttribute('class'), 'title' => $item->getDescription()]); // TODO: containerAttributes
     $item->hasLabelBlock() && $theme->display($item, '_label');
     $theme->end('th');

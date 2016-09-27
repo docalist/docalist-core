@@ -278,7 +278,7 @@ class TableManager
             }
 
             // Supprime l'ancienne table du cache
-            $cache = docalist('file-cache'); /* @var $cache FileCache */
+            $cache = docalist('file-cache'); /** @var FileCache $cache */
             $cache->has($path) && $cache->clear($path);
 
             // Met à jour le path de la table
@@ -333,7 +333,7 @@ class TableManager
         }
 
         // Supprime l'ancienne table du cache
-        $cache = docalist('file-cache'); /* @var $cache FileCache */
+        $cache = docalist('file-cache'); /** @var FileCache $cache */
         $cache->has($path) && $cache->clear($path);
 
         // Supprime la table de la master table

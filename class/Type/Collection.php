@@ -284,7 +284,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
     public function filterEmpty($strict = true)
     {
-        foreach ($this->phpValue as $key => $item) { /* @var Any $item */
+        foreach ($this->phpValue as $key => $item) { /** @var Any $item */
             if ($item->filterEmpty($strict)) {
                 unset($this->phpValue[$key]);
             }
@@ -324,10 +324,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         if ($explode) {
             // Formatte tous les items en les classant par catégorie (libellé)
             foreach ($items as $item) {
-                /* @var $item Categorizable */
+                /** @var Categorizable $item */
                 $category = $item->getCategoryLabel();
 
-                /* @var $item Any */
+                /** @var Any $item */
                 $result[$category][] = $prefix . $item->getFormattedValue($options) . $suffix;
             }
 
@@ -353,7 +353,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $truncate = $this->truncate($items, $limit);
 
         // Formatte chaque item
-        foreach ($items as $item) { /* @var $item Any */
+        foreach ($items as $item) { /** @var Any $item */
             $result[] = $prefix . $item->getFormattedValue($options) . $suffix;
         }
 
@@ -409,7 +409,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $name = $this->schema->name();
 
         // Propose l'option "vue éclatée" si le champ est catégorisable
-        if ($item instanceof Categorizable) { /* @var $item Categorizable */
+        if ($item instanceof Categorizable) { /** @var Categorizable $item */
             $form->checkbox('explode')
                 ->setLabel(__('Vue éclatée', 'docalist-core'))
                 ->setDescription(sprintf(

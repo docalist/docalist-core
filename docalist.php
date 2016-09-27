@@ -26,7 +26,7 @@ use Docalist\Services;
  */
 function docalist($service)
 {
-    static $services = null; /* @var $services Services */
+    static $services = null; /** @var Services $services */
 
     // Initialise le gestionnaire de services lors du premier appel
     if (is_null($services)) {

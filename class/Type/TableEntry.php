@@ -191,12 +191,12 @@ class TableEntry extends Text
         $table = explode(':', $this->schema->table())[1];
 
         // Détermine son type
-        $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
+        $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
         $type = $tableManager->table($table)->type();
 
         // Récupère toutes les tables qui ont le même type, sauf les tables de conversion
         $tables = [];
-        foreach ($tableManager->tables($type) as $table) { /* @var $tableInfo TableInfo */
+        foreach ($tableManager->tables($type) as $table) { /** @var TableInfo $tableInfo */
             if ($table->format() !== 'conversion') {
                 $key = $table->format() . ':' . $table->name();
                 $tables[$key] = sprintf('%s (%s)', $table->label(), $table->name());

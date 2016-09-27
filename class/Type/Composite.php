@@ -248,7 +248,7 @@ class Composite extends Any
 
     public function filterEmpty($strict = true)
     {
-        foreach ($this->phpValue as $key => $item) { /* @var Any $item */
+        foreach ($this->phpValue as $key => $item) { /** @var Any $item */
             if ($item->filterEmpty($strict)) {
                 unset($this->phpValue[$key]);
             }

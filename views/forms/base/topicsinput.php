@@ -29,7 +29,7 @@ use Docalist\Forms\Tag;
 // Récupère les données du champ et indexe par type
 $data = [];
 if ($this->data) {
-    foreach($this->getData() as $topic) { /* @var $topic Topic */
+    foreach($this->getData() as $topic) { /** @var Topic $topic */
         $type = isset($topic['type']) ? $topic['type'] : '';
         $term = isset($topic['term']) ? $topic['term'] : [];
         $data[$type] = $term;
@@ -43,7 +43,7 @@ $table = $this->getTable();
 list($type, $tableName) = explode(':', $table);
 
 // Ouvre la table
-$table = docalist('table-manager')->get($tableName); /* @var $table TableInterface */
+$table = docalist('table-manager')->get($tableName); /** @var TableInterface $table */
 
 $theme->start('table', ['class' => 'form-table']);
 $i = 0;

@@ -31,7 +31,7 @@ use Docalist\Table\TableManager;
  * @var string      $order      Ordre de tri en cours.
  */
 
-$tableManager = docalist('table-manager'); /* @var TableManager $tableManager */
+$tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
 ?>
 <style>
     .fixed .column-readonly {width: 10%}
@@ -175,7 +175,7 @@ $tableManager = docalist('table-manager'); /* @var TableManager $tableManager */
 
         <?php
         $nb = 0;
-        foreach ($tables as $table) : /* @var $table TableInfo */
+        foreach ($tables as $table) : /** @var TableInfo $table */
             ++$nb;
 
             $tableName = $table->name();

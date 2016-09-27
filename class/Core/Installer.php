@@ -38,7 +38,7 @@ class Installer
      */
     public function activate()
     {
-        $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
+        $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
 
         // Enregistre les tables prédéfinies
         foreach ($this->tables() as $name => $table) {
@@ -53,7 +53,7 @@ class Installer
      */
     public function deactivate()
     {
-        $tableManager = docalist('table-manager'); /* @var $tableManager TableManager */
+        $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
 
         // Supprime les tables prédéfinies
         foreach (array_keys($this->tables()) as $table) {

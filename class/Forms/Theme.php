@@ -260,7 +260,7 @@ class Theme
 
         // Initialise le thème en cours
         ! isset($args['theme']) && $args['theme'] = $this;
-        $theme = $args['theme']; /* @var $theme Theme */
+        $theme = $args['theme']; /** @var Theme $theme */
 
         // Teste si ce thème contient la vue indiquée
         $path = $this->directory . $view . '.php';
