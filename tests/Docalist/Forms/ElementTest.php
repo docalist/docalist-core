@@ -19,7 +19,6 @@ use Docalist\Type\Text;
 use Docalist\Type\Composite;
 use Docalist\Type\Collection;
 use Docalist\Schema\Schema;
-use ReflectionClass;
 use InvalidArgumentException;
 
 class ElementTest extends WP_UnitTestCase

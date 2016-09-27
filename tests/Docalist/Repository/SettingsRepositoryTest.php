@@ -16,7 +16,7 @@ namespace Docalist\Tests\Repository;
 
 use Docalist\Repository\Repository;
 use Docalist\Repository\SettingsRepository;
-use Docalist\Tests\Type\Fixtures\Client;
+//use Docalist\Tests\Type\Fixtures\Client;
 
 class SettingsRepositoryTest extends RepositoryTest {
     public function repositoryProvider() {
