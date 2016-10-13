@@ -25,6 +25,7 @@ use Docalist\Lookup\LookupManager;
 use Docalist\Lookup\TableLookup;
 use Docalist\Lookup\ThesaurusLookup;
 use InvalidArgumentException;
+use Docalist\Html;
 
 /**
  * Plugin Docalist-Core.
@@ -112,6 +113,11 @@ class Plugin
             },
             'wordpress-rewrite' => function() {
                 return $GLOBALS['wp_rewrite'];
+            },
+
+            // Générateur de code html
+            'html' => function () {
+                return new Html();
             },
 
             // Gestion des Settings
