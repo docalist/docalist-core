@@ -48,6 +48,19 @@ class Plugin
 
         // Définit les actions et les filtres par défaut
         $this->setupHooks();
+
+        // Debug - permet de réinstaller les tables par défaut
+        if (isset($_GET['docalist-core-reinstall-tables']) && $_GET['docalist-core-reinstall-tables'] === '1') {
+            add_action('init', function() {
+                $installer = new Installer();
+                echo 'Uninstall docalist-core tables...<br />';
+                $installer->deactivate();
+                echo 'Reinstall docalist-core tables...<br />';
+                $installer->activate();
+                echo 'Done.';
+                die();
+            });
+        }
     }
 
     /**
