@@ -135,6 +135,29 @@ class Installer
                 'type' => 'countries',
                 'creation' => '2014-03-14 10:09:01',
             ],
+
+            // Tables des continents
+            'continents_fr' => [
+                'path' => $dir . 'continents/continents_fr.txt',
+                'label' => __('Continents (français)', 'docalist-core'),
+                'format' => 'table',
+                'type' => 'continents',
+                'creation' => '2016-12-11 10:17:48',
+            ],
+            'continents_en' => [
+                'path' => $dir . 'continents/continents_en.txt',
+                'label' => __('Continents (anglais)', 'docalist-core'),
+                'format' => 'table',
+                'type' => 'continents',
+                'creation' => '2016-12-11 10:18:03',
+            ],
+            'country-to-continent' => [
+                'path' => $dir . 'countries/country-to-continent.txt',
+                'label' => __('Table de conversion pays -> continent', 'docalist-core'),
+                'format' => 'conversion',
+                'type' => 'countries',
+                'creation' => '2016-12-11 10:18:03',
+            ],
         ];
     }
 }
