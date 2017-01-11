@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -343,7 +343,7 @@ class Html
      * @param string    $tag        Nom du tag à générer.
      * @param array     $attributes Attributs du tag.
      *
-     * @return self;
+     * @return self
      *
      * @throws InvalidArgumentException Si le tag indiqué ne ne peut pas avoir de contenu (ex 'br').
      */
@@ -364,7 +364,7 @@ class Html
      *
      * @param string $tag Nom du tag à générer.
      *
-     * @return self;
+     * @return self
      *
      * @throws InvalidArgumentException Si le tag indiqué ne ne peut pas avoir de contenu (ex 'br').
      */
