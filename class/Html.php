@@ -67,9 +67,6 @@ class Html
      */
     final public function setDialect($dialect)
     {
-        if (! in_array($dialect, ['xhtml', 'html5', 'html4'])) {
-            throw new InvalidArgumentException("Invalid dialect '$dialect', expected xhtml, html4 or html5.");
-        }
         $this->dialect = $dialect;
 
         return $this;
@@ -106,7 +103,7 @@ class Html
      */
     final public function getIndent()
     {
-        return $this->indent === false ? false : true; // $indent peut être à 0, on ne peut pas utiliser (bool)$indent
+        return !($this->indent === false); // $indent peut être à 0, on ne peut pas utiliser (bool)$indent
     }
 
     /**
@@ -116,7 +113,7 @@ class Html
      */
     private function indent()
     {
-        return $this->indent === false ? '' : str_repeat('    ', $this->indent);
+        return $this->indent ? str_repeat('    ', $this->indent) : '';
     }
 
     /**
