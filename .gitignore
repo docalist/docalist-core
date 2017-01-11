@@ -1,4 +1,4 @@
-# From https://github.com/github/gitignore/blob/master/Global/Eclipse.gitignore
+# Adapted from https://github.com/github/gitignore/blob/master/Global/Eclipse.gitignore
 
 *.pydevproject
 .gradle
