@@ -127,7 +127,7 @@ class Html
      *
      * @param string $text
      *
-     * @return self
+     * @return string
      */
     protected function escapeText($text)
     {
@@ -151,7 +151,7 @@ class Html
      *
      * @param string $value
      *
-     * @return self
+     * @return string
      */
     protected function escapeAttr($value)
     {
