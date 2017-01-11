@@ -252,23 +252,16 @@ class Html
     }
 
     /**
-     * Génère un ou plusieurs attributs et retourne le résultat.
+     * Génère des attributs et retourne le résultat.
      *
-     * attr(array) ou attr(name, value)
-     *
-     * @param string|array $attributes Soit un tableau de la forme nom=>valeur contenant les attributs à générer, soit
-     * une chaine contenant le nom de l'attribut à générer (dans ce cas, la valeur est indiquée dans $value).
-     *
-     * @param string $value Seulement si $name est une chaine : valeur de l'attribut à générer.
+     * @param array $attributes Un tableau de la forme nom=>valeur contenant les attributs à générer.
      *
      * @return string Une chaine contenant les attributs générés.
      *
      * @throws InvalidArgumentException Si la valeur d'un attribut n'est pas valide.
      */
-    protected function attr($attributes, $value = false)
+    protected function attr(array $attributes)
     {
-        is_string($attributes) && $attributes = [$attributes => $value];
-
         $result = '';
         foreach ($attributes as $name => $value) {
             // Ignore l'attribut si la valeur est vide et que l'attribut est optionnel
