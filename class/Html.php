@@ -67,7 +67,7 @@ class Html
      */
     final public function setDialect($dialect)
     {
-        if ($dialect !== 'xhtml' && $dialect !== 'html5' && $dialect !== 'html4') {
+        if (! in_array($dialect, ['xhtml', 'html5', 'html4'])) {
             throw new InvalidArgumentException("Invalid dialect '$dialect', expected xhtml, html4 or html5.");
         }
         $this->dialect = $dialect;
@@ -265,7 +265,7 @@ class Html
         $result = '';
         foreach ($attributes as $name => $value) {
             // Ignore l'attribut si la valeur est vide et que l'attribut est optionnel
-            if ($value === false || is_null($value) || ($value === '' && $this->isEmptyAttribute($name))) {
+            if ($this->isEmptyAttribute($name, $value)) {
                 continue;
             }
 
@@ -379,7 +379,7 @@ class Html
      *
      * @return bool
      */
-    final private function isBooleanAttribute($attribute)
+    private function isBooleanAttribute($attribute)
     {
         // Sources :
         // - https://github.com/kangax/html-minifier/issues/63
@@ -402,7 +402,7 @@ class Html
      *
      * @return bool
      */
-    final private function attributeNeedQuotes($value)
+    private function attributeNeedQuotes($value)
     {
         // A valid unquoted attribute value in HTML is any string of text
         // - that is not the empty string and
@@ -427,14 +427,25 @@ class Html
     }
 
     /**
-     * Teste si l'attribut dont le nom est passé en paramètre peut être supprimé lorsque sa valeur est vide.
+     * Teste si l'attribut passé en paramètre peut être supprimé lorsque sa valeur est vide.
      *
-     * @param string $attribute Le nom de l'attribut à tester.
+     * @param string $name  Le nom de l'attribut à tester.
+     * @param scalar $value La valeur de l'attribut.
      *
      * @return bool
      */
-    final private function isEmptyAttribute($attribute)
+    private function isEmptyAttribute($name, $value)
     {
+        if ($value === false || is_null($value)) {
+            return true;
+        }
+
+        if ($value !== '') {
+            return false;
+        }
+
+        // value === '', on teste le nom de l'attribut pour savoir s'il est optionnel
+
         // Source : http://kangax.github.io/html-minifier/
         $attrs = '|class|id|style|title|lang|dir|onfocus|onblur|onchange|onclick|ondblclick|onmousedown|
                   |onmouseup|onmouseover|onmousemove|onmouseout|onkeypress|onkeydown|onkeyup|';
@@ -444,7 +455,7 @@ class Html
         $this->dialect === 'html5' && $attrs .= 'action|';
 
 
-        return false !== stripos($attrs, "|$attribute|");
+        return false !== stripos($attrs, "|$name|");
     }
 
     /**
@@ -454,7 +465,7 @@ class Html
      *
      * @return bool
      */
-    final private function isEmptyTag($tag)
+    private function isEmptyTag($tag)
     {
         // Sources :
         // - https://developer.mozilla.org/en-US/docs/Glossary/empty_element
@@ -495,7 +506,7 @@ class Html
      *
      * @return bool
      */
-    final private function isOptionalTag($tag)
+    private function isOptionalTag($tag)
     {
         // Source :
         // - https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js
