@@ -36,17 +36,16 @@ class Html
      *
      * @var false|int
      */
-    protected $indent;
+    protected $indent = false;
 
     /**
      * Initialise le service.
      *
      * @param string    $dialect    Dialecte html (xhtml, html4, html5) généré par ce thème (html5 par défaut).
-     * @param bool      $indent     Indique s'il faut ou non indenter le code généré (false par défaut).
      */
-    public function __construct($dialect = 'html5', $indent = false)
+    public function __construct($dialect = 'html5')
     {
-        $this->setDialect($dialect)->setIndent($indent);
+        $this->setDialect($dialect);
     }
 
     /**
