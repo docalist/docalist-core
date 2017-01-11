@@ -40,9 +40,9 @@ class Select extends Choice
     public function setFirstOption($firstOption = true)
     {
         switch (true) {
-            case $firstOption === false;
+            case $firstOption === false:
                 break;
-            case $firstOption === true;
+            case $firstOption === true:
                 $firstOption = ['' => '…'];
                 break;
             case is_string($firstOption):
@@ -103,7 +103,7 @@ class Select extends Choice
                 ++$depth;
                 $theme->start('optgroup', ['label' => sprintf(__('%s :', 'docalist-core'), $value)]);
                 $this->displayOptions($theme, $label, $data);
-                foreach($label as $value => $label) {
+                foreach ($label as $value => $label) {
                     $visited[$value] = $value;
                 }
                 $theme->end('optgroup');

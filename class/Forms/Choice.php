@@ -81,9 +81,9 @@ abstract class Choice extends Element
         if (is_string($this->options)) {
             list(, $name) = explode(':', $this->options); // TODO à virer
 
-           $table = docalist('table-manager')->get($name); /** @var TableInterface $table */
+            $table = docalist('table-manager')->get($name); /** @var TableInterface $table */
 
-           return $table->search('code,label');
+            return $table->search('code,label');
         }
 
         if (is_callable($this->options)) {
@@ -107,5 +107,10 @@ abstract class Choice extends Element
      *
      * @return array Les valeurs invalides (celles qui figurent dans les données mais pas dans les options).
      */
-    abstract protected function displayOptions(Theme $theme, array $options = [], array $data = [], array $attributes = []);
+    abstract protected function displayOptions(
+        Theme $theme,
+        array $options = [],
+        array $data = [],
+        array $attributes = []
+    );
 }

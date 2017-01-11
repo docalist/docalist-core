@@ -309,7 +309,10 @@ class Container extends Element implements Countable, IteratorAggregate
         // Si le container est répétable, $data doit être un tableau (en général numérique : liste des valeurs)
         if ($this->isMultivalued()) {
             if (! is_array($data)) {
-                return $this->invalidArgument('Container "%s" is repeatable, expected Collection or array, got "%s"', gettype($data));
+                return $this->invalidArgument(
+                    'Container "%s" is repeatable, expected Collection or array, got "%s"',
+                    gettype($data)
+                );
             }
         } else {
             $data = [$data]; // ramène au cas unique tableau, ce qui simplifie le code ci-dessous
@@ -319,7 +322,10 @@ class Container extends Element implements Countable, IteratorAggregate
         foreach ($data as $key => $data) {
             // Chaque valeur du container doit être un un tableau associatif (liste des champs)
             if (! is_array($data)) {
-                return $this->invalidArgument('Value for "%s" must be a Composite or an array, got "%s"', gettype($data));
+                return $this->invalidArgument(
+                    'Value for "%s" must be a Composite or an array, got "%s"',
+                    gettype($data)
+                );
             }
 
             // Binde chacun des champs
@@ -337,7 +343,7 @@ class Container extends Element implements Countable, IteratorAggregate
                     continue;
                 }
 
-                // L'élément n'a pas de nom. Si c'est un container, on lui passe toutes les données pour qu'il les transmette
+                // Elément sans nom. Si c'est un container, on lui passe toutes les données pour qu'il transmette
                 if ($item instanceof self) {
                     $item->bindData($data);
                     foreach ($item->getData() as $name => $value) {

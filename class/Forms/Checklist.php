@@ -56,7 +56,7 @@ class Checklist extends Choice
                     ->tag('p', ['class' => 'optgroup-label'], sprintf(__('%s :', 'docalist-core'), $value))
                     ->start('ul');
                 $this->displayOptions($theme, $label, $data);
-                foreach($label as $value => $label) {
+                foreach ($label as $value => $label) {
                     $visited[$value] = $value;
                 }
                 $theme->end('ul')->end('li');

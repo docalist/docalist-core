@@ -376,7 +376,10 @@ abstract class Element extends Item
         if (! $this->isMultivalued()) { // ni repeatable, ni multiple
             // Data doit être un scalaire
             if (!is_scalar($data) && ! is_null($data)) {
-                return $this->invalidArgument('Element %s is monovalued, expected scalar or null, got %s', gettype($data));
+                return $this->invalidArgument(
+                    'Element %s is monovalued, expected scalar or null, got %s',
+                    gettype($data)
+                );
             }
         }
 
@@ -384,7 +387,10 @@ abstract class Element extends Item
         else {
             // On accepte un tableau ou null
             if (! is_array($data) && ! is_null($data)) {
-                return $this->invalidArgument('Element %s is multivalued, expected array or null, got %s', gettype($data));
+                return $this->invalidArgument(
+                    'Element %s is multivalued, expected array or null, got %s',
+                    gettype($data)
+                );
             }
 
             // Si c'est un tableau vide, on stocke null plutôt que array()

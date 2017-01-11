@@ -31,7 +31,8 @@ class TopicsInput extends Element
         $this->table = $table;
     }
 
-    public function getTable() {
+    public function getTable()
+    {
         return $this->table;
     }
 

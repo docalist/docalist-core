@@ -23,7 +23,8 @@ class WordPress extends Theme
     protected $styles = ['docalist-forms-wordpress'];
     protected $scripts = ['docalist-forms'];
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(DOCALIST_CORE . '/views/forms/wordpress', self::get('base'));
     }
 }
