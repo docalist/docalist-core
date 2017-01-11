@@ -13,8 +13,6 @@
  */
 namespace Docalist;
 
-use InvalidArgumentException;
-
 /**
  * Service de génération de code Html.
  */
@@ -62,8 +60,6 @@ class Html
      * @param string $dialect 'xhtml', 'html4' ou 'html5'.
      *
      * @return self
-     *
-     * @throws InvalidArgumentException Si le dialecte indiqué n'est pas valide.
      */
     final public function setDialect($dialect)
     {
@@ -254,8 +250,6 @@ class Html
      * @param array $attributes Un tableau de la forme nom=>valeur contenant les attributs à générer.
      *
      * @return string Une chaine contenant les attributs générés.
-     *
-     * @throws InvalidArgumentException Si la valeur d'un attribut n'est pas valide.
      */
     protected function attr(array $attributes)
     {
@@ -300,16 +294,10 @@ class Html
      * @param string    $content    Contenu du tag.
      *
      * @return self
-     *
-     * @throws InvalidArgumentException Si vous indiquez un contenu pour un tag qui ne peut pas en contenir (ex 'br').
      */
     public function tag($tag, array $attributes = [], $content = null)
     {
         if ($this->isEmptyTag($tag)) {
-            if (!empty($content)) {
-                throw new InvalidArgumentException("Tag '$tag' can not have content.");
-            }
-
             echo $this->indent(), '<', $tag, $this->attr($attributes);
             echo ($this->dialect === 'html5') ? '>' : '/>';
             echo $this->newline();
@@ -327,15 +315,9 @@ class Html
      * @param array     $attributes Attributs du tag.
      *
      * @return self
-     *
-     * @throws InvalidArgumentException Si le tag indiqué ne ne peut pas avoir de contenu (ex 'br').
      */
     public function start($tag, array $attributes = [])
     {
-        if ($this->isEmptyTag($tag)) {
-            throw new InvalidArgumentException("Tag '$tag' is an empty tag, start() cannot be used.");
-        }
-
         echo $this->indent(), '<', $tag, $this->attr($attributes), '>', $this->newline();
         $this->indent !== false && ++$this->indent;
 
@@ -348,15 +330,9 @@ class Html
      * @param string $tag Nom du tag à générer.
      *
      * @return self
-     *
-     * @throws InvalidArgumentException Si le tag indiqué ne ne peut pas avoir de contenu (ex 'br').
      */
     public function end($tag)
     {
-        if ($this->isEmptyTag($tag)) {
-            throw new InvalidArgumentException("Tag '$tag' is an empty tag, end() cannot be used.");
-        }
-
         $this->indent !== false && --$this->indent;
         if ($this->dialect === 'html5' && $this->isOptionalTag($tag)) {
             return $this;
@@ -389,7 +365,7 @@ class Html
 
         return false !== stripos($bool, "|$attribute|");
 
-        // à gérer ? draggable (true, false, auto)
+        // non géré "draggable" qui peut être true, false ou auto
     }
 
     /**
@@ -474,27 +450,6 @@ class Html
         // - colgroup non ajouté car il n'est pas *toujours* vide
         return false !== stripos($tags, "|$tag|");
     }
-
-//     /**
-//      * Indique si le tag passé en paramètre est un élément inline.
-//      *
-//      * @param string $tag
-//      *
-//      * @return bool
-//      */
-//     final public static function isInlineElement($tag)
-//     {
-//         // Source :
-//         // - https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elemente
-//         // - mais plusieurs ont été enlevés de la liste pour que ça indente comme on veut
-//         $tags = '|b|big|i|small|tt|abbr|acronym|cite|code|dfn|em|kbd|strong|samp|time|var|a|bdo|br|img|
-//                  |map|object|q|script|span|sub|sup|button|input|label|select|textarea|';
-//
-//         // Remarques :
-//         // - embed ne figure pas dans la liste moz (html4) mais il figure dans la liste xahlee
-//         // - colgroup non ajouté car il n'est pas *toujours* vide
-//         return false !== stripos($tags, "|$tag|");
-//     }
 
     /**
      * Indique si le tag de fin peut être omis en html5 pour tag dont le nom est passé en paramètre.
