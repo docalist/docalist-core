@@ -278,12 +278,6 @@ class Html
                 continue;
             }
 
-            // Si ce n'est pas un booléen, la valeur doit être un scalaire
-            if (! is_scalar($value)) {
-                $type = gettype($value);
-                throw new InvalidArgumentException("Invalid value for attribute '$name', expected scalar, got $type.");
-            }
-
             // Garantit qu'on a une chaine. Arrivé içi, ça peut encore être un entier : rows, cols...
             // Et dans ce cas, ctype_alnum retournera true pour 50 ('2') mais false pour 10 (LF)
             $value = (string) $value;
