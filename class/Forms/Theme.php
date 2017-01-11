@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -76,9 +76,9 @@ class Theme extends Html
      *
      * @throws InvalidArgumentException Si le répertoire indiqué n'existe pas.
      */
-    public function __construct($directory, Theme $parent = null, $dialect = 'html5', $indent = false)
+    public function __construct($directory, Theme $parent = null, $dialect = 'html5')
     {
-        parent::__construct($dialect, $indent);
+        parent::__construct($dialect);
         if (false === $path = realpath($directory)) {
             throw new InvalidArgumentException("Directory not found: $directory");
         }
@@ -161,7 +161,7 @@ class Theme extends Html
      * @param string|null $view La vue à utiliser. Si $view est vide, la méthode getType() de l'item est appellée
      * et le résultat est utilisé comme nom de vue.
      *
-     * @return self;
+     * @return self
      *
      * @throws InvalidArgumentException Si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents.
      */
