@@ -23,7 +23,7 @@ class Html
     /**
      * Dialecte html (xhtml, html4, html5) généré.
      *
-     * @var int
+     * @var string
      */
     protected $dialect;
 
@@ -209,7 +209,7 @@ class Html
      * - un espace est ajout avant et après le contenu passé en paramètre.
      * - un espace est inséré quand une séquence de deux tirets consécutifs est détectée.
      *
-     * @param string $html
+     * @param string $comment
      *
      * @return self
      */
