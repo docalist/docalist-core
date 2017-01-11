@@ -93,7 +93,7 @@ class Html
      *
      * @return self
      */
-    final public function setIndent($indent = true)
+    final public function setIndent($indent)
     {
         $this->indent = $indent ? 0 : false;
 
