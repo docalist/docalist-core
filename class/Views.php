@@ -141,6 +141,10 @@ class Views
         $context = isset($data['this']) ? $data['this'] : null;
         $render = $render->bindTo($context, $context);
 
+        // En php >= 7.1, il est interdit de reassigner $this (via extract)
+        // Comme on a bindé la closure, on n'en a pas besoin
+        unset($data['this']);
+
         // Exécute le template
         return $render($data);
     }
