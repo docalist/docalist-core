@@ -213,11 +213,8 @@ class Theme extends Html
         $view = $view->bindTo($item, $item);
 
         // Exécute le template
-        $path = basename(dirname($path)) . '/' . basename($path);
         ++$level;
-        //$this->comment('enter ' . $path);
         $view();
-        //$this->comment('leave ' . $path);
         --$level;
 
         // L'appel de plus haut niveau génère un enqueue des assets du thème
