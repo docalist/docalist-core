@@ -438,8 +438,10 @@ class SQLite implements TableInterface
         return empty($result) ? false : reset($result);
     }
 
-    public function lookup($what = '*', $prefix, $limit = null)
+    public function lookup($what = '*', $prefix = '', $limit = null)
     {
+        // A vérifier : la fonction lookup n'est plus utilisée (remplacée par LookupManager)
+
         // On recherche et on trie sur le premier champ indiqué
         $field = strtok($what, ',');
         $field === '*' && $field = $this->fields[0];
