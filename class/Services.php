@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -71,7 +71,7 @@ class Services
      */
     public function add($id, $service = null)
     {
-        foreach(is_array($id) ? $id : [$id => $service] as $id => $service) {
+        foreach (is_array($id) ? $id : [$id => $service] as $id => $service) {
             if (array_key_exists($id, $this->services)) {
                 throw new InvalidArgumentException("Service '$id' is already registered");
             }

@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -51,7 +51,7 @@ class Plugin
 
         // Debug - permet de réinstaller les tables par défaut
         if (isset($_GET['docalist-core-reinstall-tables']) && $_GET['docalist-core-reinstall-tables'] === '1') {
-            add_action('init', function() {
+            add_action('init', function () {
                 $installer = new Installer();
                 echo 'Uninstall docalist-core tables...<br />';
                 $installer->deactivate();
@@ -121,10 +121,10 @@ class Plugin
             // On les déclare comme services pour éviter d'avoir des "global $xxx" dans le code
             // et pour avoir la possibilité de créer des mocks dans les tests unitaires.
             'wordpress-database' => $GLOBALS['wpdb'],
-            'wordpress-roles' => function() {
+            'wordpress-roles' => function () {
                 return $GLOBALS['wp_roles'];
             },
-            'wordpress-rewrite' => function() {
+            'wordpress-rewrite' => function () {
                 return $GLOBALS['wp_rewrite'];
             },
 
@@ -146,9 +146,9 @@ class Plugin
             // Gestion des vues
             'views' => function () {
                 // Créée la liste des plugins actifs
-                $plugins = (array) get_option( 'active_plugins', []);
+                $plugins = (array) get_option('active_plugins', []);
                 if (is_multisite()) {
-                    $sitewide = (array) get_site_option( 'active_sitewide_plugins', []);
+                    $sitewide = (array) get_site_option('active_sitewide_plugins', []);
                     $plugins = array_merge($plugins, array_keys($sitewide));
                 }
 
@@ -156,7 +156,7 @@ class Plugin
                 $groups = ['' => get_stylesheet_directory() . '/'];
 
                 // Chaque plugin donne lieu à un groupe qui est associé au répertoire '/views' du plugin
-                foreach($plugins as $plugin) {
+                foreach ($plugins as $plugin) {
                     $parts = pathinfo($plugin);
                     $groups[$parts['filename']] = WP_PLUGIN_DIR . '/' . $parts['dirname'] . '/views/';
                 }

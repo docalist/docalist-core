@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -28,7 +28,8 @@ class Url extends Text
              ->setDescription(
                  sprintf(
                      __("Ajoute le préfixe %s ou %s si aucun protocole n'est indiqué dans l'url.", 'docalist-core'),
-                    '<code>http://</code>', '<code>mailto:</code>'
+                     '<code>http://</code>',
+                     '<code>mailto:</code>'
                  )
              );
 
@@ -53,7 +54,8 @@ class Url extends Text
      *
      * @return string Url corrigée.
      */
-    private function addProtocol($url) {
+    private function addProtocol($url)
+    {
         // Adresse e-mail
         if (strpos($url, '@') !== false) {
             substr($url, 0, 7) !== 'mailto:' && $url = 'mailto:' . $url;

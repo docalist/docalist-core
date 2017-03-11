@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -32,7 +32,7 @@ interface LookupInterface
      *
      * @return bool
      */
-    public function hasMultipleSources() ;
+    public function hasMultipleSources();
 
     /**
      * Retourne la durée (en secondes) pendant laquelle les suggestions retournées peuvent être mises en cache.

@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -249,8 +249,7 @@ class AdminTables extends AdminPage
             $msg = __('La table "%s" va être supprimée. ', 'docalist-core');
             $msg .= __('Cette action ne peut pas être annulée.', 'docalist-core');
             $msg .= '<br />';
-            $msg .= __('Assurez-vous que cette table n\'est plus utilisée. ', 'docalist-core');
-            $msg .= __('Si vous avez un doute, vous pouvez <a href="%s">renommer la table</a> et vérifier que tout fonctionne avant de la supprimer.', 'docalist-core');
+            $msg .= __('Assurez-vous que cette table n\'est plus utilisée.', 'docalist-core');
 
             $href = $this->url('TableProperties', $tableName);
             $msg = sprintf($msg, $tableName, $href);

@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -119,7 +119,6 @@ class SQLite implements TableInterface
         // Sinon elle retourne le path de la base sqlite à ouvrir
         // (éventuellement le même que celui qu'on lui a passé).
         if ($path) {
-
             // Ouvre la base
             $this->db = new PDO("sqlite:$path");
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -220,7 +219,6 @@ class SQLite implements TableInterface
         // Examine tous les champs
         $_names = $names = $_defs = $defs = $index = [];
         foreach ($this->fields as $field) {
-
             // Sépare le nom du champ de ses paramètres
             $pt = strpos($field, '(');
             if ($pt) {
@@ -387,8 +385,14 @@ class SQLite implements TableInterface
      * vide) contenant les réponses obtenues. Le format de chaque élément
      * dépend de $fetchMode (cf. doc de PDO).
      */
-    protected function query($what = '*', $where = '', $order = '', $limit = null, $offset = null, $fetchMode = PDO::FETCH_OBJ)
-    {
+    protected function query(
+        $what = '*',
+        $where = '',
+        $order = '',
+        $limit = null,
+        $offset = null,
+        $fetchMode = PDO::FETCH_OBJ
+    ) {
         // Construit la requête sql
         $sql = "SELECT $what FROM data";
         $where && $sql .= " WHERE $where";

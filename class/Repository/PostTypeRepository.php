@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -312,7 +312,8 @@ class PostTypeRepository extends Repository
         $revisions = "SELECT ID FROM $wpdb->posts WHERE post_type='revision' AND post_parent IN ($posts)";
 
         // Commentaires sur les notices et les révisions
-        $comments = "SELECT comment_id FROM $wpdb->comments WHERE comment_post_id IN ($posts) OR comment_post_id IN ($revisions)";
+        $comments = "SELECT comment_id FROM $wpdb->comments "
+            . "WHERE comment_post_id IN ($posts) OR comment_post_id IN ($revisions)";
 
         // Supprime les termes de taxonomies et des révisions
         $sql = "DELETE FROM $wpdb->term_relationships WHERE object_id IN ($posts) OR object_id IN ($revisions)";
@@ -347,13 +348,15 @@ class PostTypeRepository extends Repository
         // Pour que cela fonctionne, il faut passer par une table intermédiaire.
         // source : http://stackoverflow.com/a/12508381
 
-        $sql = "DELETE FROM $wpdb->posts WHERE post_type='revision' AND post_parent IN (SELECT ID FROM ($posts) AS tmp)";
+        $sql = "DELETE FROM $wpdb->posts "
+            . "WHERE post_type='revision' AND post_parent IN (SELECT ID FROM ($posts) AS tmp)";
         $msg = __('Suppression des révisions', 'docalist-biblio');
         $this->sql($sql, $msg);
 
         // Mise à jour dans les autres bases des notices filles dont le parent est l'une des notices supprimées
         // $sql = "UPDATE $wpdb->posts SET post_parent=0 WHERE post_parent IN ($posts)"; // ERROR 1093
-        $sql = "UPDATE $wpdb->posts SET post_parent=0 WHERE post_type!='$type' AND post_parent IN (SELECT ID FROM ($posts) AS tmp)";
+        $sql = "UPDATE $wpdb->posts SET post_parent=0 "
+            . "WHERE post_type!='$type' AND post_parent IN (SELECT ID FROM ($posts) AS tmp)";
         $msg = __('Mise à jour des notices filles', 'docalist-biblio');
         $this->sql($sql, $msg);
 

@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -62,7 +62,8 @@ class FuzzyDate extends Text
      *
      * @return array Retourne un tableau de 1, 2 ou 3 éléments.
      */
-    protected function parse() {
+    protected function parse()
+    {
         $date = $this->phpValue;
         $parts = [];
 

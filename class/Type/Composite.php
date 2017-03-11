@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -307,7 +307,7 @@ class Composite extends Any
 
         $class = get_class($this);
         $class = substr($class, strrpos($class, '\\') + 1);
-        $class = preg_replace_callback('/[A-Z][a-z]+/', function($match) {
+        $class = preg_replace_callback('/[A-Z][a-z]+/', function ($match) {
             return '-' . strtolower($match[0]);
         }, $class);
         $class = ltrim($class, '-');

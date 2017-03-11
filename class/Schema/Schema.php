@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -165,7 +165,9 @@ class Schema implements JsonSerializable
         $type = $collection::type();
         if (isset($properties['type'])) {
             if (!is_a($properties['type'], $type, true) && !is_a($properties['type'], self::class, true)) {
-                throw new InvalidArgumentException("Type '{$properties['type']}' is not compatible with collection type '$type'");
+                throw new InvalidArgumentException(
+                    "Type '{$properties['type']}' is not compatible with collection type '$type'"
+                );
             }
         }
 
@@ -281,7 +283,8 @@ class Schema implements JsonSerializable
                 // Vérifie que le nom du champ est unique
                 // remarque : ne peut arriver que lors de la sauvegarde d'une grille
                 // pour un schéma, validate() garantit déjà que les noms sont uniques
-                $name = isset($data['name']) ? $data['name'] : $name; // nouveau nom si renommage autorisé dans le formulaire, ancien sinon
+                // $name = nouveau nom si renommage autorisé dans le formulaire, ancien sinon
+                $name = isset($data['name']) ? $data['name'] : $name;
                 if (isset($result[$name])) {
                     throw new InvalidArgumentException("Field '$name' defined twice");
                 }
@@ -532,5 +535,4 @@ class Schema implements JsonSerializable
         // utilisé uniquement par biblio/exporter paramètres
         return $this->properties;
     }
-
 }

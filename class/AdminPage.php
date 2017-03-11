@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -85,9 +85,11 @@ class AdminPage extends Controller
         $title = $this->menuTitle();
         $capability = $this->capability();
         if (empty($parent)) {
-            $page = add_menu_page($title, $title, $capability, $this->id(), function () {});
+            $page = add_menu_page($title, $title, $capability, $this->id(), function () {
+            });
         } else {
-            $page = add_submenu_page($parent, $title, $title, $capability, $this->id(), function () {});
+            $page = add_submenu_page($parent, $title, $title, $capability, $this->id(), function () {
+            });
         }
 
         /*
@@ -144,7 +146,7 @@ class AdminPage extends Controller
                         $h3 = __("Erreur dans l'action %s", 'docalist-core');
                         $h3 = sprintf($h3, $this->action());
 
-                        $msg = __('La méthode <code>%s()</code> devait générer un objet <code>Response</code> mais a retourné :<pre>%s</pre>', 'docalist-core');
+                        $msg = __('La méthode <code>%s()</code> a retourné :<pre>%s</pre>', 'docalist-core');
                         $msg = sprintf($msg, $this->method(), var_export($response, true));
                         printf('<div class="error"><h3>%s</h3><p>%s</p></div>', $h3, $msg);
                     }
@@ -184,7 +186,7 @@ class AdminPage extends Controller
                         $h3 = __("Garbage dans l'action %s", 'docalist-core');
                         $h3 = sprintf($h3, $this->action());
 
-                        $msg = __('La méthode <code>%s()</code> a généré le contenu suivant en plus de sa réponse :<pre>%s</pre>', 'docalist-core');
+                        $msg = __('La méthode <code>%s()</code> a généré :<pre>%s</pre>', 'docalist-core');
                         $msg = sprintf($msg, $this->method(), $garbage);
                         printf('<div class="error"><h3>%s</h3><p>%s</p></div>', $h3, $msg);
                     }

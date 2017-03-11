@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -466,7 +466,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
                 ->setAttribute('id', $name . '-editor')
                 ->addClass('editor regular-text')
                 ->setLabel(__('Éditeur', 'docalist-core'))
-                ->setDescription(__('Choisissez dans la liste le contrôle qui sera utilisé pour saisir et modifier ce champ.', 'docalist-core'))
+                ->setDescription(__('Choisissez le contrôle utilisé pour saisir ce champ.', 'docalist-core'))
                 ->setOptions($editors)
                 ->setFirstOption($default);
         }

@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -358,8 +358,12 @@ class Controller
      * - s'il y a trop de paramètres et que $checkTooManyArgs est à true
      * - s'il n'y a pas assez de paramètres et que $checkMissing est à true
      */
-    protected function matchParameters(ReflectionMethod $method, array $args, $checkTooManyArgs = false, $checkMissing = true)
-    {
+    protected function matchParameters(
+        ReflectionMethod $method,
+        array $args,
+        $checkTooManyArgs = false,
+        $checkMissing = true
+    ) {
         $params = $method->getParameters();
         $result = [];
         foreach ($params as $i => $param) {

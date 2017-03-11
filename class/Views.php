@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -197,7 +197,7 @@ class Views
 
         // Teste les différents répertoires du groupe
         $view .= '.php';
-        foreach((array)$this->groups[$group] as $dir) {
+        foreach ((array)$this->groups[$group] as $dir) {
             $path = $dir . $view;
             if (file_exists($path)) {
                 return $path;
