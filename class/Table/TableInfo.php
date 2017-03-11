@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -69,7 +69,7 @@ class TableInfo extends Composite
                     'type' => 'Docalist\Type\Boolean',
                     'default' => true,
                     'label' => __('Table en lecture seule', 'docalist-core'),
-                    'description' => __("Indique s'il s'agit d'une table prédéfinie ou d'une table personnalisée.", 'docalist-core'),
+                    'description' => __("Indique si la table est prédéfinie ou personnalisée.", 'docalist-core'),
                 ],
 
                 'creation' => [
@@ -80,8 +80,8 @@ class TableInfo extends Composite
 
                 'lastupdate' => [
                     'type' => 'Docalist\Type\DateTime',
-                    'label' => __('Dernière création', 'docalist-core'),
-                    'description' => __('Date/heure à laquelle la table a modifiée pour la dernière fois.', 'docalist-core'),
+                    'label' => __('Dernière modification', 'docalist-core'),
+                    'description' => __('Date/heure de dernière modification.', 'docalist-core'),
                 ],
             ],
         ];
