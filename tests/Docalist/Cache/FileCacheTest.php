@@ -22,8 +22,8 @@ class FileCacheTest extends WP_UnitTestCase {
     }
 
     public function testCache() {
-        $this->assertSame($this->cache->root(), $this->root . DIRECTORY_SEPARATOR);
-        $this->assertSame($this->cache->directory(), $this->dir . DIRECTORY_SEPARATOR);
+        $this->assertSame($this->cache->getRoot(), $this->root . DIRECTORY_SEPARATOR);
+        $this->assertSame($this->cache->getDirectory(), $this->dir . DIRECTORY_SEPARATOR);
     }
 
     public function testInexistent() {
@@ -32,7 +32,7 @@ class FileCacheTest extends WP_UnitTestCase {
         $path = $this->root . $file;
         $cachePath = $this->dir . $file;
 
-        $this->assertSame($this->cache->path($path), $cachePath);
+        $this->assertSame($this->cache->getPath($path), $cachePath);
 
         $this->assertFalse($this->cache->has($path));
         $this->assertNull($this->cache->get($path));

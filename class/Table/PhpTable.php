@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -28,9 +28,9 @@ class PhpTable extends SQLite
         // Si la table est en cache et qu'elle est à jour, rien à compiler
         $cache = docalist('file-cache'); /** @var FileCache $cache */
         if ($cache->has($this->path, filemtime($this->path))) {
-            return $cache->path($this->path);
+            return $cache->getPath($this->path);
         }
-        $path = $cache->path($this->path);
+        $path = $cache->getPath($this->path);
 
         // Charge le fichier php
         $data = require_once $this->path;
