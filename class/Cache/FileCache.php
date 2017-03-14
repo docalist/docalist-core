@@ -2,22 +2,18 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Cache
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Cache;
 
 use Exception;
 
 /**
- * Un cache permettant de stocker des fichiers (template compilé, version
- * SQLite d'une table d'autorité, etc.).
+ * Un cache permettant de stocker des fichiers générés sur disque (template compilé, version SQLite d'une
+ * table d'autorité, etc.).
  */
 class FileCache
 {
@@ -46,23 +42,17 @@ class FileCache
      *
      * Pour créer un nouveau cache, vous devez fournir deux noms de répertoire.
      *
-     * - Le premier désigne votre "document root". Il doit s'agir d'un
-     *   répertoire existant et vous devez fournir le path absolu. Ce path
-     *   permet de déterminer le chemin relatif du fichier dans le cache.
-     *   Seul les fichiers dont le path commence par ce chemin pourront être
-     *   stockés en cache.
+     * - Le premier désigne votre "document root". Il doit s'agir d'un répertoire existant et vous devez fournir
+     *   le path absolu. Ce path permet de déterminer le chemin relatif du fichier dans le cache.
+     *   Seul les fichiers dont le path commence par ce chemin pourront être stockés en cache.
      *
-     * - Le second désigne l'endroit où seront stockés les fichiers en cache.
-     *   Là aussi il doit s'agir d'un path absolu, mais le répertoire sera
-     *   créé s'il n'existe pas déjà (assurez-vous d'avoir les droits en
-     *   écriture).
+     * - Le second désigne l'endroit où seront stockés les fichiers en cache. Là aussi il doit s'agir d'un path
+     *   absolu, mais le répertoire sera créé s'il n'existe pas déjà (assurez-vous d'avoir les droits en écriture).
      *
-     * Important : FileCache ne vérifie pas que vous passez des path corrects,
-     * c'est à vous de vérifier que vous utilisez des paths corrects, non
-     * relatifs.
+     * Important : FileCache ne vérifie pas que vous passez des path corrects, c'est à vous de vérifier que vous
+     * utilisez des paths corrects, non relatifs.
      *
-     * @param string $root Racine des fichiers qui pourront être stockés
-     * dans ce cache.
+     * @param string $root Racine des fichiers qui pourront être stockés dans ce cache.
      *
      * @param string $directory Path du répertoire cache.
      */
@@ -100,15 +90,14 @@ class FileCache
     /**
      * Retourne le path dans le cache du fichier indiqué.
      *
-     * On ne teste pas si le fichier existe : on se contente de déterminer le
-     * path qu'aurait le fichier s'il était mis en cache.
+     * On ne teste pas si le fichier existe : on se contente de déterminer le path qu'aurait le fichier
+     * s'il était mis en cache.
      *
      * @param string $file le path du fichier à tester.
      *
      * @return string le path dans le cache de ce fichier.
      *
-     * @throws Exception si le fichier indiqué ne peut pas figurer dans le
-     * cache.
+     * @throws Exception si le fichier indiqué ne peut pas figurer dans le cache.
      */
     public function path($file)
     {
@@ -126,11 +115,9 @@ class FileCache
      *
      * @param string $file le path du fichier à tester.
      *
-     * @param timestamp $time date/heure minimale du fichier présent dans le
-     * cache pour qu'il soit considéré comme à jour.
+     * @param timestamp $time date/heure minimale du fichier en cache pour qu'il soit considéré comme à jour.
      *
-     * @return bool true si le fichier est dans le cache et est à jour, false
-     * sinon.
+     * @return bool true si le fichier est dans le cache et est à jour, false sinon.
      */
     public function has($file, $time = 0)
     {
@@ -172,8 +159,7 @@ class FileCache
      *
      * @param string $file le path du fichier à charger.
      *
-     * @return string|null les données lues ou null si le fichier n'existe
-     * pas ou ne peut pas être lu.
+     * @return string|null les données lues ou null si le fichier n'existe pas ou ne peut pas être lu.
      */
     public function get($file)
     {
@@ -185,13 +171,11 @@ class FileCache
     /**
      * Supprime un fichier ou un répertoire du cache.
      *
-     * Aucune erreur n'est générée si le fichier indiqué ne figure pas dans
-     * le cache.
+     * Aucune erreur n'est générée si le fichier indiqué ne figure pas dans le cache.
      *
      * La fonction essaie également de supprimer les répertoires vides.
      *
-     * @param string $file le path du fichier ou du répertoire à supprimer
-     * (vide = tout le cache).
+     * @param string $file le path du fichier ou du répertoire à supprimer (vide = tout le cache).
      */
     public function clear($file = '')
     {
