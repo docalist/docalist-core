@@ -13,13 +13,13 @@
  */
 namespace Docalist\Forms;
 
-use Docalist\Html;
+use Docalist\Html as HtmlGenerator;
 use InvalidArgumentException;
 
 /**
  * Un thème de formulaire.
  */
-class Theme extends Html
+class Theme extends HtmlGenerator
 {
     /**
      * Liste des thèmes connus / chargés.
