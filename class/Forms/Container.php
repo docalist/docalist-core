@@ -256,7 +256,7 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * Retourne une Closure permettant de comparer l'item passé en paramètre avec un autre item.
      *
-     * @param Item $item
+     * @param Item|string $item
      *
      * @return Closure
      *
