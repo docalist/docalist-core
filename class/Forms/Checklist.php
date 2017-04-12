@@ -38,7 +38,7 @@ class Checklist extends Choice
      * Une checklist est représentée par un <ul>, le libellé associé ne doit pas avoir d'attribut 'for' associé car
      * un ul n'est pas labelable.
      *
-     * @return false
+     * @return boolean
      */
     protected function isLabelable()
     {
