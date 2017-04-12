@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -21,18 +21,20 @@ use InvalidArgumentException;
 class Autoloader
 {
     /**
-     * @var array Liste des espaces de noms enregistrés.
+     * Liste des espaces de noms enregistrés.
      *
      * Les clés du tableau contiennent l'espace de nom, les valeurs contiennent le path du répertoire qui contient
      * les classes php de cet espace de noms.
+     *
+     * @var array
      */
     protected $namespaces = [];
 
     /**
      * Crée un nouvel autoloader en enregistrant les espaces de noms passés en paramètre.
      *
-     * @param array $namespaces un tableau de namespaces à enregistrer, de la forme :
-     * namespace => path du répertoire contenant les classes de ce namespace.
+     * @param array $namespaces Un tableau de namespaces à enregistrer de la forme :
+     *                          namespace => path du répertoire contenant les classes de ce namespace.
      */
     public function __construct(array $namespaces = [])
     {
@@ -43,7 +45,7 @@ class Autoloader
     /**
      * Retourne la liste des espaces de noms enregistrés.
      *
-     * @eturn array un tableau de la forme namespace => path
+     * @eturn array Un tableau de la forme namespace => path
      */
     public function getNamespaces()
     {
@@ -54,8 +56,7 @@ class Autoloader
      * Enregistre un espace de noms dans l'autoloader.
      *
      * @param string $namespace Namespace à enregistrer (important : pas d'antislash ni au début, ni à la fin).
-     *
-     * @param string $path Chemin absolu du dossier qui contient les classes pour le namespace indiqué.
+     * @param string $path      Chemin absolu du dossier qui contient les classes pour le namespace indiqué.
      *
      * @return self
      *
@@ -85,8 +86,8 @@ class Autoloader
      *
      * @param string $class Nom complet de la classe à tester.
      *
-     * @return string|false Retourne le path de la classe si son espace de nom correspond à l'un des espaces de nom
-     * enregistrés, false sinon.
+     * @return string|false Retourne le path de la classe si son espace de nom correspond à l'un des espaces de
+     *                      nom enregistrés, false sinon.
      */
     public function resolve($class)
     {
