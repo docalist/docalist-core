@@ -121,15 +121,7 @@ class Container extends Element implements Countable, IteratorAggregate
      */
     public function has($item)
     {
-        $isSame = $this->getComparator($item);
-
-        foreach ($this->items as $item) {
-            if ($isSame($item)) {
-                return true;
-            }
-        }
-
-        return false;
+        return !is_null($this->get($item));
     }
 
     /**
