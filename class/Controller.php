@@ -305,7 +305,7 @@ class Controller
     /**
      * Retourne la capability WordPress requise pour exécuter une action.
      *
-     * @param string $action Nom de l'action à tester ou 'default' pour
+     * @param string $what Nom de l'action à tester ou 'default' pour
      * retourner la capacité par défaut du contrôleur.
      *
      * @return string
@@ -331,7 +331,7 @@ class Controller
     /**
      * Indique si l'utilisateur peut exécuter l'action indiquée.
      *
-     * @param string $action Nom de l'action à tester ou 'default' pour
+     * @param string $what Nom de l'action à tester ou 'default' pour
      * retourner la capacité par défaut du contrôleur.
      *
      * @return bool
@@ -501,9 +501,8 @@ class Controller
      * - url('Action', 'arg1', 'arg2') : les paramètres sont dans l'ordre
      *   attendu par l'action.
      *
-     * @param string $action
-     * @param mixed $args un tableau contenant les arguments ou une liste de
-     * paramètres.
+     * @param string $action Nom de l'action.
+     * Les paramètrs supplémentaires passés à la méthode sont ajoutés à l'url.
      *
      * @return string
      * @throws Exception
@@ -514,7 +513,7 @@ class Controller
      * - s'il y a trop de paramètres fournis ou des paramètres qui ne sont pas
      *   dans la signature de la méthode de l'action.
      */
-    protected function url($action = null, $args = null)
+    protected function url($action = null)
     {
         // Récupère l'action et le nom de la méthode correspondante
         empty($action) && $action = $this->action();
