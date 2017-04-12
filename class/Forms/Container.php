@@ -179,7 +179,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return self
      */
-    public function setItems(array $items = null)
+    public function setItems(array $items)
     {
         return $this->removeAll()->addItems($items);
     }
