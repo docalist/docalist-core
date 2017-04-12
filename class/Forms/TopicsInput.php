@@ -40,9 +40,4 @@ class TopicsInput extends Element
     {
         return true;
     }
-
-    public function repeatable($repeatable = null)
-    {
-        return false;
-    }
 }
