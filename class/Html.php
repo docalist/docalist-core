@@ -193,7 +193,7 @@ class Html
         $count = 0;
         do {
             $comment = str_replace('--', '- -', $comment, $count);
-        } while ($count);
+        } while ($count !== 0);
 
         return ' ' . $comment . ' ';
     }
@@ -391,12 +391,7 @@ class Html
 
         // Make sure trailing slash is not interpreted as HTML self-closing tag
         // Source : http://kangax.github.io/html-minifier/
-        if (substr($value, -1) === '/') {
-            return true;
-        }
-
-        // Ok
-        return false;
+        return substr($value, -1) === '/';
     }
 
     /**
