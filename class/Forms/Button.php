@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -17,8 +17,7 @@ namespace Docalist\Forms;
  * Un bouton.
  *
  * Référence W3C :
- * {@link http://www.w3.org/TR/html5/forms.html#the-button-element The button
- * element}.
+ * {@link http://www.w3.org/TR/html5/forms.html#the-button-element The button element}.
  */
 class Button extends Element
 {
@@ -27,10 +26,10 @@ class Button extends Element
     /**
      * Crée un bouton.
      *
-     * @param string $label Optionnel, le libellé du bouton.
-     * @param string $name Optionnel, le nom du bouton.
-     * @param array $attributes Optionnel, les attributs du bouton.
-     * @param Container $parent Optionnel, le containeur parent du bouton.
+     * @param string    $label      Optionnel, le libellé du bouton.
+     * @param string    $name       Optionnel, le nom du bouton.
+     * @param array     $attributes Optionnel, les attributs du bouton.
+     * @param Container $parent     Optionnel, le containeur parent du bouton.
      */
     public function __construct($label = null, $name = null, array $attributes = null, Container $parent = null)
     {

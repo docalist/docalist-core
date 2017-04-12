@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -16,8 +16,8 @@ namespace Docalist\Forms;
 use Docalist\Table\TableInterface;
 
 /**
- * Classe de base pour les champs qui permettent à l'utilisateur de faire un
- * choix parmi une liste de valeurs possibles (select, checklist, radiolist).
+ * Classe de base pour les champs qui permettent à l'utilisateur de faire un choix parmi une liste de
+ * valeurs possibles (select, checklist, radiolist).
  */
 abstract class Choice extends Element
 {
@@ -29,13 +29,18 @@ abstract class Choice extends Element
     /**
      * Modifie la liste des options disponibles.
      *
-     * @param array|callable|string $options
+     * @param array|callable|string $options Vous poouvez indiquer :
      *
-     * - Un tableau de la forme 'value => label' contenant les options disponibles
+     * - Un tableau de la forme 'value => label' contenant les options disponibles :
+     *
      *   setOptions(['fr' => 'french', 'en' => english])
-     * - Un callable qui retourne un tableau contenant les options
+     *
+     * - Un callable qui retourne un tableau contenant les options :
+     *
      *   setOptions(function() { return ['fr' => 'french', 'en' => english]; });
+     *
      * - Une chaine de caractères :
+     *
      *   - le nom d'une table ou d'un thésaurus : setOptions('countries');
      *   - la chaine 'index' ??
      *   - une recherche : setOptions('search:type:person %s')
@@ -100,9 +105,9 @@ abstract class Choice extends Element
      *
      * Cette méthode utilitaire permet de simplifier les vues (exemples views/form/base/select.php ou checklist.php).
      *
-     * @param Theme $theme Le thème à utiliser.
-     * @param array $options Les options à afficher.
-     * @param array $data Les options actuellement sélectionnées (données).
+     * @param Theme $theme      Le thème à utiliser.
+     * @param array $options    Les options à afficher.
+     * @param array $data       Les options actuellement sélectionnées (données).
      * @param array $attributes Les attributs à ajouter à chacune des options.
      *
      * @return array Les valeurs invalides (celles qui figurent dans les données mais pas dans les options).

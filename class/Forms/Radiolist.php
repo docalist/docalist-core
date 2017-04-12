@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -19,8 +19,8 @@ namespace Docalist\Forms;
 class Radiolist extends Choice
 {
     /**
-     * Une radiolist est représentée par un <ul>, le libellé associé ne doit pas avoir
-     * d'attribut 'for' associé car un ul n'est pas labelable.
+     * Une radiolist est représentée par un <ul>, le libellé associé ne doit pas avoir d'attribut 'for'
+     * associé car un ul n'est pas labelable.
      *
      * @return false
      */

@@ -24,8 +24,6 @@ use Docalist\Schema\Schema;
 use InvalidArgumentException;
 
 /**
- * Représente une liste de champs.
- *
  * Un container est un élément de formulaire qui peut contenir d'autres items.
  */
 class Container extends Element implements Countable, IteratorAggregate
@@ -59,7 +57,7 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * Ajoute plusieurs items dans le container.
      *
-     * @param array $items
+     * @param Item[] $items
      *
      * @return self
      */
@@ -75,11 +73,10 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * Supprime un item du container.
      *
-     * @param string|Item $item L'item à supprimer. Vous pouvez soit passer
-     * l'objet item à supprimer, soit son nom.
+     * @param string|Item $item L'item à supprimer.
      *
-     * Si vous passez un nom, tous les items de la liste ayant ce nom seront
-     * supprimé.
+     * Vous pouvez soit passer l'objet item à supprimer, soit son nom. Si vous passez un nom, tous les items
+     * de la liste ayant ce nom seront supprimé.
      *
      * @param string|Item $item
      *
@@ -178,7 +175,7 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * Initialise la liste des items présents dans le container.
      *
-     * @param array $items
+     * @param Item[] $items
      *
      * @return self
      */
@@ -190,19 +187,16 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * Retourne le nom du contrôle html du container.
      *
-     * La nom du contrôle est construit à partir du nom du nom du container,
-     * de son numéro d'occurence (s'il est répétable) et du nom de son container
-     * parent éventuel.
+     * La nom du contrôle est construit à partir du nom du nom du container, de son numéro d'occurence (s'il est
+     * répétable) et du nom de son container parent éventuel.
      *
-     * Par exemple, si on a un container "livraison" dans un container "addresses"
-     * répétable, la méthode retournera une chaine de la forme :
-     * "adresses[i][livraison]".
+     * Par exemple, si on a un container "livraison" dans un container "addresses" répétable, la méthode
+     * retournera une chaine de la forme : "adresses[i][livraison]".
      *
-     * Important : si le conteneur n'a pas de nom, la méthode retourne le nom de
-     * son container parent. Cela permet à un container sans nom d'être "neutre".
-     * On peut ainsi ajouter des containers intermédiaires (sans nom) dans un
-     * formulaire (pour l'UI ou pour regrouper certains champs par exemple),
-     * sans que cela influe sur le nom des contrôles générés.
+     * Important : si le conteneur n'a pas de nom, la méthode retourne le nom de son container parent.
+     * Cela permet à un container sans nom d'être "neutre". On peut ainsi ajouter des containers intermédiaires
+     * (sans nom) dans un formulaire (pour l'UI ou pour regrouper certains champs par exemple), sans que cela
+     * influe sur le nom des contrôles générés.
      *
      * @return string
      */
@@ -235,8 +229,7 @@ class Container extends Element implements Countable, IteratorAggregate
     }
 
     /**
-     * Retourne un itérateur permettant de parcourir la liste des
-     * items présents dans le container.
+     * Retourne un itérateur permettant de parcourir la liste des items présents dans le container.
      *
      * (implémentation de l'interface IteratorAggregate).
      *
@@ -261,8 +254,7 @@ class Container extends Element implements Countable, IteratorAggregate
     }
 
     /**
-     * Retourne une Closure permettant de comparer l'item passé en paramètre
-     * avec un autre item.
+     * Retourne une Closure permettant de comparer l'item passé en paramètre avec un autre item.
      *
      * @param Item $item
      *

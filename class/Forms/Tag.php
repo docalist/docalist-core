@@ -36,10 +36,10 @@ class Tag extends HtmlBlock
     /**
      * Crée un nouveau tag.
      *
-     * @param string $tag Optionnel, le tag de l'élément (div par défaut).
-     * @param string $content Optionnel, le contenu de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
-     * @param Container $parent Optionnel, le containeur parent de l'item.
+     * @param string    $tag        Optionnel, le tag de l'élément (div par défaut).
+     * @param string    $content    Optionnel, le contenu de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
+     * @param Container $parent     Optionnel, le containeur parent de l'item.
      */
     public function __construct($tag = 'div', $content = null, array $attributes = null, Container $parent = null)
     {
@@ -53,18 +53,16 @@ class Tag extends HtmlBlock
      *
      * @param string $tag Le nom tag.
      *
-     * Vous pouvez passer en paramétre un tag simple ('p', 'span'...) ou un sélecteur
-     * style CSS de la forme "tag[name]#id.class" qui permet de définir, en plus du
-     * nom du tag, les attributs name, id et class de l'élément.
+     * Vous pouvez passer en paramétre un tag simple ('p', 'span'...) ou un sélecteur style CSS de la
+     * forme "tag[name]#id.class" qui permet de définir, en plus du nom du tag, les attributs name, id et
+     * class de l'élément.
      *
-     * Par exemple, un sélecteur de la forme
-     * <code>'input[age]#age.date.required'</code>
-     * créera un élément du style :
-     * <code><input name="age" id="age" class="date required" /></code>
+     * Par exemple, un sélecteur de la forme <code>'input[age]#age.date.required'</code> créera un élément du style :
      *
-     * Tous les éléments du sélecteur sont optionnels (sauf le nom de tag), mais
-     * ils doivent apparaître dans l'ordre indiqué ('p#id.class' fonctionnera,
-     * 'p.class#id' générera une erreur).
+     *     <code><input name="age" id="age" class="date required" /></code>
+     *
+     * Tous les éléments du sélecteur sont optionnels (sauf le nom de tag), mais ils doivent apparaître dans
+     * l'ordre indiqué ('p#id.class' fonctionnera, 'p.class#id' générera une erreur).
      *
      * @return self
      */

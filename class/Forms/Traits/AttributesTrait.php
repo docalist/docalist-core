@@ -19,6 +19,7 @@ use InvalidArgumentException;
  * Un trait pour les items de formulaires qui ont des attributs.
  *
  * Ce trait est partagé entre les classes :
+ *
  * - Tag (dans l'arborescence Item » HtmlBlock » Tag) et
  * - Element (Item » Element)
  */
@@ -56,8 +57,8 @@ trait AttributesTrait
     /**
      * Ajoute des attributs à l'élément.
      *
-     * Si l'un des attributs passés en paramètre existe déjà dans les
-     * attributs de l'élément, la valeur existante est écrasée.
+     * Si l'un des attributs passés en paramètre existe déjà dans les attributs de l'élément, la valeur
+     * existante est écrasée.
      *
      * @param array $attributes Un tableau de la forme nom  => valeur.
      *
@@ -99,8 +100,8 @@ trait AttributesTrait
     /**
      * Modifie la valeur d'un attribut.
      *
-     * @param string $name Le nom de l'attribut à modifier.
-     * @param string|bool|null $value La valeur de l'attribut.
+     * @param string            $name   Le nom de l'attribut à modifier.
+     * @param string|bool|null  $value  La valeur de l'attribut.
      *
      * @return self
      */
@@ -139,11 +140,11 @@ trait AttributesTrait
     /**
      * Ajoute une ou plusieurs classes à l'attribut 'class' de l'élément.
      *
-     * Chacune des classes indiquées n'est ajoutée à l'attribut que si elle
-     * n'y figure pas déjà. Les noms de classes sont sensibles à la casse.
+     * Chacune des classes indiquées n'est ajoutée à l'attribut que si elle n'y figure pas déjà.
+     * Les noms de classes sont sensibles à la casse.
      *
-     * @param string $class La classe à ajouter. Vous pouvez ajouter
-     * plusieurs classes en séparant leurs noms par un espace.
+     * @param string $class La ou les classes à ajouter. Vous pouvez ajouter plusieurs classes en séparant
+     * leurs noms par un espace.
      *
      * Exemple $input->addClass('text small');
      *
@@ -173,8 +174,8 @@ trait AttributesTrait
     /**
      * Supprime une ou plusieurs classes de l'attribut 'class' de l'élément.
      *
-     * @param string $class La classe à supprimer. Vous pouvez également enlever
-     * plusieurs classes en séparant leurs noms par un espace.
+     * @param string $class La ou les classes à supprimer. Vous pouvez enlever plusieurs classes en séparant
+     * leurs noms par un espace.
      *
      * Exemple $input->removeClass('text small');
      *
@@ -224,13 +225,14 @@ trait AttributesTrait
     /**
      * Indique si l'attribut 'class' de l'élément contient l'une des classes indiquées.
      *
-     * @param string $class La classe à tester. Vous pouvez également tester
-     * plusieurs classes en séparant leurs noms par un espace.
+     * @param string $class La ou les classes à tester. Vous pouvez également tester plusieurs classes en
+     * séparant leurs noms par un espace.
      *
-     * Exemple $input->hasClass('text small');
+     * Exemple :
      *
-     * Retournera true si l'attribut 'class' contient la classe 'text' OU la
-     * classe 'small'.
+     *     $input->hasClass('text small');
+     *
+     * Retournera true si l'attribut 'class' contient la classe 'text' OU la classe 'small'.
      *
      * @return bool
      */

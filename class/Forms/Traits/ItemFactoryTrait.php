@@ -40,13 +40,13 @@ use Docalist\Forms\Radiolist;
  *
  * Il n'est utilisé que par Container.
  *
- * Les méthodes se contentent de faire add(new Item) mais cela simplifie la
- * création des formulaires et cela permet d'avoir de l'autocomplétion dans les
- * IDE :
- * - $container->add(new Input())->setRepeatable(true) : pas de completion sur
- *   setRepeatable car add() retourne un Item et un Item n'a pas cette méthode.
- * - $container->input()->setRepeatable(true) : on a de l'autocompletion car la
- *   méthode input() retourne un Input.
+ * Les méthodes se contentent de faire add(new Item) mais cela simplifie la création des formulaires et cela permet
+ * d'avoir de l'autocomplétion dans les IDE :
+ *
+ * - $container->add(new Input())->setRepeatable(true) : pas de completion sur setRepeatable car add() retourne
+ *   un Item et un Item n'a pas cette méthode.
+ *
+ * - $container->input()->setRepeatable(true) : on a de l'autocompletion car la méthode input() retourne un Input.
  */
 trait ItemFactoryTrait
 {
@@ -89,9 +89,9 @@ trait ItemFactoryTrait
     /**
      * Crée un tag et l'ajoute au container.
      *
-     * @param string $tag Optionnel, le tag de l'élément (div par défaut).
-     * @param string $content Optionnel, le contenu de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $tag        Optionnel, le tag de l'élément (div par défaut).
+     * @param string    $content    Optionnel, le contenu de l'élément.
+     * @param array $   attributes  Optionnel, les attributs de l'élément.
      *
      * @return Tag
      */
@@ -103,8 +103,8 @@ trait ItemFactoryTrait
     /**
      * Crée un tag <p> et l'ajoute au container.
      *
-     * @param string $content Optionnel, le contenu de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $content    Optionnel, le contenu de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Tag
      */
@@ -116,8 +116,8 @@ trait ItemFactoryTrait
     /**
      * Crée un tag <span> et l'ajoute au container.
      *
-     * @param string $content Optionnel, le contenu de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $content    Optionnel, le contenu de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Tag
      */
@@ -129,8 +129,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Input (type 'text') et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Input
      */
@@ -142,8 +142,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Password et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Password
      */
@@ -155,8 +155,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Hidden et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Hidden
      */
@@ -168,8 +168,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Textarea et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Textarea
      */
@@ -181,8 +181,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Checkbox et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Checkbox
      */
@@ -194,8 +194,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Radio et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Radio
      */
@@ -207,9 +207,9 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Button et l'ajoute au container.
      *
-     * @param string $label Optionnel, le libellé du bouton.
-     * @param string $name Optionnel, le nom du bouton.
-     * @param array $attributes Optionnel, les attributs du bouton.
+     * @param string    $label      Optionnel, le libellé du bouton.
+     * @param string    $name       Optionnel, le nom du bouton.
+     * @param array     $attributes Optionnel, les attributs du bouton.
      *
      * @return Button
      */
@@ -221,9 +221,9 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Submit et l'ajoute au container.
      *
-     * @param string $label Optionnel, le libellé du bouton.
-     * @param string $name Optionnel, le nom du bouton.
-     * @param array $attributes Optionnel, les attributs du bouton.
+     * @param string    $label      Optionnel, le libellé du bouton.
+     * @param string    $name       Optionnel, le nom du bouton.
+     * @param array     $attributes Optionnel, les attributs du bouton.
      *
      * @return Submit
      */
@@ -235,9 +235,9 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Reset et l'ajoute au container.
      *
-     * @param string $label Optionnel, le libellé du bouton.
-     * @param string $name Optionnel, le nom du bouton.
-     * @param array $attributes Optionnel, les attributs du bouton.
+     * @param string    $label      Optionnel, le libellé du bouton.
+     * @param string    $name       Optionnel, le nom du bouton.
+     * @param array     $attributes Optionnel, les attributs du bouton.
      *
      * @return Reset
      */
@@ -249,8 +249,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Select et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Select
      */
@@ -262,8 +262,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Checklist et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Checklist
      */
@@ -275,8 +275,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Radiolist et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Radiolist
      */
@@ -288,8 +288,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Container et l'ajoute au container.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Container
      */
@@ -301,8 +301,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément EntryPicker et l'ajoute au container.
      *
-     * @param string $name Le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return EntryPicker
      */
@@ -314,8 +314,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Table et l'ajoute au container.
      *
-     * @param string $name Le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Table
      */
@@ -327,8 +327,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Fieldset et l'ajoute au container.
      *
-     * @param string $name Le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Fieldset
      */
@@ -340,8 +340,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Div et l'ajoute au container.
      *
-     * @param string $name Le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Div
      */

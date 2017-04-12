@@ -24,10 +24,9 @@ class Theme extends Html
     /**
      * Liste des thèmes connus / chargés.
      *
-     * Initiallement, la liste contient les noms de classe des thèmes prédéfinis.
-     * Lorsque get() est appellée, le thème est instancié et stocké dans la liste.
-     * Si get() est appellée avec un nom de thème qu'on ne connaît pas, un filtre est déclenché et on stocke le
-     * thème retourné.
+     * Initiallement, la liste contient les noms de classe des thèmes prédéfinis. Lorsque get() est appellée,
+     * le thème est instancié et stocké dans la liste. Si get() est appellée avec un nom de thème qu'on ne
+     * connaît pas, un filtre est déclenché et on stocke le thème retourné.
      *
      * @var array
      */
@@ -69,10 +68,10 @@ class Theme extends Html
     /**
      * Crée un thème.
      *
-     * @param string $directory Répertoire contenant les vues utilisées par ce thème.
-     * @param Theme $parent Thème parent : si une vue n'existe pas dans le répertoire
-     * du thème, elle sera recherchée dans le thème parent.
-     * @param string $dialect Dialecte html (xhtml, html4, html5) généré par ce thème.
+     * @param string    $directory  Répertoire contenant les vues utilisées par ce thème.
+     * @param Theme     $parent     Thème parent : si une vue n'existe pas dans le répertoire du thème,
+     *                              elle sera recherchée dans le thème parent.
+     * @param string    $dialect    Dialecte html (xhtml, html4, html5) généré par ce thème.
      *
      * @throws InvalidArgumentException Si le répertoire indiqué n'existe pas.
      */
@@ -90,8 +89,9 @@ class Theme extends Html
      * Retourne un thème.
      *
      * @param string|Theme $name Nom du thème ('base', 'wordpress'...)
-     * Si $name est vide, le thème par défaut est retourné.
-     * Si $name est déjà un objet thème, il est retourné tel quel.
+     *
+     * - Si $name est vide, le thème par défaut est retourné.
+     * - Si $name est déjà un objet thème, il est retourné tel quel.
      *
      * @throws InvalidArgumentException Si le thème demandé n'existe pas.
      *
@@ -157,9 +157,9 @@ class Theme extends Html
     /**
      * Affiche un item de formulaire en utilisant la vue indiquée.
      *
-     * @param Item $item L'item à afficher.
-     * @param string|null $view La vue à utiliser. Si $view est vide, la méthode getType() de l'item est appellée
-     * et le résultat est utilisé comme nom de vue.
+     * @param Item          $item   L'item à afficher.
+     * @param string|null   $view   La vue à utiliser. Si $view est vide, la méthode getType() de l'item
+     *                              est appellée et le résultat est utilisé comme nom de vue.
      *
      * @return self
      *
@@ -225,17 +225,15 @@ class Theme extends Html
     }
 
     /**
-     * Génère le code html d'un item de formulaire en utilisant la vue indiquée et retourne le
-     * résultat.
+     * Génère le code html d'un item de formulaire en utilisant la vue indiquée et retourne le résultat.
      *
-     * @param Item $item L'item à afficher.
-     * @param string|null $view La vue à utiliser. Si $view est vide, la méthode getType() de
-     * l'item est appellée et le résultat est utilisé comme nom de vue.
+     * @param Item          $item   L'item à afficher.
+     * @param string|null   $view   La vue à utiliser. Si $view est vide, la méthode getType() de l'item
+     *                              est appellée et le résultat est utilisé comme nom de vue.
      *
      * @return string
      *
-     * @throws InvalidArgumentException Si la vue demandée n'existe ni dans le thème, ni dans
-     * aucun de ses parents.
+     * @throws InvalidArgumentException Si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents.
      */
     final public function render(Item $item, $view = null)
     {

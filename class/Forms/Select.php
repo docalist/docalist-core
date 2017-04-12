@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -17,8 +17,7 @@ namespace Docalist\Forms;
  * Un menu déroulant de type select.
  *
  * Référence W3C :
- * {@link http://www.w3.org/TR/html5/forms.html#the-select-element The select
- * element}.
+ * {@link http://www.w3.org/TR/html5/forms.html#the-select-element The select element}.
  */
 class Select extends Choice
 {
@@ -30,8 +29,7 @@ class Select extends Choice
     /**
      * Modifie le libellé et la valeur de la première option du select.
      *
-     * Cette option est utilisée pour les select simples, elle est ignorée pour
-     * les select multiple.
+     * Cette option est utilisée pour les select simples, elle est ignorée pour les select multiples.
      *
      * @param string $firstOption Optionnel, valeur de l'option.
      *
@@ -62,8 +60,8 @@ class Select extends Choice
     }
 
     /**
-     * Retourne le libellé et la valeur de la première option du select ou false
-     * si la première option est désactivée.
+     * Retourne le libellé et la valeur de la première option du select ou false si la première option est
+     * désactivée.
      *
      * @return false|array
      */
@@ -75,8 +73,7 @@ class Select extends Choice
     /**
      * {@inheritdoc}
      *
-     * Si le select est multivalué (multiple=true), la méthode ajoute '[]' au
-     * nom du contrôle.
+     * Si le select est multivalué (multiple=true), la méthode ajoute '[]' au nom du contrôle.
      */
     protected function getControlName()
     {

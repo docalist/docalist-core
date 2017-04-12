@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -66,9 +66,9 @@ abstract class Element extends Item
     /**
      * Crée un élément de formulaire.
      *
-     * @param string $name Optionnel, le nom de l'élément.
-     * @param array $attributes Optionnel, les attributs de l'élément.
-     * @param Container $parent Optionnel, le containeur parent de l'item.
+     * @param string    $name       Optionnel, le nom de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
+     * @param Container $parent     Optionnel, le containeur parent de l'item.
      */
     public function __construct($name = null, array $attributes = null, Container $parent = null)
     {
@@ -80,11 +80,10 @@ abstract class Element extends Item
     /**
      * Par défaut, tous les éléments ont un layout.
      *
-     * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer
-     * qu'ils ne veulent pas de layout (exemple : Hidden).
+     * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer qu'ils ne veulent pas
+     * de layout (exemple : Hidden).
      *
-     * Un élément qui n'a pas de layout n'a ni bloc label, ni bloc description (il
-     * est affiché "tel quel").
+     * Un élément qui n'a pas de layout n'a ni bloc label, ni bloc description (il est affiché "tel quel").
      *
      * @return true
      */
@@ -96,8 +95,8 @@ abstract class Element extends Item
     /**
      * Par défaut, tous les éléments ont un bloc label.
      *
-     * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer
-     * qu'ils ne veulent pas de bloc description (exemple : Button).
+     * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer qu'ils ne veulent pas
+     * de bloc description (exemple : Button).
      *
      * @return true
      */
@@ -109,8 +108,8 @@ abstract class Element extends Item
     /**
      * Par défaut, tous les éléments ont un bloc description.
      *
-     * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer
-     * qu'ils ne veulent pas de bloc description (exemple : Checkbox).
+     * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer qu'ils ne veulent pas
+     * de bloc description (exemple : Checkbox).
      *
      * @return true
      */
@@ -150,13 +149,11 @@ abstract class Element extends Item
     /**
      * Retourne le nom du contrôle html de l'élément.
      *
-     * La nom du contrôle est construit à partir du nom du nom de l'élément,
-     * de son numéro d'occurence (s'il est répétable) et du nom de son container
-     * parent éventuel.
+     * La nom du contrôle est construit à partir du nom du nom de l'élément, de son numéro d'occurence
+     * (s'il est répétable) et du nom de son container parent éventuel.
      *
-     * Par exemple, si on a un élément "tel" répétable dans un container "contact"
-     * également répétable, la méthode retournera une chaine de la forme :
-     * "contact[i][tel][j]".
+     * Par exemple, si on a un élément "tel" répétable dans un container "contact" également répétable, la
+     * méthode retournera une chaine de la forme : "contact[i][tel][j]".
      *
      * Si l'élément n'a pas de nom, une chaine vide est retournée.
      *
@@ -242,7 +239,7 @@ abstract class Element extends Item
     }
 
     /**
-     * Retourne ou modifie l'attribut repeatable du champ.
+     * Modifie le flag repeatable du champ.
      *
      * @param bool|null $repeatable
      *
@@ -259,12 +256,13 @@ abstract class Element extends Item
      * Retourne le flag repeatable du champ.
      *
      * @return bool|null Retourne :
+     *
      * - null si le flag n'a pas été explicitement définit (état initial).
      * - true si le flag a été activé.
      * - false si le flag a été désactivé.
      *
-     * Remarque : en général, il est préférable d'utiliser la méthode
-     * {@link isRepeatable()} qui retourne toujours soit true soit false.
+     * Remarque : en général, il est préférable d'utiliser la méthode {@link isRepeatable()} qui retourne toujours
+     * soit true soit false.
      */
     public function getRepeatable()
     {
@@ -303,27 +301,23 @@ abstract class Element extends Item
     }
 
     /**
-     * Indique si la valeur d'une instance unique de ce type de champ est un
-     * scalaire ou un tableau. Autrement dit, indique si le champ est multivalué
-     * ou non.
+     * Indique si la valeur d'une instance unique de ce type de champ est un scalaire ou un tableau.
      *
-     * La majorité des champs sont des champs simples dont la valeur est un
-     * scalaire (input text, textarea, etc.)
+     * Autrement dit, indique si le champ est multivalué ou non.
      *
-     * Lorsqu'un champ simple est répétable, il devient multivalué et sa
-     * valeur est alors un tableau.
+     * La majorité des champs sont des champs simples dont la valeur est un scalaire (input text, textarea, etc.)
      *
-     * Certains champs sont multivalués même lorsqu'ils ne sont pas répétables.
-     * C'est le cas par exemple pour une checklist ou un select avec l'attribut
-     * multiple à true. Dans ce cas, le champ est obligatoirement multivalué (et
-     * s'il est répétable, alors sa valeur sera un tableau de tableaux).
+     * Lorsqu'un champ simple est répétable, il devient multivalué et sa valeur est alors un tableau.
      *
-     * Par défaut, isMultivalued() se contente d'appeller isRepeatable(). Les
-     * classes Select et Checklist surchargent la méthode pour tenir compte de
-     * l'attribut multiple.
+     * Certains champs sont multivalués même lorsqu'ils ne sont pas répétables. C'est le cas par exemple pour
+     * une checklist ou un select avec l'attribut multiple à true. Dans ce cas, le champ est obligatoirement
+     * multivalué (et s'il est répétable, alors sa valeur sera un tableau de tableaux).
      *
-     * Remarque : un container est toujours considéré comme multivalué : il
-     * contient les valeurs de tous les éléments qu'il contient.
+     * Par défaut, isMultivalued() se contente d'appeller isRepeatable(). Les classes Select et Checklist
+     * surchargent la méthode pour tenir compte de l'attribut multiple.
+     *
+     * Remarque : un container est toujours considéré comme multivalué : il contient les valeurs de tous les
+     * éléments qu'il contient.
      *
      * @return bool
      */
@@ -333,8 +327,7 @@ abstract class Element extends Item
     }
 
     /**
-     * Initialise les propriétés repeatable, label et description à partir du
-     * schéma passé en paramétre.
+     * Initialise les propriétés repeatable, label et description à partir du schéma passé en paramétre.
      *
      * Chaque propriété n'est initialisée que si elle est à null.
      *
@@ -434,32 +427,10 @@ abstract class Element extends Item
     }
 
     /**
-     * Teste si le tableau passé en paramètre contient autre chose que des scalaires ou null.
-     *
-     * (Utilisée par bind)
-     *
-     * @param array $array Le tableau à tester.
-     *
-     * @return true|string Retourne true si tous les éléments du tableau sont des scalaires ou null,
-     * le nom du premier type incorrect trouvé sinon.
-     */
-//     private function isScalarArray(array $array)
-//     {
-//         foreach ($array as $value) {
-//             if (! is_scalar($value) && ! is_null($value)) {
-//                 return gettype($value);
-//             }
-//         }
-
-//         return true;
-//     }
-
-    /**
      * Retourne les données de l'élément.
      *
-     * @return scalar|array|null La méthode retourne les données qui ont été stockées
-     * lors du dernier appel à la méthode bind(). Si bind() n'a jamais été appellée,
-     * elle retourne null.
+     * @return scalar|array|null La méthode retourne les données qui ont été stockées lors du dernier appel
+     * à la méthode bind(). Si bind() n'a jamais été appellée, elle retourne null.
      */
     final public function getData()
     {
@@ -469,11 +440,12 @@ abstract class Element extends Item
     /**
      * Modifie le numéro d'occurence de l'élément.
      *
-     * Cette méthode n'est utilisable que
+     * Cette méthode n'est utilisable que :
+     *
      * - pour un champ répétable
      * - après que bind() a été appellé.
      *
-     * @param scalar $occurence Un des clés des données du champ.
+     * @param scalar $occurence Une des clés des données du champ.
      *
      * @return self
      */
