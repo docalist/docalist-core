@@ -22,25 +22,21 @@ use ReflectionMethod;
 use Exception;
 
 /**
- * Un contrôleur permet de regrouper plusieurs actions ensemble et d'y
- * accéder à partir d'un point d'entrée (une url).
+ * Un contrôleur permet de regrouper plusieurs actions ensemble et d'y accéder à partir d'une url.
  *
- * Chaque objet contrôleur a un identifiant unique (id) et les actions sont
- * les méthodes (public ou protected) de cet objet ayant le prefixe 'action'.
+ * Chaque objet contrôleur a un identifiant unique (id) et les actions sont les méthodes (public ou protected)
+ * de cet objet ayant le prefixe 'action'.
  *
- * Lorsque l'utilisateur appelle l'url du contrôleur, la méthode correspondante
- * est appellée en passant en paramètre les arguments fournis dans la requête.
+ * Lorsque l'utilisateur appelle l'url du contrôleur, la méthode correspondante est appellée en passant en
+ * paramètre les arguments fournis dans la requête.
  *
  * L'action doit retourner un objet Response qui est envoyé au navigateur.
  *
- * Par défaut, la classe Controller utilise le "generic post handler" mis en
- * place dans WordPress 2.6 et utilise le fichier wp-admin/admin.php comme
- * point d'entrée mais les classes descendantes peuvent changer ça (par
- * exemple, la classe AdminPage utilise les entrées de menu comme point
- * d'entrée).
+ * Par défaut, la classe Controller utilise le "generic post handler" mis en place dans WordPress 2.6 et
+ * utilise le fichier wp-admin/admin.php comme point d'entrée mais les classes descendantes peuvent changer ça
+ * (par exemple, la classe AdminPage utilise les entrées de menu comme point d'entrée).
  *
- * Exemple :
- * Si un contrôleur avec l'ID 'test-ctrl' contient une méthode :
+ * Exemple : Si un contrôleur avec l'ID 'test-ctrl' contient une méthode :
  *
  * <code>
  *     public function actionHello($name = 'world') {
@@ -79,11 +75,10 @@ class Controller
     protected $id;
 
     /**
-     * Nom de la page qui sert de point d'entrée pour exécuter les actions
-     * de ce contrôleur.
+     * Nom de la page qui sert de point d'entrée pour exécuter les actions de ce contrôleur.
      *
-     * Par défaut, il s'agit de 'admin.php'. Pour une page d'admin ajoutée
-     * dans un sous menu, il s'agit de la page du menu.
+     * Par défaut, il s'agit de 'admin.php'. Pour une page d'admin ajoutée dans un sous menu, il s'agit de
+     * la page du menu.
      *
      * @var string
      */
@@ -92,12 +87,13 @@ class Controller
     /**
      * Nom du paramètre passé en query string qui contient l'ID du controlleur.
      *
-     * Par défaut, c'est 'action' (c'est ce qu'attend le script wordpress
-     * admin.php) mais pour une page ajoutée dans un menu, c'est 'page'.
+     * Par défaut, c'est 'action' (c'est ce qu'attend le script wordpress admin.php) mais pour une page
+     * ajoutée dans un menu, c'est 'page'.
      *
      * Les urls générées tiennent compte de ce paramètre. Exemples :
-     * wordpress/wp-admin/admin.php?action=docalist-search-actions
-     * wordpress/wp-admin/options-general.php?page=docalist-biblio-settings
+     *
+     * - wordpress/wp-admin/admin.php?action=docalist-search-actions
+     * - wordpress/wp-admin/options-general.php?page=docalist-biblio-settings
      *
      * @var string
      */
@@ -106,8 +102,7 @@ class Controller
     /**
      * Nom du paramètre passé en query string qui indique l'action à exécuter.
      *
-     * Paramétrable au cas où on ait un jour un conflit de nom avec des
-     * arguments utilisés par wordpress.
+     * Paramétrable au cas où on ait un jour un conflit de nom avec des arguments utilisés par wordpress.
      *
      * @var string
      */
@@ -116,8 +111,7 @@ class Controller
     /**
      * Nom de l'action par défaut de ce contrôleur.
      *
-     * Il s'agit de l'action qui sera exécutée si aucune action n'est indiquée
-     * dans les paramètres de la requête.
+     * Il s'agit de l'action qui sera exécutée si aucune action n'est indiquée dans les paramètres de la requête.
      *
      * @var string
      */
@@ -128,15 +122,13 @@ class Controller
      *
      * Le tableau est de la forme "nom de l'action" => "capacité requise".
      *
-     * Chacune des clés identifie l'une des actions du contrôleur (il faut
-     * respected la casse exacte du nom de la méthode correspondante).
+     * Chacune des clés identifie l'une des actions du contrôleur (il faut respecter la casse exacte du nom
+     * de la méthode correspondante).
      *
-     * La clé "default" indique la capacité requise ('manage_options' par
-     * défaut) pour que le contrôleur soit visible (par exemple, une page
-     * d'admin n'apparaîtra pas dans le menu si l'utilisateur n'a pas ce droit).
+     * La clé "default" indique la capacité requise ('manage_options' par défaut) pour que le contrôleur soit
+     * visible (par exemple, une page d'admin n'apparaîtra pas dans le menu si l'utilisateur n'a pas ce droit).
      *
-     * Elle sert également de capacité par défaut pour les actions qui ne
-     * figurent pas dans le tableau.
+     * Elle sert également de capacité par défaut pour les actions qui ne figurent pas dans le tableau.
      *
      * @var array
      */
@@ -145,8 +137,8 @@ class Controller
     /**
      * Initialise le contrôleur.
      *
-     * @param string $id Identifiant unique du contrôleur.
-     * @param string $parentPage Url de la page parent.
+     * @param string $id            Identifiant unique du contrôleur.
+     * @param string $parentPage    Url de la page parent.
      */
     public function __construct($id, $parentPage = 'admin.php')
     {
@@ -191,8 +183,7 @@ class Controller
     /**
      * Retourne le nom de l'action par défaut de ce contrôleur.
      *
-     * Il s'agit de l'action qui sera exécutée si aucune action n'est indiquée
-     * dans les paramètres de la requête.
+     * Il s'agit de l'action qui sera exécutée si aucune action n'est indiquée dans les paramètres de la requête.
      *
      * @return string
      */
@@ -216,14 +207,11 @@ class Controller
     }
 
     /**
-     * Retourne le nom de la méthode de ce contrôleur qui implémente l'action
-     * passée en paramètre.
+     * Retourne le nom de la méthode de ce contrôleur qui implémente l'action passée en paramètre.
      *
-     * Le nom de la méthode correspond au nom de l'action auquel est ajouté
-     * le préfixe "action".
+     * Le nom de la méthode correspond au nom de l'action auquel est ajouté le préfixe "action".
      *
-     * @param string $action Nom de l'action. Optionnel, utilise l'action en
-     * cours si absent.
+     * @param string $action Nom de l'action. Optionnel, utilise l'action en cours si absent.
      *
      * @return string
      */
@@ -235,24 +223,17 @@ class Controller
     /**
      * Retourne la liste des actions de ce module.
      *
-     * Par défaut, la méthode ne retourne que les actions qui peuvent être
-     * appellées sans arguments (i.e. la méthode correspondant à l'action n'a
-     * aucun paramètre ou bien ils ont tous une valeur par défaut) et qui sont
-     * 'public'.
+     * Par défaut, la méthode ne retourne que les actions qui peuvent être appellées sans arguments
+     * (i.e. la méthode correspondant à l'action n'a aucun paramètre ou bien ils ont tous une valeur par défaut)
+     * et qui sont 'public'.
      *
-     * @param bool $callableOnly Ne retourne que les actions qui peuvent être
-     * appellées sans arguments (i.e. la méthode correspondant à l'action n'a
-     * aucun paramètre ou bien ils ont tous une valeur par défaut).
-     *
-     * @param bool $hasCapacity Ne retourne que les actions pour lesquelles
-     * l'utilisateur a les droits requis.
-     *
-     * @param bool $publicOnly Ne retourne que les actions dont la méthode
-     * est marquée 'public' (false : retourne aussi les méthodes marquées
-     * 'protected').
-     *
-     * @param bool $includeDefault Inclure ou non  l'action par défaut dans la
-     * liste des actions.
+     * @param bool $callableOnly    Ne retourne que les actions qui peuvent être appellées sans arguments
+     *                              (i.e. la méthode correspondant à l'action n'a aucun paramètre ou bien
+     *                              ils ont tous une valeur par défaut).
+     * @param bool $hasCapacity     Ne retourne que les actions pour lesquelles l'utilisateur a les droits requis.
+     * @param bool $publicOnly      Ne retourne que les actions dont la méthode est marquée 'public'
+     *                              (false : retourne aussi les méthodes marquées 'protected').
+     * @param bool $includeDefault  Inclure ou non l'action par défaut dans la liste des actions.
      *
      * @return array
      */
@@ -305,8 +286,7 @@ class Controller
     /**
      * Retourne la capability WordPress requise pour exécuter une action.
      *
-     * @param string $what Nom de l'action à tester ou 'default' pour
-     * retourner la capacité par défaut du contrôleur.
+     * @param string $what Nom de l'action à tester ou 'default' pour retourner la capacité par défaut du contrôleur.
      *
      * @return string
      *
@@ -331,8 +311,7 @@ class Controller
     /**
      * Indique si l'utilisateur peut exécuter l'action indiquée.
      *
-     * @param string $what Nom de l'action à tester ou 'default' pour
-     * retourner la capacité par défaut du contrôleur.
+     * @param string $what Nom de l'action à tester ou 'default' pour retourner la capacité par défaut du contrôleur.
      *
      * @return bool
      */
@@ -344,16 +323,16 @@ class Controller
     /**
      * Construit un tableau avec les paramètres à transmettre à la méthode.
      *
-     * @param ReflectionMethod $method
-     * @param array $args
-     * @param bool $checkTooManyArgs Génère une exception si $args contient des
-     * paramètres qui ne figurent pas dans la méthode.
-     * @param bool $checkMissing Génère une exception si $args ne contient pas
-     * tous les paramètres requis.
+     * @param ReflectionMethod  $method
+     * @param array             $args
+     * @param bool              $checkTooManyArgs Génère une exception si $args contient des paramètres qui ne
+     *                          figurent pas dans la méthode.
+     * @param bool              $checkMissing Génère une exception si $args ne contient pas tous les paramètres requis.
      *
      * @return array
      *
      * @throws Exception
+     *
      * - si un paramètre obligatoire est absent
      * - s'il y a trop de paramètres et que $checkTooManyArgs est à true
      * - s'il n'y a pas assez de paramètres et que $checkMissing est à true
@@ -493,6 +472,7 @@ class Controller
      * Retourne l'url à utiliser pour appeller une action de ce contrôleur.
      *
      * Exemples :
+     *
      * - url() : retourne l'url en cours ou l'url par défaut
      * - url('Action') : url d'une action qui n'a pas de paramètres ou dont
      *   tous les paramètres ont une valeur par défaut.
@@ -501,11 +481,13 @@ class Controller
      * - url('Action', 'arg1', 'arg2') : les paramètres sont dans l'ordre
      *   attendu par l'action.
      *
-     * @param string $action Nom de l'action.
-     * Les paramètrs supplémentaires passés à la méthode sont ajoutés à l'url.
+     * @param string $action Nom de l'action. Les paramètres supplémentaires passés à la méthode
+     *                       sont ajoutés à l'url.
      *
      * @return string
+     *
      * @throws Exception
+     *
      * - si l'action indiquée n'existe pas
      * - si la méthode qui implémente l'action est 'private' ou 'static'
      * - si l'utilistateur en cours n'a pas les droits suffisants
@@ -594,10 +576,10 @@ class Controller
     /**
      * Retourne une réponse de type ViewResponse.
      *
-     * @param string $view
-     * @param array $viewArgs
-     * @param int $status
-     * @param array $headers
+     * @param string    $view
+     * @param array     $viewArgs
+     * @param int       $status
+     * @param array     $headers
      *
      * @return ViewResponse
      */
@@ -611,9 +593,9 @@ class Controller
     /**
      * Retourne une réponse de type RedirectResponse.
      *
-     * @param string $url
-     * @param int $status
-     * @param array $headers
+     * @param string    $url
+     * @param int       $status
+     * @param array     $headers
      *
      * @return RedirectResponse
      */
@@ -626,7 +608,7 @@ class Controller
      * Retourne une réponse de type JsonResponse.
      *
      * @param mixed $content
-     * @param int $status
+     * @param int   $status
      * @param array $headers
      *
      * @return JsonResponse
