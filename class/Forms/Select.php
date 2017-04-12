@@ -22,7 +22,7 @@ namespace Docalist\Forms;
 class Select extends Choice
 {
     /**
-     * @var false|array Valeur et libellé de la première option du select.
+     * @var boolean|array Valeur et libellé de la première option du select ou false pour désactiver le placeholder.
      */
     protected $firstOption = ['' => '…'];
 
@@ -31,7 +31,7 @@ class Select extends Choice
      *
      * Cette option est utilisée pour les select simples, elle est ignorée pour les select multiples.
      *
-     * @param string $firstOption Optionnel, valeur de l'option.
+     * @param boolean|string|array $firstOption Optionnel, valeur de l'option.
      *
      * @return self
      */
@@ -63,7 +63,7 @@ class Select extends Choice
      * Retourne le libellé et la valeur de la première option du select ou false si la première option est
      * désactivée.
      *
-     * @return false|array
+     * @return boolean|array
      */
     public function getFirstOption()
     {
