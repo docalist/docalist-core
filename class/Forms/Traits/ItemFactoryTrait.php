@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -15,7 +15,7 @@ namespace Docalist\Forms\Traits;
 
 use Docalist\Forms\Comment;
 use Docalist\Forms\Text;
-use Docalist\Forms\Html;
+use Docalist\Forms\HtmlBlock;
 use Docalist\Forms\Tag;
 use Docalist\Forms\Input;
 use Docalist\Forms\Password;
@@ -79,11 +79,11 @@ trait ItemFactoryTrait
      *
      * @param string $content Le code html du bloc.
      *
-     * @return Html
+     * @return HtmlBlock
      */
     public function html($content = null)
     {
-        return new Html($content, $this);
+        return new HtmlBlock($content, $this);
     }
 
     /**

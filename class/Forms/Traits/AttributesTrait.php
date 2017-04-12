@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Forms" package.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -19,7 +19,7 @@ use InvalidArgumentException;
  * Un trait pour les items de formulaires qui ont des attributs.
  *
  * Ce trait est partagé entre les classes :
- * - Tag (dans l'arborescence Item » RawItem » Html » Tag) et
+ * - Tag (dans l'arborescence Item » HtmlBlock » Tag) et
  * - Element (Item » Element)
  */
 trait AttributesTrait

@@ -16,6 +16,6 @@ namespace Docalist\Forms;
 /**
  * Un bloc de texte.
  */
-class Text extends Html
+class Text extends HtmlBlock
 {
 }
