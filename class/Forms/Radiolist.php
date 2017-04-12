@@ -19,8 +19,15 @@ namespace Docalist\Forms;
 class Radiolist extends Choice
 {
     /**
-     * Une radiolist est représentée par un <ul>, le libellé associé ne doit pas avoir d'attribut 'for'
-     * associé car un ul n'est pas labelable.
+     * La valeur de l'attribut 'type' du contrôle input généré ('radio' ou 'checkbox').
+     *
+     * @var string
+     */
+    const INPUT_TYPE = 'radio';
+
+    /**
+     * Une checklist ou une radiolist sont représentés par des <ul>, le libellé associé ne doit pas
+     * avoir d'attribut 'for' associé car un ul n'est pas labelable.
      *
      * @return boolean
      */
@@ -48,7 +55,7 @@ class Radiolist extends Choice
             }
 
             // Option normale
-            $attr = ['name' => $this->getControlName(), 'type' => 'radio', 'value' => $value];
+            $attr = ['name' => $this->getControlName(), 'type' => static::INPUT_TYPE, 'value' => $value];
             if (in_array($value, $data, false)) {
                 $attr['checked'] = 'checked';
                 $visited[$value] = $value;
