@@ -67,7 +67,7 @@ trait ItemFactoryTrait
      *
      * @param string $content Le contenu du bloc.
      *
-     * @return Comment
+     * @return Text
      */
     public function text($content = null)
     {
