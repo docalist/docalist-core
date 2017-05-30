@@ -456,10 +456,17 @@ class Schema implements JsonSerializable
      */
     public function getDefaultValue()
     {
+        // Si le champ a une valeur par défaut, terminé
         if (isset($this->properties['default'])) {
             return $this->properties['default'];
         }
 
+        // Si le champ est une collection, retourne un tableau vide
+        if (isset($this->properties['collection'])) {
+            return [];
+        }
+
+        // Si le champ est un composite, retourne un tableau contenant les valeur spar défaut des champs
         $result = null;
         if (isset($this->properties['fields'])) {
             foreach ($this->properties['fields'] as $name => $field) {
@@ -468,7 +475,7 @@ class Schema implements JsonSerializable
             }
         }
 
-        return !is_null($result) && isset($this->properties['collection']) ? [$result] : $result;
+        return $result;
     }
 
     /**
