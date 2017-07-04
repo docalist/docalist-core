@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -10,7 +10,7 @@
  * Plugin Name: Docalist Core
  * Plugin URI:  http://docalist.org
  * Description: Docalist: socle de base.
- * Version:     0.12.0
+ * Version:     0.14.0
  * Author:      Daniel Ménard
  * Author URI:  http://docalist.org/
  * Text Domain: docalist-core
