@@ -487,16 +487,11 @@ class Schema implements JsonSerializable
      */
     public function __call($name, array $arguments = [])
     {
-        if ($arguments) {
+        if (!empty($arguments)) {
             throw new InvalidArgumentException('Schema::_call() called with arguments');
         }
 
-        // Le champ existe déjà, retourne sa valeur
-        if (isset($this->properties[$name])) {
-            return $this->properties[$name];
-        }
-
-        return;
+        return isset($this->properties[$name]) ? $this->properties[$name] : null;
     }
 
     /**
