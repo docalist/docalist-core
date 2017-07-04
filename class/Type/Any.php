@@ -50,10 +50,10 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Crée un nouveau type docalist.
      *
-     * @param mixed $value La valeur initiale. Pour les scalaires, vous devez
-     * passer un type php natif correspondant au type de l'objet (int, bool,
-     * float, ...) Pour les types structurés et les collections, vous devez
-     * passer un tableau.
+     * @param mixed $value La valeur initiale. Pour les scalaires, vous devez passer un type php natif correspondant
+     * au type de l'objet (int, bool, float, ...) Pour les types structurés et les collections, vous devez passer un
+     * tableau.
+     *
      * @param Schema $schema Optionnel, le schéma du type.
      */
     public function __construct($value = null, Schema $schema = null)
@@ -77,9 +77,8 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Retourne le schéma par défaut de l'objet.
      *
-     * La méthode gère un cache des schémas déjà chargés.
-     * Si le schéma n'est pas encore dans le cache, elle appelle loadSchema() et compile le schéma
-     * obtenu.
+     * La méthode gère un cache des schémas déjà chargés : si le schéma n'est pas encore dans le cache, elle appelle
+     * loadSchema() et compile le schéma obtenu.
      *
      * @return Schema
      */
@@ -95,7 +94,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         // Charge le schéma
         $data = static::loadSchema();
         if (isset($data['type'])) {
-            throw new InvalidArgumentException("Property 'type' must not be set for a biblio type");
+            throw new InvalidArgumentException("Property 'type' must not be set in loadSchema");
         }
 
         // Compile le schéma
@@ -117,9 +116,8 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Retourne la valeur par défaut du type.
      *
-     * La méthode statique getClassDefault() retourne la valeur par défaut des
-     * instances de ce type. Les classes descendantes (Boolean, Integer, etc.)
-     * surchargent cette méthode et retournent leur propre valeur par défaut.
+     * La méthode statique getClassDefault() retourne la valeur par défaut des instances de ce type. Les classes
+     * descendantes (Boolean, Integer, etc.) surchargent cette méthode et retournent leur propre valeur par défaut.
      *
      * @return mixed
      */
@@ -131,9 +129,8 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Retourne la valeur par défaut de l'objet.
      *
-     * La méthode retourne la valeur par défaut indiquée dans le schéma associé
-     * à l'objet ou la {@link getClassDefault() valeur par défaut du type} si
-     * aucun schéma n'est associé ou s'il n'indique pas de valeur par défaut.
+     * La méthode retourne la valeur par défaut indiquée dans le schéma associé à l'objet ou la valeur par défaut
+     * du type (getClassDefault) si aucun schéma n'est associé ou s'il n'indique pas de valeur par défaut.
      *
      * @return mixed
      */
@@ -172,9 +169,8 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // -------------------------------------------------------------------------
 
     /**
-     * Retourne la valeur sous la forme d'un type php natif (string, int, float
-     * ou bool pour les types simples, un tableau pour les types structurés et
-     * les collections).
+     * Retourne la valeur sous la forme d'un type php natif (string, int, float ou bool pour les types simples,
+     * un tableau pour les types structurés et les collections).
      *
      * @return mixed
      */
@@ -207,8 +203,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // -------------------------------------------------------------------------
 
     /**
-     * Retourne une chaine contenant la version sérialisée au format PHP de la
-     * valeur du type.
+     * Retourne une chaine contenant la version sérialisée au format PHP de la valeur du type.
      *
      * @return string
      */
@@ -218,8 +213,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     }
 
     /**
-     * Initialise la valeur du type à partir d'une chaine contenant une valeur
-     * sérialisée au format PHP.
+     * Initialise la valeur du type à partir d'une chaine contenant une valeur sérialisée au format PHP.
      *
      * @param string $serialized
      */
@@ -233,8 +227,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // -------------------------------------------------------------------------
 
     /**
-     * Retourne les données à prendre en compte lorsque ce type est sérialisé
-     * au format JSON.
+     * Retourne les données à prendre en compte lorsque ce type est sérialisé au format JSON.
      *
      * @return mixed
      */
@@ -250,31 +243,25 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Filtre les valeurs vides.
      *
-     * La méthode filterEmpty() permet de supprimer les valeurs vides d'un
-     * type : elle retourne true si la valeur est vide, false sinon.
+     * La méthode filterEmpty() permet de supprimer les valeurs vides d'un type : elle retourne true si la valeur
+     * est vide, false sinon.
      *
      * Pour un type scalaire, c'est équivalent à la fonction php empty().
      *
-     * Pour un type composite (objet, collection, entité...), la méthode est
-     * récursive : elle applique filterEmpty() à chacun des éléments qui
-     * composent le type composite, supprime les éléments pour lesquels
-     * filterEmpty() a retourné true et retourne true ou false selon que le
-     * type composite est vide ou non après traitement.
+     * Pour un type composite (objet, collection, entité...), la méthode est récursive : elle applique filterEmpty()
+     * à chacun des éléments qui composent le type composite, supprime les éléments pour lesquels filterEmpty()
+     * a retourné true et retourne true ou false selon que le type composite est vide ou non après traitement.
      *
-     * Par défaut ($strict = true), filterEmpty() effectue une comparaison
-     * "stricte" pour déterminer si un objet est vide : elle retourne true si
-     * toutes les propriétés de l'objet sont vides (autrement dit, un objet qui
+     * Par défaut ($strict = true), filterEmpty() effectue une comparaison "stricte" pour déterminer si un objet
+     * est vide : elle retourne true si toutes les propriétés de l'objet sont vides (autrement dit, un objet qui
      * contient au moins une propriété sera considéré comme non vide).
      *
-     * En passant $strict = false, une comparaison spécifique est utilisée pour
-     * déterminer si un objet est vide ou non. Pour cela, chaque type objet
-     * peut surcharger la méthode filterEmpty() et définir dans quel cas il
-     * est vide. Pour un auteur, par exemple, on considérera qu'il est vide si
-     * on n'a pas de nom ; pour un résumé, on retournera true si l'objet Content
-     * contient un type de contenu mais aucun texte, etc.
+     * En passant $strict = false, une comparaison spécifique est utilisée pour déterminer si un objet est vide
+     * ou non. Pour cela, chaque type objet peut surcharger la méthode filterEmpty() et définir dans quel cas il
+     * est vide. Pour un auteur, par exemple, on considérera qu'il est vide si on n'a pas de nom ; pour un résumé,
+     * on retournera true si l'objet Content contient un type de contenu mais aucun texte, etc.
      *
-     * @param bool $strict Définit le mode de comparaison utilisé pour
-     * déterminer si la valeur est vide ou non (true par défaut).
+     * @param bool $strict Définit le mode utilisé pour déterminer si la valeur est vide ou non (true par défaut).
      *
      * @return bool true si le champ est vide, false sinon.
      */
