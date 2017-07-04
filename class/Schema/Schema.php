@@ -19,21 +19,18 @@ use InvalidArgumentException;
 use JsonSerializable;
 
 /**
- * Un schéma permet de décrire les attributs d'un
- * {@link Docalist\Type\Any type de données Docalist}.
+ * Un schéma permet de décrire les attributs d'un {@link Docalist\Type\Any type de données Docalist}.
  *
- * Sur le principe, c'est juste un moyen simple de stocker une liste de propriétés
- * de la forme clé => valeur.
+ * Sur le principe, c'est juste un moyen simple de stocker une liste de propriétés de la forme clé => valeur.
  *
- * La plupart des propriétés sont libres (il faut juste que ce soit des scalaires)
- * mais certaines propriétés connues sont contrôlées.
+ * La plupart des propriétés sont libres (il faut juste que ce soit des scalaires) mais certaines propriétés connues
+ * sont contrôlées.
  *
- * Un schéma peut également avoir une propriété 'fields' qui décrit les propriétés
- * des sous-champs d'un type composite. Dans ce cas, chaque élément de la collection
- * fields sera elle-même un schéma (i.e. la structure obtenue est récursive).
+ * Dans le cas d'un type composite, un schéma peut également avoir une propriété 'fields' qui décrit les propriétés
+ * des sous-champs. Dans ce cas, chaque élément de la collection fields sera elle-même un schéma.
  *
- * Les schémas sont notamment utilisés pour définir la liste des champs des composites
- * et pour définir les grilles (affichage, saisie, etc.) des entités.
+ * Les schémas sont notamment utilisés pour définir la liste des champs des entités docalist et pour gérer les
+ * différentes grilles (affichage, saisie, etc.).
  */
 class Schema implements JsonSerializable
 {
@@ -47,8 +44,7 @@ class Schema implements JsonSerializable
     /**
      * Construit un nouveau schéma.
      *
-     * @param array $properties Propriétés du schéma.
-     * @param string $parent Optionnel, nom de la classe parent.
+     * @param array|null $properties Propriétés du schéma.
      *
      * @throws InvalidArgumentException Si le schéma contient des erreurs.
      */
@@ -246,7 +242,7 @@ class Schema implements JsonSerializable
      * Fusionne les propriétés passées en paramètre ($data) avec les propriétés existantes ($properties).
      *
      * @param array $properties Propriétés existantes.
-     * @param array $data Nouveaux paramètres.
+     * @param array $data       Nouveaux paramètres.
      *
      * @return array Propriétés mises à jour.
      *
@@ -305,16 +301,18 @@ class Schema implements JsonSerializable
      *
      * Une propriété est vide si sa valeur est null, une chaine vide ou un tableau vide.
      *
-     * Si la propriété est un tableau, chacun des éléments du tableau est filtré récursivement et la
-     * propriété sera supprimée si le tableau obtenu est vide.
+     * Si la propriété est un tableau, chacun des éléments du tableau est filtré récursivement et la propriété sera
+     * supprimée si le tableau obtenu est vide.
      *
      * @param mixed $property La valeur à filtrer.
+     *
+     * @return mixed|null
      */
     protected function filterProperty($property)
     {
         is_array($property) && $property = array_filter($property, [$this, 'filterProperty']);
         if (is_null($property) || $property === '' || $property === []) {
-            return;
+            return null;
         }
 
         return $property;
@@ -323,11 +321,11 @@ class Schema implements JsonSerializable
     /**
      * Trie les propriétés du schéma dans un ordre prévisible.
      *
-     * Du fait de l'héritage, les propriétés se retrouventt dans un ordre qui n'est pas très logique
-     * (les propriétés héritées se retrouvent après les propriétés locales).
+     * Du fait de l'héritage, les propriétés se retrouvent dans un ordre qui n'est pas très logique (les propriétés
+     * héritées se retrouvent après les propriétés locales).
      *
-     * Cette méthode y remédie en triant les propriétés qu'on connaît pour que l'ordre soit à
-     * peu près toujours le même.
+     * Cette méthode y remédie en triant les propriétés qu'on connaît pour que l'ordre soit à peu près toujours
+     * le même.
      *
      * Cela simplifie notamment les comparaisons de grilles (pour voir ce qui a été changé).
      *
@@ -446,11 +444,12 @@ class Schema implements JsonSerializable
     /**
      * Retourne la valeur par défaut du schéma.
      *
-     * S'il s'agit d'un schéma simple (sans fields), la méthode retourne le contenu
-     * de la propriété 'default' (ou null si elle n'existe pas).
+     * La méthode retourne :
      *
-     * Si la propriété 'fields' existe, la méthode retourne un tableau contenant la
-     * valeur par défaut de chacun des champs.
+     * 1. le contenu de la propriété 'default' si celle-ci est définie dans le schéma ;
+     * 2. sinon, un tableau vide s'il s'agit d'une collection ;
+     * 3. sinon, un tableau contenant la valeur par défaut des différents champs si la propriété 'fields' existe ;
+     * 4. sinon, null.
      *
      * @return array|scalar|null
      */
@@ -466,7 +465,7 @@ class Schema implements JsonSerializable
             return [];
         }
 
-        // Si le champ est un composite, retourne un tableau contenant les valeur spar défaut des champs
+        // Si le champ est un composite, retourne un tableau contenant les valeurs par défaut des champs
         $result = null;
         if (isset($this->properties['fields'])) {
             foreach ($this->properties['fields'] as $name => $field) {
@@ -481,11 +480,12 @@ class Schema implements JsonSerializable
     /**
      * Permet d'accéder aux propriétés du schéma comme s'il sagissait de méthodes.
      *
-     * @param string $name nom du champ
-     * @param unknown $arguments
+     * @param string    $name       Nom de la propriété.
+     * @param array     $arguments  Paramètres éventuels.
+     *
      * @throws InvalidArgumentException
      */
-    public function __call($name, $arguments = null)
+    public function __call($name, array $arguments = [])
     {
         if ($arguments) {
             throw new InvalidArgumentException('Schema::_call() called with arguments');
@@ -521,6 +521,8 @@ class Schema implements JsonSerializable
      * on est obligé d'avoir une méthode getPhpValue() sinon les schémas ne sont pas récupérés quand on
      * enregistre un type (repository appelle Schema->getPhpValue(), qui appelle Schema->call('getPhpValue')
      * qui retourne vide) et du coup on perd toutes les grilles.
+     *
+     * @return array
      */
     public function getPhpValue()
     {
@@ -532,10 +534,9 @@ class Schema implements JsonSerializable
     // -------------------------------------------------------------------------
 
     /**
-     * Retourne les données à prendre en compte lorsque ce type est sérialisé
-     * au format JSON.
+     * Retourne les données à prendre en compte lorsque ce type est sérialisé au format JSON.
      *
-     * @return mixed
+     * @return array
      */
     final public function jsonSerialize()
     {
