@@ -31,7 +31,7 @@ $data = [];
 if ($this->data) {
     foreach($this->getData() as $topic) { /** @var Topic $topic */
         $type = isset($topic['type']) ? $topic['type'] : '';
-        $term = isset($topic['term']) ? $topic['term'] : [];
+        $term = isset($topic['value']) ? $topic['value'] : [];
         $data[$type] = $term;
     }
 }
@@ -59,7 +59,7 @@ foreach($table->search() as $code => $topic) {
 
     $theme->start('td');
         $hidden = (new Hidden($name . '[type]'))->bind($code);
-        $lookup = (new EntryPicker($name . '[term]'))
+        $lookup = (new EntryPicker($name . '[value]'))
             ->setOptions($topic->source)
             ->setAttribute('multiple')
             ->setDescription($topic->description);
@@ -85,7 +85,7 @@ foreach($data as $code => $terms) {
 
     $theme->start('td');
         $hidden = (new Hidden($name . '[type]'))->bind($code);
-        $lookup = (new EntryPicker($name . '[term]'))
+        $lookup = (new EntryPicker($name . '[value]'))
             ->setOptions('index:' . $this->getName() . '.' . $code)
             ->setAttribute('multiple')
             ->bind($terms);
