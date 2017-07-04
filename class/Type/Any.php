@@ -54,7 +54,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      * au type de l'objet (int, bool, float, ...) Pour les types structurés et les collections, vous devez passer un
      * tableau.
      *
-     * @param Schema $schema Optionnel, le schéma du type.
+     * @param Schema|null $schema Optionnel, le schéma du type.
      */
     public function __construct($value = null, Schema $schema = null)
     {
