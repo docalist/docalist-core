@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -17,6 +17,7 @@ use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Closure;
 use Docalist\Forms\Choice;
 use Docalist\Type\Interfaces\Categorizable;
 use Docalist\Type\Exception\InvalidTypeException;
@@ -509,5 +510,18 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Ok
         return $item;
+    }
+
+    /**
+     * Applique la fonction passée en paramètre à chacun des éléments présents dans la collection et retourne
+     * un tableau contenant les valeurs retournées par la fonction.
+     *
+     * @param Closure $transformer
+     *
+     * @return array
+     */
+    public function map(Closure $transformer)
+    {
+        return array_map($transformer, $this->phpValue);
     }
 }
