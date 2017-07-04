@@ -96,7 +96,7 @@ class MultiField extends Composite implements Categorizable
 
     public function getCategoryName()
     {
-        if ($schema = $this->__get($this->getCategoryField())->schema()) {
+        if ($schema = $this->__get($this->getCategoryField())->getSchema()) {
             $name = $schema->label();
             if ($name) {
                 return lcfirst($name);
