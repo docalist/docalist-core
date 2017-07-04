@@ -191,7 +191,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Retourne le schéma du type.
      *
-     * @return Schema.
+     * @return Schema
      */
     final public function getSchema()
     {
@@ -285,8 +285,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getSettingsForm()
     {
-        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
-
+        $name = $this->schema->name();
         $form = new Container($name);
 
         $form->input('label')
@@ -336,8 +335,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getFormatSettingsForm()
     {
-        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
-
+        $name = $this->schema->name();
         $form = new Container($name);
 
         $form->input('label')
@@ -415,8 +413,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getEditorSettingsForm()
     {
-        $name = isset($this->schema) ? $this->schema->name() : $this->randomId();
-
+        $name = $this->schema->name();
         $form = new Container($name);
 
         $form->input('label')
@@ -488,19 +485,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // -------------------------------------------------------------------------
     // Privé
     // -------------------------------------------------------------------------
-
-    /**
-     * Génère un nom aléatoire composé de lettres minuscules.
-     *
-     * @param number $length Longueur du nom à générer. Une longueur de 4 permet
-     * de générer environ 30000 id différents.
-     *
-     * @return string
-     */
-    protected function randomId($length = 4)
-    {
-        return substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), - $length);
-    }
 
     /**
      * Retourne la valeur d'une option.
