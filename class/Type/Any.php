@@ -178,8 +178,22 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      * Retourne le schéma du type.
      *
      * @return Schema le schéma ou null si le type n'a pas de schéma associé.
+     *
+     * @deprecated Remplacée par getSchema().
      */
     final public function schema()
+    {
+        _deprecated_function(__METHOD__, '0.14', 'getSchema');
+
+        return $this->getSchema();
+    }
+
+    /**
+     * Retourne le schéma du type.
+     *
+     * @return Schema.
+     */
+    final public function getSchema()
     {
         return $this->schema;
     }
@@ -442,7 +456,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         // Propose le choix si plusieurs éditeurs sont disponibles
         $editors = $this->getAvailableEditors();
         if (count($editors) > 1) {
-            $default = $this->schema()->editor() ?: $this->getDefaultEditor() ?: 'default';
+            $default = $this->getSchema()->editor() ?: $this->getDefaultEditor() ?: 'default';
             $default = sprintf(__('Éditeur par défaut indiqué dans le type (%s)', 'docalist-core'), $default);
             $form->select('editor')
                 ->setAttribute('id', $name . '-editor')
