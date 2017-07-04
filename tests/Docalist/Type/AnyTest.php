@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -31,11 +31,11 @@ class AnyTest extends WP_UnitTestCase
     public function testSchema()
     {
         $type = new Any();
-        $this->assertSame($type->schema()->value(), Any::getDefaultSchema()->value());
+        $this->assertSame($type->getSchema()->value(), Any::getDefaultSchema()->value());
 
         $schema = new Schema([]);
         $type = new Any(12, $schema);
-        $this->assertSame($type->schema(), $schema);
+        $this->assertSame($type->getSchema(), $schema);
     }
 
     public function testToString()
@@ -51,7 +51,7 @@ class AnyTest extends WP_UnitTestCase
     {
         $a = new Any([1, false, 0.12, 'fd']);
 
-        $this->assertSame($a->serialize(), serialize([$a->getPhpValue(), $a->schema()]));
+        $this->assertSame($a->serialize(), serialize([$a->getPhpValue(), $a->getSchema()]));
     }
 
     public function testUnserialize()
