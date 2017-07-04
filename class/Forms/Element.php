@@ -412,7 +412,7 @@ abstract class Element extends Item
     {
         // Si c'est un type docalist, initialise le schéma et récupère les données
         if ($data instanceof Any) {
-            ($schema = $data->schema()) && $this->bindSchema($schema);
+            ($schema = $data->getSchema()) && $this->bindSchema($schema);
             $data = $data->getPhpValue();
         }
 
