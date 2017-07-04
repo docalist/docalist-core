@@ -71,7 +71,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      */
     public static function loadSchema()
     {
-        return;
+        return [];
     }
 
     /**
