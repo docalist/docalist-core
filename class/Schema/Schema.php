@@ -109,10 +109,13 @@ class Schema implements JsonSerializable
             throw new InvalidArgumentException("Invalid 'type': expected string, got " . gettype($type));
         }
 
-        // type='xx*' équivaut à type='xx' + collection
+        // Une étoile à la fin indique un typerépétable. Par défaut, c'est le type qui indique la collection.
         if (substr($type, -1) === '*') {
             $type = $properties['type'] = substr($type, 0, -1);
-            if (! isset($properties['collection'])) {
+            if (is_a($type, 'Docalist\Type\Any', true)) {
+                $properties['collection'] = $type::getCollectionClass();
+            } else {
+                // on peut arriver là si c'est un Grid (qui n'hérite pas de Any).
                 $properties['collection'] = 'Docalist\Type\Collection';
             }
         }
