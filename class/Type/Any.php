@@ -116,7 +116,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      * la méthode pour indiquer une classe plus spécifique, mais la classe retournée doit hériter de la classe
      * Collection de base.
      *
-     * @return Le nom complet de la classe "collection" à utiliser pour ce type.
+     * @return string Le nom complet de la classe "collection" à utiliser pour ce type.
      */
     public static function getCollectionClass()
     {
