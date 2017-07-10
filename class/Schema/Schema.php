@@ -126,7 +126,7 @@ class Schema implements JsonSerializable
                 throw new InvalidArgumentException('Collection defined twice (in type and in collection)');
             }
             $properties['collection'] = $type;
-            $type = $properties['type'] = $type::type();
+            $type = $properties['type'] = $type::getType();
         }
 
         // Le type doit désigner un type docalist (ou un schéma)
@@ -161,7 +161,7 @@ class Schema implements JsonSerializable
         }
 
         // Si on a un type, il doit être compatible avec le type indiqué par la collection
-        $type = $collection::type();
+        $type = $collection::getType();
         if (isset($properties['type'])) {
             if (!is_a($properties['type'], $type, true) && !is_a($properties['type'], self::class, true)) {
                 throw new InvalidArgumentException(
@@ -172,7 +172,7 @@ class Schema implements JsonSerializable
 
         // Sinon, c'est la collection qui indique le type des items
         else {
-            $properties['type'] = $collection::type();
+            $properties['type'] = $collection::getType();
         }
 
         return $this;
