@@ -13,7 +13,7 @@
  */
 namespace Docalist\Type;
 
-use ListEntry;
+use Docalist\Type\ListEntry;
 use Docalist\Schema\Schema;
 use Docalist\Table\TableManager;
 use Docalist\Forms\EntryPicker;
