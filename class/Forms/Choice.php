@@ -29,7 +29,7 @@ abstract class Choice extends Element
     /**
      * Modifie la liste des options disponibles.
      *
-     * @param array|callable|string $options Vous poouvez indiquer :
+     * @param array|callable|string $options Vous pouvez indiquer :
      *
      * - Un tableau de la forme 'value => label' contenant les options disponibles :
      *
