@@ -125,7 +125,7 @@ class Schema implements JsonSerializable
             if (isset($properties['collection'])) {
                 throw new InvalidArgumentException('Collection defined twice (in type and in collection)');
             }
-            $properties['collection'] = $type;
+            $properties['collection'] = $type; /** @var Collection $type */
             $type = $properties['type'] = $type::getType();
         }
 
@@ -150,7 +150,7 @@ class Schema implements JsonSerializable
             return $this;
         }
 
-        $collection = $properties['collection'];
+        $collection = $properties['collection']; /** @var Collection $collection */
         if (! is_string($collection)) {
             throw new InvalidArgumentException("Invalid 'collection': expected string, got " . gettype($collection));
         }
