@@ -53,12 +53,25 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Retourne le type (le nom de classe complet) des éléments de cette
-     * collection.
+     * Retourne le type (le nom de classe complet) des éléments de cette collection.
+     *
+     * @deprecated Utiliser getType().
      *
      * @return string
      */
     final public static function type()
+    {
+        _deprecated_function(__METHOD__, '0.14', 'getType');
+
+        return static::getType();
+    }
+
+    /**
+     * Retourne le type (le nom de classe complet) des éléments de cette collection.
+     *
+     * @return string
+     */
+    final public static function getType()
     {
         return static::$type;
     }
@@ -89,8 +102,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Indique si un élément existe à la position indiquée.
-     * (implémentation de l'interface ArrayAccess).
+     * Indique si un élément existe à la position indiquée (implémentation de l'interface ArrayAccess).
      *
      * @param int $offset
      *
@@ -102,15 +114,13 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Retourne l'élément qui figure à la position indiquée.
-     * (implémentation de l'interface ArrayAccess).
+     * Retourne l'élément qui figure à la position indiquée (implémentation de l'interface ArrayAccess).
      *
      * @param int $offset
      *
      * @return Any
      *
-     * @throws InvalidArgumentException Si la position indiquée n'est pas
-     * valide.
+     * @throws InvalidArgumentException Si la position indiquée n'est pas valide.
      */
     public function offsetGet($offset)
     {
@@ -123,13 +133,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Stocke un élément à la position indiquée.
-     * (implémentation de l'interface ArrayAccess).
+     * Stocke un élément à la position indiquée (implémentation de l'interface ArrayAccess).
      *
-     * @param int $offset Position à laquelle sera inséré l'élément, ou null
-     * pour ajouter l'élément à la fin de la collection. Le paramètre offset est
-     * ignoré si une clé a été définie dans le schéma de la collection. Dans ce
-     * cas, c'est la clé de l'élément qui est utilisée comme position.
+     * @param int $offset Position à laquelle sera inséré l'élément, ou null pour ajouter l'élément à la fin de
+     * la collection. Le paramètre offset est ignoré si une clé a été définie dans le schéma de la collection. Dans
+     * ce cas, c'est la clé de l'élément qui est utilisée comme position.
      *
      * @param mixed $value Les données de l'élément.
      */
@@ -159,8 +167,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Supprime un élément à une position donnée.
-     * (implémentation de l'interface ArrayAccess).
+     * Supprime un élément à une position donnée (implémentation de l'interface ArrayAccess).
      *
      * @param int $offset
      */
@@ -170,8 +177,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Retourne le nombre d'éléments dans la collection.
-     * (implémentation de l'interface Countable).
+     * Retourne le nombre d'éléments dans la collection (implémentation de l'interface Countable).
      *
      * @return int
      */
@@ -181,8 +187,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Retourne un itérateur permettant de parcourir la collection.
-     * (implémentation de l'interface IteratorAggregate).
+     * Retourne un itérateur permettant de parcourir la collection (implémentation de l'interface IteratorAggregate).
      *
      * @return ArrayIterator
      */
@@ -192,8 +197,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Retourne le premier élément de la collection et positionne l'itérateur
-     * interne au début.
+     * Retourne le premier élément de la collection et positionne l'itérateur interne au début.
      *
      * @return mixed Le premier élément ou false si la collection est vide.
      */
@@ -203,8 +207,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * Retourne le dernier élément de la collection et positionne l'itérateur
-     * interne à la fin.
+     * Retourne le dernier élément de la collection et positionne l'itérateur interne à la fin.
      *
      * @return mixed Le dernier élément ou false si la collection est vide.
      */
@@ -216,8 +219,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Retourne la clé ou l'index de l'élément en cours.
      *
-     * @return int|string La clé de l'élément en cours ou null s'il n'y a pas
-     * d'élément courant.
+     * @return int|string La clé de l'élément en cours ou null s'il n'y a pas d'élément courant.
      */
     public function key()
     {
@@ -257,10 +259,9 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Met à jour les clés de la collection.
      *
-     * Pour une collection simple, les éléments de la collection sont simplement
-     * renumérotés de façon continue à partir de zéro. Si une clé a été définie
-     * dans le schéma de la collection, la collection est recréée en utilisant
-     * la clé de chacun des éléments.
+     * Pour une collection simple, les éléments de la collection sont simplement renumérotés de façon continue
+     * à partir de zéro. Si une clé a été définie dans le schéma de la collection, la collection est réindexée en
+     * utilisant la clé de chacun des éléments.
      *
      * @return self $this
      */
@@ -372,7 +373,9 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * Tronque le tableau passé en paramètre.
      *
      * @param array $items Le tableau à tronquer.
-     * @param int $limit Le nombre d'éléments à conserver :
+     *
+     * @param int   $limit Le nombre d'éléments à conserver :
+     *
      * - 0 : pas de limite,
      * - > 0 : ne conserve que les $limit premiers éléments,
      * - < 0 : ne conserve que les $limit derniers éléments.
@@ -484,8 +487,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Crée un item temporaire.
      *
-     * Cette méthode est utilisée par getSettingsForm, getEditorForm, etc. pour récupérer
-     * le formulaire généré par l'item.
+     * Cette méthode est utilisée par getSettingsForm, getEditorForm, etc. pour récupérer le formulaire généré
+     * par l'item.
      *
      * @return Any
      */
