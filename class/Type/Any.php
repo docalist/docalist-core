@@ -109,6 +109,20 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return $schema;
     }
 
+    /**
+     * Retourne le nom complet de la classe utilisée pour gérer une collection d'objets de ce type.
+     *
+     * Par défaut la méthode retourne 'Docalist\Type\Collection'. Les classes descendantes peuvent surcharger
+     * la méthode pour indiquer une classe plus spécifique, mais la classe retournée doit hériter de la classe
+     * Collection de base.
+     *
+     * @return Le nom complet de la classe "collection" à utiliser pour ce type.
+     */
+    public static function getCollectionClass()
+    {
+        return 'Docalist\Type\Collection';
+    }
+
     // -------------------------------------------------------------------------
     // Valeur par défaut
     // -------------------------------------------------------------------------
