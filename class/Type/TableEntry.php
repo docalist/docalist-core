@@ -13,23 +13,20 @@
  */
 namespace Docalist\Type;
 
+use ListEntry;
 use Docalist\Schema\Schema;
 use Docalist\Table\TableManager;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Select;
-use Docalist\Forms\Radiolist;
-use Docalist\Forms\Checklist;
 use InvalidArgumentException;
 
 /**
- * Un champ texte contenant un code provenant d'un table d'autorité associée
- * au champ.
+ * Un champ texte contenant un code provenant d'un table d'autorité associée au champ.
  *
- * Exemples de champ de ce type dans docalist-biblio : genre, media, language,
- * format, etc.
- * Exemples de sous-champs : champ type des multifield, auteur.role, org.pays
+ * Exemples de champ de ce type dans docalist-biblio : genre, media, language, format, etc.
+ * Exemples de sous-champs : champ type des multifield, auteur.role, org.pays...
  */
-class TableEntry extends Text
+class TableEntry extends ListEntry
 {
     public function __construct($value = null, Schema $schema = null)
     {
@@ -42,113 +39,13 @@ class TableEntry extends Text
         }
     }
 
-    public static function loadSchema()
+    protected function getEntries()
     {
-        return [
-            'label' => __('Entrée', 'docalist-core'),
-            'description' => __('Choisissez dans la liste.', 'docalist-core'),
-        ];
-    }
-
-    public function getSettingsForm()
-    {
-        // Récupère le formulaire par défaut
-        $form = parent::getSettingsForm();
-
-        // Ajoute un select permettant de choisir la table à utiliser
-        $form->select('table')
-            ->setLabel($this->getTableLabel())
-            ->setDescription(__("Choisissez la table d'autorité à utiliser pour ce champ.", 'docalist-core'))
-            ->addClass('table regular-text')
-            ->setOptions($this->getPossibleTables())
-            ->setFirstOption(false);
-
-        // ok
-        return $form;
-    }
-
-    public function getAvailableEditors()
-    {
-        return [
-            'lookup'        => __('Lookup dynamique', 'docalist-core'),
-            'select'        => __('Menu déroulant contenant toutes les entrées', 'docalist-core'),
-            'list'          => __('Liste à cocher', 'docalist-core'),
-            'list-inline'   => __("Liste à cocher 'inline'", 'docalist-core'),
-        ];
-    }
-
-    public function getEditorForm($options = null)
-    {
-        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-        switch ($editor) {
-            case 'lookup':
-                $editor = new EntryPicker();
-                break;
-
-            case 'select':
-                $editor = new Select();
-                break;
-
-            case 'list':
-            case 'radio': // ancien nom
-                $editor = $this->getSchema()->collection() ? new CheckList() : new Radiolist();
-                break;
-
-            case 'list-inline':
-            case 'radio-inline': // ancien nom
-                $editor = $this->getSchema()->collection() ? new CheckList() : new Radiolist();
-                $editor->addClass('inline');
-                break;
-
-            default:
-                throw new InvalidArgumentException("Invalid TableEntry editor '$editor'");
-        }
-
-        return $editor
-            ->setName($this->schema->name())
-            ->setOptions($this->schema->table())
-            ->setLabel($this->getOption('label', $options))
-            ->setDescription($this->getOption('description', $options));
-    }
-
-    public function getAvailableFormats()
-    {
-        return [
-            'label' => __("Libellé qui figure dans la table d'autorité", 'docalist-core'),
-            'code' => __('Code interne', 'docalist-core'),
-            'label+description' => __("Libellé et description en bulle d'aide", 'docalist-core'),
-        ];
-    }
-
-    public function getFormattedValue($options = null)
-    {
-        $format = $this->getOption('format', $options, $this->getDefaultFormat());
-
-        switch ($format) {
-            case 'code':
-                return $this->phpValue;
-
-            case 'label':
-                return $this->getEntry('label') ?: $this->phpValue;
-
-            case 'label+description':
-                $entry = $this->getEntry();
-                if ($entry === false) {
-                    return $this->phpValue;
-                }
-
-                return sprintf(
-                    '<abbr title="%s">%s</abbr>',
-                    esc_attr($entry->description),
-                    $entry->label ?: $this->phpValue
-                );
-        }
-
-        throw new InvalidArgumentException("Invalid TableEntry format '$format'");
+        return $this->schema->table();
     }
 
     /**
-     * Retourne l'entrée dans la table correspondant à la valeur actuelle du champ.
+     * Retourne l'entrée de la table correspondant à la valeur actuelle du champ.
      *
      * @param string $returns Champ(s) à retourner, '*' par défaut.
      *
@@ -166,26 +63,94 @@ class TableEntry extends Text
         return $table->find($returns, 'code=' . $table->quote($this->phpValue));
     }
 
-    /**
-     * Retourne le libellé de l'entrée.
-     *
-     * @return string Retourne le libellé de l'entrée ou son code si l'entrée ne figure
-     * pas dans la table d'autorité associée.
-     */
     public function getEntryLabel()
     {
         return $this->getEntry('label') ?: $this->phpValue;
     }
 
+    public function getSettingsForm()
+    {
+        // Récupère le formulaire par défaut
+        $form = parent::getSettingsForm();
+
+        // Ajoute un select permettant de choisir la table à utiliser
+        $form->select('table')
+            ->setLabel($this->getTableLabel())
+            ->setDescription(__("Choisissez la table d'autorité à utiliser pour ce champ.", 'docalist-core'))
+            ->addClass('table')
+            ->setOptions($this->getPossibleTables())
+            ->setFirstOption(false);
+
+        // ok
+        return $form;
+    }
+
+    public function getAvailableEditors()
+    {
+        return parent::getAvailableEditors() + [
+            'lookup' => __('Lookup dynamique', 'docalist-core'),
+        ];
+    }
+
+    public function getDefaultEditor()
+    {
+        return 'lookup';
+    }
+
+    public function getEditorForm($options = null)
+    {
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        switch ($editor) {
+            case 'lookup':
+                $editor = new EntryPicker();
+                break;
+
+            default:
+                return parent::getEditorForm();
+        }
+
+        return $editor
+            ->setName($this->schema->name())
+            ->setOptions($this->getEntries())
+            ->setLabel($this->getOption('label', $options))
+            ->setDescription($this->getOption('description', $options));
+    }
+
+    public function getAvailableFormats()
+    {
+        return parent::getAvailableFormats() + [
+            'label+description' => __("Libellé de l'entrée et description en bulle d'aide", 'docalist-core'),
+        ];
+    }
+
+    public function getFormattedValue($options = null)
+    {
+        $format = $this->getOption('format', $options, $this->getDefaultFormat());
+
+        switch ($format) {
+            case 'label+description':
+                $entry = $this->getEntry();
+                if ($entry === false) {
+                    return $this->phpValue;
+                }
+
+                return sprintf(
+                    '<abbr title="%s">%s</abbr>',
+                    esc_attr($entry->description),
+                    $entry->label ?: $this->phpValue
+                );
+        }
+
+        return parent::getFormattedValue($options);
+    }
+
     /**
      * Retourne la liste des tables utilisables pour ce champ.
      *
-     * La méthode recherche toutes les tables dont le type correspond au type
-     * de table indiqué dans le schéma du champ. Les tables de conversion sont
-     * ignorées.
+     * La méthode recherche toutes les tables dont le type correspond au type de table indiqué dans le schéma
+     * du champ. Les tables de conversion sont ignorées.
      *
-     * @return array Un tableau de la forme code => libellé contenant les tables
-     * compatibles.
+     * @return array Un tableau de la forme code => libellé contenant les tables compatibles.
      */
     protected function getPossibleTables()
     {
