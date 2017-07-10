@@ -77,6 +77,7 @@ abstract class ListEntry extends Text
             case 'list-inline':
             case 'radio-inline': // ancien nom
                 $class = 'inline';
+                // Pas de break
 
             case 'list':
             case 'radio': // ancien nom
