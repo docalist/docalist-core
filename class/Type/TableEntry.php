@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -18,6 +18,7 @@ use Docalist\Table\TableManager;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Select;
 use Docalist\Forms\Radiolist;
+use Docalist\Forms\Checklist;
 use InvalidArgumentException;
 
 /**
@@ -69,17 +70,16 @@ class TableEntry extends Text
     public function getAvailableEditors()
     {
         return [
-            'lookup' => __('Lookup dynamique', 'docalist-core'),
-            'select' => __('Menu déroulant contenant toutes les entrées', 'docalist-core'),
-            'radio' => __('Liste de boutons radios avec toutes les entrées', 'docalist-core'),
-            'radio-inline' => __("Boutons radios 'inline'", 'docalist-core'),
+            'lookup'        => __('Lookup dynamique', 'docalist-core'),
+            'select'        => __('Menu déroulant contenant toutes les entrées', 'docalist-core'),
+            'list'          => __('Liste à cocher', 'docalist-core'),
+            'list-inline'   => __("Liste à cocher 'inline'", 'docalist-core'),
         ];
     }
 
     public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-
         switch ($editor) {
             case 'lookup':
                 $editor = new EntryPicker();
@@ -89,12 +89,14 @@ class TableEntry extends Text
                 $editor = new Select();
                 break;
 
-            case 'radio':
-                $editor = new Radiolist();
+            case 'list':
+            case 'radio': // ancien nom
+                $editor = $this->getSchema()->collection() ? new CheckList() : new Radiolist();
                 break;
 
-            case 'radio-inline':
-                $editor = new Radiolist();
+            case 'list-inline':
+            case 'radio-inline': // ancien nom
+                $editor = $this->getSchema()->collection() ? new CheckList() : new Radiolist();
                 $editor->addClass('inline');
                 break;
 
