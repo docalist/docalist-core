@@ -131,20 +131,23 @@ class FileCache
      * On ne teste pas si le fichier existe : on se contente de déterminer le path qu'aurait le fichier
      * s'il était mis en cache.
      *
-     * @param string $file Path absolu du fichier à tester.
+     * @param string $filePath Path absolu du fichier à tester.
      *
      * @return string Path dans le cache de ce fichier.
      *
      * @throws InvalidArgumentException Si le fichier indiqué ne peut pas figurer dans le cache.
      */
-    public function getPath($file)
+    public function getPath($filePath)
     {
-        $file = strtr($file, '/\\', DIRECTORY_SEPARATOR);
-        if (0 !== strncasecmp($this->root, $file, strlen($this->root))) {
-            throw new InvalidArgumentException(sprintf('Unable to cache file "%s", does not match cache root', $file));
+        $filePath = strtr($filePath, '/\\', DIRECTORY_SEPARATOR);
+        if (0 !== strncasecmp($this->root, $filePath, strlen($this->root))) {
+            throw new InvalidArgumentException(sprintf(
+                'Unable to cache file "%s", path does not match cache root',
+                $filePath
+            ));
         }
 
-        return $this->directory . substr($file, strlen($this->root));
+        return $this->directory . substr($filePath, strlen($this->root));
     }
 
     /** @deprecated */
@@ -262,24 +265,26 @@ class FileCache
      * Normalise le path passé en paramètre.
      *
      * - standardise le séparateur (slash ou antislash selon le système)
-     * - garantir qu'on a un séparateur à la fin.
+     * - garantit qu'on a un séparateur à la fin.
      *
-     * @param string $path
+     * @param string $filePath
      *
      * @return string
      */
-    protected function normalizePath($path)
+    protected function normalizePath($filePath)
     {
-        $path = strtr($path, '/\\', DIRECTORY_SEPARATOR);
-        $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $filePath = strtr($filePath, '/\\', DIRECTORY_SEPARATOR);
+        $filePath = rtrim($filePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        return $path;
+        return $filePath;
     }
 
     /**
      * Supprime un répertoire et son contenu.
      *
      * @param string $directory
+     *
+     * @return bool True si le répertoire a été supprimé, false en cas de problème.
      */
     protected function rmTree($directory)
     {
