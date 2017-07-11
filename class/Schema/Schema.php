@@ -31,6 +31,28 @@ use JsonSerializable;
  *
  * Les schémas sont notamment utilisés pour définir la liste des champs des entités docalist et pour gérer les
  * différentes grilles (affichage, saisie, etc.).
+ *
+ * @method string   name()          Retourne le nom du champ, de la grille ou du schéma.
+ * @method string   type()          Pour un champ répétable, retourne le nom complet de la classe Collection.
+ * @method string   collection()    Retourne le type du champ, de la grille ou du schéma.
+ * @method string   label()         Retourne le libellé du champ, de la grille ou du schéma.
+ * @method string   description()   Retourne la description du champ, de la grille ou du schéma.
+ * @method string   table()         Pour un champ sur table, indique le nom de la table d'autorité associée.
+ * @method bool     unused()        Pour un champ, retourne true si le champ est marqué comme "non utilisé".
+ * @method mixed    default()       Retourne la valeur par défaut du champ ou de la grille.
+ *
+ * @method string   gridtype()      Pour une grille, retourne le type de grille (base, edit, content ou excerpt).
+ * @method string   state()         Pour un groupe, indique l'état initial du groupe (normal, collapsed ou hidden).
+ * @method bool     explode()       Pour une grille d'affichage, indique s'il faut ou non "éclater" le champ.
+ *
+ * @method string   editor()        Indique le nom de l'éditeur à utiliser pour le champ (grille de saisie).
+ *
+ * @method string   format()        Indique le nom du format d'affichage à utiliser pour le champ (grille d'affichage).
+ * @method string   before()        Texte à afficher avant le contenu du champ (grille d'affichage).
+ * @method string   after()         Texte à afficher après le contenu du champ (grille d'affichage).
+ *
+ * @method string   relfilter()     Pour un champ relation, query string utilisée pour filtrer les suggestions.
+ * reltype() : voir si encore utile
  */
 class Schema implements JsonSerializable
 {
