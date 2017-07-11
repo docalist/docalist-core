@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -26,9 +26,8 @@ foreach($this->getOccurences() as $key => $data) {
     $this->setOccurence($key);
 
     // Début de la radiolist
-    $attr = $this->getAttributes();
-    $attr['class'] = isset($attr['class']) ? ('radiolist ' . $attr['class'] . ' ') : 'radiolist';
-    $theme->start('ul', $attr);
+    $this->addClass('radiolist');
+    $theme->start('ul', $this->getAttributes());
 
     // Affiche les options
     $badValues = $this->displayOptions($theme, $options, (array) $data);
@@ -46,17 +45,3 @@ foreach($this->getOccurences() as $key => $data) {
     $theme->end('ul');
 }
 $this->isRepeatable() && $theme->display($this, '_add');
-
-// TODO : style ci-dessous à transférer dans css
-?>
-<style>
-.radiolist,.radiolist li { margin: 0 }          /* Supprime toutes les marges dans les ul et les li des radiolist */
-.radiolist .invalid-option { color: red }       /* affiche en rouge les options invalides */
-.radiolist .optgroup + li { margin-top: 0.5em } /* Insère une marge avant le premier li qui suit un optgroup */
-.description + .radiolist { margin-top: 0.5em;} /* Insère un espace entre la description et le ul.radiolist */
-
-.radiolist.inline>li {vertical-align: top; display: inline-block;}
-.radiolist.inline .optgroup + li { margin-top: 0 } /* Supprime la marge qu'on a ajouté au dessus pour un optgroup */
-.radiolist.inline>li+li {margin-left: 1em}
-.radiolist.inline .optgroup ul {margin-left: 0;}
-</style>
