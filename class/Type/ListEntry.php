@@ -17,10 +17,10 @@ use Docalist\Forms\Select;
 use Docalist\Forms\Radiolist;
 use Docalist\Forms\Checklist;
 use InvalidArgumentException;
-use Docalist\Forms\Choice;
 
 /**
- * Classe abstraite représentant un champ texte contenant un code choisi dans une liste de valeurs autorisées.
+ * Classe de base abstraite représentant un champ texte permettant à l'utilisateur de choisir une entrée dans une
+ * liste de valeurs autorisées.
  */
 abstract class ListEntry extends Text
 {
@@ -35,22 +35,24 @@ abstract class ListEntry extends Text
     /**
      * Retourne la liste des entrées autorisées.
      *
-     * @return array|string|callable La liste des entrées autorisées dans l'un des formats acceptés
-     * par Choice::setOptions() :
-     *
-     * - un tableau de la forme 'code => label', par exemple : ['fr' => 'french', 'en' => english] ;
-     * - une chaine de la forme 'table:countries' ou 'thesaurus:relators' ;
-     * - un callable retournant le tableau des entrées, par exemple :
-     *   function() { return ['fr' => 'french', 'en' => english]; }
+     * @return array Un tableau de la forme 'code => label', par exemple : ['fr' => 'french', 'en' => english].
      */
-    abstract protected function getEntries();
+    protected function getEntries()
+    {
+        return [];
+    }
 
     /**
      * Retourne le libellé de l'entrée en cours.
      *
      * @return string Retourne le libellé de l'entrée ou son code si ce n'est pas une entrée valide.
      */
-    abstract public function getEntryLabel();
+    public function getEntryLabel()
+    {
+        $entries = $this->getEntries();
+
+        return isset($entries[$this->phpValue]) ? $entries[$this->phpValue] : $this->phpValue;
+    }
 
     public function getAvailableEditors()
     {
