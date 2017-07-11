@@ -310,8 +310,8 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
         $form->textarea('description')
             ->setAttribute('id', $name . '-description')
-            ->addClass('description large-text')
-            ->setAttribute('rows', 2)
+            ->addClass('description large-text autosize')
+            ->setAttribute('rows', 1)
             ->setLabel(__('Description', 'docalist-core'))
             ->setDescription(__('Description : rôle, particularités, format...', 'docalist-core'));
 
@@ -443,8 +443,8 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
         $form->textarea('description')
             ->setAttribute('id', $name . '-description')
-            ->addClass('description large-text')
-            ->setAttribute('rows', 2)
+            ->addClass('description large-text autosize')
+            ->setAttribute('rows', 1)
             ->setAttribute('placeholder', $this->schema->description())
             ->setLabel(__('Aide à la saisie', 'docalist-core'))
             ->setDescription(
