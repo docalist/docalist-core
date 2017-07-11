@@ -39,11 +39,6 @@ class TableEntry extends ListEntry
         }
     }
 
-    protected function getEntries()
-    {
-        return $this->schema->table();
-    }
-
     /**
      * Retourne l'entrée de la table correspondant à la valeur actuelle du champ.
      *
@@ -111,7 +106,7 @@ class TableEntry extends ListEntry
 
         return $editor
             ->setName($this->schema->name())
-            ->setOptions($this->getEntries())
+            ->setOptions($this->schema->table())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
     }
