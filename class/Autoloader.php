@@ -87,20 +87,20 @@ class Autoloader
      *
      * Remarque : aucun test n'est fait pour tester si le path obtenu existe ou non.
      *
-     * @param string $fullClassName Nom complet de la classe à tester.
+     * @param string $className Nom complet de la classe à tester.
      *
      * @return string|false Retourne le path de la classe si son espace de nom correspond à l'un des espaces de
      *                      nom enregistrés, false sinon.
      */
-    public function resolve($fullClassName)
+    public function resolve($className)
     {
-        $namespace = $fullClassName;
+        $namespace = $className;
         while (false !== $backslash = strrpos($namespace, '\\')) {
-            $namespace = substr($fullClassName, 0, $backslash);
+            $namespace = substr($className, 0, $backslash);
             if (isset($this->namespaces[$namespace])) {
-                $fullClassName = strtr(substr($fullClassName, $backslash), '\\', DIRECTORY_SEPARATOR);
+                $file = strtr(substr($className, $backslash), '\\', DIRECTORY_SEPARATOR);
 
-                return $this->namespaces[$namespace] . $fullClassName . '.php';
+                return $this->namespaces[$namespace] . $file . '.php';
             }
         }
 
