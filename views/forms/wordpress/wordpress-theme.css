@@ -185,6 +185,22 @@ button.cloner:hover {
     text-decoration: underline;
 }
 
+/* inline checklist / radiolist */
+ul.checklist.inline, 
+ul.radiolist.inline
+{
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 0;
+}
+
+ul.checklist.inline li, 
+ul.radiolist.inline li
+{
+    flex: 1 0 200px;
+    max-width: 200px;
+}
+
 ul.checklist .optgroup-label, 
 ul.radiolist .optgroup-label 
 {
