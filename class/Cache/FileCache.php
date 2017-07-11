@@ -139,15 +139,15 @@ class FileCache
      */
     public function getPath($filePath)
     {
-        $filePath = strtr($filePath, '/\\', DIRECTORY_SEPARATOR);
-        if (0 !== strncasecmp($this->root, $filePath, strlen($this->root))) {
+        $path = strtr($filePath, '/\\', DIRECTORY_SEPARATOR);
+        if (0 !== strncasecmp($this->root, $path, strlen($this->root))) {
             throw new InvalidArgumentException(sprintf(
                 'Unable to cache file "%s", path does not match cache root',
                 $filePath
             ));
         }
 
-        return $this->directory . substr($filePath, strlen($this->root));
+        return $this->directory . substr($path, strlen($this->root));
     }
 
     /** @deprecated */
@@ -273,8 +273,10 @@ class FileCache
      */
     protected function normalizePath($filePath)
     {
-        $filePath = strtr($filePath, '/\\', DIRECTORY_SEPARATOR);
-        $filePath = rtrim($filePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        return rtrim(
+            strtr($filePath, '/\\', DIRECTORY_SEPARATOR),
+            DIRECTORY_SEPARATOR
+        ) . DIRECTORY_SEPARATOR;
 
         return $filePath;
     }
