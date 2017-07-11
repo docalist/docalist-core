@@ -277,8 +277,6 @@ class FileCache
             strtr($filePath, '/\\', DIRECTORY_SEPARATOR),
             DIRECTORY_SEPARATOR
         ) . DIRECTORY_SEPARATOR;
-
-        return $filePath;
     }
 
     /**
