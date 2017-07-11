@@ -58,7 +58,7 @@ class LargeText extends Text
             ->setName($this->schema->name())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options))
-            ->setAttribute('rows', '2');
+            ->setAttribute('rows', '1');
     }
 
     public function getFormattedValue($options = null)
