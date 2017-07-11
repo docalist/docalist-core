@@ -66,7 +66,10 @@ class Autoloader
     {
         // Vérifie que ce namespace n'a pas déjà été enregistré
         if (isset($this->namespaces[$namespace]) && $this->namespaces[$namespace] !== $path) {
-            throw new InvalidArgumentException("Namespace '$namespace' is already registered with a different path");
+            throw new InvalidArgumentException(sprintf(
+                'Namespace "%s" is already registered with a different path',
+                $namespace
+            ));
         }
 
         // Enregistre le path
@@ -92,10 +95,12 @@ class Autoloader
     public function resolve($class)
     {
         $namespace = $class;
-        while (false !== $pt = strrpos($namespace, '\\')) {
-            $namespace = substr($class, 0, $pt);
+        while (false !== $backslash = strrpos($namespace, '\\')) {
+            $namespace = substr($class, 0, $backslash);
             if (isset($this->namespaces[$namespace])) {
-                return $this->namespaces[$namespace] . strtr(substr($class, $pt), '\\', DIRECTORY_SEPARATOR) . '.php';
+                $class = strtr(substr($class, $backslash), '\\', DIRECTORY_SEPARATOR);
+
+                return $this->namespaces[$namespace] . $class . '.php';
             }
         }
 
