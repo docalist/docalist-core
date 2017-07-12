@@ -145,24 +145,6 @@ class Plugin
 
             // Gestion des vues
             'views' => function () {
-                /*
-                // Créée la liste des plugins actifs
-                $plugins = (array) get_option('active_plugins', []);
-                if (is_multisite()) {
-                    $sitewide = (array) get_site_option('active_sitewide_plugins', []);
-                    $plugins = array_merge($plugins, array_keys($sitewide));
-                }
-
-                // Le groupe vide est associé au thème en cours
-                $groups = ['' => get_stylesheet_directory() . '/'];
-
-                // Chaque plugin donne lieu à un groupe qui est associé au répertoire '/views' du plugin
-                foreach ($plugins as $plugin) {
-                    $parts = pathinfo($plugin);
-                    $groups[$parts['filename']] = WP_PLUGIN_DIR . '/' . $parts['dirname'] . '/views/';
-                }
-                return new Views($groups);
-                */
                 return new Views([
                     '' => get_stylesheet_directory(),
                     'docalist-core' => DOCALIST_CORE_DIR . '/views',
