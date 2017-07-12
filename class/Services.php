@@ -134,8 +134,8 @@ class Services
             $service = $service($this);
 
             // Permet aux plugins de paramétrer ou de modifier le service
-            $service = apply_filters('docalist_service', $service, $id); // générique ("docalist_service")
-            $service = apply_filters('docalist_service_' . $id, $service); // spécifique ("docalist_service_views")
+            $service = apply_filters('docalist_service', $service, $id); // e.g. docalist_service
+            $service = apply_filters('docalist_service_' . $id, $service); // e.g. docalist_service_views
 
             // Stocke le résultat
             $this->services[$id] = $service;
