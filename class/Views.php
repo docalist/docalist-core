@@ -227,7 +227,7 @@ class Views
      *
      * @param mixed[] $data Un tableau contenant les données à transmettre à la vue (cf. display()).
      *
-     * @return mixed La méthode retourne ce que retourne la vue (rien en général).
+     * @return string Retourne le résultat généré par la vue.
      *
      * @throws InvalidArgumentException si la vue n'existe pas.
      */
