@@ -22,8 +22,26 @@
  */
 namespace Docalist\Core;
 
-// Définit une constante pour indiquer que ce plugin est activé
-define('DOCALIST_CORE', __DIR__);
+/**
+ * Version du plugin.
+ */
+define('DOCALIST_CORE_VERSION', '0.14.0'); // Garder synchro avec la version indiquée dans l'entête
+
+/**
+ * Path absolu du répertoire dans lequel le plugin est installé.
+ *
+ * Par défaut, on utilise la constante magique __DIR__ qui retourne le path réel du répertoire et résoud les liens
+ * symboliques.
+ *
+ * Si le répertoire du plugin est un lien symbolique, la constante doit être définie manuellement dans le fichier
+ * wp_config.php et pointer sur le lien symbolique et non sur le répertoire réel.
+ */
+!defined('DOCALIST_CORE_DIR') && define('DOCALIST_CORE_DIR', __DIR__);
+
+/**
+ * Path absolu du fichier principal du plugin.
+ */
+define('DOCALIST_CORE', DOCALIST_CORE_DIR . DIRECTORY_SEPARATOR . basename(__FILE__));
 
 /**
  * Définit la fonction principale de docalist.
@@ -47,7 +65,7 @@ add_action('plugins_loaded', function () {
 /*
  * Activation du plugin.
  */
-add_action('activate_docalist-core/docalist-core.php', function () {
+register_activation_hook(DOCALIST_CORE, function () {
     // la fonction docalist() est forcèment dispo (on a fait un require)
     // notre autoloader est chargé (inclus dans le namespace général Docalist)
     // par contre Plugin n'est pas chargé (plugins_loaded pas encore exécuté)
@@ -57,7 +75,7 @@ add_action('activate_docalist-core/docalist-core.php', function () {
 /*
  * Désactivation du plugin.
  */
-add_action('deactivate_docalist-core/docalist-core.php', function () {
+register_deactivation_hook(DOCALIST_CORE, function () {
     // Quand wp nous désactive, notre plugin est chargé
     (new Installer())->deactivate();
 });
