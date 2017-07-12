@@ -25,6 +25,6 @@ class Base extends Theme
 
     public function __construct()
     {
-        parent::__construct(DOCALIST_CORE . '/views/forms/base');
+        parent::__construct(DOCALIST_CORE_DIR . '/views/forms/base');
     }
 }
