@@ -25,6 +25,6 @@ class WordPress extends Theme
 
     public function __construct()
     {
-        parent::__construct(DOCALIST_CORE . '/views/forms/wordpress', self::get('base'));
+        parent::__construct(DOCALIST_CORE_DIR . '/views/forms/wordpress', self::get('base'));
     }
 }
