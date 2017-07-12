@@ -41,7 +41,7 @@ class Installer
         $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
 
         // Enregistre les tables prédéfinies
-        foreach ($this->tables() as $name => $table) {
+        foreach ($this->getTables() as $name => $table) {
             $table['name'] = $name;
             $table['lastupdate'] = date_i18n('Y-m-d H:i:s', filemtime($table['path']));
             $tableManager->register(new TableInfo($table));
@@ -56,7 +56,7 @@ class Installer
         $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
 
         // Supprime les tables prédéfinies
-        foreach (array_keys($this->tables()) as $table) {
+        foreach (array_keys($this->getTables()) as $table) {
             $tableManager->unregister($table);
         }
     }
@@ -67,7 +67,7 @@ class Installer
      *
      * @return array
      */
-    protected function tables()
+    protected function getTables()
     {
         $dir = DOCALIST_CORE_DIR . DIRECTORY_SEPARATOR . 'tables'  . DIRECTORY_SEPARATOR;
 
