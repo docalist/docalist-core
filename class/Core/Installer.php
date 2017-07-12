@@ -44,7 +44,6 @@ class Installer
         foreach ($this->tables() as $name => $table) {
             $table['name'] = $name;
             $table['lastupdate'] = date_i18n('Y-m-d H:i:s', filemtime($table['path']));
-            echo "register table $name<br />";
             $tableManager->register(new TableInfo($table));
         }
     }
