@@ -31,7 +31,7 @@ class Services
     /**
      * Initialise les services.
      *
-     * @param array $services Un tableau de services de la forme $id => $service.
+     * @param array<string,mixed> $services Un tableau de services de la forme $id => $service.
      */
     public function __construct(array $services = [])
     {
@@ -41,8 +41,8 @@ class Services
     /**
      * Retourne la liste des services actuellement déclarés.
      *
-     * @return array Un tableau de la forme $id => $service contenant tous les services dans l'ordre dans lequel
-     * ils ont été déclarés.
+     * @return array<string,mixed> Un tableau de la forme $id => $service contenant tous les services dans l'ordre
+     * dans lequel ils ont été déclarés.
      *
      * Remarque : les services qui ne sont pas encore instanciés sont représentés par une Closure.
      */
