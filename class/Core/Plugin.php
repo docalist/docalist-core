@@ -145,6 +145,7 @@ class Plugin
 
             // Gestion des vues
             'views' => function () {
+                /*
                 // Créée la liste des plugins actifs
                 $plugins = (array) get_option('active_plugins', []);
                 if (is_multisite()) {
@@ -160,8 +161,12 @@ class Plugin
                     $parts = pathinfo($plugin);
                     $groups[$parts['filename']] = WP_PLUGIN_DIR . '/' . $parts['dirname'] . '/views/';
                 }
-
                 return new Views($groups);
+                */
+                return new Views([
+                    '' => get_stylesheet_directory(),
+                    'docalist-core' => DOCALIST_CORE_DIR . '/views',
+                ]);
             },
 
             // Gestion du cache
