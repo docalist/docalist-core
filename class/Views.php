@@ -64,14 +64,14 @@ class Views
      *
      * Les path des répertoires sont normalisés (cf. normalizePath) et contient toujours un (anti)slash à la fin.
      *
-     * @var array<string, string|array> Un tableau de la forme 'group' => [répertoires].
+     * @var string[]|array[] Un tableau de la forme 'group' => répertoire(s).
      */
     protected $groups;
 
     /**
      * Initialise le gestionnaire de vues.
      *
-     * @param array<string, string|array> $groups La liste initiale des groupes (cf. setGroups).
+     * @param string[]|array[] $groups La liste initiale des groupes (cf. setGroups).
      * Des groupes et des répertoires supplémentaires peuvent être ajoutés en appellant addDirectory().
      */
     public function __construct($groups = [])
@@ -82,7 +82,7 @@ class Views
     /**
      * Modifie la liste des groupes.
      *
-     * @param array<string, string|array> $groups Un tableau dont les entrées sont de la forme :
+     * @param string[]|array[] $groups Un tableau dont les entrées sont de la forme :
      *
      * - 'group1' => 'répertoire' ou
      * - 'group2' => ['répertoire1', 'répertoire2', etc.]
@@ -110,7 +110,7 @@ class Views
     /**
      * Retourne la liste des groupes définis.
      *
-     * @return array<string, string|array> Un tableau de la forme 'group' => répertoire(s).
+     * @return string[]|array[] Un tableau de la forme 'group' => répertoire(s).
      */
     public function getGroups()
     {
@@ -163,7 +163,7 @@ class Views
      *
      * @param string $view Le nom de la vue à exécuter.
      *
-     * @param array<string,mixed> $data Un tableau contenant les données à transmettre à la vue.
+     * @param mixed[] $data Un tableau contenant les données à transmettre à la vue.
      *
      * Chacun des éléments sera disponible dans la vue comme une variable locale :
      *
@@ -225,7 +225,7 @@ class Views
      *
      * @param string $view Le nom de la vue à exécuter.
      *
-     * @param array<string,mixed> $data Un tableau contenant les données à transmettre à la vue (cf. display()).
+     * @param mixed[] $data Un tableau contenant les données à transmettre à la vue (cf. display()).
      *
      * @return mixed La méthode retourne ce que retourne la vue (rien en général).
      *
