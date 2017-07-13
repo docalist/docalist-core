@@ -137,7 +137,7 @@ class FuzzyDate extends Text
      */
     protected function getValidationPattern($separator = '')
     {
-        $monthday = $day = function($pattern) use($separator) {
+        $monthday = $day = function ($pattern) use ($separator) {
             return $separator ? "(?:$separator(?:$pattern))?" : "(?:$pattern)?";
         };
 
