@@ -98,8 +98,8 @@ class Views
     public function setGroups(array $groups)
     {
         $this->groups = [];
-        foreach($groups as $group => $directories) {
-            foreach((array) $directories as $directory) {
+        foreach ($groups as $group => $directories) {
+            foreach ((array) $directories as $directory) {
                 $this->addDirectory($group, $directory);
             }
         }
