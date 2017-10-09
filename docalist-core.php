@@ -44,6 +44,11 @@ define('DOCALIST_CORE_VERSION', '0.14.0'); // Garder synchro avec la version ind
 define('DOCALIST_CORE', DOCALIST_CORE_DIR . DIRECTORY_SEPARATOR . basename(__FILE__));
 
 /**
+ * Url de base du plugin.
+ */
+define('DOCALIST_CORE_URL', plugins_url('', DOCALIST_CORE));
+
+/**
  * Définit la fonction principale de docalist.
  *
  * On passe par un fichier externe, inclus via un require_once, pour garantir
