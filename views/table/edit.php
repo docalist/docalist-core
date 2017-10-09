@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -32,7 +32,7 @@ use Docalist\Table\TableInfo;
 $id = "table-$tableName";
 
 // Url du répertoire "home" de handsontable
-$base = plugins_url('docalist-core/lib/jquery-handsontable');
+$base = DOCALIST_CORE_URL . '/lib/jquery-handsontable';
 
 // Enqueue la CSS de HandsOnTable
 wp_enqueue_style('handsontable-css', "$base/jquery.handsontable.full.css", false, '0.9.19');

@@ -399,7 +399,7 @@ class Plugin
     {
         $js = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? 'js' : 'min.js';
 
-        $url = plugins_url('docalist-core');
+        $url = DOCALIST_CORE_URL;
 
         // Bootstrap
         wp_register_style(
