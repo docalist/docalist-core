@@ -255,7 +255,7 @@ abstract class Element extends Item
      *
      * @param bool|null $repeatable
      *
-     * @return bool
+     * @return self
      */
     public function setRepeatable($repeatable = true)
     {
