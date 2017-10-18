@@ -3,7 +3,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -43,8 +43,7 @@ if (empty($label) || $label === '-') {
 $theme->text(' ');
 
 // Détermine les attributs du bouton
-$args;
-$attributes = ['type' => 'button', 'class' => 'cloner button button-secondary button-small button-link'];
+$attributes = ['type' => 'button', 'class' => 'cloner button button-link'];
 if (isset($args['data-clone']) && $args['data-clone'] !== '<') {
     $attributes['data-clone'] = $args['data-clone'];
 }
@@ -56,10 +55,10 @@ $level > 1 && $attributes['data-level'] = $level;
 if (isset($args['content'])) {
     $content = $args['content'];
 } else {
-    //    $content = '+';
-    $content = '<span class="dashicons dashicons-plus-alt"></span>';
+    $content = '<span class="dashicons-before dashicons-plus-alt">';
     $label = $this->getLabel();
-    $label && $label !== '-' && $content .= ' ' . $label; // espace insécable
+    $label && $label !== '-' && $content .= $label;
+    $content .= '</span>';
 }
 
 // Génère le bouton
