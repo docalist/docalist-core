@@ -509,17 +509,12 @@ abstract class Element extends Item
     }
 
     /**
-     * Génère un id pour l'élément s'il n'en a pas encore.
+     * Génère un nouvel ID pour l'élément.
      *
      * @return string
      */
     final protected function generateID()
     {
-        // Si l'élément a déjà un ID, terminé
-        if (isset($this->attributes['id'])) {
-            return $this->attributes['id'];
-        }
-
         // Génère un ID à partir du nom ou du type de l'élément
         $id = $this->getControlName() ?: $this->getType();
 
