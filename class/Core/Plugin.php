@@ -464,8 +464,8 @@ class Plugin
         wp_register_script(
             'docalist-textarea-autosize',
             "$url/lib/autosize/autosize.$js",
-            ['jquery'],
-            '3.0.15',
+            [],
+            '4.0.0',
             true
         );
 
