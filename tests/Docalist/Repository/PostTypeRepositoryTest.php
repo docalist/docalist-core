@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -39,12 +39,12 @@ class PostTypeRepositoryTest extends RepositoryTest {
 //         $client = new Client();
 
 //         $repo->save($client);
-//         $this->assertNotNull($client->id());
-//         $this->assertSame('{"name":"noname"}', get_post_field('post_excerpt', $client->id()));
+//         $this->assertNotNull($client->getID());
+//         $this->assertSame('{"name":"noname"}', get_post_field('post_excerpt', $client->getID()));
 
 //         $client->name = 'daniel';
 //         $repo->save($client);
-//         $this->assertSame('{"name":"daniel"}', get_post_field('post_excerpt', $client->id()));
+//         $this->assertSame('{"name":"daniel"}', get_post_field('post_excerpt', $client->getID()));
 
 //         $repo->save(new Client(null, null, '546')); // un entier sous forme de chaine
 
@@ -58,7 +58,7 @@ class PostTypeRepositoryTest extends RepositoryTest {
 //         $client = new Client(['name' => 'daniel']);
 //         $repo->save($client);
 
-//         $client2 = $repo->load($client->id(), Client::className());
+//         $client2 = $repo->load($client->getID(), Client::className());
 //         $this->assertTrue($client2->equals($client));
 //     }
 
@@ -100,11 +100,11 @@ class PostTypeRepositoryTest extends RepositoryTest {
 //         $client = new Client();
 
 //         $repo->save($client);
-//         $this->assertNotNull($client->id());
-//         $this->assertSame('{"name":"noname"}', get_post_field('post_excerpt', $client->id()));
+//         $this->assertNotNull($client->getID());
+//         $this->assertSame('{"name":"noname"}', get_post_field('post_excerpt', $client->getID()));
 
-//         $repo->delete($client->id());
-//         $this->assertSame('', get_post_field('post_excerpt', $client->id()));
+//         $repo->delete($client->getID());
+//         $this->assertSame('', get_post_field('post_excerpt', $client->getID()));
 //     }
 
     /**

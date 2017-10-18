@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -42,45 +42,45 @@ class RepositoryTest extends WP_UnitTestCase {
         // Vérifie qu'un ID est alloué si besoin
         $client = new Client(['name' => 'client without id']);
         $repo->save($client);
-        $this->assertNotNull($client->id(), 'save() alloue un ID si besoin');
+        $this->assertNotNull($client->getID(), 'save() alloue un ID si besoin');
 
         /* Store */
 
         // Création d'une entité
         $client1 = new Client(['name' => "client with id $id1"]);
-        $client1->id($id1);
+        $client1->setID($id1);
         $repo->save($client1);
-        $this->assertSame($id1, $client1->id(), "save() ne change pas l'ID existant (création)");
+        $this->assertSame($id1, $client1->getID(), "save() ne change pas l'ID existant (création)");
 
         // Création puis mise à jour d'une entité
         $client2 = new Client(['name' => "client with id $id2"]);
-        $client2->id($id2);
+        $client2->setID($id2);
         $repo->save($client2);
         $client2->name = "updated client with id $id2";
         $repo->save($client2);
-        $this->assertSame($id2, $client2->id(), "save() ne change pas l'ID existant (maj)");
+        $this->assertSame($id2, $client2->getID(), "save() ne change pas l'ID existant (maj)");
 
         /* Load */
 
         // Vérifie les données brutes
-        $data = $repo->loadRaw($client1->id());
+        $data = $repo->loadRaw($client1->getID());
         $this->assertSame($client1->getPhpValue(), $data);
 
-        $data = $repo->loadRaw($client2->id());
+        $data = $repo->loadRaw($client2->getID());
         $this->assertSame($client2->getPhpValue(), $data);
 
         // Entité
-//         $client = $repo->load($client1->id(), get_class($client1));
+//         $client = $repo->load($client1->getID(), get_class($client1));
 //         $this->assertTrue($client->equals($client1));
 
-//         $client = $repo->load($client2->id(), get_class($client2)); // $obj::static(), ça marche
+//         $client = $repo->load($client2->getID(), get_class($client2)); // $obj::static(), ça marche
 //         $this->assertTrue($client->equals($client2));
 
         /* Remove */
-        $repo->delete($client1->id());
+        $repo->delete($client1->getID());
         $catched = false;
         try {
-            $repo->load($client1->id());
+            $repo->load($client1->getID());
         } catch (EntityNotFoundException $e) {
             $catched = true;
         }

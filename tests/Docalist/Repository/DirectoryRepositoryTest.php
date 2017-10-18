@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -88,15 +88,15 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
         // teste avec une entité qui a déjà un ID
         $client = new Client(null, null, 'abc12');
         $repo->save($client);
-        $path = $repo->path($client->id());
+        $path = $repo->path($client->getID());
         $this->assertFileExists($path);
         $this->assertSame('{"name":"noname"}', file_get_contents($path));
 
         // teste avec une entité qui n'a pas d'ID
         $client = new Client();
         $repo->save($client);
-        $this->assertNotNull($client->id());
-        $path = $repo->path($client->id());
+        $this->assertNotNull($client->getID());
+        $path = $repo->path($client->getID());
         $this->assertFileExists($path);
         $this->assertSame('{"name":"noname"}', file_get_contents($path));
 
@@ -114,7 +114,7 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
         $repo = new DirectoryRepository($this->dir);
         $client = new Client(null, null, 'storeerror');
 
-        $path = $repo->path($client->id());
+        $path = $repo->path($client->getID());
         mkdir($path, 0777, true);
         $repo->save($client);
     }
@@ -125,7 +125,7 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
         // test avec une entité qui a déjà un ID
         $client = new Client(['name' => 'daniel']);
         $repo->save($client);
-        $client2 = $repo->load($client->id());
+        $client2 = $repo->load($client->getID());
         $this->assertTrue($client2->equals($client));
     }
 
@@ -180,7 +180,7 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
 
         $client = new Client(null, null, 'zz14');
         $repo->save($client);
-        $path = $repo->path($client->id());
+        $path = $repo->path($client->getID());
         $this->assertFileExists($path);
 
         $repo->delete('zz14');
@@ -203,12 +203,12 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
 
         $client = new Client();
         $repo->save($client);
-        $path = $repo->path($client->id());
+        $path = $repo->path($client->getID());
 
         unlink($path);
         mkdir($path);
 
-        $repo->delete($client->id());
+        $repo->delete($client->getID());
     }
 
 }

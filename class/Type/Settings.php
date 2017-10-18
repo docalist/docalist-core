@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -66,14 +66,14 @@ class Settings extends Entity
 
         // Détermine l'id des settings
         if (! is_null($id)) {           // ID transmis en paramètre
-            $this->id($id);             // Exception si la classe descendante a déjà fixé l'id
-        } elseif (is_null($this->id)) { // ID auto
+            $this->setID($id);          // Exception si la classe descendante a déjà fixé l'id
+        } elseif (is_null($this->getID())) { // ID auto
             $this->id = strtolower(strtr(get_class($this), '\\', '-'));
         }                               // ID fixé en dur et non transmis
 
         // Si les settings ont été enregistrés dans le dépôt, on les charge
-        if ($repository->has($this->id)) {
-            parent::__construct($repository->loadRaw($this->id));
+        if ($repository->has($this->getID())) {
+            parent::__construct($repository->loadRaw($this->getID()));
         }
 
         // Sinon on initialise avec la valeur par défaut
@@ -120,8 +120,9 @@ class Settings extends Entity
      */
     public function delete()
     {
-        if ($this->repository->has($this->id)) {
-            $this->repository->delete($this->id());
+        $id = $this->getID();
+        if ($this->repository->has($id)) {
+            $this->repository->delete($id);
         }
 
         return $this->assign($this->getDefaultValue());

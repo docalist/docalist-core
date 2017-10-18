@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -50,7 +50,7 @@ class SettingsRepositoryTest extends RepositoryTest {
 
 //         $client = $repo->load('c1', Client::className());
 //         $this->assertSame(['name' => 'daniel'], $client->value());
-//         $this->assertSame('c1', $client->id());
+//         $this->assertSame('c1', $client->getID());
 
 //         return $repo;
 //     }

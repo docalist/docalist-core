@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -21,19 +21,19 @@ class EntityTest extends WP_UnitTestCase
     public function testAll()
     {
         $a = new Entity();
-        $this->assertSame(null, $a->id());
+        $this->assertSame(null, $a->getID());
 
-        $a->id('abc12');
-        $this->assertSame('abc12', $a->id());
+        $a->setID('abc12');
+        $this->assertSame('abc12', $a->getID());
 
         $a = new Entity([], null, 'abc12');
-        $this->assertSame('abc12', $a->id());
+        $this->assertSame('abc12', $a->getID());
     }
 
     /** @expectedException LogicException */
     public function testIDAlreadyDefined()
     {
         $a = new Entity([], null, 'abc12');
-        $a->id('def13');
+        $a->setID('def13');
     }
 }

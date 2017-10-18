@@ -2,7 +2,7 @@
 /**
  * This file is part of the "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -158,7 +158,7 @@ abstract class Repository
     final public function save(Entity $entity)
     {
         // Vérifie que l'ID de l'entité est correct
-        ! is_null($id = $entity->id()) && $id = $this->checkId($id);
+        ! is_null($id = $entity->getID()) && $id = $this->checkId($id);
 
         // Signale à l'entité qu'elle va être enregistrée
         $entity->beforeSave($this);
@@ -167,7 +167,7 @@ abstract class Repository
         $newId = $this->saveData($id, $this->encode($entity->getPhpValue()));
 
         // Si un ID a été alloué, on l'indique à l'entité
-        is_null($id) && $entity->id($newId);
+        is_null($id) && $entity->setID($newId);
 
         // Signale à l'entité qu'elle a été enregistrée
         $entity->afterSave($this);
