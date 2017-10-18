@@ -194,7 +194,7 @@ abstract class Element extends Item
     final public function getPath($separator = '/')
     {
         $path = $this->parent ? $this->parent->getPath($separator) : '';
-        if ($this->name) {
+        if (! is_null($this->name)) {
             $path && $path .= $separator;
             $path .= $this->name;
         }
@@ -255,7 +255,7 @@ abstract class Element extends Item
      *
      * @param bool|null $repeatable
      *
-     * @return bool|$this
+     * @return bool
      */
     public function setRepeatable($repeatable = true)
     {
@@ -532,8 +532,8 @@ abstract class Element extends Item
             '=' => '-',
             '@' => '-',
             '[' => '-',
-            ']' => '']
-        );
+            ']' => '',
+        ]);
 
         // Supprime les tirets superflus
         $id = rtrim($id, '-');
