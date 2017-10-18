@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -38,5 +38,5 @@ if (empty($label) || $label === '-') {
 }
 
 // Génère le libellé
-$attributes = ($this->isLabelable() && ! $this->isRepeatable()) ? ['for' => $this->ensureId()] : [];
+$attributes = ($this->isLabelable() && ! $this->isRepeatable()) ? ['for' => $this->generateID()] : [];
 $theme->tag('label', $attributes, $label);

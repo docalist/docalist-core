@@ -34,41 +34,53 @@ abstract class Element extends Item
     use AttributesTrait;
 
     /**
-     * @var string Nom de l'élément.
+     * Nom de l'élément.
+     *
+     * @var string|null
      */
     protected $name;
 
     /**
-     * @var string Libellé associé à l'élément.
+     * Libellé associé à l'élément.
+     *
+     * @var string|null
      */
     protected $label;
 
     /**
-     * @var string Description de l'élément.
+     * Description de l'élément.
+     *
+     * @var string|null
      */
     protected $description;
 
     /**
-     * @var bool|null Indique si le champ est répétable.
+     * Indique si le champ est répétable.
+     *
+     * @var bool|null
      */
     protected $repeatable = null;
 
     /**
-     * @var null|scalar|array Les données de l'élément, initialisées par bind().
+     * Les données de l'élément, initialisées par bind().
+     *
+     * @var null|scalar|array
      */
     protected $data;
 
     /**
-     * @var scalar Occurence en cours pour un champ répétable.
+     * Occurence en cours pour un champ répétable.
+     *
+     * @var scalar
      */
     protected $occurence;
 
     /**
      * Crée un élément de formulaire.
      *
-     * @param string    $name       Optionnel, le nom de l'élément.
-     * @param array     $attributes Optionnel, les attributs de l'élément.
-     * @param Container $parent     Optionnel, le containeur parent de l'item.
+     * @param string|null       $name       Optionnel, le nom de l'élément.
+     * @param array|null        $attributes Optionnel, les attributs de l'élément.
+     * @param Container|null    $parent     Optionnel, le containeur parent de l'item.
      */
     public function __construct($name = null, array $attributes = null, Container $parent = null)
     {
@@ -85,7 +97,7 @@ abstract class Element extends Item
      *
      * Un élément qui n'a pas de layout n'a ni bloc label, ni bloc description (il est affiché "tel quel").
      *
-     * @return true
+     * @return bool
      */
     protected function hasLayout()
     {
@@ -98,7 +110,7 @@ abstract class Element extends Item
      * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer qu'ils ne veulent pas
      * de bloc description (exemple : Button).
      *
-     * @return true
+     * @return bool
      */
     protected function hasLabelBlock()
     {
@@ -111,7 +123,7 @@ abstract class Element extends Item
      * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer qu'ils ne veulent pas
      * de bloc description (exemple : Checkbox).
      *
-     * @return true
+     * @return bool
      */
     protected function hasDescriptionBlock()
     {
@@ -272,7 +284,7 @@ abstract class Element extends Item
     /**
      * Indique si le champ est répétable.
      *
-     * @return bool|null
+     * @return bool
      */
     public function isRepeatable()
     {
@@ -287,8 +299,6 @@ abstract class Element extends Item
      * - si le champ est répétable, retourne 1
      * - si le champ est répétable et que son parent est répétable, retoune 2
      * - et ainsi de suite
-     *
-     * @param int $repeatLevel
      *
      * @return int
      */
@@ -503,19 +513,14 @@ abstract class Element extends Item
      *
      * @return string
      */
-    final protected function ensureId()
+    final protected function generateID()
     {
-        return isset($this->attributes['id']) ? $this->attributes['id'] : $this->generateId();
-    }
+        // Si l'élément a déjà un ID, terminé
+        if (isset($this->attributes['id'])) {
+            return $this->attributes['id'];
+        }
 
-    /**
-     * Génère l'ID de l'élément.
-     *
-     * @return string
-     */
-    protected function generateId()
-    {
-        // Génère l'ID
+        // Génère un ID à partir du nom ou du type de l'élément
         $id = $this->getControlName() ?: $this->getType();
 
         // Supprime les caractères spéciaux de jQuery
@@ -524,16 +529,21 @@ abstract class Element extends Item
             ':' => '-',
             '.' => '-',
             ',' => '-',
+            '=' => '-',
+            '@' => '-',
             '[' => '-',
-            ']' => '',
-        ]);
+            ']' => '']
+        );
 
         // Supprime les tirets superflus
         $id = rtrim($id, '-');
         $id = strtr($id, ['--' => '-']);
 
-        // Ok
-        return $this->attributes['id'] = $id;
+        // Stocke l'ID généré
+        $this->attributes['id'] = $id;
+
+        // Retourne l'ID
+        return $id;
     }
 
     /**
