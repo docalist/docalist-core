@@ -261,8 +261,8 @@ class Composite extends Any
      * Similaire à filterEmpty() mais filtre uniquement la propriété dont le nom
      * est passé en paramètre.
      *
-     * @param string $name Nom de la propriété à filtrer
-     * @param string $strict Mode de comparaison.
+     * @param string $name      Nom de la propriété à filtrer
+     * @param bool   $strict    Mode de comparaison.
      */
     protected function filterEmptyProperty($name, $strict = true)
     {
