@@ -351,7 +351,7 @@ class Composite extends Any
         }
 
         // Si le champ existe dans notre schéma, terminé
-        if (!is_null($value = $this->schema->__call($name))) {
+        if ($this->schema->hasField($name)) {
             return $this->schema->getField($name);
         }
 
