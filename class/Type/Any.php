@@ -503,12 +503,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Retourne la valeur d'une option.
      *
-     * La méthode détermine la valeur de l'option indiquée en paramètre en examinant successivement :
-     *
-     * - les options passées en paramètre,
-     * - le schéma du type,
-     * - la valeur par défaut passée en paramètre.
-     *
      * Cette méthode utilitaire permet aux classes descendantes de gérer facilement les options qui sont
      * passées en paramètre à des méthodes comme {@link getEditorForm()} ou {@link getFormattedValue()}.
      *
@@ -521,28 +515,36 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      * }
      * </code>
      *
-     * @param string $name Le nom de l'option recherchée.
-     * @param Schema|null $options Le schéma (la grille) contenant les options.
-     * @param mixed $default La valeur par défaut de l'option.
+     * La méthode détermine la valeur de l'option indiquée en paramètre en examinant successivement :
+     *
+     * - les options passées en paramètre,
+     * - le schéma du type,
+     * - la valeur par défaut passée en paramètre.
+     *
+     * @param string            $name       Le nom de l'option recherchée.
+     * @param Schema|array|null $options    Un tableau ou un schéma contenant les options disponibles.
+     * @param mixed             $default    La valeur par défaut à retourner si l'option demandée est introuvable.
      *
      * @return scalar
      */
-    protected function getOption($name, Schema $options = null, $default = null)
+    protected function getOption($name, $options = null, $default = null)
     {
-        // Teste si l'option figure dans les options
-        if ($options) {
-            $value = $options->__call($name);
-            if (! is_null($value)) {
-                return $value;
-            }
-        }
-
-        // Teste le schéma sinon
-        $value = $this->schema->__call($name);
-        if (! is_null($value)) {
+        // Si des options ont été fournies sous forme d'un schéma et que l'option existe, terminé
+        if ($options instanceof Schema && !is_null($value = $options->__call($name))) { /** Schema $options */
             return $value;
         }
 
+        // Si on a un tableau d'options et l'option demandée existe, terminé
+        if (is_array($options) && isset($options[$name])) {
+            return $options[$name];
+        }
+
+        // Si l'option existe dans notre schéma, terminé
+        if (!is_null($value = $this->schema->__call($name))) {
+            return $value;
+        }
+
+        // Option introuvable, retourne la valeur par défaut passée en paramètre
         return $default;
     }
 }

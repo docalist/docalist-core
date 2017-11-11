@@ -316,7 +316,7 @@ class Composite extends Any
         $class .= ' ' . $this->schema->name();
         $editor->addClass($class);
 
-        foreach ($options->getFieldNames() as $name) { // TODO : si $options n'est pas une grille
+        foreach ($options->getFieldNames() as $name) {
             $fieldOptions = $this->getFieldOptions($name, $options);
             $field = $this->__get($name);
             $unused = $field->getOption('unused', $fieldOptions, false);
@@ -331,27 +331,32 @@ class Composite extends Any
     /**
      * Retourne les options du champ indiqué dans le schéma passé en paramètre.
      *
-     * @param string $name
-     * @param Schema $options
+     * @param string            $name       Le nom du champ recherché.
+     * @param Schema|array|null $options    Un tableau ou un schéma contenant les champs disponibles.
      *
-     * @return Schema|null
+     * @return Schema|array|null
      *
      * @throws InvalidArgumentException
      */
-    protected function getFieldOptions($name, Schema $options = null)
+    protected function getFieldOptions($name, $options = null)
     {
-        // Teste si le champ figure dans les options
-        if ($options && $options->hasField($name)) {
+        // Si des options ont été fournies sous forme d'un schéma et que le champ existe, terminé
+        if ($options instanceof Schema && $options->hasField($name)) { /** Schema $options */
             return $options->getField($name);
         }
 
-        // Teste dans le schéma sinon
-        if ($this->schema->hasField($name)) {
+        // Si on a un tableau d'options et le champ demandé existe, terminé
+        if (is_array($options) && isset($options[$name]) && is_array($options[$name])) {
+            return $options[$name];
+        }
+
+        // Si le champ existe dans notre schéma, terminé
+        if (!is_null($value = $this->schema->__call($name))) {
             return $this->schema->getField($name);
         }
 
-        // Champ trouvé nulle part
-        return;
+        // Champ introuvable, retourne null
+        return null;
     }
 
     protected function formatField($name, $options = null)
