@@ -2,7 +2,7 @@
 /**
  * This file is part of a "Docalist Core" plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -40,17 +40,35 @@ class Text extends Scalar
     public function getAvailableEditors()
     {
         return [
-            'input' => __('Zone de texte sur une seule ligne', 'docalist-core'),
+            'input'         => __('Zone de texte sur une seule ligne (par défaut)',     'docalist-core'),
+            'input-small'   => __('Zone de texte sur une seule ligne (petite)',         'docalist-core'),
+            'input-regular' => __('Zone de texte sur une seule ligne (moyenne)',        'docalist-core'),
+            'input-large'   => __('Zone de texte sur une seule ligne (pleine largeur)', 'docalist-core'),
         ];
     }
 
     public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-
+        $class = '';
         switch ($editor) {
             case 'input':
                 $editor = new Input();
+                break;
+
+            case 'input-small':
+                $editor = new Input();
+                $editor->addClass('small-text');
+                break;
+
+            case 'input-regular':
+                $editor = new Input();
+                $editor->addClass('regular-text');
+                break;
+
+            case 'input-large':
+                $editor = new Input();
+                $editor->addClass('large-text');
                 break;
 
             default:
