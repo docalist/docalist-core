@@ -101,11 +101,5 @@ class DateTime extends Text
 
         // Récupère le timestamp correspondant et demande à WordPress de formatter
         return date_i18n($format, $dateTime->getTimestamp());
-
-        // Demande à l'objet DateTime de formatter la date avec le format indiqué
-        // Pas de bloc try/catch : si le format n'est pas bon, on veut une exception
-        return $dateTime->format($format);
-        //throw new InvalidArgumentException("Invalid link format '$format'");
-        //return
     }
 }
