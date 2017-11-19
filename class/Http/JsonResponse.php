@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -41,7 +41,7 @@ class JsonResponse extends Response
     /**
      * Active ou désactive le formattage "pretty print" de a réponse jsoN.
      *
-     * @param string $pretty
+     * @param bool $pretty
      *
      * @return self
      */
