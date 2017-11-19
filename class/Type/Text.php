@@ -50,7 +50,6 @@ class Text extends Scalar
     public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-        $class = '';
         switch ($editor) {
             case 'input':
                 $editor = new Input();
