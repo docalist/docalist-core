@@ -236,28 +236,29 @@ abstract class Repository
         // Essaie d'encoder les données
         $result = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        // Teste si on a réussi, génère une exception sinon
-        if ($result === false) {
-            // Récupère le message d'erreur
-            $err = json_last_error_msg();
-
-            // Essaie de déterminer les champs responsables
-            $fields = [];
-            foreach($data as $field => $value) {
-                if (false === json_encode($data[$field], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) {
-                    $fields[] = $field;
-                }
-            }
-
-            // Génère l'exception
-            $msg = sprintf(__('Invalid data, json_encode() says "%s".', 'docalist-core'), $err);
-            $fields && $msg .= ' The error is probably in fields ' . implode(', ', $fields) . '.';
-
-            throw new RepositoryException($msg);
+        // Vérifie que json_encode() a réussi et retourne le résultat
+        if ($result !== false) {
+            return $result;
         }
 
-        // Ok
-        return $result;
+        // Récupère le message d'erreur
+        $err = json_last_error_msg();
+
+        // Essaie de déterminer les champs responsables
+        $fields = [];
+        foreach($data as $field => $value) {
+            if (false === json_encode($data[$field], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) {
+                $fields[] = $field;
+            }
+        }
+
+        // Génère l'exception
+        $msg = sprintf(__('Invalid data, json_encode() says "%s".', 'docalist-core'), $err);
+        if ($fields) {
+            $msg .= ' The error is probably in fields ' . implode(', ', $fields) . '.';
+        }
+
+        throw new RepositoryException($msg);
     }
 
     /**
