@@ -39,7 +39,7 @@ class Url extends Text
     public function getFormattedValue($options = null)
     {
         $url = $this->phpValue;
-        if (true || $this->getOption('add-protocol', $options, $this->getDefaultFormat())) {
+        if ($this->getOption('add-protocol', $options, $this->getDefaultFormat())) {
             $url = $this->addProtocol($url);
         }
 
@@ -67,5 +67,10 @@ class Url extends Text
         !preg_match('~^(?:f|ht)tps?://~i', $url) && $url = 'http://' . $url;
 
         return $url;
+    }
+
+    public function getDefaultEditor()
+    {
+        return 'input-large';
     }
 }
