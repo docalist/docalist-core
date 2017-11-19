@@ -195,7 +195,7 @@ class Sequences
     {
         $wpdb = docalist('wordpress-database');
 
-        if ($sequence) {
+        if (!empty($sequence)) {
             $op = '=';
             $value = $this->getSequenceName($group, $sequence);
         } else {
