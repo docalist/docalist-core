@@ -2,7 +2,7 @@
 /**
  * This file is part of the 'Docalist Core' plugin.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2017 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 class Response extends SymfonyResponse
 {
     /**
-     * Entête http par défaut pour ce type de réponse.
+     * Entêtes http par défaut pour ce type de réponse.
      *
      * @var string[]
      */
@@ -41,7 +41,7 @@ class Response extends SymfonyResponse
 
     public function __construct($content = '', $status = 200, $headers = [])
     {
-        $this->defaultHeaders && $headers += $this->defaultHeaders;
+        !empty($this->defaultHeaders) && $headers += $this->defaultHeaders;
 
         parent::__construct($content, $status, $headers);
     }
