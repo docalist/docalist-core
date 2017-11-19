@@ -254,7 +254,7 @@ abstract class Repository
 
         // Génère l'exception
         $msg = sprintf(__('Invalid data, json_encode() says "%s".', 'docalist-core'), $err);
-        if ($fields) {
+        if (!empty($fields)) {
             $msg .= ' The error is probably in fields ' . implode(', ', $fields) . '.';
         }
 
