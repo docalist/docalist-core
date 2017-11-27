@@ -218,7 +218,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     final public function __toString()
     {
-        return json_encode($this->phpValue, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        return json_encode($this->getPhpValue(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
     // -------------------------------------------------------------------------
