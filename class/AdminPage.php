@@ -16,11 +16,14 @@ namespace Docalist;
 use Docalist\Http\Response;
 use Docalist\Http\TextResponse;
 use Docalist\Http\CallbackResponse;
+use ReflectionObject;
+use ReflectionMethod;
+use InvalidArgumentException;
 
 /**
  * Une page d'administration dans le back-office.
  */
-class AdminPage extends Controller
+abstract class AdminPage extends Controller
 {
     /**
      * {@inheritdoc}
@@ -81,14 +84,14 @@ class AdminPage extends Controller
          */
 
         // Crée la page dans le menu WordPress
-        $parent = $this->parentPage();
+        $parent = $this->getParentPage();
         $title = $this->menuTitle();
-        $capability = $this->capability();
+        $capability = $this->getCapability();
         if (empty($parent)) {
-            $page = add_menu_page($title, $title, $capability, $this->id(), function () {
+            $page = add_menu_page($title, $title, $capability, $this->getID(), function () {
             });
         } else {
-            $page = add_submenu_page($parent, $title, $title, $capability, $this->id(), function () {
+            $page = add_submenu_page($parent, $title, $title, $capability, $this->getID(), function () {
             });
         }
 
@@ -131,7 +134,7 @@ class AdminPage extends Controller
             // dans notre cas il n'a pas encore été appellé. Ca pose
             // problème car dans ce cas, les vues qui appellent
             // screen_icon() ne récupèrent pas la bonne icone (wp 3.6).
-            get_current_screen()->set_parentage($this->parentPage);
+            get_current_screen()->set_parentage($this->getParentPage());
 
             // Exécute l'action, récupère la réponse générée et le garbage éventuel
             ob_start();
@@ -144,10 +147,10 @@ class AdminPage extends Controller
                     // En mode debug, on signale l'erreur
                     if (WP_DEBUG) {
                         $h3 = __("Erreur dans l'action %s", 'docalist-core');
-                        $h3 = sprintf($h3, $this->action());
+                        $h3 = sprintf($h3, $this->getAction());
 
                         $msg = __('La méthode <code>%s()</code> a retourné :<pre>%s</pre>', 'docalist-core');
-                        $msg = sprintf($msg, $this->method(), var_export($response, true));
+                        $msg = sprintf($msg, $this->getMethod(), var_export($response, true));
                         printf('<div class="error"><h3>%s</h3><p>%s</p></div>', $h3, $msg);
                     }
 
@@ -184,10 +187,10 @@ class AdminPage extends Controller
                     // Si on a du garbage, on le signale en mode WP_DEBUG
                     if ($garbage && WP_DEBUG) {
                         $h3 = __("Garbage dans l'action %s", 'docalist-core');
-                        $h3 = sprintf($h3, $this->action());
+                        $h3 = sprintf($h3, $this->getAction());
 
                         $msg = __('La méthode <code>%s()</code> a généré :<pre>%s</pre>', 'docalist-core');
-                        $msg = sprintf($msg, $this->method(), $garbage);
+                        $msg = sprintf($msg, $this->getMethod(), $garbage);
                         printf('<div class="error"><h3>%s</h3><p>%s</p></div>', $h3, $msg);
                     }
 
@@ -278,6 +281,11 @@ class AdminPage extends Controller
         );
     }
 
+    protected function getDefaultAction()
+    {
+        return 'Index';
+    }
+
     /**
      * Liste des outils disponibles.
      *
@@ -287,14 +295,47 @@ class AdminPage extends Controller
      * "action", et qui peuvent être appellées sans paramètres (aucun
      * paramètre ou paramètres ayant une valeur par défaut).
      */
-    protected function actionIndex()
+    public function actionIndex()
     {
         return $this->view(
             'docalist-core:controller/actions-list',
             [
                 'title' => $this->menuTitle(),
-                'actions' => $this->actions(),
+                'actions' => $this->getCallableActions(),
             ]
         );
+    }
+
+    /**
+     * Retourne la liste des actions que l'utilisateur peut invoquer.
+     *
+     * La méthode retourne les actions qui peuvent être appellées sans paramètre obligatoire et pour lesquelles
+     * l'utilisateur dispose droits requis. L'action par défaut n'est pas incluse dans la liste.
+     *
+     * @return string[]
+     */
+    protected function getCallableActions()
+    {
+        $actions = [];
+        $default = $this->getDefaultAction();
+        $controller = new ReflectionObject($this);
+        foreach ($controller->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            // Ignore les méthodes qui ne sont pas des actions
+            try {
+                $action = $this->getAction($method->getName());
+            } catch (InvalidArgumentException $e) {
+                continue;
+            }
+
+            // Ignore l'action par défaut, celles qui demandent des droits et qui ont des paramètres obligatoires
+            if ($action === $default || !$this->canRun($action) || $method->getNumberOfRequiredParameters() > 0) {
+                continue;
+            }
+
+            // Stocke le nom de la méthode
+            $actions[] = $action;
+        }
+
+        return $actions;
     }
 }
