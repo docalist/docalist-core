@@ -65,8 +65,15 @@ use Exception;
  * - http://core.trac.wordpress.org/ticket/7283
  * - http://core.trac.wordpress.org/changeset/8315
  */
-class Controller
+abstract class Controller
 {
+    /**
+     * Préfixe utilisé pour les noms de méthodes qui implémentent des actions.
+     *
+     * @var string
+     */
+    const ACTION_PREFIX = 'action';
+
     /**
      * Identifiant unique de ce contrôleur.
      *
@@ -77,8 +84,11 @@ class Controller
     /**
      * Nom de la page qui sert de point d'entrée pour exécuter les actions de ce contrôleur.
      *
-     * Par défaut, il s'agit de 'admin.php'. Pour une page d'admin ajoutée dans un sous menu, il s'agit de
-     * la page du menu.
+     * Par défaut, il s'agit de 'admin.php'.
+     *
+     * Pour une page d'admin ajoutée dans un sous menu, il s'agit de la page du menu ('options-general.php' pour
+     * une page de réglages, 'edit.php?post_type=post' pour une page dans le menu Articles, 'admin-ajax.php' pour
+     * un contrôleur ajax, etc.)
      *
      * @var string
      */
@@ -107,15 +117,6 @@ class Controller
      * @var string
      */
     protected $actionParameter = 'm'; // m comme "method"
-
-    /**
-     * Nom de l'action par défaut de ce contrôleur.
-     *
-     * Il s'agit de l'action qui sera exécutée si aucune action n'est indiquée dans les paramètres de la requête.
-     *
-     * @var string
-     */
-    protected $defaultAction = 'Index';
 
     /**
      * Définit les droits requis pour exécuter les actions de ce contrôleur.
@@ -153,7 +154,7 @@ class Controller
     protected function register()
     {
         if ($this->canRun()) {
-            add_action('admin_action_' . $this->id(), function () {
+            add_action('admin_action_' . $this->getID(), function () {
                 $this->run()->send();
                 exit();
             });
@@ -165,17 +166,17 @@ class Controller
      *
      * @return string
      */
-    protected function id()
+    protected function getID()
     {
         return $this->id;
     }
 
     /**
-     * Retourne l'url de la page parent.
+     * Retourne le nom de la page parent.
      *
      * @return string
      */
-    protected function parentPage()
+    protected function getParentPage()
     {
         return $this->parentPage;
     }
@@ -187,256 +188,126 @@ class Controller
      *
      * @return string
      */
-    protected function defaultAction()
-    {
-        return $this->defaultAction;
-    }
+    abstract protected function getDefaultAction();
 
     /**
-     * Retourne le nom de l'action exécutée.
+     * Retourne le nom de la méthode correspondant à l'action passée en paramètre ou à l'action en cours.
+     *
+     * La méthode se contente d'ajouter le préfixe 'action' au nom de l'action, elle ne vérifie pas que l'action
+     * demandée existe ou peut être appellée.
+     *
+     * @param string $action Optionnel, nom de l'action, utilise l'action en cours si absent.
      *
      * @return string
      */
-    protected function action()
+    protected function getMethod($action = '')
     {
-        if (isset($_REQUEST[$this->actionParameter])) {
-            return $_REQUEST[$this->actionParameter];
+        if (empty($action)) {
+            $arg = $this->actionParameter;
+
+            $action = empty($_REQUEST[$arg]) ? $this->getDefaultAction() : $_REQUEST[$arg];
         }
 
-        return $this->defaultAction();
+        return self::ACTION_PREFIX . ucfirst($action);
     }
 
     /**
-     * Retourne le nom de la méthode de ce contrôleur qui implémente l'action passée en paramètre.
+     * Retourne le nom de l'action correspondant au nom de méthode passé en paramètre ou de la méthode en cours.
      *
-     * Le nom de la méthode correspond au nom de l'action auquel est ajouté le préfixe "action".
+     * La méthode se contente de supprimer le préfixe 'action' du nom de la méthode, elle ne vérifie pas que la
+     * méthode indiquée existe ou peut être appellée.
      *
-     * @param string $action Nom de l'action. Optionnel, utilise l'action en cours si absent.
+     * @param string $method Nom de la méthode
+     *
+     * @return string Nom de l'action correspondant à la méthode ou une chaine vide si le nom de méthode ne
+     * commence pas par le préfixe 'action'.
+     */
+    protected function getAction($method = '')
+    {
+        empty($method) && $method = $this->getMethod();
+
+        $prefixLength = strlen(self::ACTION_PREFIX);
+        if (strncmp($method, self::ACTION_PREFIX, $prefixLength) !== 0) {
+            return '';
+        }
+
+        return substr($method, $prefixLength);
+    }
+
+    /**
+     * Retourne la capacité WordPress requise pour exécuter l'action passée en paramètre.
+     *
+     * Si aucune action n'est passée en paramètre, la méthode teste la capacité par défaut du contrôleur.
+     *
+     * @param string $action Nom de l'action à tester.
      *
      * @return string
      */
-    protected function method($action = null)
+    protected function getCapability($action = '')
     {
-        return 'action' . ($action ?: $this->action());
-    }
-
-    /**
-     * Retourne la liste des actions de ce module.
-     *
-     * Par défaut, la méthode ne retourne que les actions qui peuvent être appellées sans arguments
-     * (i.e. la méthode correspondant à l'action n'a aucun paramètre ou bien ils ont tous une valeur par défaut)
-     * et qui sont 'public'.
-     *
-     * @param bool $callableOnly    Ne retourne que les actions qui peuvent être appellées sans arguments
-     *                              (i.e. la méthode correspondant à l'action n'a aucun paramètre ou bien
-     *                              ils ont tous une valeur par défaut).
-     * @param bool $hasCapacity     Ne retourne que les actions pour lesquelles l'utilisateur a les droits requis.
-     * @param bool $publicOnly      Ne retourne que les actions dont la méthode est marquée 'public'
-     *                              (false : retourne aussi les méthodes marquées 'protected').
-     * @param bool $includeDefault  Inclure ou non l'action par défaut dans la liste des actions.
-     *
-     * @return array
-     */
-    protected function actions($callableOnly = true, $hasCapacity = true, $publicOnly = true, $includeDefault = false)
-    {
-        $actions = [];
-
-        $class = new ReflectionObject($this);
-
-        $flags = ReflectionMethod::IS_PUBLIC;
-        !$publicOnly && $flags |= ReflectionMethod::IS_PROTECTED;
-
-        foreach ($class->getMethods($flags) as $method) {
-            $name = $method->getName();
-
-            // On ne liste que les actions
-            if (strncmp($name, 'action', 6) !== 0) {
-                continue;
-            }
-
-            $action = substr($name, 6);
-
-            // Ignore les méthodes action() et actions()
-            if (empty($action) || $action === 's') {
-                continue;
-            }
-
-            // Ignore l'action par défaut
-            if (! $includeDefault && $name === $this->defaultAction()) {
-                continue;
-            }
-
-            // Ne liste que les action que l'utilisateur peut appeller
-            if ($hasCapacity && !$this->canRun($action)) {
-                continue;
-            }
-
-            // On ne peut appeller que les méthodes sans paramètres requis
-            if ($callableOnly && $method->getNumberOfRequiredParameters() > 0) {
-                continue;
-            }
-
-            // Stocke le nom de la méthode
-            $actions[] = $action;
+        // Teste si une capacité spécifique a été définie pour l'action
+        if (!empty($action) && !empty($this->capability[$action])) {
+            return $this->capability[$action];
         }
 
-        return $actions;
-    }
-
-    /**
-     * Retourne la capability WordPress requise pour exécuter une action.
-     *
-     * @param string $what Nom de l'action à tester ou 'default' pour retourner la capacité par défaut du contrôleur.
-     *
-     * @return string
-     *
-     * @see http://codex.wordpress.org/Roles_and_Capabilities
-     */
-    protected function capability($what = 'default')
-    {
-        // Teste si un droit a été indiqué pour cette action
-        if (isset($this->capability[$what])) {
-            return $this->capability[$what];
-        }
-
-        // Pas de droit spécifique à l'action, retourne la capacité par défaut
-        if (isset($this->capability['default'])) {
+        // Teste la capacité par défaut
+        if (!empty($this->capability['default'])) {
             return $this->capability['default'];
         }
 
-        // Pas de capacité par défaut
+        // Admin only
         return 'manage_options';
     }
 
+
     /**
-     * Indique si l'utilisateur peut exécuter l'action indiquée.
+     * Teste si l'utilisateur en cours dispose de la capacité WordPress requise pour exécuter l'action indiquée.
      *
-     * @param string $what Nom de l'action à tester ou 'default' pour retourner la capacité par défaut du contrôleur.
+     * Si aucune action n'est passée en paramètre, la méthode teste la capacité par défaut du contrôleur.
+     *
+     * @param string $action Nom de l'action à tester.
      *
      * @return bool
      */
-    protected function canRun($what = 'default')
+    protected function canRun($action = '')
     {
-        return current_user_can($this->capability($what));
+        return current_user_can($this->getCapability($action));
     }
 
     /**
-     * Construit un tableau avec les paramètres à transmettre à la méthode.
+     * Exécution l'action en cours.
      *
-     * @param ReflectionMethod  $method
-     * @param array             $args
-     * @param bool              $checkTooManyArgs Génère une exception si $args contient des paramètres qui ne
-     *                          figurent pas dans la méthode.
-     * @param bool              $checkMissing Génère une exception si $args ne contient pas tous les paramètres requis.
-     *
-     * @return array
-     *
-     * @throws Exception
-     *
-     * - si un paramètre obligatoire est absent
-     * - s'il y a trop de paramètres et que $checkTooManyArgs est à true
-     * - s'il n'y a pas assez de paramètres et que $checkMissing est à true
-     */
-    protected function matchParameters(
-        ReflectionMethod $method,
-        array $args,
-        $checkTooManyArgs = false,
-        $checkMissing = true
-    ) {
-        $params = $method->getParameters();
-        $result = [];
-        foreach ($params as $i => $param) {
-            // Récupère le nom du paramètre
-            $name = $param->getName();
-
-            // TODO : si name="request', transmettre un objet Request
-
-            // Le paramètre peut être fourni soit par nom, soit par numéro
-            $key = isset($args[$name]) ? $name : $i;
-
-            // Le paramètre a été fourni
-            if (isset($args[$key])) {
-                $value = $args[$key];
-
-                // La méthode attend un tableau, caste en array
-                if ($param->isArray() && !is_array($value)) {
-                    $value = [$value];
-                }
-
-                // Tout est ok
-                $result[$name] = $value;
-                unset($args[$key]);
-                continue;
-            }
-
-            // Paramètre non fourni : utilise la valeur par défaut s'il y en a une
-            if (!$param->isDefaultValueAvailable()) {
-                if ($checkMissing) {
-                    $msg = __('Paramètre requis : %s.', 'docalist-core');
-                    throw new Exception(sprintf($msg, $name));
-                }
-                continue;
-            }
-
-            // Ok
-            $result[$name] = $param->getDefaultValue();
-        }
-
-        if ($checkTooManyArgs && count($args)) {
-            $msg = __('Trop de paramètres (%s)', 'docalist-core');
-            $msg = sprintf($msg, implode(', ', array_keys($args)));
-
-            throw new Exception($msg);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Lance l'exécution d'une action.
-     *
-     * @return Response la valeur retournée par la méthode exécutée.
+     * @return Response La réponse retournée par l'action.
      */
     protected function run()
     {
-        // Récupère l'action à exécuter
-        $action = $this->action();
-
         // Détermine la méthode à appeller
-        $name = $this->method();
+        $name = $this->getMethod();
 
         // Vérifie que la méthode demandée existe
-        $class = new ReflectionObject($this);
-        if (!$class->hasMethod($name)) {
+        $controller = new ReflectionObject($this);
+        if (!$controller->hasMethod($name)) {
             return $this->view(
                 'docalist-core:controller/action-not-found',
-                ['action' => $action],
+                ['action' => $this->getAction()],
                 404
             );
         }
 
         // Vérifie qu'on peut l'appeller
-        $method = $class->getMethod($name);
-        if ($method->isPrivate() || $method->isStatic()) {
-            $msg = __('La méthode <code>%s</code> est "%s".', 'docalist-core');
-            $msg = sprintf($msg, $name, $method->isPrivate() ? 'private' : 'static');
-
+        $method = $controller->getMethod($name);
+        if ($method->isStatic() || !$method->isPublic()) {
             return $this->view(
                 'docalist-core:controller/bad-request',
-                ['message' => $msg],
+                ['message' => sprintf('<code>%s()</code> is static or not public.', $name)],
                 400
             );
         }
 
-        // Remarques : autres flags possibles
-        // isConstructor(), isDestructor() : impossible car le nom ne commence
-        // par 'action' ; isAbstract() : on n'aurait pas pu créer l'instance
-
         // Récupère la casse exacte de l'action
-        // C'est important car sinon on pourrait court-circuiter les droits
-        // en changeant la casse de l'action en query string : comme les
-        // méthodes php sont insensibles à la casse, cela marcherait.
-        $action = substr($method->getName(), strlen('action'));
+        // C'est important car sinon on pourrait court-circuiter les droits en changeant la casse de l'action
+        // en query string : comme les méthodes php sont insensibles à la casse, cela marcherait.
+        $action = $this->getAction($method->getName());
 
         // Vérifie que l'utilisateur a les droits requis pour exécuter l'action
         if (! $this->canRun($action)) {
@@ -449,7 +320,7 @@ class Controller
 
         // Construit la liste des paramètres
         try {
-            $args = $this->matchParameters($method, $_REQUEST, false, true);
+            $parameters = $this->runParameters($method, $_REQUEST, false, true);
         } catch (Exception $e) {
             return $this->view(
                 'docalist-core:controller/bad-request',
@@ -458,14 +329,51 @@ class Controller
             );
         }
 
-        // Si l'action est protected (action appellable mais non listée dans
-        // actionIndex), il faut la rendre accessible
-        if ($method->isProtected()) {
-            $method->setAccessible(true); // oui, c'est monstrueux de pouvoir faire ça...
+        // Appelle la méthode avec la liste d'arguments obtenue
+        return $method->invokeArgs($this, $parameters);
+    }
+
+    /**
+     * Retourne un tableau contenant les paramètres nécessaires pour exécuter la méthode indiquée.
+     *
+     * @param ReflectionMethod $method Méthode à appeler.
+     * @param array $args Paramètres fournis.
+     *
+     * @return array Un tableau contenant les paramètres fournis et les paramètres par défaut de la méthode.
+     *
+     * @throws Exception Si un paramètre obligatoire manque (paramètre non fourni pour lequel la méthode ne
+     * propose pas de valeur par défaut).
+     */
+    private function runParameters(ReflectionMethod $method, array $args)
+    {
+        $result = [];
+        foreach ($method->getParameters() as $parameter) {
+            // Récupère le nom du paramètre
+            $name = $parameter->getName();
+
+            // Paramètre fourni
+            if (isset($args[$name])) {
+                // Récupère la valeur fournie
+                $value = $args[$name];
+
+                // Si la méthode attend un tableau, caste en array
+                $parameter->isArray() && !is_array($value) && $value = [$value];
+
+                // Tout est ok
+                $result[$name] = $value;
+                continue;
+            }
+
+            // Paramètre non fourni : génère une exception s'il n'a pas de valeur par défaut
+            if (!$parameter->isDefaultValueAvailable()) {
+                throw new Exception(sprintf('Required parameter "%s" is missing.', $name));
+            }
+
+            // Utilise la valeur par défaut du paramètre
+            $result[$name] = $parameter->getDefaultValue();
         }
 
-        // Appelle la méthode avec la liste d'arguments obtenue
-        return $method->invokeArgs($this, $args);
+        return $result;
     }
 
     /**
@@ -473,16 +381,12 @@ class Controller
      *
      * Exemples :
      *
-     * - url() : retourne l'url en cours ou l'url par défaut
-     * - url('Action') : url d'une action qui n'a pas de paramètres ou dont
-     *   tous les paramètres ont une valeur par défaut.
-     * - url('Action', array('arg1'=>1, 'arg2' => 2)) : les paramètres sont
-     *   passés dans un tableau
-     * - url('Action', 'arg1', 'arg2') : les paramètres sont dans l'ordre
-     *   attendu par l'action.
+     * - getUrl() : retourne l'url à utiliser pour l'action en cours.
+     * - getUrl('Action') : url d'une action sans paramètres ou dont tous les paramètres ont une valeur par défaut.
+     * - getUrl('Action', ['arg1' => 1, 'arg2' => 2]) : les paramètres sont passés dans un tableau
+     * - getUrl('Action', 'arg1', 'arg2') : les paramètres sont dans l'ordre attendu par l'action.
      *
-     * @param string $action Nom de l'action. Les paramètres supplémentaires passés à la méthode
-     *                       sont ajoutés à l'url.
+     * @param string $action Nom de l'action. Les paramètres supplémentaires passés à la méthode sont ajoutés à l'url.
      *
      * @return string
      *
@@ -497,9 +401,14 @@ class Controller
      */
     protected function url($action = null)
     {
-        // Récupère l'action et le nom de la méthode correspondante
-        empty($action) && $action = $this->action();
-        $name = $this->method($action);
+        // _deprecated_function(__METHOD__, '0.14', 'getUrl');
+        return $this->getUrl($action);
+    }
+
+    protected function getUrl($action = '')
+    {
+        // Récupère le nom de la méthode à utiliser
+        $name = $this->getMethod($action);
 
         // Vérifie que la méthode existe
         $class = new ReflectionObject($this);
@@ -517,7 +426,7 @@ class Controller
         }
 
         // Récupère la casse exacte de l'action
-        $action = substr($method->getName(), strlen('action'));
+        $action = $this->getAction($method->getName());
 
         // Vérifie que l'utilisateur a les droits requis pour l'action
         if (! $this->canRun($action)) {
@@ -529,17 +438,55 @@ class Controller
         $args = func_get_args();
         array_shift($args);
         count($args) === 1 && is_array($args[0]) && $args = $args[0]; // // Appel de la forme "action, array(args)"
-        $args = $this->matchParameters($method, $args, true, false);
+        $args = $this->urlParameters($method, $args);
 
         // Ajoute les paramètres du contrôleur
-        $t = [$this->controllerParameter => $this->id()];
-        $action !== $this->defaultAction() && $t[$this->actionParameter] = $action;
+        $t = [$this->controllerParameter => $this->getID()];
+        $action !== $this->getDefaultAction() && $t[$this->actionParameter] = $action;
         $args = $t + $args;
 
         // Retourne l'url
-        return add_query_arg($args, admin_url($this->parentPage()));
+        return add_query_arg($args, admin_url($this->getParentPage()));
     }
 
+    protected function urlParameters(ReflectionMethod $method, array $args, $checkMax = TRUE, $checkMin = FALSE)
+    {
+        $result = [];
+        $params = $method->getParameters();
+        foreach ($params as $i => $param) {
+            // Récupère le nom du paramètre
+            $name = $param->getName();
+
+            // Le paramètre peut être fourni soit par nom, soit par numéro
+            $key = isset($args[$name]) ? $name : $i;
+
+            // Le paramètre a été fourni
+            if (isset($args[$key])) {
+                // Récupère la valeur fournie
+                $value = $args[$key];
+
+                // Si la méthode attend un tableau, caste en array
+                $param->isArray() && !is_array($value) && $value = [$value];
+
+                // Tout est ok
+                $result[$name] = $value;
+                unset($args[$key]);
+                continue;
+            }
+
+            // Paramètre non fourni : génère une exception s'il n'a pas de valeur par défaut
+            if (!$param->isDefaultValueAvailable()) {
+                throw new Exception(sprintf('Required parameter "%s" is missing.', $name));
+            }
+        }
+
+        // Génère une exception si on a passé trop de paramètres
+        if (count($args)) {
+            throw new Exception(sprintf('Too many parameters (%s)', implode(', ', array_keys($args))));
+        }
+
+        return $result;
+    }
     /**
      * Retourne l'url de base du contrôleur.
      *
@@ -548,8 +495,8 @@ class Controller
     protected function baseUrl()
     {
         return add_query_arg(
-            [$this->controllerParameter => $this->id()],
-            admin_url($this->parentPage())
+            [$this->controllerParameter => $this->getID()],
+            admin_url($this->getParentPage())
         );
     }
 
