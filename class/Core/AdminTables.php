@@ -22,11 +22,6 @@ use Exception;
  */
 class AdminTables extends AdminPage
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $defaultAction = 'TablesList';
-
     protected $capability = [
         'default' => 'manage_options',
     ];
@@ -38,6 +33,11 @@ class AdminTables extends AdminPage
             'options-general.php',                      // page parent
             __("Tables d'autorité", 'docalist-core')    // libellé menu
         );
+    }
+
+    protected function getDefaultAction()
+    {
+        return 'TablesList';
     }
 
     /**
