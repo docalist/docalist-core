@@ -61,10 +61,10 @@ class DateTime extends Text
         // Formats dispos
         $formats = [
             'd/m/Y',    // 04/09/2017
-            'd-m-Y',    // 04/09/2017
+            'd-m-Y',    // 04-09-2017
 
             'd/m/y',    // 04/09/17
-            'd-m-y',    // 04/09/17
+            'd-m-y',    // 04-09-17
 
             'Y-m-d',    // 2017-09-04
 
