@@ -402,7 +402,7 @@ abstract class Controller
     protected function url($action = null)
     {
         // _deprecated_function(__METHOD__, '0.14', 'getUrl');
-        return $this->getUrl($action);
+        return call_user_func_array([$this, 'getUrl'], func_get_args());
     }
 
     protected function getUrl($action = '')
