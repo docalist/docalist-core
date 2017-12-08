@@ -542,7 +542,7 @@ class JsonReader
     public function getString()
     {
         // La chaine doit commencer par un guillemet double
-        if (! $this->size || $this->buffer[$this->position] !== '"') { // i.e. isString() inlined
+        if (!$this->size || $this->buffer[$this->position] !== '"') { // i.e. isString() inlined
             throw $this->parseError('expected string');
         }
 
@@ -556,11 +556,11 @@ class JsonReader
 
             // Génère une erreur si le buffer a atteint la taille maximale autorisée pour les chaines
             if ($this->size >= self::STRING_MAX_LEN) {
-                throw $this->parseError('string exceeds '. self::STRING_MAX_LEN . ' bytes');
+                throw $this->parseError('string exceeds ' . self::STRING_MAX_LEN . ' bytes');
             }
 
             // Lit un chunk supplémentaire dans le buffer et ré-essaye
-            if (! $this->readChunk()) {
+            if (!$this->readChunk()) {
                 throw $this->parseError('invalid string: bad escape sequence or missing closing quote');
             }
         }
@@ -569,7 +569,7 @@ class JsonReader
         $length = strlen($match[0]);
         $this->position += $length;
         $this->size -= $length;
-        $this->col += $length;  // On ne peut pas avoir de saut de lignes dans une chaine, ils sont encodés
+        $this->col += $length; // On ne peut pas avoir de saut de lignes dans une chaine, ils sont encodés
 
         // Passe les espaces qui suivent
         $this->skipWhitespaces();
@@ -593,7 +593,7 @@ class JsonReader
      */
     public function isValue()
     {
-        return 0 !== $this->size && isset(self::$mapMethods[ $this->buffer[$this->position] ]);
+        return 0 !== $this->size && isset(self::$mapMethods[$this->buffer[$this->position]]);
         // Remarque : on n'appelle pas readChunk : soit on a au moins un caractère, soit EOF a été atteint
     }
 
@@ -617,7 +617,7 @@ class JsonReader
         $char = $this->buffer[$this->position];
 
         // Si ce n'est pas un des caractères qui permettent de commencer une valeur, erreur
-        if (! isset(self::$mapMethods[$char])) {
+        if (!isset(self::$mapMethods[$char])) {
             throw $this->parseError('unexpected char "' . $char . '"');
         }
 
