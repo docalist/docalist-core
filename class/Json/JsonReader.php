@@ -246,8 +246,6 @@ class JsonReader
         $this->line = $this->col = 1;
 
         $this->file = fopen($filename, 'rb');
-//         stream_set_chunk_size($this->file, self::CHUNK_SIZE);
-//         stream_set_read_buffer($this->file, self::CHUNK_SIZE);
         $this->readChunk();
         $this->skipWhitespaces();
     }
@@ -257,7 +255,7 @@ class JsonReader
      */
     public function __destruct()
     {
-        $this->file && fclose($this->file) && $this->file=null;
+        $this->file && fclose($this->file) && $this->file = null;
     }
 
     /**
@@ -285,7 +283,7 @@ class JsonReader
 
         // Si read échoue (false) ou ne retourne rien (chaine vide), on considère que EOF a été atteinte
         if (false === $chunk || 0 === $length = strlen($chunk)) {
-            $this->file && fclose($this->file) && $this->file=null; // ferme le fichier dès que possible
+            $this->file && fclose($this->file) && $this->file = null; // ferme le fichier dès que possible
 
             return false;
         }
@@ -317,13 +315,6 @@ class JsonReader
             while ($this->size && isset($whitespaces[$char = $this->buffer[$this->position]])) {
                 ++$this->position;
                 --$this->size;
-
-//                 if ($char === "\n") {
-//                     ++$this->line;
-//                     $this->col = 0;
-//                 } else {
-//                     $this->col += $whitespaces[$char];
-//                 }
                 ($char === "\n") ? (++$this->line && $this->col = 0) : ($this->col += $whitespaces[$char]);
             }
         } while (!$this->size && $this->readChunk());
@@ -507,9 +498,7 @@ class JsonReader
     public function getNumber()
     {
         // Charge le chunk suivant s'il reste moins de NUMBER_MAX_LEN caractères dans le buffer (cf. isNumber)
-        if ($this->size < self::NUMBER_MAX_LEN) {
-            $this->readChunk();
-        }
+        ($this->size < self::NUMBER_MAX_LEN) && $this->readChunk();
 
         // Génère une erreur si le buffer ne matche pas la regexp utilisée pour reconnaître les nombres
         $match = null;
@@ -651,7 +640,7 @@ class JsonReader
     /**
      * Vérifie que le buffer contient un objet et passe au token suivant.
      *
-     * @param bool $assoc True pour retourner un tableau associatif plutôt qu'un objet (false par défaut).
+     * @param bool|null $assoc True pour retourner un tableau associatif plutôt qu'un objet (false par défaut).
      *
      * @return object|array L'objet lu ou un tableau associatif si vous passez true en paramètre.
      *
@@ -761,7 +750,7 @@ class JsonReader
     protected function parseError($message)
     {
         // Ferme le fichier
-        $this->file && fclose($this->file) && $this->file=null;
+        $this->file && fclose($this->file) && $this->file = null;
 
         // Crée l'exception
         return new JsonParseException($message, $this->line, $this->col);
