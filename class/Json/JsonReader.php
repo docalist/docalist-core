@@ -25,8 +25,8 @@ namespace Docalist\Json;
  * génèrent une exception si ce n'est pas le cas) puis elles retournent la valeur en cours et passent au token
  * suivant.
  *
- * SuppressWarnings(PHPMD.TooManyPublicMethods)
- * SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
