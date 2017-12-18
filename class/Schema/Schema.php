@@ -142,6 +142,20 @@ class Schema implements JsonSerializable
             }
         }
 
+        $compat = [
+            'Docalist\Biblio\Type\TypedText'        => 'Docalist\Type\TypedText',
+            'Docalist\Biblio\Type\TypedLargeText'   => 'Docalist\Type\TypedLargeText',
+            'Docalist\Biblio\Type\TypedFuzzyDate'   => 'Docalist\Type\TypedFuzzyDate',
+            'Docalist\Biblio\Type\TypedNumber'      => 'Docalist\Type\TypedNumber',
+            'Docalist\Biblio\Type\TypedDecimal'     => 'Docalist\Type\TypedDecimal',
+        ];
+
+        if (isset($compat[$type])) {
+//              echo "WARNING : Ancien type '$type' utilisé";
+//              var_dump($properties);
+            $properties['type'] = $type = $compat[$type];
+        }
+
         // Si le type indiqué est une collection, c'est la collection qui fournit le type des éléments
         if (is_a($type, 'Docalist\Type\Collection', true)) {
             if (isset($properties['collection'])) {
