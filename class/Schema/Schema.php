@@ -131,7 +131,10 @@ class Schema implements JsonSerializable
             throw new InvalidArgumentException("Invalid 'type': expected string, got " . gettype($type));
         }
 
-        // Une étoile à la fin indique un typerépétable. Par défaut, c'est le type qui indique la collection.
+        // Compatibilité ascendante : convertit les noms de classes qui ont changé
+        $type = $this->convertType($type);
+
+        // Une étoile à la fin indique un type répétable. Par défaut, c'est le type qui indique la collection.
         if (substr($type, -1) === '*') {
             $type = $properties['type'] = substr($type, 0, -1);
             if (is_a($type, 'Docalist\Type\Any', true)) {
@@ -140,39 +143,6 @@ class Schema implements JsonSerializable
                 // on peut arriver là si c'est un Grid (qui n'hérite pas de Any).
                 $properties['collection'] = 'Docalist\Type\Collection';
             }
-        }
-
-        $compat = [
-            'Docalist\Biblio\Type\TypedText'        => 'Docalist\Type\TypedText',
-            'Docalist\Biblio\Type\TypedLargeText'   => 'Docalist\Type\TypedLargeText',
-            'Docalist\Biblio\Type\TypedFuzzyDate'   => 'Docalist\Type\TypedFuzzyDate',
-            'Docalist\Biblio\Type\TypedNumber'      => 'Docalist\Type\TypedNumber',
-            'Docalist\Biblio\Type\TypedDecimal'     => 'Docalist\Type\TypedDecimal',
-            'Docalist\Biblio\Type\Topic'            => 'Docalist\Databases\Type\Topic',
-            'Docalist\Biblio\Type\Link'             => 'Docalist\Databases\Type\Link',
-            'Docalist\Biblio\Type\Relation'         => 'Docalist\Databases\Type\Relation',
-            'Docalist\Biblio\Type\PostType'         => 'Docalist\Databases\Type\PostType',
-            'Docalist\Biblio\Type\PostStatus'       => 'Docalist\Databases\Type\PostStatus',
-            'Docalist\Biblio\Type\PostTitle'        => 'Docalist\Databases\Type\PostTitle',
-            'Docalist\Biblio\Type\PostDate'         => 'Docalist\Databases\Type\PostDate',
-            'Docalist\Biblio\Type\PostAuthor'       => 'Docalist\Databases\Type\PostAuthor',
-            'Docalist\Biblio\Type\PostModified'     => 'Docalist\Databases\Type\PostModified',
-            'Docalist\Biblio\Type\PostPassword'     => 'Docalist\Databases\Type\PostPassword',
-            'Docalist\Biblio\Type\PostParent'       => 'Docalist\Databases\Type\PostParent',
-            'Docalist\Biblio\Type\PostSlug'         => 'Docalist\Databases\Type\PostSlug',
-            'Docalist\Biblio\Type\RefNumber'        => 'Docalist\Databases\Type\RefNumber',
-            'Docalist\Biblio\Type\RefType'          => 'Docalist\Databases\Type\RefType',
-            'Docalist\Biblio\Type\Group'            => 'Docalist\Databases\Type\Group',
-        ];
-
-        if (isset($compat[$type])) {
-            false && printf(
-                'COMPAT : Le champ "%s" utilise le type "%s" qui est remplacé par "%s"<br />',
-                $properties['name'],
-                $type,
-                $compat[$type]
-            );
-            $properties['type'] = $type = $compat[$type];
         }
 
         // Si le type indiqué est une collection, c'est la collection qui fournit le type des éléments
@@ -193,6 +163,59 @@ class Schema implements JsonSerializable
     }
 
     /**
+     * Compatibilité ascendante : convertit les noms des classes qui ont changé de namespace ou de plugin.
+     *
+     * @param string $type Nom de classe à tester.
+     * @param string $name Nom du champ en cours (utilisé uniquement pour le message de warning).
+     *
+     * @return string Nom de classe convertit.
+     */
+    private function convertType($type, $name = '')
+    {
+        $star = substr($type, -1) === '*';
+        $test = $star ? substr($type, 0, -1) : $type;
+
+        $compat = [
+            'Docalist\Biblio\Type\TypedText'        => 'Docalist\Type\TypedText',
+            'Docalist\Biblio\Type\TypedLargeText'   => 'Docalist\Type\TypedLargeText',
+            'Docalist\Biblio\Type\TypedFuzzyDate'   => 'Docalist\Type\TypedFuzzyDate',
+            'Docalist\Biblio\Type\TypedNumber'      => 'Docalist\Type\TypedNumber',
+            'Docalist\Biblio\Type\TypedDecimal'     => 'Docalist\Type\TypedDecimal',
+            'Docalist\Biblio\Type\Topic'            => 'Docalist\Data\Type\Topic',
+            'Docalist\Biblio\Type\Topics'           => 'Docalist\Data\Type\Topics',
+            'Docalist\Biblio\Type\Link'             => 'Docalist\Data\Type\Link',
+            'Docalist\Biblio\Type\Relation'         => 'Docalist\Data\Type\Relation',
+            'Docalist\Biblio\Type\PostType'         => 'Docalist\Data\Type\PostType',
+            'Docalist\Biblio\Type\PostStatus'       => 'Docalist\Data\Type\PostStatus',
+            'Docalist\Biblio\Type\PostTitle'        => 'Docalist\Data\Type\PostTitle',
+            'Docalist\Biblio\Type\PostDate'         => 'Docalist\Data\Type\PostDate',
+            'Docalist\Biblio\Type\PostAuthor'       => 'Docalist\Data\Type\PostAuthor',
+            'Docalist\Biblio\Type\PostModified'     => 'Docalist\Data\Type\PostModified',
+            'Docalist\Biblio\Type\PostPassword'     => 'Docalist\Data\Type\PostPassword',
+            'Docalist\Biblio\Type\PostParent'       => 'Docalist\Data\Type\PostParent',
+            'Docalist\Biblio\Type\PostSlug'         => 'Docalist\Data\Type\PostSlug',
+            'Docalist\Biblio\Type\RefNumber'        => 'Docalist\Data\Type\RefNumber',
+            'Docalist\Biblio\Type\RefType'          => 'Docalist\Data\Type\RefType',
+            'Docalist\Biblio\Type\Group'            => 'Docalist\Data\Type\Group',
+            'Docalist\Biblio\Type\TypedRelation'    => 'Docalist\Data\Type\TypedRelation',
+        ];
+
+        if (! isset($compat[$test])) {
+            return $type;
+        }
+
+        $type = $compat[$test];
+        false && printf(
+            'COMPAT : Le champ "%s" utilise le type "%s" qui est remplacé par "%s"<br />',
+            $name,
+            $test,
+            $type
+        );
+
+        return $star ? ($type . '*') : $type;
+    }
+
+    /**
      * Valide la propriété 'collection'.
      *
      * @param array $properties
@@ -210,21 +233,8 @@ class Schema implements JsonSerializable
             throw new InvalidArgumentException("Invalid 'collection': expected string, got " . gettype($collection));
         }
 
-        $compat = [
-            'Docalist\Biblio\Type\Topics'           => 'Docalist\Databases\Type\Topics',
-        ];
-
-        if (isset($compat[$collection])) {
-            //              echo "WARNING : Ancien type '$type' utilisé";
-            //              var_dump($properties);
-            false && printf(
-                'COMPAT : Le champ "%s" utilise la collection"%s" qui est remplacée par "%s"<br />',
-                $properties['name'],
-                $collection,
-                $compat[$collection]
-            );
-            $properties['collection'] = $collection = $compat[$collection];
-        }
+        // Compatibilité ascendante : convertit les noms de classes qui ont changé
+        $type = $this->convertType($collection, $properties['name']);
 
         // La collection indiquée doit être une classe descendante de Collection
         if (!is_a($collection, 'Docalist\Type\Collection', true)) {
