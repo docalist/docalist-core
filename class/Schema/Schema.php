@@ -132,7 +132,7 @@ class Schema implements JsonSerializable
         }
 
         // Compatibilité ascendante : convertit les noms de classes qui ont changé
-        $type = $this->convertType($type);
+        $type = $properties['type'] = $this->convertType($type);
 
         // Une étoile à la fin indique un type répétable. Par défaut, c'est le type qui indique la collection.
         if (substr($type, -1) === '*') {
@@ -234,7 +234,7 @@ class Schema implements JsonSerializable
         }
 
         // Compatibilité ascendante : convertit les noms de classes qui ont changé
-        $type = $this->convertType($collection, $properties['name']);
+        $collection = $properties['collection'] = $this->convertType($collection, $properties['name']);
 
         // La collection indiquée doit être une classe descendante de Collection
         if (!is_a($collection, 'Docalist\Type\Collection', true)) {
