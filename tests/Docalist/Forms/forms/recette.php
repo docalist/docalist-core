@@ -3,7 +3,10 @@ use Docalist\Forms\Form;
 
 $form = new Form();
 $form ->setLabel('Un formulaire de saisie pour des recettes de cuisine')
-      ->setDescription('Ce formulaire est inspiré de <a href="http://www.marmiton.org/recettes/recette_lasagnes-de-haute-corse_48084.aspx">cette recette</a>.');
+      ->setDescription(
+          'Ce formulaire est inspiré de ' .
+          '<a href="http://www.marmiton.org/recettes/recette_lasagnes-de-haute-corse_48084.aspx">cette recette</a>.'
+      );
 
 // -----------------------------------------------------------------------------
 
@@ -31,11 +34,17 @@ $form->checkbox('vegetarien')
 $form->table('temps')
      ->setLabel('Temps de préparation')
      ->setRepeatable(true)
-     ->setDescription('Indiquez les différentes étapes de préparation et la durée (en minutes) de chaque étape.', false)
+     ->setDescription('Indiquez les étapes de préparation et la durée (en minutes) de chaque étape.', false)
         ->select('type')
         ->setLabel('Etape')
         ->addClass('input-block-level')
-        ->setOptions(array('Temps de préparation', 'Temps de repos', 'Temps de cuisson', 'Temps de glaçage', 'Durée totale'))
+        ->setOptions(array(
+            'Temps de préparation',
+            'Temps de repos',
+            'Temps de cuisson',
+            'Temps de glaçage',
+
+        'Durée totale'))
      ->getParent()
         ->input('duree')
         ->setLabel('Durée (en minutes)')
@@ -55,7 +64,11 @@ $form->fieldset()->setLabel('Liste d\'ingrédients')
      ->getParent()
         ->table('liste')
         ->setLabel('Ingrédients')
-        ->setDescription('Listez <strong>tous</strong> les ingrédients nécessaires à la réalisation de votre recette. Vous pouvez ajouter une nouvelle liste d\'ingrédients avec le bouton ci-dessous.', true)
+        ->setDescription(
+            'Listez <strong>tous</strong> les ingrédients nécessaires à la réalisation de votre recette. ' .
+            'Vous pouvez ajouter une nouvelle liste d\'ingrédients avec le bouton ci-dessous.',
+            true
+        )
         ->setRepeatable(true)
              ->input('nom')
              ->setLabel('Nom de l\'ingrédient')
@@ -127,10 +140,12 @@ La pâte est prête, couvrir le saladier avec un torchon propre et laisser repos
     ),
     array (
       'step' => 'Préparation de la viande en sauce',
-      'description' => 'Couper la viande en morceaux et faire d’abord revenir le bœuf et le veau puis le poulet dans une grande marmite. Attendre quelques minutes et mettre la viande dans un plat.
-Couper l’oignon et les gousses d’ail en petits morceaux et les faire revenir dans la marmite sans les brûler. Remettre la viande dans la marmite.
-Dans un bol, verser tout le coulis et remplir le bol de vin rouge. Verser le mélange dans la marmite, laisser évaporer le vin pendant 2 minutes et couvrir la viande d’eau.
-Saler, poivrer, ajouter du thym et laisser mijoter à petit feu pendant au moins 1 heure.',
+      'description' => 'Couper la viande en morceaux et faire d’abord revenir le bœuf et le veau puis le ' .
+        'poulet dans une grande marmite. Attendre quelques minutes et mettre la viande dans un plat. ' .
+        'Couper l’oignon et les gousses d’ail en petits morceaux et les faire revenir dans la marmite sans ' .
+        'les brûler. Remettre la viande dans la marmite. ' . 'Dans un bol, verser tout le coulis et remplir le ' .
+        'bol de vin rouge. Verser le mélange dans la marmite, laisser évaporer le vin pendant 2 minutes et couvrir ' .
+        'la viande d’eau. Saler, poivrer, ajouter du thym et laisser mijoter à petit feu pendant au moins 1 heure.',
     ),
     array (
       'step' => 'Séchage et cuisson des lasagnes',
@@ -141,7 +156,8 @@ Faire bouillir à feu fort, ajouter les lasagnes et laisser cuire pendant 15 min
     ),
     array (
       'step' => 'Présentation du plat',
-      'description' => 'Dans un grand saladier mettre dans l’ordre : une couche de sauce sans viande, une couche de parmesan fort mélangé avec du poivre et une couche de lasagnes.
+      'description' => 'Dans un grand saladier mettre dans l’ordre : une couche de sauce sans viande, une couche
+de parmesan fort mélangé avec du poivre et une couche de lasagnes.
 Refaire la même opération jusqu’à ce que le saladier soit plein avec une dernière couche de parmesan/ poivre.
 La viande est présentée dans un plat avec sa sauce.
 

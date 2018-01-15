@@ -3,7 +3,7 @@ use Docalist\Forms\Form;
 
 $form = new Form();
 $form->setLabel('Saisie des auteurs dans une table')
-     ->setDescription('Indiquez les auteurs du document en séparant les auteurs physiques (personnes) des auteurs moraux (organismes).');
+     ->setDescription('Indiquez les auteurs du document en séparant les personnes des organismes).');
 
 $form->input('test')->setLabel('test');
 

@@ -147,7 +147,7 @@ $box->input('pagination')
 $box->input('format')
     ->setLabel('Format du document')
     ->addClass('span12')
-    ->setDescription('Caractéristiques matérielles du document : étiquettes de collation (tabl, ann, fig...), références bibliographiques, etc.');
+    ->setDescription('Caractéristiques matérielles du document : étiquettes de collation (tabl, ann, fig...), etc.');
 
 // -----------------------------------------------------------------------------
 
@@ -184,7 +184,7 @@ $box->table('collection')
 
 $box->table('edition')
     ->setLabel('Mentions d\'édition')
-    ->setDescription('Mentions d\'éditions (hors série, 2nde édition, etc.) et autres numéros du document (n° de rapport, de loi, etc.)')
+    ->setDescription('Mentions d\'éditions (hors série, 2nde édition, etc.) et autres numéros du document')
     ->setRepeatable(true)
         ->input('type')
         ->setLabel('Mention')
@@ -242,7 +242,7 @@ $box = $form->fieldset()->setLabel('Indexation et résumé');
 
 $box->table('topic')
     ->setLabel('Mots-clés')
-    ->setDescription('Indexation du document : mots-clés matières, mots outils, noms propres, description géographique, période historique, candidats descripteurs, etc.', false)
+    ->setDescription('Indexation du document : mots-clés matières, mots outils, noms propres, etc.', false)
     ->setRepeatable(true)
         ->select('type')
         ->setLabel('Thesaurus')
@@ -278,7 +278,16 @@ $box->table('note')
         ->select('type')
         ->setLabel('Type de note')
         ->addClass('span2')
-        ->setOptions(array('note visible','note interne','avertissement','objectifs pédagogiques','publics concernés','pré-requis', 'modalités d\'accès', 'copyright'))
+        ->setOptions(array(
+            'note visible',
+            'note interne',
+            'avertissement',
+            'objectifs pédagogiques',
+            'publics concernés',
+            'pré-requis',
+            'modalités d\'accès',
+            'copyright'
+        ))
     ->getParent()
         ->textarea('content')
         ->setLabel('Contenu de la note')

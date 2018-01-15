@@ -147,7 +147,9 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertSame('Docalist\Type\Collection', $schema->getField('code')->collection());
         $this->assertNull($schema->getField('code')->repeatable());
 
-        $schema = new Schema(['fields' => ['code' => ['type' => 'Docalist\Type\Text', 'collection' => 'Docalist\Type\Collection']]]);
+        $schema = new Schema([
+            'fields' => ['code' => ['type' => 'Docalist\Type\Text', 'collection' => 'Docalist\Type\Collection']]
+        ]);
         $this->assertSame('Docalist\Type\Text', $schema->getField('code')->type());
         $this->assertSame('Docalist\Type\Collection', $schema->getField('code')->collection());
         $this->assertNull($schema->getField('code')->repeatable());

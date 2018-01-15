@@ -155,8 +155,17 @@ class RepositoryTest extends WP_UnitTestCase
 //      }
 
 //     public function testEncode() {
-//         $this->assertSame('["a"]', MemoryRepository::jsonEncode(['a'], false), 'Repository::JsonEncode() en mode normal');
-//         $this->assertSame("[\n    \"a\"\n]", MemoryRepository::jsonEncode(['a'], true, 'Repository::JsonEncode() en mode pretty'));
+//         $this->assertSame(
+//             '["a"]',
+//             MemoryRepository::jsonEncode(['a'], false),
+//             'Repository::JsonEncode() en mode normal'
+//         );
+
+//         $this->assertSame(
+//             "[\n    \"a\"\n]",
+//             MemoryRepository::jsonEncode(['a'], true),
+//             'Repository::JsonEncode() en mode pretty'
+//         );
 //     }
 
 //     public function testDecode() {

@@ -6,7 +6,11 @@ use Docalist\Forms\Form;
 
 $form = new Form();
 $form->setLabel('Into this')
-     ->setDescription('Reproduction du formulaire affiché en haut de <a href="http://reactiveraven.github.com/jqBootstrapValidation/">cette page</a>', false);
+     ->setDescription(
+         'Reproduction du formulaire affiché en haut de ' .
+         '<a href="http://reactiveraven.github.com/jqBootstrapValidation/">cette page</a>',
+         false
+     );
 
 $form->input('email')
      ->setLabel('Email address')

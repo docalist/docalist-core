@@ -122,11 +122,6 @@ class SettingsRepositoryTest extends RepositoryTest
 //          MemoryRepository::jsonDecode('[', 'abc12');
 //      }
 
-//     public function testEncode() {
-//         $this->assertSame('["a"]', MemoryRepository::jsonEncode(['a'], false), 'Repository::JsonEncode() en mode normal');
-//         $this->assertSame("[\n    \"a\"\n]", MemoryRepository::jsonEncode(['a'], true, 'Repository::JsonEncode() en mode pretty'));
-//     }
-
 //     public function testDecode() {
 //          $this->assertSame(['a'], MemoryRepository::jsonDecode('["a"]', 'abc12'));
 //      }

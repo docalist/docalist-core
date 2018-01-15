@@ -58,7 +58,10 @@ define('WP_PLUGIN_DIR', realpath(__DIR__ . '/../../../../'));
         wp_head();
     ?>
     <script src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js" type="text/javascript"></script>
-    <link href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css" type="text/css" rel="stylesheet" />
+    <link
+        href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css"
+        type="text/css"
+        rel="stylesheet" />
     <link href="docalist-forms-tests.css" type="text/css" rel="stylesheet" />
 </head>
 <body onload="prettyPrint()">

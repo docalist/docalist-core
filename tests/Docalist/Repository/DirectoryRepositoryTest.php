@@ -63,7 +63,11 @@ class DirectoryRepositoryTest extends WP_UnitTestCase
         $repo = new DirectoryRepository($this->dir);
         $this->assertTrue(is_dir($this->dir), 'DirectoryRepository::__construct() creates the directory');
 
-        $this->assertSame(realpath($this->dir) . DIRECTORY_SEPARATOR, $repo->directory(), 'DirectoryRepository::directory() returns the directory with a slash at the end');
+        $this->assertSame(
+            realpath($this->dir) . DIRECTORY_SEPARATOR,
+            $repo->directory(),
+            'DirectoryRepository::directory() returns the directory with a slash at the end'
+        );
     }
 
     /**

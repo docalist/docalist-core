@@ -42,7 +42,11 @@ class SettingsTest extends WP_UnitTestCase
     {
         // new quand les settings n'existent pas
         $s = new MySettings($repo);
-        $this->assertSame('docalist-tests-type-fixtures-mysettings', $s->getID(), "L'id correspond au nom de la classe");
+        $this->assertSame(
+            'docalist-tests-type-fixtures-mysettings',
+            $s->getID(),
+            "L'id correspond au nom de la classe"
+        );
         $this->assertFalse($repo->has($s->getID()), 'Les paramètres ne figurent pas déjà dans le dépôt');
         $this->assertSame($s->getDefaultValue(), $s->getPhpValue(), 'Les paramètres ont leur valeur par défaut');
         $this->assertSame($repo, $s->repository(), 'Le dépôt retourné est celui pasé en paramètre');
