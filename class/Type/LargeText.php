@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of a "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Core
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Type;
 
@@ -19,6 +15,8 @@ use InvalidArgumentException;
 
 /**
  * Un bloc de texte multiligne contenant ou non du code html.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class LargeText extends Text
 {

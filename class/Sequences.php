@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2017 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Core
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist;
 
@@ -32,6 +28,8 @@ use InvalidArgumentException;
  * "{groupe}_last_{sequence}" (par exemple "dbprisme_last_ref"). Pour cette raison, la longueur totale du nom de
  * la séquence ne doit pas dépasser 64 caractères (taille actuelle du champ option_name dans la table wp_options).
  * Une exception sera générée en cas de dépassement.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Sequences
 {

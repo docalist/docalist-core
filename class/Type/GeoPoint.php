@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of a "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
  * Copyright (C) 2012-2018 Daniel Ménard
  *

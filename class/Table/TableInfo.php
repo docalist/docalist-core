@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of the 'Docalist Core' plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2017 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Table
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Table;
 
@@ -28,6 +24,8 @@ use Docalist\Type\Boolean;
  * @property Boolean $readonly true : table prédéfinie, false : table utilisateur
  * @property Text $creation Date de création
  * @property Text $lastupdate Date de dernière modification
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class TableInfo extends Composite
 {

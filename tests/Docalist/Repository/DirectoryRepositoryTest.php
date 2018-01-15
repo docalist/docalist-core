@@ -1,17 +1,12 @@
 <?php
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2017 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Tests
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Tests\Repository;
 
 use WP_UnitTestCase;
@@ -19,6 +14,10 @@ use WP_UnitTestCase;
 use Docalist\Repository\DirectoryRepository;
 use Docalist\Tests\Type\Fixtures\Client;
 
+/**
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
+ */
 class DirectoryRepositoryTest extends WP_UnitTestCase {
     protected $dir;
     protected function rmTree($directory) {

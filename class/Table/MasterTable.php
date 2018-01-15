@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of a "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Table
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Table;
 
@@ -19,6 +15,8 @@ use InvalidArgumentException;
 
 /**
  * La master table.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class MasterTable extends CsvTable
 {

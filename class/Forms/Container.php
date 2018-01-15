@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of the "Docalist Forms" package.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Forms
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Forms;
 
@@ -25,6 +21,8 @@ use InvalidArgumentException;
 
 /**
  * Un container est un élément de formulaire qui peut contenir d'autres items.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Container extends Element implements Countable, IteratorAggregate
 {

@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of the "Docalist Forms" package.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2017 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Forms
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Forms;
 
@@ -18,6 +14,8 @@ use Docalist\Table\TableInterface;
 /**
  * Classe de base pour les champs qui permettent à l'utilisateur de faire un choix parmi une liste de
  * valeurs possibles (select, checklist, radiolist).
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 abstract class Choice extends Element
 {

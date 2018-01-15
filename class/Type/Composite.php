@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of a "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2017 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Core
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Type;
 
@@ -45,6 +41,8 @@ use Docalist\Forms\Table;
  * Lors de sa création, un objet utilisera soit le schéma par défaut de la
  * classe, soit une version personnalisée du schéma transmise en paramètre au
  * constructeur.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Composite extends Any
 {

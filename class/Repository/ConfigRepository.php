@@ -1,21 +1,18 @@
 <?php
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Core
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Repository;
 
 /**
- * Un dépôt permettant de stocker des entités dans le répertoire
- * "config" de l'application.
+ * Un dépôt permettant de stocker des entités dans le répertoire "config" de l'application.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class ConfigRepository extends DirectoryRepository
 {

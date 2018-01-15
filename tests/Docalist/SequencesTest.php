@@ -1,21 +1,21 @@
 <?php
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2016 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Tests
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Tests\Cache;
 
 use WP_UnitTestCase;
 use Docalist\Sequences;
 
+/**
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
+ */
 class SequencesTest extends WP_UnitTestCase
 {
     public function testGetSequenceName()

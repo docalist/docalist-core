@@ -1,17 +1,12 @@
 <?php
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2017 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Tests
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Tests\Repository;
 
 use WP_UnitTestCase;
@@ -22,6 +17,10 @@ use Docalist\Tests\Repository\Fixtures\MemoryRepository;
 use Docalist\Tests\Type\Fixtures\Client;
 use Docalist\Repository\Exception\BadIdException;
 
+/**
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
+ */
 class RepositoryTest extends WP_UnitTestCase {
     /**
      * Provider : retourne un dépôt du type à tester et deux ID valides pour

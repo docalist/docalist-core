@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of a "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2017 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Core
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Type;
 
@@ -25,6 +21,8 @@ use Docalist\Type\Text;
  *
  * @property TableEntry $type   Type    Type de numéro.
  * @property Text       $value  Value   Numéro associé.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class TypedNumber extends TypedText
 {

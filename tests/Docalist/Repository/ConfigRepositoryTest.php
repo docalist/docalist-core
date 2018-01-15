@@ -1,17 +1,12 @@
 <?php
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2014 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Tests
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
-
 namespace Docalist\Tests\Repository;
 
 use WP_UnitTestCase;
@@ -22,6 +17,8 @@ use Docalist\Type\Settings;
 /**
  * @property string $url
  * @property int $timeout
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class MySettings extends Settings {
     static public function loadSchema() {

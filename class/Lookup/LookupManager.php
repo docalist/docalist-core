@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Core
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Lookup;
 
@@ -28,6 +24,8 @@ use Exception;
  *
  * Le gestionnaire de lookups définit une méthode générique (lookup) et une page ajax (docalist-lookup) qui se
  * contentent d'invoquer le bon service.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class LookupManager
 {

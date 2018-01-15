@@ -1,16 +1,11 @@
 <?php
-
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2015 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Tests
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Tests\Forms;
 
@@ -19,6 +14,10 @@ use Docalist\Forms\Element;
 use Docalist\Forms\Traits\AttributesTrait;
 use InvalidArgumentException;
 
+/**
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
+ */
 class AttributesTraitTest extends WP_UnitTestCase
 {
     /**

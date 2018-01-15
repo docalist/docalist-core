@@ -1,15 +1,11 @@
 <?php
 /**
- * This file is part of the "Docalist Core" plugin.
+ * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2017 Daniel Ménard
+ * Copyright (C) 2012-2018 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE.txt file that was distributed with this source code.
- *
- * @package     Docalist
- * @subpackage  Core
- * @author      Daniel Ménard <daniel.menard@laposte.net>
  */
 namespace Docalist\Repository;
 
@@ -20,6 +16,8 @@ use Docalist\Repository\Exception\EntityNotFoundException;
 
 /**
  * Un repository est un dépôt dans lequel on peut stocker des entités.
+ *
+ * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 abstract class Repository
 {
