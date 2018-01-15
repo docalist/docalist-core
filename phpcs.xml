@@ -5,6 +5,7 @@
     <description>Standard de codage pour Docalist.</description>
 
     <file>./class</file>
+    <file>./tests</file>
 
     <rule ref="PSR2" />
     
