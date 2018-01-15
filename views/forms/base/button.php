@@ -19,7 +19,7 @@ use Docalist\Forms\Theme;
  * @var Theme  $theme Le thème de formulaire en cours.
  * @var array  $args  Paramètres transmis à la vue.
  */
-foreach($this->getOccurences() as $key => $data) {
+foreach ($this->getOccurences() as $key => $data) {
     $this->setOccurence($key);
     $attributes = ['name' => $this->getControlName(), 'value' => $data] + $this->getAttributes();
     $theme->tag('button', $attributes, $this->getLabel());

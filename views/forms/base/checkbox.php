@@ -20,7 +20,7 @@ use Docalist\Forms\Theme;
  * @var array    $args  Paramètres transmis à la vue.
  */
 $description = $this->getDescription();
-foreach($this->getOccurences() as $key => $data) {
+foreach ($this->getOccurences() as $key => $data) {
     $this->setOccurence($key);
 
     // Si la checknox a une description, on l'utilise comme libellé supplémentaire

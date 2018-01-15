@@ -19,7 +19,7 @@ use Docalist\Forms\Theme;
  * @var Theme    $theme Le thème de formulaire en cours.
  * @var array    $args  Paramètres transmis à la vue.
  */
-foreach($this->getOccurences() as $key => $data) {
+foreach ($this->getOccurences() as $key => $data) {
     $this->setOccurence($key);
 
     $id = $this->generateId();
@@ -28,7 +28,7 @@ foreach($this->getOccurences() as $key => $data) {
     $settings = [
         'textarea_name'     => $this->getControlName(),
         'drag_drop_upload'  => true,
-        'quicktags'         => false, // en mode teeny, on n'en veux pas, en mode full on ne sait pas les cloner (cf. forms.js)
+        'quicktags'         => false, // teeny : on n'en veux pas, mode full : on ne sait pas les cloner (cf. forms.js)
         'tinymce' => [
             'resize'            => false,
             'wp_autoresize_on'  => true,
@@ -39,7 +39,9 @@ foreach($this->getOccurences() as $key => $data) {
     $this->hasAttribute('rows') && $settings['textarea_rows'] = $this->getAttribute('rows');
     $this->hasAttribute('tabindex') && $settings['tabindex'] = $this->getAttribute('tabindex');
     $this->hasAttribute('class') && $settings['editor_class'] = $this->getAttribute('class'); // mode texte uniquement
-    $this->hasAttribute('style') && $settings['editor_css'] = "<style scoped>#wp-$id-wrap{" . $this->getAttribute('style') . '}</style>';
+    if ($this->hasAttribute('style')) {
+        $settings['editor_css'] = "<style scoped>#wp-$id-wrap{" . $this->getAttribute('style') . '}</style>';
+    }
 
     // Editeur en version simplifiée (cf. wp-admin/includes/class-wp-press-this.php:1403)
     if ($this->getTeeny()) {
@@ -50,7 +52,8 @@ foreach($this->getOccurences() as $key => $data) {
                 'wordpress_adv_hidden'  => false,
                 'add_unload_trigger'    => false,
                 'statusbar'             => false,
-                'plugins'               => 'lists,media,paste,tabfocus,fullscreen,wordpress,wpautoresize,wpeditimage,wpgallery,wplink,wptextpattern,wpview',
+                'plugins'               => 'lists,media,paste,tabfocus,fullscreen,wordpress,wpautoresize,'
+                                            . 'wpeditimage,wpgallery,wplink,wptextpattern,wpview',
                 'toolbar1'              => 'bold,italic,bullist,numlist,blockquote,link,unlink,undo,redo',
             ]
         ]);

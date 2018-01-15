@@ -25,7 +25,7 @@ $label = $this->getLabel();
 if (!empty($label) && $label !== '-') {
     $theme->tag('legend', [], $label);
 }
-foreach(array_keys($this->getOccurences()) as $key) {
+foreach (array_keys($this->getOccurences()) as $key) {
     $this->setOccurence($key);
     $theme->display($this, 'container-items');
 }

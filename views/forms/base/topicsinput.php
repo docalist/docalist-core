@@ -27,7 +27,7 @@ use Docalist\Forms\Tag;
 // Récupère les données du champ et indexe par type
 $data = [];
 if ($this->data) {
-    foreach($this->getData() as $topic) { /** @var Topic $topic */
+    foreach ($this->getData() as $topic) { /** @var Topic $topic */
         $type = isset($topic['type']) ? $topic['type'] : '';
         $term = isset($topic['value']) ? $topic['value'] : [];
         $data[$type] = $term;
@@ -45,7 +45,7 @@ $table = docalist('table-manager')->get($tableName); /** @var TableInterface $ta
 
 $theme->start('table', ['class' => 'form-table']);
 $i = 0;
-foreach($table->search() as $code => $topic) {
+foreach ($table->search() as $code => $topic) {
     list($type) = explode(':', $topic->source);
     $name = $this->getControlName() . '[' . $i . ']';
 
@@ -56,23 +56,23 @@ foreach($table->search() as $code => $topic) {
     $theme->end('th');
 
     $theme->start('td');
-        $hidden = (new Hidden($name . '[type]'))->bind($code);
-        $lookup = (new EntryPicker($name . '[value]'))
-            ->setOptions($topic->source)
-            ->setAttribute('multiple')
-            ->setDescription($topic->description);
-        if (isset($data[$code])) {
-            $lookup->bind($data[$code]);
-            unset($data[$code]);
-        }
-        $theme->display($hidden)->display($lookup);
+    $hidden = (new Hidden($name . '[type]'))->bind($code);
+    $lookup = (new EntryPicker($name . '[value]'))
+        ->setOptions($topic->source)
+        ->setAttribute('multiple')
+        ->setDescription($topic->description);
+    if (isset($data[$code])) {
+        $lookup->bind($data[$code]);
+        unset($data[$code]);
+    }
+    $theme->display($hidden)->display($lookup);
     $theme->end('td');
 
     $theme->end('tr');
     ++$i;
 }
 
-foreach($data as $code => $terms) {
+foreach ($data as $code => $terms) {
     $name = $this->getControlName() . '[' . $i . ']';
 
     $theme->start('tr');

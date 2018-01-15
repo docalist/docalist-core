@@ -20,7 +20,7 @@ use Docalist\Forms\Theme;
  * @var array     $args  Paramètres transmis à la vue.
  */
 $this->hasDescriptionBlock() && $theme->display($this, '_description');
-foreach(array_keys($this->getOccurences()) as $key) {
+foreach (array_keys($this->getOccurences()) as $key) {
     $this->setOccurence($key);
     $theme->display($this, 'container-items');
 }

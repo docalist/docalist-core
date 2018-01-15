@@ -19,7 +19,7 @@ use Docalist\Forms\Theme;
  * @var Theme   $theme Le thème de formulaire en cours.
  * @var array   $args  Paramètres transmis à la vue.
  */
-foreach(array_keys($this->getOccurences()) as $key) {
+foreach (array_keys($this->getOccurences()) as $key) {
     $this->setOccurence($key);
 
     $attributes = $this->getAttributes();
@@ -30,22 +30,20 @@ foreach(array_keys($this->getOccurences()) as $key) {
     }
     $theme->start('div', $attributes);
 
-        $theme->start('button', ['type' => 'button', 'class' => 'handlediv button-link', 'aria-expanded' => 'true']);
-            $theme->tag('span', ['class' => 'toggle-indicator']);
-        $theme->end('button');
+    $theme->start('button', ['type' => 'button', 'class' => 'handlediv button-link', 'aria-expanded' => 'true']);
+        $theme->tag('span', ['class' => 'toggle-indicator']);
+    $theme->end('button');
 
-        $theme->start('h2', ['class' => 'hndle']);
-            $theme->tag('span', [], $this->getLabel() ?: $this->getName());
-//            $theme->tag('span', ['class' => 'description', 'style' => 'float:right;opacity: .5'], $this->getLabel() ?: $this->getDescription());
-        $theme->end('h2');
+    $theme->start('h2', ['class' => 'hndle']);
+        $theme->tag('span', [], $this->getLabel() ?: $this->getName());
+    $theme->end('h2');
 
-        $theme->start('div', ['class' => 'inside']);
-            if ($description = $this->getDescription()) {
-                $theme->tag('p', ['class' => 'description'], $description);
-            }
-
-            $theme->display($this, 'container-items');
-        $theme->end('div'); // div.inside
+    $theme->start('div', ['class' => 'inside']);
+    if ($description = $this->getDescription()) {
+        $theme->tag('p', ['class' => 'description'], $description);
+    }
+    $theme->display($this, 'container-items');
+    $theme->end('div'); // div.inside
 
     $theme->end('div'); // div.postbox
 }

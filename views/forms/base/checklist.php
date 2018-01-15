@@ -20,7 +20,7 @@ use Docalist\Forms\Theme;
  * @var array     $args  Paramètres transmis à la vue.
  */
 $options = $this->loadOptions();
-foreach($this->getOccurences() as $key => $data) {
+foreach ($this->getOccurences() as $key => $data) {
     $this->setOccurence($key);
 
     // Début de la checklist

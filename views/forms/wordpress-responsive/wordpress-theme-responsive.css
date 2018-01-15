@@ -33,7 +33,7 @@
     line-height: normal;
 }
 
-.field-table thead th, .form-table .form-table th, 
+.field-table thead th, .form-table .form-table th,
 .field-table td p, .form-table .form-table td p {
     font-size: smaller;
 }
@@ -120,7 +120,7 @@ button.cloner:hover {
     max-height: 400px;
 }
 
-.selectize-dropdown .des, 
+.selectize-dropdown .des,
 .selectize-dropdown .nondes {
     font-size: 13px;
 }
@@ -130,7 +130,7 @@ button.cloner:hover {
     font-weight: bold;
 }
 
-.selectize-dropdown .nondes .term, /* le nom d'un non-des */ 
+.selectize-dropdown .nondes .term, /* le nom d'un non-des */
 .selectize-dropdown .UF b {            /* le nom d'un EP */
     font-style: italic;
     font-weight: normal;
@@ -151,15 +151,15 @@ button.cloner:hover {
     color: #aaa;
 }
 
-.selectize-dropdown .BT b { /* TG */ 
+.selectize-dropdown .BT b { /* TG */
     color: #008;
 }
 
-.selectize-dropdown .NT b { /* TS */ 
+.selectize-dropdown .NT b { /* TS */
     color: #800;
 }
 
-.selectize-dropdown .RT b { /* TA */ 
+.selectize-dropdown .RT b { /* TA */
     color: #080;
 }
 /*
@@ -172,7 +172,7 @@ button.cloner:hover {
 */
 
 .selectize-dropdown .description,
-.selectize-dropdown .SN 
+.selectize-dropdown .SN
 {
     background: #ddd;
     color: #999;
@@ -325,8 +325,8 @@ Si on a au moins 782 de large, label devant les items
         width: 88%;
     }
     
-    .columns-1 .df-item .description, 
-    .columns-2 .df-item .description 
+    .columns-1 .df-item .description,
+    .columns-2 .df-item .description
     {
         display: block;
     }
@@ -352,7 +352,7 @@ Jusqu'à 1200, on n'a pas assez de place, donc on repasse les labels en mode blo
         width: 100%;
     }
     
-    .columns-2 .df-item .description 
+    .columns-2 .df-item .description
     {
         display: block;
     }
@@ -375,7 +375,7 @@ Lorsque la colonne 2 est affichée en sidebar, les labels sont toujours en mode 
         width: 100%;
     }
     
-    .columns-2 #postbox-container-1 .df-item .description 
+    .columns-2 #postbox-container-1 .df-item .description
     {
         display: block;
     }

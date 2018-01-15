@@ -20,11 +20,11 @@ use Docalist\Forms\Theme;
  * @var array   $args  Paramètres transmis à la vue.
  */
 
-foreach(array_keys($this->getOccurences()) as $key) {
+foreach (array_keys($this->getOccurences()) as $key) {
     $theme->start('div', $this->getAttributes());
     $this->setOccurence($key);
 
-    foreach($this->getItems() as $item) {
+    foreach ($this->getItems() as $item) {
         $theme->display($item);
     }
 

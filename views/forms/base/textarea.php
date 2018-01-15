@@ -23,7 +23,7 @@ use Docalist\Forms\Theme;
 // Envoie le js autosize
 $this->hasClass('autosize') && $theme->enqueueScript('docalist-textarea-autosize');
 
-foreach($this->getOccurences() as $key => $data) {
+foreach ($this->getOccurences() as $key => $data) {
     $this->setOccurence($key);
     $attributes = ['name' => $this->getControlName()] + $this->getAttributes();
     $theme

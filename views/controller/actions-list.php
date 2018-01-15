@@ -24,11 +24,11 @@ use Docalist\Controller;
 <div class="wrap">
     <h1><?= $title ?></h1>
 
-    <?php if (empty($actions)): ?>
+    <?php if (empty($actions)) : ?>
         <p><?= __("Aucune action n'est disponible dans ce module.", 'docalist-core') ?></p>
-    <?php else: ?>
+    <?php else : ?>
         <ul class="ul-disc">
-        <?php foreach ($actions as $action): ?>
+        <?php foreach ($actions as $action) : ?>
             <li>
                 <h2>
                     <a href="<?= $this->url($action) ?>"><?= $action ?></a>

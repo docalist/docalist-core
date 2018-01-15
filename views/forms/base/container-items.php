@@ -20,7 +20,7 @@ use Docalist\Forms\Theme;
  * @var array     $args  Paramètres transmis à la vue.
  */
 $inTable = false;
-foreach($this->getItems() as $item) {
+foreach ($this->getItems() as $item) {
     if ($item->hasLayout()) {
         if (!$inTable) {
             $theme->start('table', ['class' => 'form-table']);

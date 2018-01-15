@@ -42,10 +42,18 @@ wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'
     <h1><?= $tableInfo->label() ?: $tableName ?></h1>
 
     <p class="description">
-        <?php if ($readonly): ?>
-            <?= __("Table prédéfinie : vous pouvez voir et copier les données de la table mais vous ne pouvez pas la modifier.", 'docalist-core') ?>
-        <?php else: ?>
-            <?= __('Table personnalisée : vous pouvez modifier la table ci-dessous comme dans un tableur. Utilisez le menu contextuel pour ajouter ou supprimer des lignes.', 'docalist-core') ?>
+        <?php if ($readonly) : ?>
+            <?= __(
+                'Table prédéfinie : vous pouvez voir et copier les données de la table ' .
+                'mais vous ne pouvez pas la modifier.',
+                'docalist-core'
+            ) ?>
+        <?php else : ?>
+            <?= __(
+                'Table personnalisée : vous pouvez modifier la table ci-dessous comme dans un tableur. ' .
+                'Utilisez le menu contextuel pour ajouter ou supprimer des lignes.',
+                'docalist-core'
+            ) ?>
         <?php endif; ?>
     </p>
 
@@ -53,11 +61,11 @@ wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'
         <div id="<?=$id ?>"></div>
 
         <p class="buttons">
-            <?php if ($readonly): ?>
+            <?php if ($readonly) : ?>
                 <a href="<?= esc_url($this->url('TablesList')) ?>" class="button">
                     <?= __('← Retour à la liste des tables', 'docalist-core') ?>
                 </a>
-            <?php else: ?>
+            <?php else : ?>
                 <button type="submit" class="button-primary">
                     <?= __('Enregistrer les modifications...', 'docalist-core') ?>
                 </button>
@@ -115,23 +123,23 @@ wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'
             dataSchema: <?= json_encode(array_fill_keys($fields, null)) ?>,
 
             // En mode readonly, il faut désactiver l'édition pour chaque colonne
-            <?php if ($readonly): ?>
+            <?php if ($readonly) : ?>
                 <?php
                     $columns = [];
-                    foreach($fields as $field) {
-                        $columns[] = ['data' => $field, 'readOnly' => true];
-                    }
+                foreach ($fields as $field) {
+                    $columns[] = ['data' => $field, 'readOnly' => true];
+                }
                 ?>
                 columns: <?= json_encode($columns) ?>,
             <?php endif; ?>
 
             // Désactive la poignée de recopie de cellule en mode readonly
-            <?php if ($readonly): ?>
+            <?php if ($readonly) : ?>
                 fillHandle: false,
             <?php endif; ?>
 
             // Si la table est vide, ajoute une ligne sinon on ne peut rien éditer
-            <?php if (empty($data) && ! $readonly): ?>
+            <?php if (empty($data) && ! $readonly) : ?>
                 minSpareRows : 1,
             <?php endif; ?>
 
@@ -152,13 +160,13 @@ wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'
             rowHeaders: true,
 
             // Menu contextuel
-            <?php if (! $readonly): ?>
+            <?php if (! $readonly) : ?>
                 contextMenu: {
                     items: {
                         row_above: {name: <?=json_encode(__('Insérer une ligne au dessus', 'docalist-core')) ?> },
                         row_below: {name: <?=json_encode(__('Ajouter une ligne en dessous', 'docalist-core')) ?> },
                         hsep1: '-----',
-                        remove_row: {name: <?=json_encode(__('Supprimer les lignes sélectionnées', 'docalist-core')) ?> },
+                        remove_row: {name: <?=json_encode(__('Supprimer les lignes', 'docalist-core')) ?> },
                         hsep2: '-----',
                         undo: {name: <?=json_encode(__('Annuler', 'docalist-core')) ?> },
                         redo: {name: <?=json_encode(__('Refaire', 'docalist-core')) ?> }

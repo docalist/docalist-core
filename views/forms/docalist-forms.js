@@ -9,7 +9,7 @@
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 
-jQuery(document).ready(function($) {
+jQuery(document).ready(function ($) {
 
     /**
      * Génère un effet highlight sur l'élément passé en paramètre : l'élément
@@ -20,7 +20,8 @@ jQuery(document).ready(function($) {
      *
      * @param DomElement note l'élément à highlighter
      */
-    function highlight(node) {
+    function highlight(node)
+    {
         // Principe : on crée une div jaune avec exactement les mêmes dimensions
         // que l'élément et on la place au dessus en absolute puis on l'estompe
         // (fadeout) gentiment avant de la supprimer.
@@ -32,7 +33,7 @@ jQuery(document).ready(function($) {
             'background-color' : '#ffff44',
             'opacity' : '0.5',
             'z-index' : '9999999'
-        }).appendTo('body').fadeOut(1000, function() {
+        }).appendTo('body').fadeOut(1000, function () {
             $(this).remove();
         });
     }
@@ -59,7 +60,8 @@ jQuery(document).ready(function($) {
      * @param DomElement button le bouton "+" qui a été cliqué
      * @return DomElement le noeud à cloner
      */
-    function nodeToClone(button) {
+    function nodeToClone(button)
+    {
         var node = $(button);
 
         // Récupère le sélecteur à appliquer (attribut data-clone, '<' par défaut)
@@ -100,7 +102,8 @@ jQuery(document).ready(function($) {
      * @param DomElement noeud à cloner
      * @return DomElement noeud cloné
      */
-    function createClone(node) {
+    function createClone(node)
+    {
         // Si on a des éléments input ou select sur lesquels selectize() a été
         // appliqué, cela pose un problème pour le clonage : le noeud d'origine
         // et le noeud cloné restent plus ou moins liés (on ne peut pas
@@ -116,11 +119,11 @@ jQuery(document).ready(function($) {
         var selectized = $('input.selectized,select.selectized', node);
 
         // Pour chacun des selectize, fait une sauvegarde et appelle destroy
-        selectized.each(function() {
+        selectized.each(function () {
             // Sauvegarde la valeur actuelle dans l'attribut data-save
             $(this).data('save', {
-            	'value': this.selectize.getValue(),
-            	'options': this.selectize.options
+                'value': this.selectize.getValue(),
+                'options': this.selectize.options
             });
 
             // Quand on var faire "destroy", selectize va réinitialiser le
@@ -158,7 +161,7 @@ jQuery(document).ready(function($) {
         selectized.tableLookup();
 
         // Restaure la sauvegarde qu'on a faite dans le noeud d'origine
-        selectized.each(function() {
+        selectized.each(function () {
             var save = $(this).data('save');
             for (var i in save.options) {
                 this.selectize.addOption(save.options[i]);
@@ -199,29 +202,39 @@ jQuery(document).ready(function($) {
      * @param integer level le niveau de renumérotation.
      * @return DomElement le noeud final.
      */
-    function renumber(clone, level) {
-        $(':input,label,div', clone).addBack().each(function(){
+    function renumber(clone, level)
+    {
+        $(':input,label,div', clone).addBack().each(function () {
             var input = $(this);
 
             // Renomme l'attribut name
-            $.each(['name'], function(i, name){
+            $.each(['name'], function (i, name) {
                 var value = input.attr(name); // valeur de l'attribut name, id ou for
-                if (! value) return;
+                if (! value) {
+                    return;
+                }
                 var curLevel = 0;
-                value = value.replace(/\[(\d+)\]/g, function(match, i) {
-                    if (++curLevel !== level) return match;
+                value = value.replace(/\[(\d+)\]/g, function (match, i) {
+                    if (++curLevel !== level) {
+                        return match;
+                    }
                     return '[' + (parseInt(i)+1) + ']';
                 });
                 input.attr(name, value);
             });
 
             // Renomme les attributs id et for
-            $.each(['id', 'for', 'data-editor'], function(i, name) { // data-editor : bouton "add media" de wp-editor
+            $.each(['id', 'for', 'data-editor'], function (i, name) {
+ // data-editor : bouton "add media" de wp-editor
                 var value = input.attr(name); // valeur de l'attribut name, id ou for
-                if (! value) return;
+                if (! value) {
+                    return;
+                }
                 var curLevel = 0;
-                value = value.replace(/-(\d+)(-|$)/g, function(match, i, end) {
-                    if (++curLevel !== level) return match;
+                value = value.replace(/-(\d+)(-|$)/g, function (match, i, end) {
+                    if (++curLevel !== level) {
+                        return match;
+                    }
                     return '-' + (parseInt(i)+1) + (end ? '-' : '');
                 });
                 input.attr(name, value);
@@ -237,7 +250,7 @@ jQuery(document).ready(function($) {
      * Les boutons doivent avoir la classe "cloner" et peuvent avoir un attribut
      * "data-clone" qui indique l'élément à cloner.
      */
-    $('body').on('click', '.cloner', function() {
+    $('body').on('click', '.cloner', function () {
         // this = le bouton "+" qui a été cliqué.
 
         // On va travailler en plusieurs étapes :
@@ -289,7 +302,7 @@ jQuery(document).ready(function($) {
         autosize($('textarea.autosize'));
 
         // Autosize sur les textarea qui sont clonées
-        $(document).on('docalist:forms:after-clone', function(event, node, clone) {
+        $(document).on('docalist:forms:after-clone', function (event, node, clone) {
             autosize($('textarea.autosize', clone));
         });
     }
@@ -297,14 +310,14 @@ jQuery(document).ready(function($) {
     /* ------------------------------------------------------------------------
      * Gère le clonage de l'éditeur wordpress / tinymce
      * ------------------------------------------------------------------------*/
-    $(document).on('docalist:forms:before-clone', function(event, node) {
+    $(document).on('docalist:forms:before-clone', function (event, node) {
         // Désactive les tinymce qui existent dans le noeud d'origine
-        $('.wp-editor-area', node).each(function(index, textarea) {
+        $('.wp-editor-area', node).each(function (index, textarea) {
             tinymce.execCommand("mceRemoveEditor",false, textarea.id);
         });
     });
 
-    $(document).on('docalist:forms:after-clone', function(event, node, clone) {
+    $(document).on('docalist:forms:after-clone', function (event, node, clone) {
         // Lors du premier appel, WP fait un wp_print_styles('editor-button-css')
         // On ne veut pas cloner ces liens, donc on les supprimer
         $('link', clone).remove(); // <link> id='dashicons-css' + 'editor-buttons-css' +
@@ -313,12 +326,12 @@ jQuery(document).ready(function($) {
         $('div.quicktags-toolbar', clone).remove();
 
         // Ré-active les tinymce qui existaient dans le noeud d'origine
-        $('.wp-editor-area', node).each(function(index, textarea) {
+        $('.wp-editor-area', node).each(function (index, textarea) {
             tinymce.execCommand("mceAddEditor",false, textarea.id);
         });
 
         // Active les tinymce qui existent dans le clone
-        $('.wp-editor-area', clone).each(function(index, textarea) {
+        $('.wp-editor-area', clone).each(function (index, textarea) {
             tinymce.execCommand("mceAddEditor",false, textarea.id);
 
             // pour les quicktags, la config est stockée dans la var globale tinyMCEPreInit
@@ -362,11 +375,11 @@ var docalistLookupRelNames = {
 /**
  * Initialise un contrôle de type TableLookup.
  */
-jQuery.fn.tableLookup = function() {
+jQuery.fn.tableLookup = function () {
     $=jQuery;
-    return this.each(function() {
+    return this.each(function () {
 
-        var createId = function(label) {
+        var createId = function (label) {
             return label;
         }
 
@@ -416,7 +429,7 @@ jQuery.fn.tableLookup = function() {
             openOnFocus: true,
 
             // Lance une requête ajax pour charger les entrées qui commencent par query
-            load: function(query, callback) {
+            load: function (query, callback) {
                 // Dans le back-office, la variable ajaxurl est définie par WP et
                 // pointe vers la page "wordpress/wp-admin/admin-ajax.php"
                 // @see http://codex.wordpress.org/AJAX_in_Plugins
@@ -433,10 +446,10 @@ jQuery.fn.tableLookup = function() {
                 $.ajax({
                     url : url,
                     type: 'GET',
-                    error: function() {
+                    error: function () {
                         callback();
                     },
-                    success: function(res) {
+                    success: function (res) {
                         for (var i = 0, n = res.length; i < n; i++) {
                             if (! res[i][settings.valueField]) {
                                 res[i][settings.valueField] = createId(res[i][settings.labelField]);
@@ -449,7 +462,7 @@ jQuery.fn.tableLookup = function() {
             },
 
             render: {
-                option: function(item, escape) {
+                option: function (item, escape) {
 
                     /**
                      * Retourne le libellé à utiliser pour une relation donnée.
@@ -458,7 +471,7 @@ jQuery.fn.tableLookup = function() {
                      * javascript 'docalistLookupRelNames' qui est internationalisée
                      * et injectée dans la page.
                      */
-                    var relName = function(field) {
+                    var relName = function (field) {
                         if (docalistLookupRelNames && docalistLookupRelNames[field]) {
                             return docalistLookupRelNames[field];
                         }
@@ -475,10 +488,10 @@ jQuery.fn.tableLookup = function() {
                      *     ABSENTEISME PROFESSIONNEL: "Absentéisme professionnel"
                      *     ABSENTEISME SCOLAIRE: "Absentéisme scolaire"
                      */
-                    var listRelations = function(name, relations) {
+                    var listRelations = function (name, relations) {
                         var all=[];
 
-                        $.each(relations, function(code, label) {
+                        $.each(relations, function (code, label) {
                             if (typeof code === 'number') {
                                 code = createId(label);
                             }
@@ -525,7 +538,7 @@ jQuery.fn.tableLookup = function() {
                     }
 
                     // Relations
-                    $.each(['USE','MT','BT','NT', 'RT','UF'], function(index, field) {
+                    $.each(['USE','MT','BT','NT', 'RT','UF'], function (index, field) {
                         if (item[field]) {
                             html += listRelations(field, item[field]);
                         }
@@ -545,7 +558,7 @@ jQuery.fn.tableLookup = function() {
 /**
  * Plugin pour Selectize permettant de naviguer dans un thesaurus.
  */
-Selectize.define('subnavigate', function(options) {
+Selectize.define('subnavigate', function (options) {
     var self = this;
 
     /**
@@ -559,10 +572,10 @@ Selectize.define('subnavigate', function(options) {
      * l'attribut href et on affiche les résultats obtenus, sinon, on appelle
      * la méthode onOptionSelect d'origine.
      */
-    self.onOptionSelect = (function() {
+    self.onOptionSelect = (function () {
         var original = self.onOptionSelect;
 
-        var show = function(value) {
+        var show = function (value) {
             if (!self.options.hasOwnProperty(value)) {
                 return;
             }
@@ -573,14 +586,14 @@ Selectize.define('subnavigate', function(options) {
 
         };
 
-        var loaded = function(value, results) {
+        var loaded = function (value, results) {
             if (results && results.length) {
                 self.addOption(results);
             }
             show(value);
         };
 
-        return function(e) {
+        return function (e) {
             // soit selectize nous a passé un event mouse ($dropdown.on('mousedown'))
             // soit un objet contenant juste currentTarget (onKeyDown:KEY_RETURN)
 
@@ -598,8 +611,10 @@ Selectize.define('subnavigate', function(options) {
                     show(value);
                 } else {
                     var load = self.settings.load;
-                    if (!load) return;
-                    load.apply(self, ['[' + value + ']', function(results){
+                    if (!load) {
+                        return;
+                    }
+                    load.apply(self, ['[' + value + ']', function (results) {
                         loaded(value, results);
                     }]);
                 }
