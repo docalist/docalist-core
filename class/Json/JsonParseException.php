@@ -18,7 +18,7 @@ use RuntimeException;
  */
 class JsonParseException extends RuntimeException
 {
-    public function __construct ($message, $line = 0, $col = 0)
+    public function __construct($message, $line = 0, $col = 0)
     {
         parent::__construct(sprintf('JSON error line %d, column %d: %s.', $line, $col, $message));
     }

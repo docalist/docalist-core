@@ -244,7 +244,7 @@ abstract class Repository
 
         // Essaie de déterminer les champs responsables
         $fields = [];
-        foreach($data as $field => $value) {
+        foreach ($data as $field => $value) {
             if (false === json_encode($data[$field], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) {
                 $fields[] = $field;
             }
