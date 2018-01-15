@@ -20,7 +20,7 @@ use Docalist\Table\TableInterface;
 abstract class Choice extends Element
 {
     /**
-     * @var array Les options disponibles.
+     * @var array|callable|string Les options disponibles.
      */
     protected $options = [];
 
