@@ -18,28 +18,31 @@ use Docalist\Tests\Type\Fixtures\Client;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class DirectoryRepositoryTest extends WP_UnitTestCase {
+class DirectoryRepositoryTest extends WP_UnitTestCase
+{
     protected $dir;
-    protected function rmTree($directory) {
+    protected function rmTree($directory)
+    {
         $files = array_diff(scandir($directory), array('.','..'));
         foreach ($files as $file) {
-        	$path = $directory . DIRECTORY_SEPARATOR . $file;
-    		if (is_dir($path)) {
-    			if (! $this->rmTree($path)) {
-    			    return false;
-    			}
-    		} else {
-    		    if (! unlink($path)) {
-    		        return false;
-    		    }
-    		}
+            $path = $directory . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($path)) {
+                if (! $this->rmTree($path)) {
+                    return false;
+                }
+            } else {
+                if (! unlink($path)) {
+                    return false;
+                }
+            }
         }
 
         return @rmdir($directory);
     }
 
     // Garantie que le répertoire utilisé pour les tests n'existe pas
-    public function setUp() {
+    public function setUp()
+    {
         $dir = sys_get_temp_dir() . '/DirectoryTest';
         if (file_exists($dir)) {
             if (is_dir($dir)) {
@@ -55,7 +58,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
     }
 
 
-    public function testNew() {
+    public function testNew()
+    {
         $repo = new DirectoryRepository($this->dir);
         $this->assertTrue(is_dir($this->dir), 'DirectoryRepository::__construct() creates the directory');
 
@@ -66,7 +70,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
      * @expectedException Docalist\Repository\Exception\RepositoryException
      * @expectedExceptionMessage Unable to create
      */
-    public function testUnableToCreateDir() {
+    public function testUnableToCreateDir()
+    {
         touch($this->dir);
         new DirectoryRepository($this->dir);
         // on passe un fichier qui existe, donc il ne peut pas créer le dir
@@ -81,7 +86,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
 //         $this->markTestSkipped('unable to test is_writable');
 //     }
 
-    public function testSave() {
+    public function testSave()
+    {
         $repo = new DirectoryRepository($this->dir);
 
         // teste avec une entité qui a déjà un ID
@@ -109,7 +115,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
      * @expectedException Docalist\Repository\Exception\RepositoryException
      * @expectedExceptionMessage failed to open
      */
-    public function testStoreError() {
+    public function testStoreError()
+    {
         $repo = new DirectoryRepository($this->dir);
         $client = new Client(null, null, 'storeerror');
 
@@ -118,7 +125,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
         $repo->save($client);
     }
 
-    public function testLoad() {
+    public function testLoad()
+    {
         $repo = new DirectoryRepository($this->dir);
 
         // test avec une entité qui a déjà un ID
@@ -131,7 +139,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
     /**
      * @expectedException Docalist\Repository\Exception\EntityNotFoundException
      */
-    public function testLoadInexistant() {
+    public function testLoadInexistant()
+    {
         $repo = new DirectoryRepository($this->dir);
         $repo->load('inexistant');
     }
@@ -140,7 +149,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
      * @expectedException Docalist\Repository\Exception\RepositoryException
      * @expectedExceptionMessage failed to open
      */
-    public function testLoadError() {
+    public function testLoadError()
+    {
         $repo = new DirectoryRepository($this->dir);
 
         $path = $repo->path('loaderror');
@@ -148,7 +158,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
         $repo->load('loaderror');
     }
 
-    public function badIdProvider() {
+    public function badIdProvider()
+    {
         return [
             [ null ],                   // null
             [ 4128 ],                   // un entier
@@ -169,12 +180,14 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
      * @dataProvider badIdProvider
      * @expectedException Docalist\Repository\Exception\BadIdException
      */
-    public function testLoadInvalidId($badId) {
+    public function testLoadInvalidId($badId)
+    {
         $repo = new DirectoryRepository($this->dir);
         $repo->load($badId);
     }
 
-    public function testRemove() {
+    public function testRemove()
+    {
         $repo = new DirectoryRepository($this->dir);
 
         $client = new Client(null, null, 'zz14');
@@ -189,7 +202,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
     /**
      * @expectedException Docalist\Repository\Exception\EntityNotFoundException
      */
-    public function testRemoveInexistant() {
+    public function testRemoveInexistant()
+    {
         $repo = new DirectoryRepository($this->dir);
         $repo->delete('inexistant');
     }
@@ -197,7 +211,8 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
     /**
      * @expectedException Docalist\Repository\Exception\RepositoryException
      */
-    public function testRemoveError() {
+    public function testRemoveError()
+    {
         $repo = new DirectoryRepository($this->dir);
 
         $client = new Client();
@@ -209,5 +224,4 @@ class DirectoryRepositoryTest extends WP_UnitTestCase {
 
         $repo->delete($client->getID());
     }
-
 }

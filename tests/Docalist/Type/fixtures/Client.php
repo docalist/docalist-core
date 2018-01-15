@@ -15,8 +15,10 @@ use Docalist\Type\Entity;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Client extends Entity {
-    static public function loadSchema() {
+class Client extends Entity
+{
+    public static function loadSchema()
+    {
         return [
             'fields' => [
                 'name' => [

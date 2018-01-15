@@ -21,14 +21,16 @@ use Docalist\Repository\Exception\BadIdException;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class RepositoryTest extends WP_UnitTestCase {
+class RepositoryTest extends WP_UnitTestCase
+{
     /**
      * Provider : retourne un dépôt du type à tester et deux ID valides pour
      * ce dépôt.
      *
      * @return array
      */
-    public function repositoryProvider() {
+    public function repositoryProvider()
+    {
         return [
             [ new MemoryRepository(), 'client1', 'client2']
         ];
@@ -37,7 +39,8 @@ class RepositoryTest extends WP_UnitTestCase {
     /**
      * @dataProvider repositoryProvider
      */
-    public function testSaveLoadDelete(Repository $repo, $id1, $id2) {
+    public function testSaveLoadDelete(Repository $repo, $id1, $id2)
+    {
         // Vérifie qu'un ID est alloué si besoin
         $client = new Client(['name' => 'client without id']);
         $repo->save($client);
@@ -90,12 +93,14 @@ class RepositoryTest extends WP_UnitTestCase {
      * @dataProvider repositoryProvider
      * @expectedException Docalist\Repository\Exception\EntityNotFoundException
      */
-    public function testRemoveInexistant(Repository $repo, $id1, $id2) {
+    public function testRemoveInexistant(Repository $repo, $id1, $id2)
+    {
         $id = is_int($id1) ? 456789 : "xxx$id1";
         $repo->load($id);
     }
 
-    public function badIdProvider() {
+    public function badIdProvider()
+    {
         return [
             [ null ],                   // null
             [ 3.14 ],                   // un float
@@ -108,8 +113,9 @@ class RepositoryTest extends WP_UnitTestCase {
     /**
      * @dataProvider repositoryProvider
      */
-    public function testLoadInvalidId(Repository $repo, $id1, $id2) {
-        foreach($this->badIdProvider() as $badId) {
+    public function testLoadInvalidId(Repository $repo, $id1, $id2)
+    {
+        foreach ($this->badIdProvider() as $badId) {
             $catched = false;
             try {
                 $repo->load($badId);
@@ -164,5 +170,4 @@ class RepositoryTest extends WP_UnitTestCase {
 //      public function testJsonDecodeError() {
 //          MemoryRepository::jsonDecode('[', 'abc12');
 //      }
-
 }

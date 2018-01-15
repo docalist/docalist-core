@@ -15,8 +15,10 @@ use Docalist\Type\Composite;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Money extends Composite {
-    static public function loadSchema() {
+class Money extends Composite
+{
+    public static function loadSchema()
+    {
         return [
             'label' => 'prix',
             'fields' => [

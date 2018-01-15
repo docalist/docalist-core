@@ -94,7 +94,7 @@ class JsonReaderTest extends WP_UnitTestCase
 
         $methods = ['get', 'getArray', 'getBool', 'getNull', 'getNumber', 'getObject', 'getString', 'getValue'];
 
-        foreach($methods as $method) {
+        foreach ($methods as $method) {
             try {
                 $method === 'get' ? $json->get('{') : $json->$method();
             } catch (JsonParseException $e) {
@@ -349,12 +349,12 @@ class JsonReaderTest extends WP_UnitTestCase
     {
         $tests = [];
 
-        foreach(array_merge(range('A', 'Z'), range('a', 'z'), range('0', '9')) as $letter) {
+        foreach (array_merge(range('A', 'Z'), range('a', 'z'), range('0', '9')) as $letter) {
             $tests[$letter] = ['"\\' . $letter . '"'];
         }
 
         // Tous les caractères sont invalides, sauf bfnrt/\
-        foreach(['b', 'f', 'n', 'r', 't', '/', '\\', ] as $letter) {
+        foreach (['b', 'f', 'n', 'r', 't', '/', '\\', ] as $letter) {
             unset($tests[$letter]);
         }
 

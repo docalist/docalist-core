@@ -17,7 +17,7 @@ $colors = array(
 $form = new Form();
 $form->setLabel('Test des checklist');
 
-foreach(array(1=>false, 2=>true) as $i=>$repeat) {
+foreach (array(1=>false, 2=>true) as $i => $repeat) {
     $form->checklist("empty$i")
          ->setLabel('Vide :')
          ->setDescription('Une checklist vide, aucune option n\'a été fournie.')

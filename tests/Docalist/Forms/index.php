@@ -34,15 +34,18 @@ define('WP_PLUGIN_DIR', realpath(__DIR__ . '/../../../../'));
 
     $path = __DIR__ . '/forms/' . $file . '.php';
 
-    if (! file_exists($path))
+    if (! file_exists($path)) {
         die("Le formulaire '$form' indiqué en paramètre n'existe pas.");
+    }
 
     // Charge le formulaire
     $form = require $path; /** @var Form $form */
     $source = file_get_contents($path);
 
     // Prépare le rendu du formulaire, fait le bind
-    if ($isPost) $form->bind($_POST);
+    if ($isPost) {
+        $form->bind($_POST);
+    }
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -83,7 +86,7 @@ define('WP_PLUGIN_DIR', realpath(__DIR__ . '/../../../../'));
                 <a href="#dump" data-toggle="tab">Dump</a>
             </li>
  -->
-            <?php if ($isPost): ?>
+            <?php if ($isPost) : ?>
             <li>
                 <a href="#data" data-toggle="tab">$_POST</a>
             </li>
@@ -129,7 +132,7 @@ define('WP_PLUGIN_DIR', realpath(__DIR__ . '/../../../../'));
                 <?php //dumpArray($form->toArray(true), '// Tableau retourné par $form->toArray(true)') ?>
             </div>
  -->
-            <?php if ($isPost): ?>
+            <?php if ($isPost) : ?>
             <div id="data">
                 <p>
                     Voici les données qui ont été "envoyées" par le formulaire
@@ -155,10 +158,13 @@ define('WP_PLUGIN_DIR', realpath(__DIR__ . '/../../../../'));
 </html>
 <?php
 
-function choose() {
+function choose()
+{
     // Crée la liste des formulaires dispos
     $files = glob(__DIR__ . '/forms/*.php', GLOB_NOSORT);
-    foreach($files as &$file) $file = basename($file, '.php');
+    foreach ($files as &$file) {
+        $file = basename($file, '.php');
+    }
     $files = array_combine($files, $files);
 
     $form = new Form('', 'get');
@@ -208,13 +214,14 @@ function assets($assets, $pos) {
 }
 */
 
-function prettyPrint($h, $lang='php') {
+function prettyPrint($h, $lang = 'php')
+{
     echo '<pre class="prettyprint lang-', $lang, '">';
     echo htmlspecialchars($h);
     echo '</pre>';
     return;
-    $h = preg_replace ('~\s*array\s+\(~', ' array(', $h);
-    $h = preg_replace ('~\d+\s*=>\s*~', '', $h);
+    $h = preg_replace('~\s*array\s+\(~', ' array(', $h);
+    $h = preg_replace('~\d+\s*=>\s*~', '', $h);
     $h = highlight_string($h, true);
     $h = substr($h, 6) ; // <code>
     $h = substr($h, 0, -7); // </code>
@@ -224,6 +231,7 @@ function prettyPrint($h, $lang='php') {
     echo $h;
 }
 
-function dumpArray($array, $name = '') {
+function dumpArray($array, $name = '')
+{
     prettyPrint("<?php $name\nreturn " . var_export($array, true));
 }

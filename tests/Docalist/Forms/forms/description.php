@@ -13,7 +13,7 @@ $pos = array(
     'Description affichée en bas (après le champ)' => true,
 );
 
-foreach($pos as $title => $pos) {
+foreach ($pos as $title => $pos) {
     $form->tag('h3', $title);
 
     $form->button()

@@ -30,7 +30,8 @@ class AttributesTraitTest extends WP_UnitTestCase
         return $this->getMockForTrait('Docalist\Forms\Traits\AttributesTrait', func_get_args());
     }
 
-    public function testHasGetSetAttributes() {
+    public function testHasGetSetAttributes()
+    {
         $attr = ['class' => 'required', 'id' => '',  'checked' => true, 'selected' => false];
         $stored = ['class' => 'required', 'id' => '', 'checked' => true];
 
@@ -129,7 +130,8 @@ class AttributesTraitTest extends WP_UnitTestCase
     }
 
 
-    public function testGetSetHasToggleClass() {
+    public function testGetSetHasToggleClass()
+    {
         $element = $this->getTrait();
         $this->assertFalse($element->hasAttribute('class'));
 
@@ -189,7 +191,8 @@ class AttributesTraitTest extends WP_UnitTestCase
      * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Invalid value
      */
-    public function testInvalidAttributeName() {
+    public function testInvalidAttributeName()
+    {
         $this->getTrait()->setAttribute('class', []);
     }
 }

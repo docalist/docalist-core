@@ -37,7 +37,7 @@ class ServicesTest extends WP_UnitTestCase
             'array' => [1, 'a', true],
             'object' => $o,
             2016 => 'deux-mille-seize', // un nom de service n'est pas obligatoirement une chaine
-            'closure' => function() use (& $called, $o) {
+            'closure' => function () use (& $called, $o) {
                 $called = true;
 
                 return $o;
@@ -47,7 +47,7 @@ class ServicesTest extends WP_UnitTestCase
         // Vérifie que tous les services simples existent et sont instanciés
         $services = new Services($all);
         $this->assertSame($all, $services->getServices());
-        foreach(['null', 'int', 'bool', 'string', 'array', 'object', 2016] as $service) {
+        foreach (['null', 'int', 'bool', 'string', 'array', 'object', 2016] as $service) {
             $this->assertTrue($services->has($service));
             $this->assertTrue($services->isLoaded($service));
             $this->assertSame($all[$service], $services->get($service));

@@ -19,7 +19,7 @@ use Docalist\Type\Text;
  */
 class MySettings extends Settings
 {
-    static public function loadSchema()
+    public static function loadSchema()
     {
         return [
             'fields' => [

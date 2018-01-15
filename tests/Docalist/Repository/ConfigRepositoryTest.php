@@ -20,8 +20,10 @@ use Docalist\Type\Settings;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class MySettings extends Settings {
-    static public function loadSchema() {
+class MySettings extends Settings
+{
+    public static function loadSchema()
+    {
         return [
             'fields' => [
                 'url' => [ 'type' => 'Docalist\Type\Text', 'default' => 'http://127.0.0.1:9200/' ],
@@ -31,8 +33,10 @@ class MySettings extends Settings {
     }
 }
 
-class ConfigRepositoryTest extends WP_UnitTestCase {
-    public function testNew() {
+class ConfigRepositoryTest extends WP_UnitTestCase
+{
+    public function testNew()
+    {
         $repo = new ConfigRepository();
 
         $dir = docalist('config-dir');

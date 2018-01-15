@@ -1,7 +1,6 @@
 <?php
 use Docalist\Forms\Form;
 
-
 $form = new Form();
 $form ->setLabel('Un formulaire de saisie pour des recettes de cuisine')
       ->setDescription('Ce formulaire est inspiré de <a href="http://www.marmiton.org/recettes/recette_lasagnes-de-haute-corse_48084.aspx">cette recette</a>.');

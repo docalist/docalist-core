@@ -11,14 +11,17 @@ namespace Docalist\Tests\Repository;
 
 use Docalist\Repository\Repository;
 use Docalist\Repository\SettingsRepository;
+
 //use Docalist\Tests\Type\Fixtures\Client;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class SettingsRepositoryTest extends RepositoryTest {
-    public function repositoryProvider() {
+class SettingsRepositoryTest extends RepositoryTest
+{
+    public function repositoryProvider()
+    {
         return [
             [ new SettingsRepository(), 'option1', 'option2']
         ];
@@ -62,7 +65,8 @@ class SettingsRepositoryTest extends RepositoryTest {
 //         $this->assertFalse(isset($repo->data['c1']));
 //     }
 
-    public function badIdProvider() {
+    public function badIdProvider()
+    {
         return [
             [ null ],                   // null
             [ 4128 ],                   // un entier
@@ -134,5 +138,4 @@ class SettingsRepositoryTest extends RepositoryTest {
 //      public function testJsonDecodeError() {
 //          MemoryRepository::jsonDecode('[', 'abc12');
 //      }
-
 }

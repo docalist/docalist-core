@@ -54,8 +54,7 @@ class ViewsTest extends WP_UnitTestCase
             ['nb' => 2, 'values' => [1, 2, 3], 'this' => $this],
         ];
 
-        foreach($tests as $data) {
-
+        foreach ($tests as $data) {
             $vars = $views->display('vars', $data);
             $this->assertSame([
                 'view' => [

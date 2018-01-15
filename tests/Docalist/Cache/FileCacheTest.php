@@ -4,7 +4,8 @@ namespace Docalist\Tests\Cache;
 use WP_UnitTestCase;
 use Docalist\Cache\FileCache;
 
-class FileCacheTest extends WP_UnitTestCase {
+class FileCacheTest extends WP_UnitTestCase
+{
     /**
      * @var FileCache
      */
@@ -12,7 +13,8 @@ class FileCacheTest extends WP_UnitTestCase {
     protected $root;
     protected $dir;
 
-    public function setup() {
+    public function setup()
+    {
         parent::setup();
 
         $this->root = __DIR__;
@@ -21,12 +23,14 @@ class FileCacheTest extends WP_UnitTestCase {
         $this->cache = new FileCache($this->root, $this->dir);
     }
 
-    public function testCache() {
+    public function testCache()
+    {
         $this->assertSame($this->cache->getRoot(), $this->root . DIRECTORY_SEPARATOR);
         $this->assertSame($this->cache->getDirectory(), $this->dir . DIRECTORY_SEPARATOR);
     }
 
-    public function testInexistent() {
+    public function testInexistent()
+    {
         $file = DIRECTORY_SEPARATOR . 'dir' . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'inexistent.txt';
 
         $path = $this->root . $file;
@@ -38,7 +42,8 @@ class FileCacheTest extends WP_UnitTestCase {
         $this->assertNull($this->cache->get($path));
     }
 
-    public function testExistent() {
+    public function testExistent()
+    {
         $file = DIRECTORY_SEPARATOR . 'dir' . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'toto.txt';
         $path = $this->root . $file;
 
@@ -53,7 +58,8 @@ class FileCacheTest extends WP_UnitTestCase {
         $this->assertNull($this->cache->get($path));
     }
 
-    public function testClear() {
+    public function testClear()
+    {
         $file = DIRECTORY_SEPARATOR . 'dir' . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'toto.txt';
         $path1 = $this->root . $file;
         $path2 = $this->root . $file . '.bis';

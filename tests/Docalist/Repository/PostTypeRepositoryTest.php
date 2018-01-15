@@ -11,14 +11,17 @@ namespace Docalist\Tests\Repository;
 
 use Docalist\Repository\Repository;
 use Docalist\Repository\PostTypeRepository;
+
 //use Docalist\Tests\Type\Fixtures\Client;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class PostTypeRepositoryTest extends RepositoryTest {
-    public function repositoryProvider() {
+class PostTypeRepositoryTest extends RepositoryTest
+{
+    public function repositoryProvider()
+    {
         return [
             [ new PostTypeRepository('myposttype'), 759, '237']
         ];
@@ -27,7 +30,8 @@ class PostTypeRepositoryTest extends RepositoryTest {
     /**
      * @dataProvider repositoryProvider
      */
-    public function testPostType(Repository $repo) {
+    public function testPostType(Repository $repo)
+    {
         $this->assertSame('myposttype', $repo->postType());
     }
 
@@ -69,7 +73,8 @@ class PostTypeRepositoryTest extends RepositoryTest {
 //         $repo->load(123456789);
 //     }
 
-    public function badIdProvider() {
+    public function badIdProvider()
+    {
         return [
             [ null ],                   // null
             [ true ],                   // un bool
@@ -121,5 +126,4 @@ class PostTypeRepositoryTest extends RepositoryTest {
 //         $repo = new DirectoryRepository($this->dir);
 //         $repo->save(new Client());
 //     }
-
 }

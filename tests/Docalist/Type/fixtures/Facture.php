@@ -15,8 +15,10 @@ use Docalist\Type\Composite;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Facture extends Composite {
-    static public function loadSchema() {
+class Facture extends Composite
+{
+    public static function loadSchema()
+    {
         return [
             'fields' => [
                 'code' => 'Docalist\Type\Text',

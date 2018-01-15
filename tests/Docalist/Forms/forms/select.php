@@ -5,8 +5,7 @@ $form = new Form();
 $form->setLabel('Formulaire de test pour les select');
 $t = array('Multiple=false' => false, 'Multiple=true' => true);
 
-foreach ($t as $title=>$multiple) {
-
+foreach ($t as $title => $multiple) {
     $form->tag('h4', $title);
 
     $form->select('m')->setLabel('que des options, pas de value :')->setAttribute('multiple', $multiple)->setOptions(array(

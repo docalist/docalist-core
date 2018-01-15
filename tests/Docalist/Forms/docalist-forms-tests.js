@@ -1,6 +1,6 @@
 // source : http://www.jacklmoore.com/notes/jquery-tabs
-$(document).ready(function() {
-    $('.tabs').each(function() {
+$(document).ready(function () {
+    $('.tabs').each(function () {
         // For each set of tabs, we want to keep track of
         // which tab is active and it's associated content
         var $active, $content, $links = $(this).find('a');
@@ -12,12 +12,12 @@ $(document).ready(function() {
         $content = $($active.attr('href'));
 
         // Hide the remaining content
-        $links.not($active).each(function() {
+        $links.not($active).each(function () {
             $($(this).attr('href')).hide();
         });
 
         // Bind the click event handler
-        $(this).on('click', 'a', function(e) {
+        $(this).on('click', 'a', function (e) {
             // Make the old tab inactive.
             $active.removeClass('active');
             $content.hide();
@@ -46,7 +46,7 @@ $(document).ready(function() {
             return false;
         });
     });
-    window.setTimeout(function(){
+    window.setTimeout(function () {
         document.body.scrollTop = 0;
     }, 1);
 
