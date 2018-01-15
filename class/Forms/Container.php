@@ -312,11 +312,13 @@ class Container extends Element implements Countable, IteratorAggregate
 
             // Binde chacun des champs
             $result = [];
-            foreach ($this->items as $item) { /** @var Element $item */
+            foreach ($this->items as $item) {
                 // Seuls les éléments peuvent être avoir une valeur (i.e. pas les items, les tags, etc.)
                 if (! $item instanceof Element) {
                     continue;
                 }
+
+                /** @var Element $item */
 
                 // Si l'élément a un nom, fait le binding sur cet élément
                 if ($name = $item->getName()) {
@@ -351,11 +353,13 @@ class Container extends Element implements Countable, IteratorAggregate
 
         if ($this->isRepeatable()) {
             $data = $this->data[$occurence];
-            foreach ($this->items as $item) { /** @var Element $item */
+            foreach ($this->items as $item) {
                 // Seuls les éléments peuvent être avoir une valeur (i.e. pas les items, les tags, etc.)
                 if (! $item instanceof Element) {
                     continue;
                 }
+
+                /** @var Element $item */
 
                 // Si l'élément a un nom, fait le binding sur cet élément
                 if ($name = $item->getName()) {
