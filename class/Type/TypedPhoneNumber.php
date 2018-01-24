@@ -17,7 +17,7 @@ use Docalist\Type\PhoneNumber;
  * Numéro de téléphone typé : un type composite associant un type provenant d'une table d'autorité à une valeur de
  * type PhoneNumber.
  *
- * @property TableEntry     $type   Type de numéro (stdard, ligne directe, mobile...)
+ * @property TableEntry     $type   Type de numéro (standard, ligne directe, mobile...)
  * @property PhoneNumber    $value  Numéro de téléphone associé.
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
@@ -33,6 +33,8 @@ class TypedPhoneNumber extends TypedText
     public static function loadSchema()
     {
         return [
+            'label' => __('Téléphone', 'docalist-core'),
+            'description' => __('Numéros de téléphone.', 'docalist-core'),
             'fields' => [
                 'value' => [
                     'type' => 'Docalist\Type\PhoneNumber',
