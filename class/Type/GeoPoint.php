@@ -14,6 +14,7 @@ use Docalist\Forms\Input;
 use Docalist\Forms\Hidden;
 use Docalist\Forms\Div;
 use InvalidArgumentException;
+use Docalist\Forms\Table;
 
 /**
  * Un point géographique sur la terre, défini par sa latitude et sa longitude.
@@ -44,11 +45,15 @@ class GeoPoint extends Any
      * - https://github.com/thephpleague/geotools/blob/master/src/Coordinate/Coordinate.php
      */
 
+    /*
+     * A voir : on devrait plutôt hériter de la classe Composite et déclarer explicitement les champs lat/lon
+     */
+
     public static function loadSchema()
     {
         return [
             'label' => __('Coordonnées', 'docalist-core'),
-            'description' => __('Format : <code>latitude,longitude</code>, en degrés décimaux', 'docalist-core'),
+            'description' => __('Latitude et longitude en degrés décimaux.', 'docalist-core'),
         ];
     }
 
@@ -142,7 +147,7 @@ class GeoPoint extends Any
         }
 
         if (empty($value)) {
-            $this->value = $this->getDefaultValue();
+            $this->phpValue = $this->getDefaultValue();
 
             return $this;
         }
@@ -207,8 +212,8 @@ class GeoPoint extends Any
     public function getAvailableEditors()
     {
         return [
-            'input'     => __('Latitude / longitude', 'docalist-core'),
-            'hidden'    => __('Latitude / longitude (cachés)', 'docalist-core'),
+            'inputs'    => __('Champs texte distincts pour la latitude et la longitude', 'docalist-core'),
+            'hiddens'   => __('Champs cachés distincts pour la latitude et la longitude (cachés)', 'docalist-core'),
         ];
     }
 
@@ -216,19 +221,19 @@ class GeoPoint extends Any
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
-            case 'input':
-                $editor = new Div();
+            case 'inputs':
+                $editor = new Table();
                 $editor
                     ->input('lat')
                     ->addClass('latitude')
-                    ->setAttribute('placeholder', __('latitude', 'docalist-core'));
+                    ->setLabel(__('Latitude', 'docalist-core'));
                 $editor
                     ->input('lon')
                     ->addClass('longitude')
-                    ->setAttribute('placeholder', __('longitude', 'docalist-core'));
+                    ->setLabel(__('Longitude', 'docalist-core'));
                 break;
 
-            case 'hidden':
+            case 'hiddens':
                 $editor = new Div();
                 $editor->hidden('lat')->addClass('latitude');
                 $editor->hidden('lon')->addClass('longitude');
