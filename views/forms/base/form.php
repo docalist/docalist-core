@@ -20,6 +20,8 @@ use Docalist\Forms\Theme;
  * @var array $args  Paramètres transmis à la vue.
  */
 
+$this->hasDescriptionBlock() && $theme->display($this, '_description');
+
 $theme
     ->start('form', $this->getAttributes())
     ->display($this, 'container')
