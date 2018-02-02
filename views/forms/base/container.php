@@ -19,7 +19,7 @@ use Docalist\Forms\Theme;
  * @var Theme     $theme Le thème de formulaire en cours.
  * @var array     $args  Paramètres transmis à la vue.
  */
-$this->hasDescriptionBlock() && $theme->display($this, '_description');
+
 foreach (array_keys($this->getOccurences()) as $key) {
     $this->setOccurence($key);
     $theme->display($this, 'container-items');
