@@ -468,15 +468,16 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
     public function getEditorForm($options = null)
     {
-        // Crée un item et récupére son formulaire
-        $form = $this->createTemporaryItem()->getEditorForm($options);
+        // Récupère le premier item ou crée un item temporaire si la collection est vide
+        $item = reset($this->phpValue) ?: $this->createTemporaryItem();
+
+        // Récupére le formulaire de l'item
+        $form = $item->getEditorForm($options);
 
         // Modifie le champ pour qu'il soit répétable
-        if ($form instanceof Choice) {
-            $form->setAttribute('multiple');
-        } else {
-            $form->setRepeatable();
-        }
+        ($form instanceof Choice) ? $form->setAttribute('multiple') : $form->setRepeatable();
+
+        // TODO : dans Choice, surcharger setRepeatable() et mettre 'multiple' à true
 
         // Ok
         return $form;
