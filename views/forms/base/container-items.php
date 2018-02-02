@@ -13,6 +13,7 @@ namespace Docalist\Views\Forms\Base;
 
 use Docalist\Forms\Container;
 use Docalist\Forms\Theme;
+use Docalist\Forms\Element;
 
 /**
  * @var Container $this  Le container à afficher.
@@ -38,7 +39,12 @@ foreach ($this->getItems() as $item) {
         continue;
     }
 
-    $theme->start('tr');
+    $attr = [];
+    if ($item instanceof Element) { /** @var Element $item */
+        $name = $item->getName();
+        !empty($name) && $attr['class'] = $name . '-group';
+    }
+    $theme->start('tr', $attr);
 
     $theme->start('th');
     $item->hasLabelBlock() && $theme->display($item, '_label');
