@@ -291,7 +291,7 @@ class Composite extends Any
 
             case 'integrated':
                 $editor = new Container();
-                $wrapper = $editor->div();
+                $wrapper = $editor->div()->addClass('composite-integrated');
                 break;
 
             default:
