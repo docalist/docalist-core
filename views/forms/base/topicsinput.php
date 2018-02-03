@@ -59,13 +59,13 @@ foreach ($table->search() as $code => $topic) {
     $hidden = (new Hidden($name . '[type]'))->bind($code);
     $lookup = (new EntryPicker($name . '[value]'))
         ->setOptions($topic->source)
-        ->setAttribute('multiple')
-        ->setDescription($topic->description);
+        ->setAttribute('multiple');
     if (isset($data[$code])) {
         $lookup->bind($data[$code]);
         unset($data[$code]);
     }
-    $theme->display($hidden)->display($lookup);
+    $theme->display($hidden)->display($lookup)->tag('p', ['class' => 'description'], $topic->description);
+
     $theme->end('td');
 
     $theme->end('tr');
