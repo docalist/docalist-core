@@ -80,19 +80,29 @@ class Schema implements JsonSerializable
         // Valide et normalise les propriétés du schéma
         $this->validate($properties);
 
+        // Hack : Compile une première fois la liste des champs pour récupérer les propriétés héritées
+        if (isset($properties['fields'])) {
+            foreach ($properties['fields'] as & $field) {
+                $field = new self($field);
+                $field = $field->getPhpValue(); // retransforme en array car on veut pouvoir faire un merge
+            }
+        }
+        unset($field);
+
         // Gère l'héritage si la propriété 'type' est définie
         if (isset($properties['type']) && is_a($properties['type'], 'Docalist\Type\Any', true)) {
             $parent = $properties['type']::getDefaultSchema();
             $properties = $this->mergeProperties($parent->value(), $properties);
         }
 
-        // Compile la liste des champs
+        // Compile la liste des champs (pour de bon cette fois)
         if (isset($properties['fields'])) {
             foreach ($properties['fields'] as & $field) {
                 $field = new self($field);
             }
         }
-
+        unset($field);
+        
         // Trie les propriétés
         $this->properties = $this->sortProperties($properties);
     }
