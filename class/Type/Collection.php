@@ -26,15 +26,6 @@ use InvalidArgumentException;
  */
 class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate
 {
-    /**
-     * Le type des éléments de cette collection.
-     *
-     * Destiné à être surchargé par les classes descendantes (Any par défaut).
-     *
-     * @var string
-     */
-    protected static $type = 'Docalist\Type\Any';
-
     public static function getClassDefault()
     {
         return [];
@@ -48,30 +39,6 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     public function getDefaultValue()
     {
         return [];
-    }
-
-    /**
-     * Retourne le type (le nom de classe complet) des éléments de cette collection.
-     *
-     * @deprecated Utiliser getType().
-     *
-     * @return string
-     */
-    final public static function type()
-    {
-        _deprecated_function(__METHOD__, '0.14', 'getType');
-
-        return static::getType();
-    }
-
-    /**
-     * Retourne le type (le nom de classe complet) des éléments de cette collection.
-     *
-     * @return string
-     */
-    final public static function getType()
-    {
-        return static::$type;
     }
 
     public function assign($value)
