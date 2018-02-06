@@ -13,6 +13,7 @@ use Docalist\Type\Composite;
 use Docalist\Type\Collection;
 use InvalidArgumentException;
 use JsonSerializable;
+use Docalist\Type\Any;
 
 /**
  * Un schéma permet de décrire les attributs d'un {@link Docalist\Type\Any type de données Docalist}.
@@ -64,11 +65,11 @@ class Schema implements JsonSerializable
     /**
      * Construit un nouveau schéma.
      *
-     * @param array|null $properties Propriétés du schéma.
+     * @param array $properties Propriétés du schéma.
      *
      * @throws InvalidArgumentException Si le schéma contient des erreurs.
      */
-    public function __construct(array $properties = null)
+    public function __construct(array $properties)
     {
         // Cas particulier : schéma vide
         if (empty($properties)) {
@@ -90,7 +91,7 @@ class Schema implements JsonSerializable
         unset($field);
 
         // Gère l'héritage si la propriété 'type' est définie
-        if (isset($properties['type']) && is_a($properties['type'], 'Docalist\Type\Any', true)) {
+        if (isset($properties['type']) && is_a($properties['type'], Any::class, true)) {
             $parent = $properties['type']::getDefaultSchema();
             $properties = $this->mergeProperties($parent->value(), $properties);
         }
@@ -102,7 +103,7 @@ class Schema implements JsonSerializable
             }
         }
         unset($field);
-        
+
         // Trie les propriétés
         $this->properties = $this->sortProperties($properties);
     }
@@ -145,7 +146,7 @@ class Schema implements JsonSerializable
         // Une étoile à la fin indique un type répétable. Par défaut, c'est le type qui indique la collection.
         if (substr($type, -1) === '*') {
             $type = $properties['type'] = substr($type, 0, -1);
-            if (is_a($type, 'Docalist\Type\Any', true)) {
+            if (is_a($type, Any::class, true)) {
                 $properties['collection'] = $type::getCollectionClass();
             } else {
                 // on peut arriver là si c'est un Grid (qui n'hérite pas de Any).
@@ -153,18 +154,24 @@ class Schema implements JsonSerializable
             }
         }
 
-        // Si le type indiqué est une collection, c'est la collection qui fournit le type des éléments
-        if (is_a($type, 'Docalist\Type\Collection', true)) {
-            if (isset($properties['collection'])) {
-                throw new InvalidArgumentException('Collection defined twice (in type and in collection)');
-            }
-            $properties['collection'] = $type; /** @var Collection $type */
-            $type = $properties['type'] = $type::getType();
+        // Le type doit désigner un type docalist (ou un schéma)
+        if (! is_a($type, Any::class, true) && ! is_a($type, self::class, true)) {
+            throw new InvalidArgumentException("Invalid type '$type'");
         }
 
-        // Le type doit désigner un type docalist (ou un schéma)
-        if (! is_a($type, 'Docalist\Type\Any', true) && ! is_a($type, self::class, true)) {
-            throw new InvalidArgumentException("Invalid type '$type'");
+        // Nouvelle manière de gérer les collections : attribut "repeatable"
+        if (isset($properties['repeatable'])) {
+            $repeatable = $properties['repeatable'];
+            if (! is_bool($repeatable)) {
+                throw new InvalidArgumentException('Invalid value for "repeatable", expected true or false');
+            }
+            if ($repeatable) {
+                if (isset($properties['collection']) && $properties['collection'] !== $type::getCollectionClass()) {
+                    var_dump($properties);
+                    throw new InvalidArgumentException('Repeatable : collection already defined');
+                }
+                $properties['collection'] = $type::getCollectionClass();
+            }
         }
 
         return $this;
@@ -259,26 +266,11 @@ class Schema implements JsonSerializable
         }
 
         // Compatibilité ascendante : convertit les noms de classes qui ont changé
-        $collection = $properties['collection'] = $this->convertType($collection, $properties['name']);
+        $collection = $properties['collection'] = $this->convertType($collection, isset($properties['name']) ? $properties['name'] : '');
 
         // La collection indiquée doit être une classe descendante de Collection
-        if (!is_a($collection, 'Docalist\Type\Collection', true)) {
+        if (!is_a($collection, Collection::class, true)) {
             throw new InvalidArgumentException("$collection is not a Collection");
-        }
-
-        // Si on a un type, il doit être compatible avec le type indiqué par la collection
-        $type = $collection::getType();
-        if (isset($properties['type'])) {
-            if (!is_a($properties['type'], $type, true) && !is_a($properties['type'], self::class, true)) {
-                throw new InvalidArgumentException(
-                    "Type '{$properties['type']}' is not compatible with collection type '$type'"
-                );
-            }
-        }
-
-        // Sinon, c'est la collection qui indique le type des items
-        else {
-            $properties['type'] = $collection::getType();
         }
 
         return $this;
@@ -297,7 +289,7 @@ class Schema implements JsonSerializable
             return $this;
         }
 
-        if (isset($properties['type']) && ! is_a($properties['type'], 'Docalist\Type\Composite', true)) {
+        if (isset($properties['type']) && ! is_a($properties['type'], Composite::class, true)) {
             throw new InvalidArgumentException('Scalar type can not have fields');
         }
 
@@ -448,7 +440,7 @@ class Schema implements JsonSerializable
             'name',
             'unused',
             'gridtype',
-            'type','collection',
+            'type','repeatable','collection',
             'state',
             'label', 'description',
             'reltype', 'relfilter','table',
