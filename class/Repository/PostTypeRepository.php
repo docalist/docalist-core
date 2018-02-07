@@ -9,6 +9,7 @@
  */
 namespace Docalist\Repository;
 
+use Docalist\Type\Entity;
 use WP_Post;
 use Docalist\Repository\Exception\BadIdException;
 use Docalist\Repository\Exception\RepositoryException;
@@ -72,7 +73,7 @@ class PostTypeRepository extends Repository
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      */
-    public function __construct($postType, $type = 'Docalist\Type\Entity')
+    public function __construct($postType, $type = Entity::class)
     {
         // Initialise le dépôt
         parent::__construct($type);
