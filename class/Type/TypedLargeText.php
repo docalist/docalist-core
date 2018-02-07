@@ -29,7 +29,7 @@ class TypedLargeText extends TypedText
         return [
             'fields' => [
                 'value' => [
-                    'type' => 'Docalist\Type\LargeText',
+                    'type' => LargeText::class,
                     'label' => __('Texte', 'docalist-core'),
                 ],
             ],
