@@ -9,6 +9,7 @@
  */
 namespace Docalist\Repository;
 
+use Docalist\Type\Entity;
 use Docalist\Repository\Exception\BadIdException;
 use Docalist\Repository\Exception\EntityNotFoundException;
 use Exception;
@@ -26,7 +27,7 @@ use Exception;
  */
 class SettingsRepository extends Repository
 {
-    public function __construct($type = 'Docalist\Type\Settings')
+    public function __construct($type = Entity::class)
     {
         parent::__construct($type);
     }
