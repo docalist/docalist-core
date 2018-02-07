@@ -15,6 +15,7 @@ use Countable;
 use IteratorAggregate;
 use Closure;
 use Docalist\Forms\Choice;
+use Docalist\Type\Any;
 use Docalist\Type\Interfaces\Categorizable;
 use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
@@ -109,7 +110,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     public function offsetSet($offset, $value)
     {
         // Détermine le type des éléments de cette collection
-        $type = $this->schema->type() ?: 'Docalist\Type\Any';
+        $type = $this->schema->type() ?: Any::class;
 
         // Si value n'est pas du bon type, on l'instancie
         if (! $value instanceof $type) {
@@ -282,7 +283,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $result = [];
 
         // Sanity check / debug
-        if ($explode && ! is_a($this->schema->type(), 'Docalist\Type\Interfaces\Categorizable', true)) {
+        if ($explode && ! is_a($this->schema->type(), Categorizable::class, true)) {
             echo $this->schema->name(), " : 'vue éclatée' activée mais le champ ne gère pas 'Categorizable'<br />";
             $explode = false;
         }
