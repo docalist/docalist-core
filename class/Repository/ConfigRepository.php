@@ -9,6 +9,8 @@
  */
 namespace Docalist\Repository;
 
+use Docalist\Type\Entity;
+
 /**
  * Un dépôt permettant de stocker des entités dans le répertoire "config" de l'application.
  *
@@ -23,7 +25,7 @@ class ConfigRepository extends DirectoryRepository
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      */
-    public function __construct($type = 'Docalist\Type\Entity')
+    public function __construct($type = Entity::class)
     {
         parent::__construct(docalist('config-dir'), $type);
     }
