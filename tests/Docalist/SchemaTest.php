@@ -11,7 +11,14 @@ namespace Docalist\Tests;
 
 use WP_UnitTestCase;
 use Docalist\Schema\Schema;
+use Docalist\Type\Any;
+use Docalist\Type\Composite;
+use Docalist\Type\Text;
+use Docalist\Type\LargeText;
+use Docalist\Type\TableEntry;
+use Docalist\Type\Collection;
 use Docalist\Tests\Type\Fixtures\Money;
+use Docalist\Tests\Type\Fixtures\TextCollection;
 
 /**
  *
@@ -42,11 +49,11 @@ class SchemaTest extends WP_UnitTestCase
     // Héritage simple depuis le type scalaire TableEntry
     public function testInheritTableEntry()
     {
-        $properties = ['type' => 'Docalist\Type\TableEntry'];
+        $properties = ['type' => TableEntry::class];
         $schema = new Schema($properties);
 
         $result = [
-            'type' => 'Docalist\Type\TableEntry',
+            'type' => TableEntry::class,
             'label' => __('Entrée', 'docalist-core'),
             'description' => __('Choisissez dans la liste.', 'docalist-core'),
         ];
@@ -58,13 +65,13 @@ class SchemaTest extends WP_UnitTestCase
     public function testInheritTableEntryAndOverride()
     {
         $schema = new Schema([
-            'type' => 'Docalist\Type\TableEntry',
+            'type' => TableEntry::class,
             'label' => 'label modifié',
             'newprop' => 'maprop',
         ]);
 
         $result = [
-            'type' => 'Docalist\Type\TableEntry',
+            'type' => TableEntry::class,
             'label' => 'label modifié',
             'description' => __('Choisissez dans la liste.', 'docalist-core'),
             'newprop' => 'maprop',
@@ -76,10 +83,10 @@ class SchemaTest extends WP_UnitTestCase
     // Héritage simple depuis le composite Money
     public function testInheritMoney()
     {
-        $schema = new Schema(['type' => 'Docalist\Tests\Type\Fixtures\Money']);
+        $schema = new Schema(['type' => Money::class]);
         $parent = Money::getDefaultSchema();
 
-        $this->assertSame($schema->type(), 'Docalist\Tests\Type\Fixtures\Money');
+        $this->assertSame($schema->type(), Money::class);
         $this->assertSame($schema->label(), $parent->label());
         $this->assertSame($schema->description(), $parent->description());
 
@@ -94,7 +101,7 @@ class SchemaTest extends WP_UnitTestCase
     public function testInheritMoneyAndOverride()
     {
         $schema = new Schema([
-            'type' => 'Docalist\Tests\Type\Fixtures\Money',
+            'type' => Money::class,
             'label' => 'new label',
             'editor' => 'other-editor',
             'fields' => [
@@ -107,7 +114,7 @@ class SchemaTest extends WP_UnitTestCase
 
         $parent = Money::getDefaultSchema();
 
-        $this->assertSame($schema->type(), 'Docalist\Tests\Type\Fixtures\Money');
+        $this->assertSame($schema->type(), Money::class);
         $this->assertSame($schema->label(), 'new label');
         $this->assertSame($schema->description(), $parent->description());
         $this->assertSame($schema->editor(), 'other-editor');
@@ -118,7 +125,7 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertSame($schema->getField('amount')->label(), 'montant');
         $this->assertSame($schema->getField('amount')->zz(), 'ZZ');
         $this->assertSame($schema->getField('currency')->description(), $parent->getField('currency')->description());
-        $this->assertSame($schema->getField('currency')->type(), 'Docalist\Type\Text');
+        $this->assertSame($schema->getField('currency')->type(), Text::class);
 
         $this->assertEquals($schema->getField('currency'), $parent->getField('currency'));
     }
@@ -130,10 +137,10 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertSame('code', $schema->getField('code')->name());
         $this->assertNull($schema->getField('code')->type());
 
-        $schema = new Schema(['fields' => ['message' => 'Docalist\Type\Text']]);
+        $schema = new Schema(['fields' => ['message' => Text::class]]);
         $this->assertTrue($schema->hasField('message'));
         $this->assertSame('message', $schema->getField('message')->name());
-        $this->assertSame('Docalist\Type\Text', $schema->getField('message')->type());
+        $this->assertSame(Text::class, $schema->getField('message')->type());
     }
 
     public function testCollection()
@@ -142,26 +149,26 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertNull($schema->collection());
         $this->assertNull($schema->repeatable());
 
-        $schema = new Schema(['fields' => ['code' => 'Docalist\Type\Text*']]);
-        $this->assertSame('Docalist\Type\Text', $schema->getField('code')->type());
-        $this->assertSame('Docalist\Type\Collection', $schema->getField('code')->collection());
+        $schema = new Schema(['fields' => ['code' => Text::class, 'repeatable' => true]]);
+        $this->assertSame(Text::class, $schema->getField('code')->type());
+        $this->assertSame(Collection::class, $schema->getField('code')->collection());
         $this->assertNull($schema->getField('code')->repeatable());
 
         $schema = new Schema([
-            'fields' => ['code' => ['type' => 'Docalist\Type\Text', 'collection' => 'Docalist\Type\Collection']]
+            'fields' => ['code' => ['type' => Text::class, 'collection' => Collection::class]]
         ]);
-        $this->assertSame('Docalist\Type\Text', $schema->getField('code')->type());
-        $this->assertSame('Docalist\Type\Collection', $schema->getField('code')->collection());
+        $this->assertSame(Text::class, $schema->getField('code')->type());
+        $this->assertSame(Collection::class, $schema->getField('code')->collection());
         $this->assertNull($schema->getField('code')->repeatable());
 
-        $schema = new Schema(['fields' => ['code' => 'Docalist\Tests\Type\Fixtures\TextCollection']]);
-        $this->assertSame('Docalist\Type\Text', $schema->getField('code')->type());
-        $this->assertSame('Docalist\Tests\Type\Fixtures\TextCollection', $schema->getField('code')->collection());
+        $schema = new Schema(['fields' => ['code' => TextCollection::class]]);
+        $this->assertSame(Text::class, $schema->getField('code')->type());
+        $this->assertSame(TextCollection::class, $schema->getField('code')->collection());
         $this->assertNull($schema->getField('code')->repeatable());
 
-        $schema = new Schema(['fields' => ['code' => ['collection' => 'Docalist\Type\Collection']]]);
-        $this->assertSame('Docalist\Type\Any', $schema->getField('code')->type());
-        $this->assertSame('Docalist\Type\Collection', $schema->getField('code')->collection());
+        $schema = new Schema(['fields' => ['code' => ['collection' => Collection::class]]]);
+        $this->assertSame(Any::class, $schema->getField('code')->type());
+        $this->assertSame(Collection::class, $schema->getField('code')->collection());
         $this->assertNull($schema->getField('code')->repeatable());
     }
 
@@ -192,7 +199,7 @@ class SchemaTest extends WP_UnitTestCase
         new Schema(['fields' => [
             [
                 'name' => 'test',
-                'collection' => 'Docalist\Type\Text',
+                'collection' => Text::class,
             ],
         ]]);
     }
@@ -208,8 +215,8 @@ class SchemaTest extends WP_UnitTestCase
         new Schema(['fields' => [
             [
                 'name' => 'test',
-                'type' => 'Docalist\Tests\Type\Fixtures\TextCollection',
-                'collection' => 'Docalist\Tests\Type\Fixtures\TextCollection',
+                'type' => TextCollection::class,
+                'collection' => TextCollection::class,
             ],
         ]]);
     }
@@ -222,7 +229,7 @@ class SchemaTest extends WP_UnitTestCase
         $schema = new Schema(['fields' => ['a', 'b']]);
         $this->assertTrue($schema->hasFields());
 
-        $schema = new Schema(['type' => 'Docalist\Tests\Type\Fixtures\Money']);
+        $schema = new Schema(['type' => Money::class]);
         $this->assertTrue($schema->hasFields());
     }
 
@@ -319,7 +326,7 @@ class SchemaTest extends WP_UnitTestCase
      */
     public function testScalarWithFields()
     {
-        new Schema(['type' => 'Docalist\Type\Text', 'fields' => []]);
+        new Schema(['type' => Text::class, 'fields' => []]);
     }
 
     /**
@@ -338,11 +345,11 @@ class SchemaTest extends WP_UnitTestCase
      */
     public function testType()
     {
-        $schema = new Schema(['type' => 'Docalist\Type\Any']);
-        $this->assertSame('Docalist\Type\Any', $schema->type());
+        $schema = new Schema(['type' => Any::class]);
+        $this->assertSame(Any::class, $schema->type());
 
-        $schema = new Schema(['type' => 'Docalist\Schema\Schema']);
-        $this->assertSame('Docalist\Schema\Schema', $schema->type());
+        $schema = new Schema(['type' => Schema::class]);
+        $this->assertSame(Schema::class, $schema->type());
     }
 
     /**
@@ -362,13 +369,13 @@ class SchemaTest extends WP_UnitTestCase
     public function testCollectionType()
     {
         new Schema([
-            'type' => 'Docalist\Type\Text',
-            'collection' => 'Docalist\Tests\Type\Fixtures\TextCollection',
+            'type' => Text::class,
+            'collection' => TextCollection::class,
         ]);
 
         new Schema([
-            'type' => 'Docalist\Type\LargeText',
-            'collection' => 'Docalist\Tests\Type\Fixtures\TextCollection',
+            'type' => LargeText::class,
+            'collection' => TextCollection::class,
         ]);
     }
 
@@ -381,8 +388,8 @@ class SchemaTest extends WP_UnitTestCase
     public function testBadCollectionType()
     {
         new Schema([
-            'type' => 'Docalist\Type\Any',
-            'collection' => 'Docalist\Tests\Type\Fixtures\TextCollection',
+            'type' => Any::class,
+            'collection' => TextCollection::class,
         ]);
     }
 
@@ -422,7 +429,7 @@ class SchemaTest extends WP_UnitTestCase
     public function testFieldWithoutName()
     {
         new Schema(['fields' => [
-            ['type' => 'Docalist\Type\Text'],
+            ['type' => Text::class],
         ]]);
     }
 
@@ -445,26 +452,27 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertNull($schema->getDefaultValue());
 
         $schema = new Schema([
-            'type' => 'Docalist\Type\Text',
+            'type' => Text::class,
             'default' => 'aa',
         ]);
         $this->assertSame('aa', $schema->getDefaultValue());
 
         $schema = new Schema([
-            'type' => 'Docalist\Type\Text*',
+            'type' => Text::class,
+            'repeatable' => true,
             'default' => ['aa', 'bb'],
         ]);
         $this->assertSame(['aa', 'bb'], $schema->getDefaultValue());
 
         $schema = new Schema([
-            'type' => 'Docalist\Type\Composite',
+            'type' => Composite::class,
             'fields' => ['a', 'b'],
             'default' => ['a' => 'A', 'b' => 'B'],
         ]);
         $this->assertSame(['a' => 'A', 'b' => 'B'], $schema->getDefaultValue());
 
         $schema = new Schema([
-            'type' => 'Docalist\Type\Composite',
+            'type' => Composite::class,
             'fields' => [
                 'a' => [
                     'default' => 'x',
@@ -477,7 +485,7 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertSame(['a' => 'x', 'b' => 'y'], $schema->getDefaultValue());
 
         $schema = new Schema([
-            'type' => 'Docalist\Type\Composite',
+            'type' => Composite::class,
             'fields' => [
                 'a' => [
                 ],
@@ -489,10 +497,10 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertSame(['b' => 'y'], $schema->getDefaultValue());
 
         $schema = new Schema([
-            'type' => 'Docalist\Type\Composite',
+            'type' => Composite::class,
             'fields' => [
                 'a' => [
-                    'type' => 'Docalist\Type\Composite',
+                    'type' => Composite::class,
                     'fields' => [
                         'a1',
                         'a2' => [
@@ -508,10 +516,11 @@ class SchemaTest extends WP_UnitTestCase
         $this->assertSame(['a' => ['a2' => 'A2'], 'b' => 'B'], $schema->getDefaultValue());
 
         $schema = new Schema([ // idem mais collection
-            'type' => 'Docalist\Type\Composite*',
+            'type' => Composite::class,
+            'repeatable' => true,
             'fields' => [
                 'a' => [
-                    'type' => 'Docalist\Type\Composite',
+                    'type' => Composite::class,
                     'fields' => [
                         'a1',
                         'a2' => [
@@ -534,7 +543,7 @@ class SchemaTest extends WP_UnitTestCase
     public function testNameDefinedTwice()
     {
         new Schema([
-            'type' => 'Docalist\Type\Composite',
+            'type' => Composite::class,
             'fields' => [
                 'a' => [
                     'name' => 'b',
@@ -546,7 +555,7 @@ class SchemaTest extends WP_UnitTestCase
     public function testJsonSerialize()
     {
         $schema = new Schema([
-            'type' => 'Docalist\Type\Composite',
+            'type' => Composite::class,
             'fields' => ['a', 'b'],
         ]);
 

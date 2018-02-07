@@ -10,6 +10,8 @@
 namespace Docalist\Tests\Type\Fixtures;
 
 use Docalist\Type\Composite;
+use Docalist\Type\Decimal;
+use Docalist\Type\Text;
 
 /**
  *
@@ -23,11 +25,11 @@ class Money extends Composite
             'label' => 'prix',
             'fields' => [
                 'amount' => [
-                    'type' => 'Docalist\Type\Decimal',
+                    'type' => Decimal::class,
                     'default' => 0
                 ],
                 'currency' => [
-                    'type' => 'Docalist\Type\Text',
+                    'type' => Text::class,
                     'default' => 'EUR'
                 ],
             ]

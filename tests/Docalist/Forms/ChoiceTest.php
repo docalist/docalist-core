@@ -25,7 +25,7 @@ class ChoiceTest extends WP_UnitTestCase
      */
     protected function getElement()
     {
-        return $this->getMockForAbstractClass('Docalist\Forms\Choice', func_get_args());
+        return $this->getMockForAbstractClass(Choice::class, func_get_args());
     }
 
     public function testGetSetOptions()

@@ -10,6 +10,8 @@
 namespace Docalist\Tests\Type\Fixtures;
 
 use Docalist\Type\Composite;
+use Docalist\Type\Text;
+use Docalist\Type\Integer;
 
 /**
  *
@@ -21,9 +23,9 @@ class Facture extends Composite
     {
         return [
             'fields' => [
-                'code' => 'Docalist\Type\Text',
-                'label' => 'Docalist\Type\Text',
-                'total'  => 'Docalist\Type\Integer'
+                'code' => Text::class,
+                'label' => Text::class,
+                'total'  => Integer::class,
             ]
         ];
     }

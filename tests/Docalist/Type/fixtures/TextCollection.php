@@ -10,6 +10,7 @@
 namespace Docalist\Tests\Type\Fixtures;
 
 use Docalist\Type\Collection;
+use Docalist\Type\Text;
 
 /**
  *
@@ -17,5 +18,5 @@ use Docalist\Type\Collection;
  */
 class TextCollection extends Collection
 {
-    protected static $type = 'Docalist\Type\Text';
+    protected static $type = Text::class;
 }

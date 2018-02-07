@@ -13,6 +13,8 @@ use WP_UnitTestCase;
 
 use Docalist\Repository\ConfigRepository;
 use Docalist\Type\Settings;
+use Docalist\Type\Text;
+use Docalist\Type\Integer;
 
 /**
  * @property string $url
@@ -26,8 +28,8 @@ class MySettings extends Settings
     {
         return [
             'fields' => [
-                'url' => [ 'type' => 'Docalist\Type\Text', 'default' => 'http://127.0.0.1:9200/' ],
-                'timeout' => [ 'type' => 'Docalist\Type\Integer', 'default' => 30 ],
+                'url' => [ 'type' => Text::class, 'default' => 'http://127.0.0.1:9200/' ],
+                'timeout' => [ 'type' => Integer::class, 'default' => 30 ],
             ]
         ];
     }

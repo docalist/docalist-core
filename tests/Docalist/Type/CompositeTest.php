@@ -12,6 +12,8 @@ namespace Docalist\Tests\Type;
 use WP_UnitTestCase;
 use Docalist\Type\Composite;
 use Docalist\Tests\Type\Fixtures\Money;
+use Docalist\Type\Decimal;
+use Docalist\Type\Text;
 
 /**
  *
@@ -61,8 +63,8 @@ class CompositeTest extends WP_UnitTestCase
     {
         $a = new Money(['amount' => 16., 'currency' => '$']);
 
-        $this->assertInstanceOf('Docalist\Type\Decimal', $a->amount);
-        $this->assertInstanceOf('Docalist\Type\Text', $a->currency);
+        $this->assertInstanceOf(Decimal::class, $a->amount);
+        $this->assertInstanceOf(Text::class, $a->currency);
 
         $this->assertSame(16., $a->amount->getPhpValue());
         $this->assertSame('$', $a->currency->getPhpValue());

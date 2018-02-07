@@ -24,7 +24,7 @@ class MySettings extends Settings
         return [
             'fields' => [
                 'a' => [
-                    'type' => 'Docalist\Type\Text',
+                    'type' => Text::class,
                     'default' => 'default',
                 ],
             ],

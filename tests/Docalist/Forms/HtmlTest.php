@@ -26,7 +26,7 @@ class HtmlTest extends WP_UnitTestCase
      */
     protected function getContainer()
     {
-        return $this->getMockForAbstractClass('Docalist\Forms\Container', func_get_args());
+        return $this->getMockForAbstractClass(Container::class, func_get_args());
     }
 
     public function testGetSetContent()

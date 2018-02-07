@@ -29,7 +29,7 @@ class ItemTest extends WP_UnitTestCase
      */
     protected function getItem()
     {
-        return $this->getMockForAbstractClass('Docalist\Forms\Item', func_get_args());
+        return $this->getMockForAbstractClass(Item::class, func_get_args());
     }
 
     /**

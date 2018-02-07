@@ -10,9 +10,9 @@
 namespace Docalist\Tests\Type;
 
 use WP_UnitTestCase;
+use Docalist\Type\Any;
 use Docalist\Type\Collection;
 use Docalist\Tests\Type\Fixtures\Client;
-use Docalist\Type\Any;
 
 /**
  *
@@ -76,7 +76,7 @@ class CollectionTest extends WP_UnitTestCase
         $c = new Collection($t);
 
         foreach ($t as $i => $v) {
-            $this->assertInstanceOf('Docalist\Type\Any', $c[$i]);
+            $this->assertInstanceOf(Any::class, $c[$i]);
             $this->assertSame($v, $c[$i]->getPhpValue());
         }
     }
@@ -129,9 +129,9 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertNull($c->key());
 
         $c = new Collection(['a', true, 5, 3.14]);
-        $this->assertInstanceOf('Docalist\Type\Any', $c->first());
+        $this->assertInstanceOf(Any::class, $c->first());
         $this->assertSame('a', $c->first()->getPhpValue());
-        $this->assertInstanceOf('Docalist\Type\Any', $c->current());
+        $this->assertInstanceOf(Any::class, $c->current());
         $this->assertSame('a', $c->current()->getPhpValue());
         $this->assertSame(0, $c->key());
     }
@@ -144,9 +144,9 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertNull($c->key());
 
         $c = new Collection(['a', true, 5, 3.14]);
-        $this->assertInstanceOf('Docalist\Type\Any', $c->last());
+        $this->assertInstanceOf(Any::class, $c->last());
         $this->assertSame(3.14, $c->last()->getPhpValue());
-        $this->assertInstanceOf('Docalist\Type\Any', $c->current());
+        $this->assertInstanceOf(Any::class, $c->current());
         $this->assertSame(3.14, $c->current()->getPhpValue());
         $this->assertSame(3, $c->key());
     }
@@ -161,9 +161,9 @@ class CollectionTest extends WP_UnitTestCase
         $c = new Collection(['a', true, 5, 3.14]);
         $c->first();
         $next = $c->next();
-        $this->assertInstanceOf('Docalist\Type\Any', $next);
+        $this->assertInstanceOf(Any::class, $next);
         $this->assertSame(true, $next->getPhpValue());
-        $this->assertInstanceOf('Docalist\Type\Any', $c->current());
+        $this->assertInstanceOf(Any::class, $c->current());
         $this->assertSame(true, $c->current()->getPhpValue());
         $this->assertSame(1, $c->key());
     }

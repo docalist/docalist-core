@@ -10,6 +10,8 @@
 namespace Docalist\Tests\Type\Fixtures;
 
 use Docalist\Type\Entity;
+use Docalist\Type\Text;
+use Docalist\Tests\Type\Fixtures\Facture;
 
 /**
  *
@@ -22,11 +24,12 @@ class Client extends Entity
         return [
             'fields' => [
                 'name' => [
-                    'type' => 'Docalist\Type\Text',
+                    'type' => Text::class,
                     'default' => 'noname'
                 ],
                 'factures' => [
-                    'type' => 'Docalist\Tests\Type\Fixtures\Facture*',
+                    'type' => Facture::class,
+                    'repeatable' => true,
                     'key' => 'code'
                 ]
             ]
