@@ -9,6 +9,7 @@
  */
 namespace Docalist\Repository;
 
+use Docalist\Type\Entity;
 use Docalist\Repository\Exception\EntityNotFoundException;
 use Docalist\Repository\Exception\RepositoryException;
 use Docalist\Repository\Exception\BadIdException;
@@ -43,7 +44,7 @@ class DirectoryRepository extends Repository
      * @throws InvalidArgumentException Si le répertoire indiqué nest pas
      * valide.
      */
-    public function __construct($directory, $type = 'Docalist\Type\Entity')
+    public function __construct($directory, $type = Entity::class)
     {
         // Initialise le dépôt
         parent::__construct($type);
