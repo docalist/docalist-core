@@ -31,12 +31,12 @@ class TypedText extends MultiField
             'description' => __('Texte et type de texte.', 'docalist-core'),
             'fields' => [
                 'type' => [
-                    'type' => 'Docalist\Type\TableEntry',
+                    'type' => TableEntry::class,
                     'label' => __('Type', 'docalist-core'),
                     'table' => '',  // la table utilisée doit être indiquée par les classes descendantes
                 ],
                 'value' => [
-                    'type' => 'Docalist\Type\Text',
+                    'type' => Text::class,
                     'label' => __('Texte', 'docalist-core'),
                 ],
             ],
