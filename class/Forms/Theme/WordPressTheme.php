@@ -16,7 +16,7 @@ use Docalist\Forms\Theme;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class WordPress extends Theme
+class WordPressTheme extends Theme
 {
     protected $styles = ['docalist-forms-wordpress'];
     protected $scripts = ['docalist-forms'];
