@@ -35,7 +35,7 @@ abstract class Repository
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      */
-    public function __construct($type = 'Docalist\Type\Entity')
+    public function __construct($type = Entity::class)
     {
         $this->type = $type;
     }
