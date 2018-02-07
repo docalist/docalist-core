@@ -33,7 +33,7 @@ class TypedDecimal extends TypedNumber
             'description' => __('Chiffres clés, nombres, dimensions, caractéristiques...', 'docalist-core'),
             'fields' => [
                 'value' => [
-                    'type' => 'Docalist\Type\Decimal',
+                    'type' => Decimal::class,
                     'label' => __('Nombre', 'docalist-core'),
                     'description' => __('Nombre associé.', 'docalist-core'),
                 ],
