@@ -11,6 +11,7 @@ namespace Docalist\Forms;
 
 use Docalist\Forms\Traits\AttributesTrait;
 use Docalist\Type\Any;
+use Docalist\Type\Collection;
 use Docalist\Schema\Schema;
 use InvalidArgumentException;
 
@@ -347,7 +348,7 @@ abstract class Element extends Item
         if (is_null($this->repeatable)) {
             if ($schema->repeatable()) {
                 if ($this->isMultivalued()) {
-                    $this->setRepeatable(is_a($schema->type(), 'Docalist\Type\Collection', true));
+                    $this->setRepeatable(is_a($schema->type(), Collection::class, true));
                 } else {
                     $this->setRepeatable(true);
                 }
