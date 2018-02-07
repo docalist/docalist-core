@@ -16,7 +16,7 @@ use Docalist\Forms\Theme;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Base extends Theme
+class BaseTheme extends Theme
 {
     protected $styles = [];
     protected $scripts = ['docalist-forms'];
