@@ -13,6 +13,7 @@ use Docalist\Type\Interfaces\Stringable;
 use Docalist\Type\Interfaces\Configurable;
 use Docalist\Type\Interfaces\Formattable;
 use Docalist\Type\Interfaces\Editable;
+use Docalist\Type\Collection;
 use Serializable;
 use JsonSerializable;
 use Docalist\Schema\Schema;
@@ -118,7 +119,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      */
     public static function getCollectionClass()
     {
-        return 'Docalist\Type\Collection';
+        return Collection::class;
     }
 
     // -------------------------------------------------------------------------
