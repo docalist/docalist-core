@@ -30,7 +30,7 @@ class TypedFuzzyDate extends TypedText
             'description' => __('Date et type de date.', 'docalist-core'),
             'fields' => [
                 'value' => [
-                    'type' => 'Docalist\Type\FuzzyDate',
+                    'type' => FuzzyDate::class,
                     'label' => __('Date', 'docalist-core'),
                     'description' => __('Date au format AAAAMMJJ', 'docalist-core'),
                 ]
