@@ -146,12 +146,7 @@ class Schema implements JsonSerializable
         // Une étoile à la fin indique un type répétable. Par défaut, c'est le type qui indique la collection.
         if (substr($type, -1) === '*') {
             $type = $properties['type'] = substr($type, 0, -1);
-            if (is_a($type, Any::class, true)) {
-                $properties['collection'] = $type::getCollectionClass();
-            } else {
-                // on peut arriver là si c'est un Grid (qui n'hérite pas de Any).
-                $properties['collection'] = 'Docalist\Type\Collection';
-            }
+            $properties['collection'] = $type::getCollectionClass();
         }
 
         // Le type doit désigner un type docalist (ou un schéma)
@@ -166,11 +161,11 @@ class Schema implements JsonSerializable
                 throw new InvalidArgumentException('Invalid value for "repeatable", expected true or false');
             }
             if ($repeatable) {
-                if (isset($properties['collection']) && $properties['collection'] !== $type::getCollectionClass()) {
-                    var_dump($properties);
+                $collection = $type::getCollectionClass();
+                if (isset($properties['collection']) && $properties['collection'] !== $collection) {
                     throw new InvalidArgumentException('Repeatable : collection already defined');
                 }
-                $properties['collection'] = $type::getCollectionClass();
+                $properties['collection'] = $collection;
             }
         }
 
