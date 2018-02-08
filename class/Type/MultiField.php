@@ -44,7 +44,7 @@ use Docalist\Type\Interfaces\Categorizable;
  *
  * Exemples de champs MultiField (dans docalist-biblio) :
  * - author : classement par role,
- * - organisation : classement par role,
+ * - corporation : classement par role,
  * - othertitle : classement par type,
  * - translation : classement par language,
  * - date : classement par type,
