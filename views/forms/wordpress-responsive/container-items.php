@@ -19,7 +19,6 @@ use Docalist\Forms\Theme;
  *  @var $theme Theme     Le thème de formulaire en cours.
  *  @var $args  array     Paramètres transmis à la vue.
  */
-//$theme->start('table', ['border'=>1, 'class' => 'form-table']);
 foreach ($this->getItems() as $item) {
     $theme->start('div', ['class' => 'df-row block-group']);
 
@@ -36,5 +35,3 @@ foreach ($this->getItems() as $item) {
 
     $theme->end('div');
 }
-
-//$theme->end('table');
