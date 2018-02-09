@@ -335,9 +335,8 @@ class PostTypeRepository extends Repository
 
         // Supprime les révisions et les autosaves
 
-        // $sql = "DELETE FROM $wpdb->posts WHERE post_type='revision' AND post_parent IN ($posts)";
-
-        // La requête ci-dessus ne fonctionne pas, on obtient une ERROR 1093
+        // Essai avec "DELETE FROM $wpdb->posts WHERE post_type='revision' AND post_parent IN ($posts)";
+        // Ne fonctionne pas, on obtient une ERROR 1093
         // "You can't specify target table 'wp_posts' for update in FROM clause"
         // On ne peut pas utiliser une subquery qui porte sur la table dans
         // laquelle on supprime.
@@ -408,7 +407,6 @@ class PostTypeRepository extends Repository
     {
         // Si c'est un nouveau post, il se peut que post_excerpt soit vide
         if (empty($post['post_excerpt'])) {
-            //die('post_excerpt vide ' . __FILE__ . ':' . __LINE__);
             $data = [];
         }
 
