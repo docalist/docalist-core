@@ -452,7 +452,6 @@ class Html
         // https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js
         $tags = '|html|body|tbody|head|thead|tfoot|tr|td|th|dt|dd|option|colgroup|source|track|';
 
-        // Remarques :
         return false !== stripos($tags, "|$tag|");
     }
 }
