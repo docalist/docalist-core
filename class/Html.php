@@ -129,7 +129,6 @@ class Html
      */
     protected function escapeText($text)
     {
-        // Remarques :
         // - Dans du texte (contenu d'un tag), on a uniquement besoin d'escaper '<', '&' et '>'.
         // - Les guillemets doubles et simples peuvent être laissés tels quels (ENT_NOQUOTES)
         // - Comme on n'encode pas l'apostrophe, on n'a pas besoin de gérer les flags
@@ -140,7 +139,7 @@ class Html
         // - ENT_DISALLOWED est une sécu supplémentaire (séquence valide mais qui ne serait pas autorisée en html ?)
         return htmlspecialchars($text, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_DISALLOWED, 'UTF-8');
 
-        // remarque : Zend utilise ENT_QUOTES | ENT_SUBSTITUTE;
+        // Zend utilise ENT_QUOTES | ENT_SUBSTITUTE;
         // https://github.com/zendframework/zend-escaper/blob/master/src/Escaper.php#L144
     }
 
@@ -153,7 +152,6 @@ class Html
      */
     protected function escapeAttr($value)
     {
-        // Remarques :
         // - Pour un attribut, on fait tout ce qu'on fait dans escapeText(), mais en plus on encode '"'
         // - Comme on contrôle la génération des attributs et qu'on utilise toujours des guillemets
         //   pour les délimiter (i.e. jamais des simples), on n'a pas besoin d'encoder l'apostrophe.
@@ -352,7 +350,7 @@ class Html
      */
     private function isBooleanAttribute($attribute)
     {
-        // Sources :
+        // Sources
         // - https://github.com/kangax/html-minifier/issues/63
         // - https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js
 
