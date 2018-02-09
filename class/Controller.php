@@ -377,15 +377,13 @@ abstract class Controller
     /**
      * Retourne l'url à utiliser pour appeller une action de ce contrôleur.
      *
-     * @param string $action Nom de l'action. Les paramètres supplémentaires passés à la méthode sont ajoutés à l'url.
-     *
      * @return string
      *
      * @throws Exception
      *
      * @deprecated Remplacée par getUrl().
      */
-    protected function url($action = null)
+    protected function url()
     {
         _deprecated_function(__METHOD__, '0.14', 'getUrl');
         return call_user_func_array([$this, 'getUrl'], func_get_args());
