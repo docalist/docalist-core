@@ -237,16 +237,6 @@ class Plugin
      */
     protected function rootDirectory()
     {
-        // Version 1, basée sur SCRIPT_FILENAME : pas dispo en mode cli
-        // if (PHP_SAPI === 'cli' || PHP_SAPI === 'cli-server') {
-        //     throw new \Exception('root-dir is not available with CLI SAPI');
-        // }
-        // $root = substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['PHP_SELF']));
-
-        // $root = strtr($root, '/\\', DIRECTORY_SEPARATOR);
-        // $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-
-        // Version 2, basée sur l'emplacement de wp-config.php
         // Adapté de wordpress/wp-load.php
         $root = rtrim(ABSPATH, '/\\'); // ABSPATH contient un slash final
         if (!file_exists($root . '/wp-config.php')) {
@@ -279,7 +269,6 @@ class Plugin
      */
     public function dataDirectory($subdir = null)
     {
-        // $directory = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'docalist-data';
         $directory = wp_upload_dir();
         $directory = $directory['basedir'];
         $directory = strtr($directory, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR);
