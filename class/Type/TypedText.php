@@ -12,7 +12,6 @@ namespace Docalist\Type;
 use Docalist\Type\MultiField;
 use Docalist\Type\TableEntry;
 use Docalist\Type\Text;
-use InvalidArgumentException;
 
 /**
  * Texte typé : un type composite associant un champ TableEntry à une valeur de type Text.
@@ -83,7 +82,7 @@ class TypedText extends MultiField
                 return empty($type) ? $value : $type . ' ' . $value; // espace insécable
         }
 
-        throw new InvalidArgumentException("Invalid TypedText format '$format'");
+        return parent::getFormattedValue($options);
     }
 
     public function filterEmpty($strict = true)
