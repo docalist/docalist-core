@@ -413,8 +413,6 @@ abstract class Controller
      * - si un paramètre est obligatoire mais n'a pas été fourni
      * - s'il y a trop de paramètres fournis ou des paramètres qui ne sont pas
      *   dans la signature de la méthode de l'action.
-     *
-     * @deprecated Remplacée par getSchema().
      */
     protected function getUrl($action = '')
     {
