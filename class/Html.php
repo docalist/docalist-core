@@ -410,7 +410,7 @@ class Html
 
         // value === '', on teste le nom de l'attribut pour savoir s'il est optionnel
 
-        // Source : http://kangax.github.io/html-minifier/
+        // Source http://kangax.github.io/html-minifier/
         $attrs = '|class|id|style|title|lang|dir|onfocus|onblur|onchange|onclick|ondblclick|onmousedown|
                   |onmouseup|onmouseover|onmousemove|onmouseout|onkeypress|onkeydown|onkeyup|';
 
@@ -431,12 +431,10 @@ class Html
      */
     private function isEmptyTag($tag)
     {
-        // Sources :
-        // - https://developer.mozilla.org/en-US/docs/Glossary/empty_element
-        // - http://xahlee.info/js/html5_non-closing_tag.html
+        // https://developer.mozilla.org/en-US/docs/Glossary/empty_element
+        // http://xahlee.info/js/html5_non-closing_tag.html
         $tags = '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|';
 
-        // Remarques :
         // - embed ne figure pas dans la liste moz (html4) mais il figure dans la liste xahlee
         // - colgroup non ajouté car il n'est pas *toujours* vide
         return false !== stripos($tags, "|$tag|");
@@ -451,8 +449,7 @@ class Html
      */
     private function isOptionalTag($tag)
     {
-        // Source :
-        // - https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js
+        // https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js
         $tags = '|html|body|tbody|head|thead|tfoot|tr|td|th|dt|dd|option|colgroup|source|track|';
 
         // Remarques :
