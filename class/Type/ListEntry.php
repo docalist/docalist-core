@@ -121,6 +121,6 @@ abstract class ListEntry extends Text
                 return $this->getEntryLabel();
         }
 
-        throw new InvalidArgumentException("Invalid Entry format '$format'");
+        return parent::getFormattedValue($options);
     }
 }
