@@ -167,7 +167,6 @@ class Schema implements JsonSerializable
                 }
                 $properties['collection'] = $collection;
             }
-            //unset($properties['repeatable']);
         }
 
         return $this;
