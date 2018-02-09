@@ -24,12 +24,6 @@ use Docalist\Type\Collection;
 // Envoie le js et la CSS de selectize
 $theme->enqueueStyle('selectize')->enqueueScript('selectize');
 
-// Détermine la table utilisée et les champs utilisés pour code et label
-// $valueField = $this->valueField();
-// $labelField = $this->labelField();
-// $tableName = $this->table();
-//list($type, $name) = explode(':', $tableName);
-
 // Récupère les données du champ
 if ($this->data instanceof Collection) {
     // par exemple si on a passé un objet "Settings" ou Property comme valeur actuelle du champ
