@@ -447,7 +447,7 @@ abstract class Controller
         return add_query_arg($args, admin_url($this->getParentPage()));
     }
 
-    protected function urlParameters(ReflectionMethod $method, array $args, $checkMax = true, $checkMin = false)
+    protected function urlParameters(ReflectionMethod $method, array $args)
     {
         $result = [];
         $params = $method->getParameters();
