@@ -9,6 +9,7 @@
  */
 namespace Docalist\Lookup;
 
+use Docalist\Lookup\LookupInterface;
 use Docalist\Http\JsonResponse;
 use InvalidArgumentException;
 use Exception;

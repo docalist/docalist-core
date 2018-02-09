@@ -9,6 +9,7 @@
  */
 namespace Docalist\Table;
 
+use Docalist\Table\TableInterface;
 use Docalist\Tokenizer;
 use PDO;
 use Exception;

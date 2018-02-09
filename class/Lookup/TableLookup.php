@@ -9,6 +9,7 @@
  */
 namespace Docalist\Lookup;
 
+use Docalist\Lookup\LookupInterface;
 use Docalist\Table\TableInterface;
 use Docalist\Tokenizer;
 
