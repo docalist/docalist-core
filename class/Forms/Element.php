@@ -346,7 +346,7 @@ abstract class Element extends Item
     {
         // Initialise la propriété "repeatable"
         if (is_null($this->repeatable)) {
-            if ($schema->repeatable()) {
+            if (FALSE && $schema->repeatable()) {
                 if ($this->isMultivalued()) {
                     $this->setRepeatable(is_a($schema->type(), Collection::class, true));
                 } else {
