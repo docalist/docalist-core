@@ -415,7 +415,7 @@ class Plugin
         // docalist-forms
         wp_register_script(
             'docalist-forms',
-            "$url/views/forms/docalist-forms.js", // TODO: version min.js
+            "$url/views/forms/docalist-forms.js",
             ['jquery', 'jquery-ui-sortable', 'selectize'],
             '160311',
             false
