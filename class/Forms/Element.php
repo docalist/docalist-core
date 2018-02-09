@@ -397,12 +397,6 @@ abstract class Element extends Item
 
             // Si c'est un tableau vide, on stocke null plutôt que array()
             $data === [] && $data = null;
-
-            // Si c'est un tableau, il ne doit contenir que des scalaires ou null
-//             $badType = null;
-//             if (is_array($data) && true !== $badType = $this->isScalarArray($data)) {
-//                 return $this->invalidArgument('All values of element %s must be scalar, got %s', $badType);
-//             }
         }
 
         // Stocke les données
