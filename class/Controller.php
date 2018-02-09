@@ -52,9 +52,9 @@ use Exception;
  * Inversement, il est possible de générer un lien vers cette action avec :
  *
  * <code>
- *     $this->url('Hello', 'guess');
+ *     $this->getUrl('Hello', 'guess');
  *     // ou
- *     $this->url('Hello', ['name' => 'guess']);
+ *     $this->getUrl('Hello', ['name' => 'guess']);
  * </code>
  *
  * @see
@@ -377,6 +377,23 @@ abstract class Controller
     /**
      * Retourne l'url à utiliser pour appeller une action de ce contrôleur.
      *
+     * @param string $action Nom de l'action. Les paramètres supplémentaires passés à la méthode sont ajoutés à l'url.
+     *
+     * @return string
+     *
+     * @throws Exception
+     *
+     * @deprecated Remplacée par getUrl().
+     */
+    protected function url($action = null)
+    {
+        _deprecated_function(__METHOD__, '0.14', 'getUrl');
+        return call_user_func_array([$this, 'getUrl'], func_get_args());
+    }
+
+    /**
+     * Retourne l'url à utiliser pour appeller une action de ce contrôleur.
+     *
      * Exemples :
      *
      * - getUrl() : retourne l'url à utiliser pour l'action en cours.
@@ -396,13 +413,9 @@ abstract class Controller
      * - si un paramètre est obligatoire mais n'a pas été fourni
      * - s'il y a trop de paramètres fournis ou des paramètres qui ne sont pas
      *   dans la signature de la méthode de l'action.
+     *
+     * @deprecated Remplacée par getSchema().
      */
-    protected function url($action = null)
-    {
-        // _deprecated_function(__METHOD__, '0.14', 'getUrl');
-        return call_user_func_array([$this, 'getUrl'], func_get_args());
-    }
-
     protected function getUrl($action = '')
     {
         // Récupère le nom de la méthode à utiliser
