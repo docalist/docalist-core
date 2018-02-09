@@ -413,7 +413,7 @@ class Plugin
             "$url/lib/selectize/js/standalone/selectize.$js",
             ['jquery'],
             '0.8.5',
-            false // TODO: Passer à true (position top)
+            false
         );
 
         wp_register_style(
@@ -423,15 +423,13 @@ class Plugin
             '0.8.5'
         );
 
-        // Todo : handsontable
-
         // docalist-forms
         wp_register_script(
             'docalist-forms',
             "$url/views/forms/docalist-forms.js", // TODO: version min.js
             ['jquery', 'jquery-ui-sortable', 'selectize'],
             '160311',
-            false // TODO: Passer à true (position top)
+            false
         );
 
         // Thème par défaut des formulaires

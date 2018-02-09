@@ -21,8 +21,8 @@ use Docalist\Forms\Element;
  * @var array $args  Paramètres transmis à la vue.
  */
 
-// TODO : une table ne doit contenir que des éléments
-// TODO : une table ne doit contenir que des éléments qui ont un layout
+// une table ne doit contenir que des éléments
+// une table ne doit contenir que des éléments qui ont un layout
 
 // Début de la table
 $theme->start('table', ['class' => 'field-table'] + $this->getAttributes());
@@ -30,7 +30,7 @@ $theme->start('table', ['class' => 'field-table'] + $this->getAttributes());
 // Entête de la table
 $theme->start('thead')->start('tr');
 foreach ($this->getItems() as $item) { /** @var Element $item */
-    $theme->start('th', ['class' => $item->getAttribute('class'), 'title' => $item->getDescription()]); // TODO: containerAttributes
+    $theme->start('th', ['class' => $item->getAttribute('class'), 'title' => $item->getDescription()]);
     $item->hasLabelBlock() && $theme->display($item, '_label');
     $theme->end('th');
 }

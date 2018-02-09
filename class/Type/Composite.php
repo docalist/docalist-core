@@ -65,7 +65,7 @@ class Composite extends Any
 
         return $this;
 
-        // TODO ne pas réinitialiser le tablau à chaque assign ?
+        // Voir si on peut évitéer de réinitialiser le tablau à chaque assign ?
         // (faire un array_diff + unset de ce qu'on avait et qu'on n'a plus)
     }
 

@@ -12,7 +12,7 @@ namespace Docalist\Forms;
 /**
  * Un widget spécialisé pour la saisie du champ topic de docalist-biblio.
  *
- * TODO: Ne devrait pas être là mais pour le moment, la surcharge des vues de
+ * Ne devrait pas être là mais pour le moment, la surcharge des vues de
  * formulaires ne marche pas. Il faudrait faire un theme wordpressbiblio qui
  * étend wordpress, mais comme wordpress étend déjà base, on se retrouve avec
  * trois niveaux et actuellement ce n'est pas géré.

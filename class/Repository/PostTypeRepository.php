@@ -318,8 +318,6 @@ class PostTypeRepository extends Repository
         $msg = __('Suppression des termes', 'docalist-biblio');
         $this->sql($sql, $msg);
 
-        // TODO : mettre à jour wp_term_taxonomy.count pour chacun des termes supprimés
-
         // Supprime les métas des notices et des révisions
         $sql = "DELETE FROM $wpdb->postmeta WHERE post_id IN ($posts) OR post_id IN ($revisions)";
         $msg = __('Suppression des méta-données des notices', 'docalist-biblio');

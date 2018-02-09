@@ -82,7 +82,7 @@ abstract class Choice extends Element
         }
 
         if (is_string($this->options)) {
-            list(, $name) = explode(':', $this->options); // TODO à virer
+            list(, $name) = explode(':', $this->options);
 
             $table = docalist('table-manager')->get($name); /** @var TableInterface $table */
 

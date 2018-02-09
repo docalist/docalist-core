@@ -445,7 +445,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         // Modifie le champ pour qu'il soit répétable
         ($form instanceof Choice) ? $form->setAttribute('multiple') : $form->setRepeatable();
 
-        // TODO : dans Choice, surcharger setRepeatable() et mettre 'multiple' à true
+        // A voir : dans Choice, surcharger setRepeatable() et mettre 'multiple' à true
 
         // Ok
         return $form;

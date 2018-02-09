@@ -14,8 +14,6 @@ namespace Docalist;
  *
  * Convertit un texte en minuscules non accentuées
  *
- * TODO : transformer cette classe statique en service de gestion de texte.
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Tokenizer

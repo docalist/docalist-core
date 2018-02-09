@@ -442,7 +442,6 @@ jQuery.fn.tableLookup = function () {
                     url += '&search=' + encodeURIComponent(query);
                 }
 
-                // TODO : plutôt $.getJSON
                 $.ajax({
                     url : url,
                     type: 'GET',
