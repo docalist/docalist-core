@@ -251,9 +251,22 @@ class Schema implements JsonSerializable
             'Docalist\Biblio\Field\Relation'      => 'Docalist\Biblio\Field\RelationField',
             'Docalist\Biblio\Field\Title'         => 'Docalist\Biblio\Field\TitleField',
             'Docalist\Biblio\Field\Translation'   => 'Docalist\Biblio\Field\TranslationField',
-        ];
 
+            'Docalist\Biblio\Reference'                 => 'Docalist\Biblio\Entity\ReferenceEntity',
+            'Docalist\Biblio\Reference\Article'         => 'Docalist\Biblio\Entity\ArticleEntity',
+            'Docalist\Biblio\Reference\Book'            => 'Docalist\Biblio\Entity\BookEntity',
+            'Docalist\Biblio\Reference\BookChapter'     => 'Docalist\Biblio\Entity\BookChapterEntity',
+            'Docalist\Biblio\Reference\Degree'          => 'Docalist\Biblio\Entity\DegreeEntity',
+            'Docalist\Biblio\Reference\Film'            => 'Docalist\Biblio\Entity\FilmEntity',
+            'Docalist\Biblio\Reference\Legislation'     => 'Docalist\Biblio\Entity\LegislationEntity',
+            'Docalist\Biblio\Reference\Meeting'         => 'Docalist\Biblio\Entity\MeetingEntity',
+            'Docalist\Biblio\Reference\Periodical'      => 'Docalist\Biblio\Entity\PeriodicalEntity',
+            'Docalist\Biblio\Reference\PeriodicalIssue' => 'Docalist\Biblio\Entity\PeriodicalIssueEntity',
+            'Docalist\Biblio\Reference\Report'          => 'Docalist\Biblio\Entity\ReportEntity',
+            'Docalist\Biblio\Reference\WebSite'         => 'Docalist\Biblio\Entity\WebSiteEntity',
+        ];
         if (! isset($compat[$test])) {
+
             return $type;
         }
 
