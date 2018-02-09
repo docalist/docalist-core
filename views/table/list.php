@@ -155,7 +155,7 @@ $tableManager = docalist('table-manager'); /** @var TableManager $tableManager *
                  *  --------------------------------------------------------------*/
                 ?>
                 <?php if ($format || $type || !is_null($readonly) || !($sort === 'label' && $order === 'asc')) : ?>
-                    <a href="<?=esc_url($this->url())?>" class="button action">
+                    <a href="<?=esc_url($this->getUrl())?>" class="button action">
                         <?=__('Réinitialiser les filtres', 'docalist-core')?>
                     </a>
                 <?php endif; ?>
@@ -178,10 +178,10 @@ $tableManager = docalist('table-manager'); /** @var TableManager $tableManager *
 
             $tableName = $table->name();
 
-            $edit = esc_url($this->url('TableEdit', $tableName));
-            $copy = esc_url($this->url('TableCopy', $tableName));
-            $properties = esc_url($this->url('TableProperties', $tableName));
-            $delete = esc_url($this->url('TableDelete', $tableName)); ?>
+            $edit = esc_url($this->getUrl('TableEdit', $tableName));
+            $copy = esc_url($this->getUrl('TableCopy', $tableName));
+            $properties = esc_url($this->getUrl('TableProperties', $tableName));
+            $delete = esc_url($this->getUrl('TableDelete', $tableName)); ?>
 
             <tr class="<?= $nb % 2 ? 'alternate' : '' ?>">
                 <td class="column-title">

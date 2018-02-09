@@ -138,7 +138,7 @@ class AdminTables extends AdminPage
 
             return $this->json([
                 'success' => true,
-                'url' => $this->url('TablesList'),
+                'url' => $this->getUrl('TablesList'),
             ]);
         }
 
@@ -179,7 +179,7 @@ class AdminTables extends AdminPage
             try {
                 docalist('table-manager')->copy($tableName, $name, $label, $nodata);
 
-                return $this->redirect($this->url('TablesList'), 303);
+                return $this->redirect($this->getUrl('TablesList'), 303);
             } catch (Exception $e) {
                 $error = $e->getMessage();
             }
@@ -219,7 +219,7 @@ class AdminTables extends AdminPage
             try {
                 docalist('table-manager')->update($tableName, $name, $label);
 
-                return $this->redirect($this->url('TablesList'), 303);
+                return $this->redirect($this->getUrl('TablesList'), 303);
             } catch (Exception $e) {
                 $error = $e->getMessage();
             }
@@ -249,7 +249,7 @@ class AdminTables extends AdminPage
             $msg .= '<br />';
             $msg .= __('Assurez-vous que cette table n\'est plus utilisée.', 'docalist-core');
 
-            $href = $this->url('TableProperties', $tableName);
+            $href = $this->getUrl('TableProperties', $tableName);
             $msg = sprintf($msg, $tableName, $href);
 
             return $this->confirm($msg, __('Supprimer une table', 'docalist-core'));
@@ -259,13 +259,13 @@ class AdminTables extends AdminPage
         try {
             docalist('table-manager')->delete($tableName);
 
-            return $this->redirect($this->url('TablesList'), 303);
+            return $this->redirect($this->getUrl('TablesList'), 303);
         } catch (Exception $e) {
             return $this->view('docalist-core:error', [
                 'h2' => __('Supprimer une table', 'docalist-core'),
                 'h3' => __('Erreur', 'docalist-core'),
                 'message' => $e->getMessage(),
-                'back' => $this->url('TablesList'),
+                'back' => $this->getUrl('TablesList'),
             ]);
         }
     }

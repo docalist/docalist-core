@@ -62,7 +62,7 @@ wp_enqueue_script('handsontable', "$base/jquery.handsontable.full.js", ['jquery'
 
         <p class="buttons">
             <?php if ($readonly) : ?>
-                <a href="<?= esc_url($this->url('TablesList')) ?>" class="button">
+                <a href="<?= esc_url($this->getUrl('TablesList')) ?>" class="button">
                     <?= __('← Retour à la liste des tables', 'docalist-core') ?>
                 </a>
             <?php else : ?>

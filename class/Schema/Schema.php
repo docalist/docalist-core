@@ -167,6 +167,7 @@ class Schema implements JsonSerializable
                 }
                 $properties['collection'] = $collection;
             }
+            //unset($properties['repeatable']);
         }
 
         return $this;
@@ -225,6 +226,32 @@ class Schema implements JsonSerializable
             'Docalist\Data\Type\RefNumber'        => 'Docalist\Data\Field\Ref',
             'Docalist\Data\Type\RefType'          => 'Docalist\Data\Field\Type',
             'Docalist\Data\Type\Link'             => 'Docalist\Data\Field\Link',
+            'Docalist\Biblio\Field\Corporation'   => 'Docalist\Biblio\Field\CorporationField',
+            'Docalist\Biblio\Field\Context'       => 'Docalist\Biblio\Field\ContextField',
+
+            // docalist-biblio
+            'Docalist\Biblio\Field\Author'        => 'Docalist\Biblio\Field\AuthorField',
+            'Docalist\Biblio\Field\Collection'    => 'Docalist\Biblio\Field\CollectionField',
+            'Docalist\Biblio\Field\Content'       => 'Docalist\Biblio\Field\ContentField',
+            'Docalist\Biblio\Field\Event'         => 'Docalist\Biblio\Field\ContextField',
+            'Docalist\Biblio\Field\Organisation'  => 'Docalist\Biblio\Field\CorporationField',
+            'Docalist\Biblio\Field\Date'          => 'Docalist\Biblio\Field\DateField',
+            'Docalist\Biblio\Field\Edition'       => 'Docalist\Biblio\Field\EditionField',
+            'Docalist\Biblio\Field\Editor'        => 'Docalist\Biblio\Field\EditorField',
+            'Docalist\Biblio\Field\Error'         => 'Docalist\Biblio\Field\ErrorField',
+            'Docalist\Biblio\Field\Extent'        => 'Docalist\Biblio\Field\ExtentField',
+            'Docalist\Biblio\Field\Format'        => 'Docalist\Biblio\Field\FormatField',
+            'Docalist\Biblio\Field\Genre'         => 'Docalist\Biblio\Field\GenreField',
+            'Docalist\Biblio\Field\Imported'      => 'Docalist\Biblio\Field\ImportedField',
+            'Docalist\Biblio\Field\Journal'       => 'Docalist\Biblio\Field\JournalField',
+            'Docalist\Biblio\Field\Language'      => 'Docalist\Biblio\Field\LanguageField',
+            'Docalist\Biblio\Field\Media'         => 'Docalist\Biblio\Field\MediaField',
+            'Docalist\Biblio\Field\Number'        => 'Docalist\Biblio\Field\NumberField',
+            'Docalist\Biblio\Field\OtherTitle'    => 'Docalist\Biblio\Field\OtherTitleField',
+            'Docalist\Biblio\Field\Owner'         => 'Docalist\Biblio\Field\OwnerField',
+            'Docalist\Biblio\Field\Relation'      => 'Docalist\Biblio\Field\RelationField',
+            'Docalist\Biblio\Field\Title'         => 'Docalist\Biblio\Field\TitleField',
+            'Docalist\Biblio\Field\Translation'   => 'Docalist\Biblio\Field\TranslationField',
         ];
 
         if (! isset($compat[$test])) {

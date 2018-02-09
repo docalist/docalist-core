@@ -31,7 +31,7 @@ use Docalist\Controller;
         <?php foreach ($actions as $action) : ?>
             <li>
                 <h2>
-                    <a href="<?= $this->url($action) ?>"><?= $action ?></a>
+                    <a href="<?= $this->getUrl($action) ?>"><?= $action ?></a>
                 </h2>
             </li>
         <?php endforeach; ?>
