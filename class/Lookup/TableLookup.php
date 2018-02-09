@@ -88,10 +88,6 @@ class TableLookup implements LookupInterface
      */
     protected function processResults($result, TableInterface $table)
     {
-//         foreach($result as & $term) {
-//             $term = array_filter((array)$term);
-//         }
-
         // Supprime la clé ROWID, pour que json_encode génère bien un tableau
         return array_values($result);
     }
