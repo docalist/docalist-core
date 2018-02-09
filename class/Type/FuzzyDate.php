@@ -108,7 +108,6 @@ class FuzzyDate extends Text
         $editor = parent::getEditorForm($options);
 
         $editor->setAttribute('pattern', $this->getValidationPattern());
-        //$editor->setAttribute('placeholder', 'AAAAMMJJ, AAAAMM ou AAAA');
 
         return $editor;
     }
