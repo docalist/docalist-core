@@ -407,7 +407,11 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getFormattedValue($options = null)
     {
-        return get_class($this) . '::getFormattedValue() not implemented';
+        $format = $this->getOption('format', $options, $this->getDefaultFormat());
+        $class = get_class($this);
+        $msg = sprint('getFormattedValue() : invalid format "%s" for class "%s"', $format, $class);
+
+        throw new InvalidArgumentException($msg);
     }
 
     // -------------------------------------------------------------------------
