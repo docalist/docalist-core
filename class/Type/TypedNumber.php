@@ -50,6 +50,11 @@ class TypedNumber extends TypedText
         ] + parent::getAvailableFormats();
     }
 
+    public function getDefaultFormat()
+    {
+        return 'format';
+    }
+
     public function getFormattedValue($options = null)
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
