@@ -24,9 +24,12 @@ $inTable = false;
 foreach ($this->getItems() as $item) {
     if ($item->hasLayout()) {
         if (!$inTable) {
-            $attr = $this->getAttributes();
-            $attr['class'] = isset($attr['class']) ? ('form-table ' . $attr['class']) : 'form-table';
-            $theme->start('table', $attr);
+//             $attr = $this->getAttributes();
+//             $attr['class'] = isset($attr['class']) ? ('form-table ' . $attr['class']) : 'form-table';
+//             $theme->start('table', $attr);
+
+            $theme->start('table', ['class' => 'form-table']);
+
             $inTable = true;
         }
     } else {
