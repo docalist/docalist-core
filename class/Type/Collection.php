@@ -51,7 +51,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         $this->phpValue = [];
         foreach ($value as $item) {
-            $this->offsetSet(null, $item);
+            !empty($item) && $this->offsetSet(null, $item);
         }
 
         return $this;
