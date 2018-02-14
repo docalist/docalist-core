@@ -409,7 +409,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
         $class = get_class($this);
-        $msg = sprint('getFormattedValue() : invalid format "%s" for class "%s"', $format, $class);
+        $msg = sprintf('getFormattedValue() : invalid format "%s" for class "%s"', $format, $class);
 
         throw new InvalidArgumentException($msg);
     }
