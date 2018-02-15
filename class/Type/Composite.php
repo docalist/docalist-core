@@ -60,8 +60,8 @@ class Composite extends Any
         }
 
         $this->phpValue = [];
-        foreach ($array as $name => $value) {
-            $this->__set($name, $value);
+        foreach ($array as $name => $fieldValue) {
+            $this->__set($name, $fieldValue);
         }
 
         return $this;
