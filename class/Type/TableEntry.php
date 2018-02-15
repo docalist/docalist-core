@@ -110,15 +110,16 @@ class TableEntry extends ListEntry
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'lookup':
-                $editor = new EntryPicker();
+                $form = new EntryPicker();
                 break;
 
             default:
                 return parent::getEditorForm($options);
         }
 
-        return $editor
+        return $form
             ->setName($this->schema->name())
+            ->addClass($this->getEditorClass($editor))
             ->setOptions($this->schema->table())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));

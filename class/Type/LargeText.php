@@ -32,28 +32,28 @@ class LargeText extends Text
     public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-
         switch ($editor) {
             case 'textarea':
-                $editor = new Textarea();
-                $editor->addClass('autosize');
+                $form = new Textarea();
+                $form->addClass('autosize');
                 break;
 
             case 'wpeditor':
-                $editor = new WPEditor();
+                $form = new WPEditor();
                 break;
 
             case 'wpeditor-teeny':
-                $editor = new WPEditor();
-                $editor->setTeeny();
+                $form = new WPEditor();
+                $form->setTeeny();
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid LargeText editor '$editor'");
+                throw new InvalidArgumentException("Invalid LargeText editor '$form'");
         }
 
-        return $editor
+        return $form
             ->setName($this->schema->name())
+            ->addClass($this->getEditorClass($editor))
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options))
             ->setAttribute('rows', '1');

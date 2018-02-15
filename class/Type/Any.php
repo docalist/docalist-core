@@ -490,16 +490,18 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     }
 
     /**
-     * Retourne les classes CSS qui seront ajoutées à l'éditeur retourné par getEditForm().
+     * Retourne les classes CSS qui seront générées par getEditForm() pour l'éditeur passé en paramètre.
      *
      * La méthode retourne une chaine contenant deux classes CSS :
      *
      * - le nom de la classe PHP du type (par exemple 'typed-text' pour la classe 'Docalist\Type\TypedText')
      * - le nom du champ indiqué dans le schéma
      *
+     * @param string $editor Optionnel, nom de code de l'éditeur.
+     *
      * @return string
      */
-    protected function getEditorClass()
+    protected function getEditorClass($editor = '')
     {
         // Convertit le nom de classe Php en classe CSS (Docalist\Type\DateTimeInterval -> 'date-time-interval')
         $class = get_class($this);
@@ -508,10 +510,14 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
             return '-' . strtolower($match[0]);
         }, $class);
         $class = ltrim($class, '-');
+        $class = 'type-' . $class;
 
         // Ajoute une classe contenant le nom du champ
         $name = $this->schema->name();
-        $name && $class .= ' ' . $name;
+        $name && $class .= ' field-' . $name;
+
+        // Ajoute le nom de l'éditeur
+        $editor && $class .= ' editor-' . $editor;
 
         // Ok
         return $class;
@@ -523,6 +529,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
         return $editor
             ->setName($this->schema->name())
+            ->addClass($this->getEditorClass())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
     }

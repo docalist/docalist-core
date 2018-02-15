@@ -222,29 +222,30 @@ class GeoPoint extends Any
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'inputs':
-                $editor = new Table();
-                $editor
+                $form = new Table();
+                $form
                     ->input('lat')
                     ->addClass('latitude')
                     ->setLabel(__('Latitude', 'docalist-core'));
-                $editor
+                $form
                     ->input('lon')
                     ->addClass('longitude')
                     ->setLabel(__('Longitude', 'docalist-core'));
                 break;
 
             case 'hiddens':
-                $editor = new Div();
-                $editor->hidden('lat')->addClass('latitude');
-                $editor->hidden('lon')->addClass('longitude');
+                $form = new Div();
+                $form->hidden('lat')->addClass('latitude');
+                $form->hidden('lon')->addClass('longitude');
                 break;
 
             default:
-                throw new InvalidArgumentException('Invalid GeoPoint editor "' . $editor . '"');
+                throw new InvalidArgumentException('Invalid GeoPoint editor "' . $form . '"');
         }
 
-        return $editor
+        return $form
             ->setName($this->schema->name())
+            ->addClass($this->getEditorClass($editor))
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
     }

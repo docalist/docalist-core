@@ -71,7 +71,7 @@ abstract class ListEntry extends Text
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'select':
-                $editor = new Select();
+                $form = new Select();
                 break;
 
             case 'list-inline':
@@ -81,16 +81,17 @@ abstract class ListEntry extends Text
 
             case 'list':
             case 'radio': // ancien nom
-                $editor = $this->getSchema()->collection() ? new CheckList() : new Radiolist();
-                isset($class) && $editor->addClass('inline');
+                $form = $this->getSchema()->collection() ? new CheckList() : new Radiolist();
+                isset($class) && $form->addClass('inline');
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid Entry editor '$editor'");
+                throw new InvalidArgumentException("Invalid Entry editor '$form'");
         }
 
-        return $editor
+        return $form
             ->setName($this->schema->name())
+            ->addClass($this->getEditorClass($editor))
             ->setOptions($this->getEntries())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));

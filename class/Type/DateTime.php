@@ -33,7 +33,6 @@ class DateTime extends Text
     public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-
         switch ($editor) {
             case 'datetime':
             case 'datetime-local':
@@ -44,10 +43,11 @@ class DateTime extends Text
                 return parent::getEditorForm($options);
         }
 
-        $editor = new Input();
+        $form = new Input();
 
-        return $editor
+        return $form
             ->setName($this->schema->name())
+            ->addClass($this->getEditorClass($editor))
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options))
             ->setAttribute('type', $type);
