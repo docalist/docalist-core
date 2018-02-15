@@ -489,6 +489,34 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return $settings;
     }
 
+    /**
+     * Retourne les classes CSS qui seront ajoutées à l'éditeur retourné par getEditForm().
+     *
+     * La méthode retourne une chaine contenant deux classes CSS :
+     *
+     * - le nom de la classe PHP du type (par exemple 'typed-text' pour la classe 'Docalist\Type\TypedText')
+     * - le nom du champ indiqué dans le schéma
+     *
+     * @return string
+     */
+    protected function getEditorClass()
+    {
+        // Convertit le nom de classe Php en classe CSS (Docalist\Type\DateTimeInterval -> 'date-time-interval')
+        $class = get_class($this);
+        $class = substr($class, strrpos($class, '\\') + 1);
+        $class = preg_replace_callback('/[A-Z][a-z]+/', function ($match) {
+            return '-' . strtolower($match[0]);
+        }, $class);
+        $class = ltrim($class, '-');
+
+        // Ajoute une classe contenant le nom du champ
+        $name = $this->schema->name();
+        $name && $class .= ' ' . $name;
+
+        // Ok
+        return $class;
+    }
+
     public function getEditorForm($options = null)
     {
         $editor = new Input();
