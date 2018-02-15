@@ -69,7 +69,7 @@ class Text extends Scalar
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid Text editor '$form'");
+                throw new InvalidArgumentException("Invalid Text editor '$editor'");
         }
 
         return $form

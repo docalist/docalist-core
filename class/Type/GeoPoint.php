@@ -240,7 +240,7 @@ class GeoPoint extends Any
                 break;
 
             default:
-                throw new InvalidArgumentException('Invalid GeoPoint editor "' . $form . '"');
+                throw new InvalidArgumentException('Invalid GeoPoint editor "' . $editor . '"');
         }
 
         return $form

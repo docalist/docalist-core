@@ -48,7 +48,7 @@ class LargeText extends Text
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid LargeText editor '$form'");
+                throw new InvalidArgumentException("Invalid LargeText editor '$editor'");
         }
 
         return $form

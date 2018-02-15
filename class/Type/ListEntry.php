@@ -86,7 +86,7 @@ abstract class ListEntry extends Text
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid Entry editor '$form'");
+                throw new InvalidArgumentException("Invalid Entry editor '$editor'");
         }
 
         return $form
