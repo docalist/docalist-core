@@ -294,19 +294,9 @@ class Composite extends Any
 
         $editor
             ->setName($this->schema->name())
+            ->addClass($this->getEditorClass())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
-
-        $class = get_class($this);
-        $class = substr($class, strrpos($class, '\\') + 1);
-        $class = preg_replace_callback('/[A-Z][a-z]+/', function ($match) {
-            return '-' . strtolower($match[0]);
-        }, $class);
-        $class = ltrim($class, '-');
-
-//        $class .= ' editor-' . $editorName; bof, renvoie l'éditeur du container, pas WPEditor par exemple
-        $class .= ' ' . $this->schema->name();
-        $editor->addClass($class);
 
         // Récupère la liste des champs à afficher
         $fields = array_keys(isset($options['fields']) ? $options['fields'] : $this->schema->getFields());
