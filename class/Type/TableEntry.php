@@ -37,6 +37,21 @@ class TableEntry extends ListEntry
         }
     }
 
+    protected function getEntries()
+    {
+        // Cette méthode n'est pas utilisée directement par TableEntry, mais elle peut être appellée par notre
+        // classe parent (ListEntry), par exemple lorsque l'éditeur est paramétré sur 'select'.
+
+        // Le nom de la table est de la forme "type:nom", on ne veut que le nom
+        $table = explode(':', $this->schema->table())[1];
+
+        // Ouvre la table
+        $table = docalist('table-manager')->get($table);
+
+        // Recherche le code et le label de toutes les entrées, triées par label en ignorant la casse
+        return $table->search('code,label', '', '_label');
+    }
+
     /**
      * Retourne l'entrée de la table correspondant à la valeur actuelle du champ.
      *
@@ -91,15 +106,17 @@ class TableEntry extends ListEntry
     }
 
     public function getEditorForm($options = null)
-    {
+    {var_dump($options);
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        var_dump($editor);
+        var_dump($this->schema);
         switch ($editor) {
             case 'lookup':
                 $editor = new EntryPicker();
                 break;
 
             default:
-                return parent::getEditorForm();
+                return parent::getEditorForm($options);
         }
 
         return $editor
