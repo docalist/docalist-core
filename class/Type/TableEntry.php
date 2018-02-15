@@ -106,10 +106,8 @@ class TableEntry extends ListEntry
     }
 
     public function getEditorForm($options = null)
-    {var_dump($options);
+    {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
-        var_dump($editor);
-        var_dump($this->schema);
         switch ($editor) {
             case 'lookup':
                 $editor = new EntryPicker();
