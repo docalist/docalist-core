@@ -9,11 +9,12 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Type\Any;
 use Docalist\Schema\Schema;
 use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Container;
-use InvalidArgumentException;
 use Docalist\Forms\Table;
+use InvalidArgumentException;
 
 /**
  * Type Composite.
@@ -64,22 +65,33 @@ class Composite extends Any
         }
 
         return $this;
-
-        // Voir si on peut évitéer de réinitialiser le tablau à chaque assign ?
-        // (faire un array_diff + unset de ce qu'on avait et qu'on n'a plus)
     }
 
     public function getPhpValue()
     {
-        $fields = $this->schema ? $this->schema->getFieldNames() : array_keys($this->phpValue);
+        // Le tableau qui sera retourné
         $result = [];
-        foreach ($fields as $name) {
-            if (isset($this->phpValue[$name])) {
-                $value = $this->phpValue[$name]->getPhpValue();
-                $value !== [] && $result[$name] = $value;
+
+        // On se base sur le schéma pour retourner les champs toujours dans le même ordre
+        foreach ($this->schema->getFieldNames() as $name) {
+            // Si le champ n'a pas été créé, continue
+            if (!isset($this->phpValue[$name])) {
+                continue;
             }
+
+            // Récupère la valeur du champ
+            $value = $this->phpValue[$name]->getPhpValue();
+
+            // Si la valeur est vide (cas d'une collection snas éléments, par exemple), continue
+            if ($value === []) {
+                continue;
+            }
+
+            // Ok, stocke la valeur
+            $result[$name] = $value;
         }
 
+        // Terminé
         return $result;
     }
 
@@ -107,39 +119,26 @@ class Composite extends Any
      */
     public function __set($name, $value)
     {
-        // Si la propriété existe déjà, on change simplement sa valeur
+        // Si le champ a déjà été créé, on change simplement sa valeur
         if (isset($this->phpValue[$name])) {
-            is_null($value) && $value = $this->phpValue[$name]->getDefaultValue();
-            $this->phpValue[$name]->assign($value);
+            $this->phpValue[$name]->assign(is_null($value) ? $this->phpValue[$name]->getDefaultValue() : $value);
 
             return $this;
         }
 
         // Vérifie que le champ existe et récupère son schéma
-        if ($this->schema->hasField($name)) {
-            $field = $this->schema->getField($name);
-        } else {
-            $schema = static::getDefaultSchema();
-            if ($schema->hasField($name)) {
-                $field = $schema->getField($name);
-            } else {
-                $msg = 'Field %s does not exist';
-                throw new InvalidArgumentException(sprintf($msg, $name));
-            }
+        if (!$this->schema->hasField($name)) {
+            throw new InvalidArgumentException('Field "' . $name . '" does not exist');
         }
+
+        // Récupère le schéma du champ
+        $field = $this->schema->getField($name);
 
         // Détermine le type du champ
         $type = $field->collection() ?: $field->type();
 
-        // Si value est déjà du bon type, on le prend tel quel
-        if ($value instanceof $type) {
-            $this->phpValue[$name] = $value;
-        }
-
-        // Sinon, on instancie
-        else {
-            $this->phpValue[$name] = new $type($value, $field);
-        }
+        // Si value est déjà du bon type, on le prend tel quel, sinon, on instancie
+        $this->phpValue[$name] = ($value instanceof $type) ? $value : new $type($value, $field);
 
         // Ok
         return $this;
@@ -230,18 +229,10 @@ class Composite extends Any
         }
 
         // Le champ n'existe pas encore, retourne la valeur par défaut
-        if ($this->schema) {
-            $field = $this->schema->getField($name);
-            if ($collection = $field->collection()) {
-                return $collection::getClassDefault();
-            }
+        $field = $this->schema->getField($name);
+        $class = $field->collection() ?: $field->type();
 
-            $type = $field->type();
-
-            return $type::getClassDefault();
-        }
-
-        return Any::getClassDefault();
+        return $type::getClassDefault();
     }
 
     public function filterEmpty($strict = true)
