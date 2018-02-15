@@ -278,6 +278,9 @@ class Composite extends Any
 
     public function getEditorForm($options = null)
     {
+        // TEMP : pour le moment on peut nous passer une grille ou un schéma, à terme, on ne passera que des array
+        $options && is_object($options) && $options = $options->value();
+
         $editorName = $this->getOption('editor', $options, $this->getDefaultEditor());
 
         switch ($editorName) {
@@ -314,51 +317,53 @@ class Composite extends Any
         $class .= ' ' . $this->schema->name();
         $editor->addClass($class);
 
-        foreach ($options->getFieldNames() as $name) {
-            $fieldOptions = $this->getFieldOptions($name, $options);
-            $field = $this->__get($name);
-            $unused = $field->getOption('unused', $fieldOptions, false);
-            if (!$unused) {
-                $wrapper->add($field->getEditorForm($fieldOptions));
+        // Récupère la liste des champs à afficher
+        $fields = array_keys(isset($options['fields']) ? $options['fields'] : $this->schema->getFields());
+
+        // Génère le formulaire de chaque sous-champ
+        foreach ($fields as $name) {
+            // Si le champ est marqué "unused" dans le schéma, on l'ignore
+            if ($this->schema->getField($name)->unused()) {
+                continue;
             }
+
+            // Récupère les options du champ
+            $fieldOptions = empty($options['fields'][$name]) ? [] : $options['fields'][$name];
+
+            // Crée l'éditeur de ce champ et l'ajoute au wrapper
+            $wrapper->add($this->__get($name)->getEditorForm($fieldOptions));
         }
 
         return $editor;
     }
 
     /**
-     * Retourne les options du champ indiqué dans le schéma passé en paramètre.
+     * Formatte le sous-champ dont le nom est passée en paramètre.
      *
-     * @param string            $name       Le nom du champ recherché.
-     * @param Schema|array|null $options    Un tableau ou un schéma contenant les champs disponibles.
+     * Cette méthode utilitaire permet aux classes descendantes de formatter les différents sous-champs qu'elles
+     * gèrent (cf. TypedText::getFormattedValue par exemple).
      *
-     * @return Schema|array|null
+     * @param string $name    Nom du champ à formatter.
+     * @param array  $options Options d'affichage passées à la méthode getFormattedValue() du Composite.
      *
-     * @throws InvalidArgumentException
+     * @return string Le champ formatté.
      */
-    protected function getFieldOptions($name, $options = null)
-    {
-        // Si des options ont été fournies sous forme d'un schéma et que le champ existe, terminé
-        if ($options instanceof Schema && $options->hasField($name)) { /** Schema $options */
-            return $options->getField($name);
-        }
-
-        // Si on a un tableau d'options et le champ demandé existe, terminé
-        if (is_array($options) && isset($options[$name]) && is_array($options[$name])) {
-            return $options[$name];
-        }
-
-        // Si le champ existe dans notre schéma, terminé
-        if ($this->schema->hasField($name)) {
-            return $this->schema->getField($name);
-        }
-
-        // Champ introuvable, retourne null
-        return null;
-    }
-
     protected function formatField($name, $options = null)
     {
-        return $this->__get($name)->getFormattedValue($this->getFieldOptions($name, $options));
+        // Si le champ est vide, terminé
+        if (empty($this->phpValue[$name])) {
+            return '';
+        }
+
+        // Récupère le champ
+        $field = $this->phpValue[$name]; /** @var Any $field */
+
+        // Si aucune option n'a été indiquée pour le champ, utilise le formattage par défaut
+        if (empty($options['fields'][$name])) {
+            return $field->getFormattedValue();
+        }
+
+        // Formatte le champ avec les options indiquées
+        return $field->getFormattedValue($options['fields'][$name]);
     }
 }
