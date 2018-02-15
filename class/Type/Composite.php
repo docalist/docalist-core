@@ -54,13 +54,13 @@ class Composite extends Any
 
     public function assign($value)
     {
-        ($value instanceof Any) && $value = $value->getPhpValue();
-        if (! is_array($value)) {
+        $array = ($value instanceof Any) ? $value->getPhpValue() : $value;
+        if (! is_array($array)) {
             throw new InvalidTypeException('array');
         }
 
         $this->phpValue = [];
-        foreach ($value as $name => $value) {
+        foreach ($array as $name => $value) {
             $this->__set($name, $value);
         }
 
@@ -217,7 +217,7 @@ class Composite extends Any
     public function __call($name, $arguments)
     {
         // $composite->property($x) permet de modifier la valeur d'un champ
-        if ($arguments) {
+        if (!empty($arguments)) {
             return $this->__set($name, $arguments[0]);
         }
 
@@ -232,7 +232,7 @@ class Composite extends Any
         $field = $this->schema->getField($name);
         $class = $field->collection() ?: $field->type();
 
-        return $type::getClassDefault();
+        return $class::getClassDefault();
     }
 
     public function filterEmpty($strict = true)
