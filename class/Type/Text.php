@@ -48,33 +48,32 @@ class Text extends Scalar
     public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $css = '';
         switch ($editor) {
             case 'input':
-                $form = new Input();
                 break;
 
             case 'input-small':
-                $form = new Input();
-                $form->addClass('small-text');
+                $css = 'small-text';
                 break;
 
             case 'input-regular':
-                $form = new Input();
-                $form->addClass('regular-text');
+                $css = 'regular-text';
                 break;
 
             case 'input-large':
-                $form = new Input();
-                $form->addClass('large-text');
+                $css = 'large-text';
                 break;
 
             default:
                 throw new InvalidArgumentException("Invalid Text editor '$editor'");
         }
 
+        $form = new Input();
+
         return $form
             ->setName($this->schema->name())
-            ->addClass($this->getEditorClass($editor))
+            ->addClass($this->getEditorClass($editor, $css))
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
     }
