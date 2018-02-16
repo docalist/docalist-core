@@ -272,29 +272,28 @@ class Composite extends Any
         // TEMP : pour le moment on peut nous passer une grille ou un schéma, à terme, on ne passera que des array
         $options && is_object($options) && $options = $options->value();
 
-        $editorName = $this->getOption('editor', $options, $this->getDefaultEditor());
-
-        switch ($editorName) {
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        switch ($editor) {
             case 'container':
-                $wrapper = $editor = new Container();
+                $form = $wrapper = new Container();
                 break;
 
             case 'table':
-                $wrapper = $editor = new Table();
+                $form = $wrapper = new Table();
                 break;
 
             case 'integrated':
-                $editor = new Container();
-                $wrapper = $editor->div()->addClass('composite-integrated');
+                $form = new Container();
+                $wrapper = $form->div()->addClass('composite-integrated');
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid Composite editor '$editorName'");
+                throw new InvalidArgumentException("Invalid Composite editor '$editor'");
         }
 
-        $editor
+        $form
             ->setName($this->schema->name())
-            ->addClass($this->getEditorClass())
+            ->addClass($this->getEditorClass($editor))
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
 
@@ -315,7 +314,7 @@ class Composite extends Any
             $wrapper->add($this->__get($name)->getEditorForm($fieldOptions));
         }
 
-        return $editor;
+        return $form;
     }
 
     /**
