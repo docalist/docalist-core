@@ -223,20 +223,14 @@ class GeoPoint extends Any
         switch ($editor) {
             case 'inputs':
                 $form = new Table();
-                $form
-                    ->input('lat')
-                    ->addClass('latitude')
-                    ->setLabel(__('Latitude', 'docalist-core'));
-                $form
-                    ->input('lon')
-                    ->addClass('longitude')
-                    ->setLabel(__('Longitude', 'docalist-core'));
+                $form->input('lat')->addClass('field-latitude')->setLabel(__('Latitude', 'docalist-core'));
+                $form->input('lon')->addClass('field-longitude')->setLabel(__('Longitude', 'docalist-core'));
                 break;
 
             case 'hiddens':
                 $form = new Div();
-                $form->hidden('lat')->addClass('latitude');
-                $form->hidden('lon')->addClass('longitude');
+                $form->hidden('lat')->addClass('field-latitude');
+                $form->hidden('lon')->addClass('field-longitude');
                 break;
 
             default:
