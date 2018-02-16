@@ -69,6 +69,7 @@ abstract class ListEntry extends Text
     public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $css = '';
         switch ($editor) {
             case 'select':
                 $form = new Select();
@@ -76,13 +77,12 @@ abstract class ListEntry extends Text
 
             case 'list-inline':
             case 'radio-inline': // ancien nom
-                $class = 'inline';
+                $css = 'inline';
                 // Pas de break
 
             case 'list':
             case 'radio': // ancien nom
                 $form = $this->getSchema()->collection() ? new CheckList() : new Radiolist();
-                isset($class) && $form->addClass('inline');
                 break;
 
             default:
@@ -91,7 +91,7 @@ abstract class ListEntry extends Text
 
         return $form
             ->setName($this->schema->name())
-            ->addClass($this->getEditorClass($editor))
+            ->addClass($this->getEditorClass($editor, $css))
             ->setOptions($this->getEntries())
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options));
