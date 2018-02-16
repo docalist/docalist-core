@@ -492,17 +492,31 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Retourne les classes CSS qui seront générées par getEditForm() pour l'éditeur passé en paramètre.
      *
-     * La méthode retourne une chaine contenant deux classes CSS :
+     * La méthode retourne une chaine contenant plusieurs classes CSS :
      *
-     * - le nom de la classe PHP du type (par exemple 'typed-text' pour la classe 'Docalist\Type\TypedText')
-     * - le nom du champ indiqué dans le schéma
+     * - Le nom du champ : une chaine avec le préfixe 'field-' et le nom indiqué dans le schéma du champ
+     *   (cette classe n'est pas générée si aucun nom ne figure dans le schéma).
+     * - Le type de champ : une chaine avec le préfixe 'type-' construite à partir du nom de la classe PHP
+     *   (par exemple 'type-large-text' pour la classe 'Docalist\Type\LargeText').
+     * - Le nom de l'éditeur utilisé : si le paramètre $editor est fournit, il est inséré avec le préfixe 'editor'
+     *   (par exemple 'editor-textarea' pour le type LargeText).
+     * - Les classes css additionnelles fournies dans le paramètre $additional.
      *
-     * @param string $editor Optionnel, nom de code de l'éditeur.
+     * Exemple : pour un champ 'content' de type LargeText utilisant l'éditeur 'textarea', la méthode retourne les
+     * classes CSS "field-content type-large-text editor-textarea autosize".
      *
-     * @return string
+     * @param string $editor        Optionnel, nom de code de l'éditeur.
+     * @param string $additional    Optionnel, classes CSS supplémentaires à ajouter.
+     *
+     * @return string Une chaine contenant les classes CSS à ajouter à l'éditeur.
      */
-    protected function getEditorClass($editor = '')
+    protected function getEditorClass($editor = '', $additional = '')
     {
+        $css = '';
+
+        // Ajoute une classe contenant le nom du champ
+        !empty($name = $this->schema->name()) && $css .= 'field-' . $name;
+
         // Convertit le nom de classe Php en classe CSS (Docalist\Type\DateTimeInterval -> 'date-time-interval')
         $class = get_class($this);
         $class = substr($class, strrpos($class, '\\') + 1);
@@ -510,24 +524,23 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
             return '-' . strtolower($match[0]);
         }, $class);
         $class = ltrim($class, '-');
-        $class = 'type-' . $class;
-
-        // Ajoute une classe contenant le nom du champ
-        $name = $this->schema->name();
-        $name && $class .= ' field-' . $name;
+        $css .= ' type-' . $class;
 
         // Ajoute le nom de l'éditeur
-        $editor && $class .= ' editor-' . $editor;
+        !empty($editor) && $css .= ' editor-' . $editor;
+
+        // Ajoute les classes css additionnelles
+        !empty($additional) && $css.= ' ' . $additional;
 
         // Ok
-        return $class;
+        return ltrim($css);
     }
 
     public function getEditorForm($options = null)
     {
-        $editor = new Input();
+        $form = new Input();
 
-        return $editor
+        return $form
             ->setName($this->schema->name())
             ->addClass($this->getEditorClass())
             ->setLabel($this->getOption('label', $options))
