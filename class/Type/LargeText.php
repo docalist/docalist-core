@@ -32,10 +32,11 @@ class LargeText extends Text
     public function getEditorForm($options = null)
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $css = '';
         switch ($editor) {
             case 'textarea':
                 $form = new Textarea();
-                $form->addClass('autosize');
+                $css = 'autosize';
                 break;
 
             case 'wpeditor':
@@ -53,7 +54,7 @@ class LargeText extends Text
 
         return $form
             ->setName($this->schema->name())
-            ->addClass($this->getEditorClass($editor))
+            ->addClass($this->getEditorClass($editor, $css))
             ->setLabel($this->getOption('label', $options))
             ->setDescription($this->getOption('description', $options))
             ->setAttribute('rows', '1');
