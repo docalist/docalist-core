@@ -105,11 +105,8 @@ class FuzzyDate extends Text
 
     public function getEditorForm($options = null)
     {
-        $editor = parent::getEditorForm($options);
-
-        $editor->setAttribute('pattern', $this->getValidationPattern());
-
-        return $editor;
+        return parent::getEditorForm($options)
+            ->setAttribute('pattern', $this->getValidationPattern());
     }
 
     /**
