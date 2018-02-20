@@ -157,13 +157,6 @@ class JsonReader
     const NUMBER_MAX_LEN = 100;
 
     /**
-     * Path du fichier en cours.
-     *
-     * @var string
-     */
-    protected $filename;
-
-    /**
      * Handle du fichier en cours.
      *
      * @var resource
@@ -237,7 +230,6 @@ class JsonReader
      */
     public function __construct($filename)
     {
-        $this->filename = $filename;
         $this->buffer = '';
         $this->size = 0;
         $this->position = 0;
