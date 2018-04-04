@@ -10,6 +10,7 @@
 namespace Docalist\Pipeline;
 
 use Docalist\Pipeline\Pipeline;
+use Generator;
 use InvalidArgumentException;
 
 /**
@@ -126,7 +127,7 @@ class StandardPipeline implements Pipeline
             foreach ($items as $key => $item) {
                 $result = $stage($item);
                 if (! is_null($result)) {
-                    is_iterable($result) ? yield from $result : yield $result;
+                    ($result instanceof Generator) ? yield from $result : yield $result;
                 }
             }
         }, $items);
