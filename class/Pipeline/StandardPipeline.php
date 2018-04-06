@@ -14,7 +14,8 @@ use Generator;
 use InvalidArgumentException;
 
 /**
- * Implémentation de l'interface Pipeline.
+ * Implémentation standard de l'interface Pipeline basée sur des
+ * {@link http://php.net/language.generators générateurs}.
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -27,28 +28,6 @@ class StandardPipeline implements Pipeline
      */
     protected $operations = [];
 
-    /**
-     * Crée un nouveau pipeline qui exécute séquentiellement les opérations indiquées.
-     *
-     * @param callable[] $operations La liste des opérations qui composent le pipeline.
-     */
-    public function __construct(array $operations = [])
-    {
-        $this->setOperations($operations);
-    }
-
-    public function setOperations(array $operations): void
-    {
-        foreach ($operations as $key => $operation) {
-            $this->appendOperation($operation, $key);
-        }
-    }
-
-    public function getOperations(): array
-    {
-        return $this->operations;
-    }
-
     public function appendOperation(callable $operation, $key = null): void
     {
         if (is_null($key)) {
@@ -58,8 +37,9 @@ class StandardPipeline implements Pipeline
         }
 
         if (isset($this->operations[$key])) {
-            throw new InvalidArgumentException('An operation with "' . $key . '" already exists');
+            throw new InvalidArgumentException('An operation with key "' . $key . '" already exists');
         }
+
         $this->operations[$key] = $operation;
     }
 
@@ -82,31 +62,16 @@ class StandardPipeline implements Pipeline
 
     public function getOperation($key): callable
     {
-        // Génère une exception si l'opération indiquée n'existe pas
         if (! isset($this->operations[$key])) {
             throw new InvalidArgumentException('Operation "' . $key . '" not found');
         }
 
-        // Ok
         return $this->operations[$key];
     }
 
-    public function setOperation($key, callable $operation): void
+    public function getOperations(): array
     {
-        // Génère une exception si l'opération indiquée n'existe pas
-        $this->getOperation($key);
-
-        // Modifie l'opération associée à la clé indiquée
-        $this->operations[$key] = $operation;
-    }
-
-    public function removeOperation($key): void
-    {
-        // Génère une exception si l'opération indiquée n'existe pas
-        $this->getOperation($key);
-
-        // Supprime l'opération
-        unset($this->operations[$key]);
+        return $this->operations;
     }
 
     public function process(Iterable $items): Iterable

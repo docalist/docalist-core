@@ -71,7 +71,9 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         $pipeline = new StandardPipeline();
         $this->assertSame([], $pipeline->getOperations());
 
-        $pipeline = new StandardPipeline(['a' => 'trim', 'b' => 'md5']);
+        $pipeline = new StandardPipeline();
+        $pipeline->appendOperation('trim', 'a');
+        $pipeline->appendOperation('md5', 'b');
         $this->assertSame(['a' => 'trim', 'b' => 'md5'], $pipeline->getOperations());
     }
 
@@ -84,7 +86,8 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructWithNotCallableOperation()
     {
-        $pipeline = new StandardPipeline(['a']);
+        $pipeline = new StandardPipeline();
+        $pipeline->appendOperation('a');
     }
 
     /**
@@ -93,9 +96,10 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
     public function testOperations()
     {
         $pipeline = new StandardPipeline();
+        $pipeline->appendOperation('trim', 'a');
+        $pipeline->appendOperation('md5', 'b');
 
         // Vérifie que getOperations() retourne les opérations stockées par setOperations()
-        $pipeline->setOperations(['a' => 'trim', 'b' => 'md5']);
         $this->assertSame(['a' => 'trim', 'b' => 'md5'], $pipeline->getOperations());
 
         // Teste hasOperation()
@@ -107,17 +111,6 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         // Teste getOperation()
         $this->assertSame('trim', $pipeline->getOperation('a'));
         $this->assertSame('md5', $pipeline->getOperation('b'));
-
-        // Vérifie que removeOperation() supprime les opérations
-        $pipeline->removeOperation('b');
-        $this->assertFalse($pipeline->hasOperation('b'));
-        $this->assertSame(['a' => 'trim'], $pipeline->getOperations());
-        $this->assertTrue($pipeline->hasOperation('a'));
-
-        // Vérifie que setOperation() modifie l'opération indiquée
-        $pipeline->setOperation('a', 'chop');
-        $this->assertSame('chop', $pipeline->getOperation('a'));
-        $this->assertSame(['a' => 'chop'], $pipeline->getOperations());
     }
 
     /**
@@ -150,11 +143,6 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         $pipeline->appendOperation('ucfirst');
         $pipeline->appendOperation('md5');
         $this->assertSame([0 => 'trim', 1 => 'ucfirst', 2 => 'md5'], $pipeline->getOperations());
-
-        // Si on supprime une opération, la clé n'est pas réutilisée
-        $pipeline->removeOperation(0);
-        $pipeline->appendOperation('strrev');
-        $this->assertSame([1 => 'ucfirst', 2 => 'md5', 3 => 'strrev'], $pipeline->getOperations());
     }
 
     /**
@@ -165,7 +153,8 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
      */
     public function testAppendDuplicateKey()
     {
-        $pipeline = new StandardPipeline(['a' => 'trim']);
+        $pipeline = new StandardPipeline();
+        $pipeline->appendOperation('trim', 'a');
         $pipeline->appendOperation('md5', 'a');
     }
 
@@ -199,11 +188,6 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         $pipeline->prependOperation('ucfirst');
         $pipeline->prependOperation('trim');
         $this->assertSame([2 => 'trim', 1 => 'ucfirst', 0 => 'md5'], $pipeline->getOperations());
-
-        // Si on supprime une opération, la clé n'est pas réutilisée
-        $pipeline->removeOperation(0);
-        $pipeline->prependOperation('strrev');
-        $this->assertSame([3 => 'strrev', 2 => 'trim', 1 => 'ucfirst'], $pipeline->getOperations());
     }
 
     /**
@@ -214,7 +198,8 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
      */
     public function testPrependDuplicateKey()
     {
-        $pipeline = new StandardPipeline(['a' => 'trim']);
+        $pipeline = new StandardPipeline();
+        $pipeline->appendOperation('trim', 'a');
         $pipeline->prependOperation('md5', 'a');
     }
 
@@ -223,10 +208,13 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
      */
     public function testPrependDuplicateKeyOrder()
     {
-        $pipeline = new StandardPipeline(['a' => 'trim', 'b' => 'md5']);
+        $pipeline = new StandardPipeline();
+        $pipeline->appendOperation('trim', 'a');
+        $pipeline->appendOperation('md5', 'b');
+
         try {
             // en interne, prepend fait un array_reverse
-            $pipeline->prependOperation('md5', 'a');
+            $pipeline->prependOperation('md5', 'a'); // duplicate key
         } catch (InvalidArgumentException $e) {
             // une exception a été générée, vérifie que l'ordre des opérations est toujours bon
             $this->assertSame(['a' => 'trim', 'b' => 'md5'], $pipeline->getOperations());
@@ -245,7 +233,7 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
      */
     public function testGetOperationInvalidKey()
     {
-        $pipeline = new StandardPipeline(['a' => 'trim']);
+        $pipeline = new StandardPipeline();
         $pipeline->getOperation('b');
     }
 
@@ -255,36 +243,39 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
     public function testProcess()
     {
         // crée un pipeline qui teste à peu près tout : générateurs, transformeurs, filtres, etc.
-        $pipeline = new StandardPipeline([
-            // op1 (generator) : génère deux items pour chaque item reçu (exemple : 'a' => ['a1', 'a2'])
-            'op1' => function ($item) {
-                yield $item . '1';
-                yield $item . '2';
-            },
+        $pipeline = new StandardPipeline();
 
-            // op2 (transformer) : met l'item en tout maju (exemple : 'a1' => 'A1')
-            'op2' => 'strtoupper',
+        // op1 (generator) : génère deux items pour chaque item reçu (exemple : 'a' => ['a1', 'a2'])
+        $pipeline->appendOperation(function ($item) {
+            yield $item . '1';
+            yield $item . '2';
+        });
 
-            // op3 (transformer) : dédouble l'item (exemple : 'A1' => 'A1A1')
-            'op3' => function ($item) {
-                return $item . $item;
-            },
+        // op2 (transformer) : met l'item en tout maju (exemple : 'a1' => 'A1')
+        $pipeline->appendOperation('strtoupper');
 
-            // op4 (pipeline in pipeline) : propercase (exemple 'A1A1' => 'a1a1' => 'A1a1')
-            'op4' => new StandardPipeline(['strtolower', 'ucfirst']),
+        // op3 (transformer) : dédouble l'item (exemple : 'A1' => 'A1A1')
+        $pipeline->appendOperation(function ($item) {
+            return $item . $item;
+        });
 
-            // op5 (filter) : supprime l'item 'B1b1'
-            'op5' => function ($item) {
-                return $item === 'B1b1' ? null : $item;
-            },
+        // op4 (pipeline in pipeline) : propercase (exemple 'A1A1' => 'a1a1' => 'A1a1')
+        $inner = new StandardPipeline();
+        $inner->appendOperation('strtolower');
+        $inner->appendOperation('ucfirst');
+        $pipeline->appendOperation($inner);
 
-            // op6 (filter) : yield tous les items, sauf 'A1a1'
-            'op6' => function ($item) {
-                if ($item !== 'A1a1') {
-                    yield $item;
-                }
+        // op5 (filter) : supprime l'item 'B1b1'
+        $pipeline->appendOperation(function ($item) {
+            return $item === 'B1b1' ? null : $item;
+        });
+
+        // op6 (filter) : yield tous les items, sauf 'A1a1'
+        $pipeline->appendOperation(function ($item) {
+            if ($item !== 'A1a1') {
+                yield $item;
             }
-        ]);
+        });
 
         $input = ['a', 'b'];
         //      1               2               3                   4                   5                   6
@@ -302,11 +293,10 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
     {
         $started = false;
 
-        $pipeline = new StandardPipeline([
-            function () use (& $started) {
-                $started = true;
-            }
-        ]);
+        $pipeline = new StandardPipeline();
+        $pipeline->appendOperation(function () use (& $started) {
+            $started = true;
+        });
 
         $result = $pipeline->process(['a', 'b', 'c']);
         $this->assertFalse($started);
@@ -320,7 +310,9 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
      */
     public function testProcessWithEmptyCollection()
     {
-        $pipeline = new StandardPipeline(['trim', 'md5']);
+        $pipeline = new StandardPipeline();
+        $pipeline->appendOperation('trim');
+        $pipeline->appendOperation('md5');
 
         $result = $pipeline->process([]);
         $this->assertSame([], iterator_to_array($result));
@@ -331,13 +323,12 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
      */
     public function testProcessFilterAll()
     {
-        $pipeline = new StandardPipeline([
-            'trim',
-            'md5',
-            function () {
-                return null;
-            }
-        ]);
+        $pipeline = new StandardPipeline();
+        $pipeline->appendOperation('trim');
+        $pipeline->appendOperation('md5');
+        $pipeline->appendOperation(function () {
+            return null;
+        });
 
         $result = $pipeline->process(['a', 'b', 'c']);
         $this->assertSame([], iterator_to_array($result));

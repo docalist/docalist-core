@@ -12,44 +12,57 @@ namespace Docalist\Pipeline;
 /**
  * Interface d'un pipeline de données.
  *
- * Un pipeline de données constitue une chaine de traitements qui permet d'appliquer une suite d'opérations à une
- * collection d'items.
+ * Un {@link https://martinfowler.com/articles/collection-pipeline/ pipeline de données} constitue une chaine de
+ * traitements qui permet d'appliquer une suite d'opérations à une collection d'items.
  *
+ * <code>
  * collection initiale -> [operation 1] -> nouvelle collection -> [operation 2] -> ... -> collection finale.
+ * </code>
  *
  * Un item peut être de n'importe quel type : un scalaire (entier, chaine...), un tableau, un objet, un fichier...
  *
- * Une collection est simplement un Iterable, c'est-à dire soit un tableau soit un objet qui implémente
- * l'interface Traversable (un itérateur ou un générateur).
+ * Une collection est une liste d'items : c'est un {@link http://php.net/language.types.iterable Iterable},
+ * c'est-à dire un tableau ou un objet qui implémente l'interface {@link http://php.net/Traversable Traversable}
+ * (un {@link http://php.net/class.iterator itérateur} ou un {@link http://php.net/language.generators générateur}).
  *
- * Une opération est simplement un callable : il peut s'agir d'une fonction nommée, d'une fonction anonyme, d'une
- * méthode statique de classe, d'une méthode d'une instance, d'un objet disposant d'une méthode __invoke(), etc.
- * Dans tous les cas, l'opération prend en paramètre un item à traiter et retourne 0, 1 ou plusieurs items.
+ * Une opération (un traitement) est simplement un {@link http://php.net/language.types.callable callable} :
+ * il peut s'agir d'une fonction nommée, d'une fonction anonyme, d'une méthode statique de classe,
+ * d'une méthode d'une instance, ou d'un objet disposant d'une méthode
+ * {@link http://php.net/language.oop5.magic#object.invoke __invoke()}.
  *
- * Il existe plusieurs types d'opérations :
+ * Dans tous les cas, l'opération prend en paramètre un item à traiter (généré par l'opération précédente du pipeline)
+ * et retourne 0, 1 ou plusieurs items :
+ *
+ * <code>
+ *     function ($item) : null|item|Generator;
+ * </code>
+ *
+ * Selon le traitement effectué, les opérations peuvent être classées en plusieurs catégoriées :
  *
  * - transformer : une transformation applique un traitement sur l'item reçu en paramètre et retourne l'item modifié.
  * - filter : un filtre permet de supprimer certains items de la chaine de traitement. Il effectue un test et il
  *   retourne soit null, soit l'item transmis en paramètre.
  * - generator : un générateur permet de générer de nouveaux items à traiter. Au lieu de retourner un item unique,
- *   il retourne un iterable contenant de nouveaux items.
- * - observer : un observateur se contente de regarder ce qui se passe : par exemple, il met à jour des compteurs ou
- *   fait des stats mais il retourne tels quels les items qu'on lui passe en paramètre.
+ *   il retourne un générateur qui produit de nouveaux items.
+ * - observer : un observateur se contente de regarder ce qui se passe (par exemple, il met à jour des compteurs ou
+ *   fait des stats) mais il retourne tels quels les items qu'on lui passe en paramètre.
+ * - ou une combinaison de tout ça.
  *
- * Lorsque le pipeline est exécuté, il prend en paramètre un Iterable contenant les items à traiter. Pour chacun des
- * items, il applique séquentiellement chacune des opérations demandées en fournissant à chaque opération les items
- * générés par l'opération précédente et se charge de supprimer les items qui ont été filtrés et d'injecter dans le
- * process les nouveaux items générés. Une fois que tous les items ont été traités, il retourne le résultat obtenu.
+ * Lorsque le pipeline est exécuté, il prend en paramètre un {@link http://php.net/language.types.iterable Iterable}
+ * contenant les items à traiter. Pour chacun des items, il applique séquentiellement chacune des opérations demandées
+ * en fournissant à chaque opération les items générés par l'opération précédente et se charge de supprimer les items
+ * qui ont été filtrés et d'injecter dans le process les nouveaux items générés. Une fois que tous les items ont été
+ * traités, il retourne le résultat obtenu.
  *
- * Sur le fond, un pipeline peut être vu comme une double boucle : une première boucle pour les itérer sur les
- * items à traiter puis uen boucle imbriquée pour itérer sur les opérations à effectuer sur chaque item.
+ * Sur le fond, un pipeline peut être vu comme une double boucle : une première boucle pour itérer sur les
+ * items à traiter puis une boucle imbriquée pour itérer sur les opérations à effectuer sur chaque item.
  *
  * L'intérêt du pipeline, c'est qu'il permet de faire la même chose mais sans avoir à charger la totalité des items
  * en mémoire (laziness). Dans l'implémentation standard, ce sont des générateurs qui sont utilisés et les items sont
- * traités un par un lorsque la collection intiale est itérée.
+ * traités un par un lorsque la collection initiale est itérée.
  *
  * Enfin, un pipeline permet de découpler plus facilement les traitements effectués par une chaine de traitement car
- * chaque opération peut être testée indépendement.
+ * chaque opération peut être testée indépendement. Le pipeline peut alors être vu comme une composition de fonctions.
  *
  * @see https://martinfowler.com/articles/collection-pipeline/
  *
@@ -57,22 +70,6 @@ namespace Docalist\Pipeline;
  */
 interface Pipeline
 {
-    /**
-     * Modifie la liste des opérations qui composent le pipeline.
-     *
-     * @param callable[] $operations Un tableau d'éléments pour lesquels la fonction php is_callable() retourne true.
-     * Les clés du tableau passé en paramètre sont utilisées comme identifiants pour les opérations du pipeline et
-     * peuvent ensuite être utilisées pour appeler getOperation() removeOperation() et similaires.
-     */
-    public function setOperations(array $operations): void;
-
-    /**
-     * Retourne la liste des opérations qui composent le pipeline.
-     *
-     * @return callable[]
-     */
-    public function getOperations(): array;
-
     /**
      * Ajoute une opération à la fin du pipeline.
      *
@@ -116,23 +113,11 @@ interface Pipeline
     public function getOperation($key): callable;
 
     /**
-     * Modifie une opération existante.
+     * Retourne la liste des opérations qui composent le pipeline.
      *
-     * @param int|string $key   Clé de l'opération à modifier.
-     * @param callable          $operation  Nouvelle opération associée à cette clé.
-     *
-     * @throws InvalidArgumentException Si le pipeline ne contient aucune opération ayant la clé indiquée.
+     * @return callable[]
      */
-    public function setOperation($key, callable $operation): void;
-
-    /**
-     * Supprime une opération du pipeline.
-     *
-     * @param int|string $key Clé de l'opération à supprimer.
-     *
-     * @throws InvalidArgumentException Si le pipeline ne contient aucune opération ayant la clé indiquée.
-     */
-    public function removeOperation($key): void;
+    public function getOperations(): array;
 
     /**
      * Traite les items passés en paramètre.
