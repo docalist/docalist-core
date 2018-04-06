@@ -35,6 +35,11 @@ class Text extends Scalar
         return $this;
     }
 
+    public function filterEmpty($strict = true)
+    {
+        return ($this->phpValue === '');
+    }
+
     public function getAvailableEditors()
     {
         return [
