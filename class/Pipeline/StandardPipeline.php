@@ -37,13 +37,11 @@ class StandardPipeline implements Pipeline
         $this->setOperations($operations);
     }
 
-    public function setOperations(array $operations): Pipeline
+    public function setOperations(array $operations): void
     {
         foreach ($operations as $key => $operation) {
             $this->appendOperation($operation, $key);
         }
-
-        return $this;
     }
 
     public function getOperations(): array
@@ -51,23 +49,21 @@ class StandardPipeline implements Pipeline
         return $this->operations;
     }
 
-    public function appendOperation(callable $operation, $key = null): Pipeline
+    public function appendOperation(callable $operation, $key = null): void
     {
         if (is_null($key)) {
             $this->operations[] = $operation;
 
-            return $this;
+            return;
         }
 
         if (isset($this->operations[$key])) {
             throw new InvalidArgumentException('An operation with "' . $key . '" already exists');
         }
         $this->operations[$key] = $operation;
-
-        return $this;
     }
 
-    public function prependOperation(callable $operation, $key = null): Pipeline
+    public function prependOperation(callable $operation, $key = null): void
     {
         $this->operations = array_reverse($this->operations, true);
         try {
@@ -77,8 +73,6 @@ class StandardPipeline implements Pipeline
             throw $exception;
         }
         $this->operations = array_reverse($this->operations, true);
-
-        return $this;
     }
 
     public function hasOperation($key): bool
@@ -97,28 +91,22 @@ class StandardPipeline implements Pipeline
         return $this->operations[$key];
     }
 
-    public function setOperation($key, callable $operation): callable
+    public function setOperation($key, callable $operation): void
     {
         // Génère une exception si l'opération indiquée n'existe pas
         $this->getOperation($key);
 
         // Modifie l'opération associée à la clé indiquée
         $this->operations[$key] = $operation;
-
-        // Ok
-        return $this;
     }
 
-    public function removeOperation($key): Pipeline
+    public function removeOperation($key): void
     {
         // Génère une exception si l'opération indiquée n'existe pas
         $this->getOperation($key);
 
         // Supprime l'opération
         unset($this->operations[$key]);
-
-        // Ok
-        return $this;
     }
 
     public function process(Iterable $items): Iterable

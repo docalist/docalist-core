@@ -94,8 +94,8 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
     {
         $pipeline = new StandardPipeline();
 
-        // Vérifie que setOperations() retourne $this et que getOperations() retourne les opérations stockées
-        $this->assertSame($pipeline, $pipeline->setOperations(['a' => 'trim', 'b' => 'md5']));
+        // Vérifie que getOperations() retourne les opérations stockées par setOperations()
+        $pipeline->setOperations(['a' => 'trim', 'b' => 'md5']);
         $this->assertSame(['a' => 'trim', 'b' => 'md5'], $pipeline->getOperations());
 
         // Teste hasOperation()
@@ -108,14 +108,14 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         $this->assertSame('trim', $pipeline->getOperation('a'));
         $this->assertSame('md5', $pipeline->getOperation('b'));
 
-        // Vérifie que removeOperation() retourne $this et que l'opération a bien été supprimée
-        $this->assertSame($pipeline, $pipeline->removeOperation('b'));
+        // Vérifie que removeOperation() supprime les opérations
+        $pipeline->removeOperation('b');
         $this->assertFalse($pipeline->hasOperation('b'));
         $this->assertSame(['a' => 'trim'], $pipeline->getOperations());
         $this->assertTrue($pipeline->hasOperation('a'));
 
-        // Vérifie que setOperation() retourn $this et que ça modifie l'opération indiquée
-        $this->assertSame($pipeline, $pipeline->setOperation('a', 'chop'));
+        // Vérifie que setOperation() modifie l'opération indiquée
+        $pipeline->setOperation('a', 'chop');
         $this->assertSame('chop', $pipeline->getOperation('a'));
         $this->assertSame(['a' => 'chop'], $pipeline->getOperations());
     }
@@ -128,13 +128,13 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         $pipeline = new StandardPipeline();
 
         // Append ajoute les opérations à la fin de la liste, tient compte de la clé indiquée et retourn $this
-        $this->assertSame($pipeline, $pipeline->appendOperation('trim', 'a'));
-        $this->assertSame($pipeline, $pipeline->appendOperation('ucfirst', 'b'));
-        $this->assertSame($pipeline, $pipeline->appendOperation('md5', 'c'));
+        $pipeline->appendOperation('trim', 'a');
+        $pipeline->appendOperation('ucfirst', 'b');
+        $pipeline->appendOperation('md5', 'c');
         $this->assertSame(['a' => 'trim', 'b' => 'ucfirst', 'c' => 'md5'], $pipeline->getOperations());
 
         // Si on ajoute une opération sans clé, le premier numéro attribué est zéro
-        $this->assertSame($pipeline, $pipeline->appendOperation('strrev'));
+        $pipeline->appendOperation('strrev');
         $this->assertSame(['a' => 'trim', 'b' => 'ucfirst', 'c' => 'md5', 0 => 'strrev'], $pipeline->getOperations());
     }
 
@@ -146,14 +146,14 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         $pipeline = new StandardPipeline();
 
         // Append ajoute les opérations à la fin de la liste et numérote séquentiellement à partir de zéro
-        $this->assertSame($pipeline, $pipeline->appendOperation('trim'));
-        $this->assertSame($pipeline, $pipeline->appendOperation('ucfirst'));
-        $this->assertSame($pipeline, $pipeline->appendOperation('md5'));
+        $pipeline->appendOperation('trim');
+        $pipeline->appendOperation('ucfirst');
+        $pipeline->appendOperation('md5');
         $this->assertSame([0 => 'trim', 1 => 'ucfirst', 2 => 'md5'], $pipeline->getOperations());
 
         // Si on supprime une opération, la clé n'est pas réutilisée
         $pipeline->removeOperation(0);
-        $this->assertSame($pipeline, $pipeline->appendOperation('strrev'));
+        $pipeline->appendOperation('strrev');
         $this->assertSame([1 => 'ucfirst', 2 => 'md5', 3 => 'strrev'], $pipeline->getOperations());
     }
 
@@ -177,13 +177,13 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         $pipeline = new StandardPipeline();
 
         // Prepend ajoute les opérations au début de la liste et tient compte de la clé indiquée
-        $this->assertSame($pipeline, $pipeline->prependOperation('md5', 'a'));
-        $this->assertSame($pipeline, $pipeline->prependOperation('ucfirst', 'b'));
-        $this->assertSame($pipeline, $pipeline->prependOperation('trim', 'c'));
+        $pipeline->prependOperation('md5', 'a');
+        $pipeline->prependOperation('ucfirst', 'b');
+        $pipeline->prependOperation('trim', 'c');
         $this->assertSame(['c' => 'trim', 'b' => 'ucfirst', 'a' => 'md5'], $pipeline->getOperations());
 
         // Si on ajoute une opération sans clé, le premier numéro attribué est zéro
-        $this->assertSame($pipeline, $pipeline->prependOperation('strrev'));
+        $pipeline->prependOperation('strrev');
         $this->assertSame([0 => 'strrev', 'c' => 'trim', 'b' => 'ucfirst', 'a' => 'md5'], $pipeline->getOperations());
     }
 
@@ -195,14 +195,14 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
         $pipeline = new StandardPipeline();
 
         // Prepend ajoute les opérations au début de la liste et numérote séquentiellement à partir de zéro
-        $this->assertSame($pipeline, $pipeline->prependOperation('md5'));
-        $this->assertSame($pipeline, $pipeline->prependOperation('ucfirst'));
-        $this->assertSame($pipeline, $pipeline->prependOperation('trim'));
+        $pipeline->prependOperation('md5');
+        $pipeline->prependOperation('ucfirst');
+        $pipeline->prependOperation('trim');
         $this->assertSame([2 => 'trim', 1 => 'ucfirst', 0 => 'md5'], $pipeline->getOperations());
 
         // Si on supprime une opération, la clé n'est pas réutilisée
         $pipeline->removeOperation(0);
-        $this->assertSame($pipeline, $pipeline->prependOperation('strrev'));
+        $pipeline->prependOperation('strrev');
         $this->assertSame([3 => 'strrev', 2 => 'trim', 1 => 'ucfirst'], $pipeline->getOperations());
     }
 

@@ -62,11 +62,9 @@ interface Pipeline
      *
      * @param callable[] $operations Un tableau d'éléments pour lesquels la fonction php is_callable() retourne true.
      * Les clés du tableau passé en paramètre sont utilisées comme identifiants pour les opérations du pipeline et
-     * peuvent ensuite être utilisées pour appeler getOperation() ou removeOperation().
-     *
-     * @return self
+     * peuvent ensuite être utilisées pour appeler getOperation() removeOperation() et similaires.
      */
-    public function setOperations(array $operations): Pipeline;
+    public function setOperations(array $operations): void;
 
     /**
      * Retourne la liste des opérations qui composent le pipeline.
@@ -83,10 +81,8 @@ interface Pipeline
      *                                      Par défaut (null), un numéro unique est affecté à l'opération.
      *
      * @throws InvalidArgumentException Si une clé a été indiquée et qu'il existe déjà une opération avec cette clé.
-     *
-     * @return self
      */
-    public function appendOperation(callable $operation, $key = null): Pipeline;
+    public function appendOperation(callable $operation, $key = null): void;
 
     /**
      * Ajoute une opération au début du pipeline.
@@ -96,10 +92,8 @@ interface Pipeline
      *                                      Par défaut (null), un numéro unique est affecté à l'opération.
      *
      * @throws InvalidArgumentException Si une clé a été indiquée et qu'il existe déjà une opération avec cette clé.
-     *
-     * @return self
      */
-    public function prependOperation(callable $operation, $key = null): Pipeline;
+    public function prependOperation(callable $operation, $key = null): void;
 
     /**
      * Teste si le pipeline contient une opération ayant la clé indiquée.
@@ -128,10 +122,8 @@ interface Pipeline
      * @param callable          $operation  Nouvelle opération associée à cette clé.
      *
      * @throws InvalidArgumentException Si le pipeline ne contient aucune opération ayant la clé indiquée.
-     *
-     * @return callable
      */
-    public function setOperation($key, callable $operation): callable;
+    public function setOperation($key, callable $operation): void;
 
     /**
      * Supprime une opération du pipeline.
@@ -139,10 +131,8 @@ interface Pipeline
      * @param int|string $key Clé de l'opération à supprimer.
      *
      * @throws InvalidArgumentException Si le pipeline ne contient aucune opération ayant la clé indiquée.
-     *
-     * @return self
      */
-    public function removeOperation($key): Pipeline;
+    public function removeOperation($key): void;
 
     /**
      * Traite les items passés en paramètre.
