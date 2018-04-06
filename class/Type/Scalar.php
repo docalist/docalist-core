@@ -39,4 +39,9 @@ class Scalar extends Any
     {
         return (string) $this->phpValue;
     }
+
+    public function filterEmpty($strict = true)
+    {
+        return false;
+    }
 }
