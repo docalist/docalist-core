@@ -199,6 +199,13 @@ class JsonReader
     protected $col;
 
     /**
+     * Indique que getObject() a été appellée avec assoc=true.
+     *
+     * @var bool
+     */
+    protected $assoc = false;
+
+    /**
      * Table de décision utilisée par isValue() et readValue() pour déterminer la méthode à appeller en
      * fonction du caractère en cours.
      *
@@ -641,6 +648,8 @@ class JsonReader
         // Début de l'objet
         $this->getChar('{');
 
+        ($assoc === true) && $this->assoc = true ;
+
         // Lit toutes les propriétés de l'objet
         $result = [];
         while (!$this->size || $this->buffer[$this->position] !== '}') {
@@ -657,8 +666,12 @@ class JsonReader
         // Fin de l'objet
         $this->getChar('}');
 
+        ($this->assoc === false) && $result = (object) $result;
+
+        ($assoc === true) && $this->assoc = false;
+
         // Ok
-        return $assoc ? $result : (object) $result;
+        return $result;
     }
 
     /**
