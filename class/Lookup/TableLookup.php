@@ -115,6 +115,9 @@ class TableLookup implements LookupInterface
         // Construit le tableau résultat, en respectant l'ordre initial des données
         $codes = [];
         foreach ($data as $code) {
+            if (empty($code)) {
+                continue;
+            }
             $codes[$code] = isset($results[$code]) ? $results[$code] : __('Invalid: ', 'docalist-core') . $code;
         }
 
