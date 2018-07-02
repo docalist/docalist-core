@@ -73,6 +73,7 @@ abstract class ListEntry extends Text
         switch ($editor) {
             case 'select':
                 $form = new Select();
+                $form->setFirstOption(false);
                 break;
 
             case 'list-inline':

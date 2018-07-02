@@ -113,6 +113,9 @@ class TableEntry extends ListEntry
                 $form = new EntryPicker();
                 break;
 
+            case 'select': // Par défaut ListEntry mets firstEntry à false, pour les tables on le veut à true
+                return parent::getEditorForm($options)->setFirstOption(true);
+
             default:
                 return parent::getEditorForm($options);
         }
