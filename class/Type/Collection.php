@@ -114,12 +114,14 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Si value n'est pas du bon type, on l'instancie
         if (! $value instanceof $type) {
-            $value = new $type($value, $this->schema);
+            $value = new $type($value, $this->schema); /** @var Any $value */
         }
 
-        // Si c'est une collection indexée, ignore offset et utilise le champ indiqué comme clé
+        // Si c'est une collection indexée, ignore offset et indexe les éléments de la collection
+        // $key contient soit le nom d'un sous-champ (composite) soit true pour indexer les valeurs
         if ($key = $this->schema->key()) {
-            $this->phpValue[$value->$key()] = $value;
+            $key = ($key === true) ? $value->getPhpValue() : $value->$key();
+            $this->phpValue[$key] = $value;
         }
 
         // Collection sans clés
@@ -237,7 +239,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         if ($this->schema && $key = $this->schema->key()) {
             $result = [];
             foreach ($this->phpValue as $item) {
-                $result[$item->$key->getPhpValue()] = $item;
+                $key = ($key === true) ? $value->getPhpValue() : $value->$key();
+                $result[$key] = $item;
             }
             $this->phpValue = $result;
 
