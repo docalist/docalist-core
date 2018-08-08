@@ -63,6 +63,7 @@ class Autoloader
     public function add($namespace, $path)
     {
         // Vérifie que ce namespace n'a pas déjà été enregistré
+        $path = strtr($path, '/', DIRECTORY_SEPARATOR);
         if (isset($this->namespaces[$namespace]) && $this->namespaces[$namespace] !== $path) {
             throw new InvalidArgumentException(sprintf(
                 'Namespace "%s" is already registered with a different path',
