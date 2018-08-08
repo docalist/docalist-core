@@ -3,6 +3,11 @@
     font-weight: bold;
 }
 
+/* Réduit un peu la largeur des th (label) dans le formulaire (200px par défaut) */
+.form-table th {
+    width: 120px;
+    min-width: 120px;
+}
 
 /* Nouveau style field-table */
 .field-table {
