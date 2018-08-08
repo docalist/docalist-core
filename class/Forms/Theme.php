@@ -106,7 +106,7 @@ class Theme extends Html
 
         // Thème par défaut
         if (empty($name) || $name === 'default') {
-            $name = apply_filters('docalist_forms_get_default_theme', 'base');
+            $name = apply_filters('docalist_forms_get_default_theme', 'wordpress');
         }
 
         // Thème qu'on ne connaît pas encore
