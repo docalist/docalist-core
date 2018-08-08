@@ -212,3 +212,14 @@ ul.radiolist li.optgroup > ul
 .typed-large-text>div + div {
     margin-top: 0.5em;
 }
+
+/*
+    Autosize pour CodeMirror. 
+    
+    Le contrôle CodeEditor demande le thème "autosize" à CodeMirror, ce qui génére la classe .cm-s-autosize.
+    Dans cette classe, on définit height à auto pour activer le module Autoresize de CodeMirror : 
+    https://codemirror.net/demo/resize.html 
+*/
+.cm-s-autosize {
+    height: auto;
+}
