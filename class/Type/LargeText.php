@@ -12,6 +12,7 @@ namespace Docalist\Type;
 use Docalist\Forms\Textarea;
 use Docalist\Forms\WPEditor;
 use InvalidArgumentException;
+use Docalist\Forms\CodeEditor;
 
 /**
  * Un bloc de texte multiligne contenant ou non du code html.
@@ -26,6 +27,8 @@ class LargeText extends Text
             'textarea'       => __('Zone de texte sur plusieurs lignes', 'docalist-core'),
             'wpeditor'       => __('Editeur WordPress', 'docalist-core'),
             'wpeditor-teeny' => __('Editeur WordPress simplifié', 'docalist-core'),
+            'csseditor'      => __('Editeur de code CSS', 'docalist-core'),
+            'htmleditor'     => __('Editeur de code HTML', 'docalist-core'),
         ];
     }
 
@@ -36,7 +39,7 @@ class LargeText extends Text
         switch ($editor) {
             case 'textarea':
                 $form = new Textarea();
-                $css = 'autosize';
+                $css = 'autosize large-text';
                 break;
 
             case 'wpeditor':
@@ -46,6 +49,23 @@ class LargeText extends Text
             case 'wpeditor-teeny':
                 $form = new WPEditor();
                 $form->setTeeny();
+                break;
+
+            case 'csseditor':
+                $form = new CodeEditor();
+                $form->setOptions(['type' => 'text/css']);
+                $css = 'autosize large-text'; // comme textarea si l'utilisateur a désactivé codemirror
+                break;
+
+            case 'htmleditor':
+                $form = new CodeEditor();
+                $form->setOptions([
+                    'type' => 'text/html',
+                    'codemirror' => [
+                        'matchTags' => false,
+                    ]
+                ]);
+                $css = 'autosize large-text'; // comme textarea si l'utilisateur a désactivé codemirror
                 break;
 
             default:
