@@ -11,6 +11,7 @@ namespace Docalist\Type;
 
 use Docalist\Type\ListEntry;
 use WP_Post;
+use Docalist\Type\Exception\InvalidTypeException;
 
 /**
  * Un champ de type ListEntry permettant de sélectionner une page WordPress existante.
