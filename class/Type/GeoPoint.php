@@ -10,8 +10,6 @@
 namespace Docalist\Type;
 
 use Docalist\Type\Any;
-use Docalist\Forms\Input;
-use Docalist\Forms\Hidden;
 use Docalist\Forms\Div;
 use InvalidArgumentException;
 use Docalist\Forms\Table;
