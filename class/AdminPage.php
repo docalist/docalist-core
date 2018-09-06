@@ -12,6 +12,7 @@ namespace Docalist;
 use Docalist\Http\Response;
 use Docalist\Http\TextResponse;
 use Docalist\Http\CallbackResponse;
+use Docalist\Http\ViewResponse;
 use ReflectionObject;
 use ReflectionMethod;
 use InvalidArgumentException;
