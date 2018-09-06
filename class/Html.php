@@ -394,7 +394,7 @@ class Html
      * Teste si l'attribut passé en paramètre peut être supprimé lorsque sa valeur est vide.
      *
      * @param string $name  Le nom de l'attribut à tester.
-     * @param scalar $value La valeur de l'attribut.
+     * @param string $value La valeur de l'attribut.
      *
      * @return bool
      */
