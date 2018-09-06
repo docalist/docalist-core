@@ -13,7 +13,6 @@ use Docalist\Type\ListEntry;
 use Docalist\Schema\Schema;
 use Docalist\Table\TableManager;
 use Docalist\Forms\EntryPicker;
-use Docalist\Forms\Select;
 use InvalidArgumentException;
 
 /**
