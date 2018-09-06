@@ -39,7 +39,7 @@ define('WP_PLUGIN_DIR', realpath(__DIR__ . '/../../../../'));
     }
 
     // Charge le formulaire
-    $form = require $path; /** @var Form $form */
+    $form = require $path; /* @var Form $form */
     $source = file_get_contents($path);
 
     // Prépare le rendu du formulaire, fait le bind
