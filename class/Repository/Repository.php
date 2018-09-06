@@ -60,7 +60,7 @@ abstract class Repository
      * SettingsRepository n'accepte que des options de moins de 64 caractères,
      * etc.
      *
-     * @param scalar $id L'identifiant à tester.
+     * @param int|string $id L'identifiant à tester.
      *
      * @throws BadIdException Si l'identifiant est invalide.
      */
@@ -78,7 +78,7 @@ abstract class Repository
     /**
      * Teste si le dépôt contient l'entité indiquée.
      *
-     * @param scalar $id L'identifiant de l'entité recherchée
+     * @param int|string $id L'identifiant de l'entité recherchée
      *
      * @eturn bool
      */
@@ -87,7 +87,7 @@ abstract class Repository
     /**
      * Charge une entité depuis le dépôt.
      *
-     * @param scalar $id L'identifiant de l'entité à charger.
+     * @param int|string $id L'identifiant de l'entité à charger.
      *
      * @return Entity Retourne l'entité.
      *
@@ -107,7 +107,7 @@ abstract class Repository
     /**
      * Retourne les données brutes d'un entité stockée dans le dépôt.
      *
-     * @param scalar $id L'identifiant de l'entité à charger.
+     * @param int|string $id L'identifiant de l'entité à charger.
      *
      * @return array
      *
@@ -130,7 +130,7 @@ abstract class Repository
     /**
      * Charge les données brutes d'une entité.
      *
-     * @param scalar $id L'identifiant de l'identité à charger (déjà validé).
+     * @param int|string $id L'identifiant de l'identité à charger (déjà validé).
      *
      * @return array Les données brutes, non décodées, de l'entité.
      */
@@ -177,11 +177,11 @@ abstract class Repository
     /**
      * Enregistre les données brutes d'une entité.
      *
-     * @param scalar $id L'identifiant de l'identité (déjà validé).
+     * @param int|string $id L'identifiant de l'identité (déjà validé).
      *
      * @param mixed $data Les données brutes, déjà encodées, de l'entité.
      *
-     * @return scalar Retourne l'id de l'entité (soit l'id existant si l'entité
+     * @return int|string Retourne l'id de l'entité (soit l'id existant si l'entité
      * avait déjà un identifiant, soit l'id alloué si l'entité n'existait pas
      * déjà).
      */
@@ -190,7 +190,7 @@ abstract class Repository
     /**
      * Supprime une entité du dépôt.
      *
-     * @param scalar $id L'identifiant de l'entité à détruire.
+     * @param int|string $id L'identifiant de l'entité à détruire.
      *
      * @return self $this
      *
@@ -216,7 +216,7 @@ abstract class Repository
     /**
      * Supprime les données d'une entité.
      *
-     * @param scalar $id
+     * @param int|string $id
      */
     abstract protected function deleteData($id);
 
@@ -265,7 +265,7 @@ abstract class Repository
      * L'implémentation par défaut attend des données encodées en JSON.
      *
      * @param mixed $data
-     * @param scalar $id
+     * @param int|string $id
      *
      * @return array Les données décodées de l'entité.
      *
