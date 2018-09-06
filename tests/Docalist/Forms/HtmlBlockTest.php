@@ -10,14 +10,14 @@
 namespace Docalist\Tests\Forms;
 
 use WP_UnitTestCase;
-use Docalist\Forms\Html;
+use Docalist\Forms\HtmlBlock;
 use Docalist\Forms\Container;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class HtmlTest extends WP_UnitTestCase
+class HtmlBlockTest extends WP_UnitTestCase
 {
     /**
      * Crée un containeur (mock).
@@ -31,36 +31,36 @@ class HtmlTest extends WP_UnitTestCase
 
     public function testGetSetContent()
     {
-        $html = new Html();
+        $html = new HtmlBlock();
         $this->assertNull($html->getParent());
         $this->assertNull($html->getContent());
 
-        $html = new Html('test');
+        $html = new HtmlBlock('test');
         $this->assertNull($html->getParent());
         $this->assertSame('test', $html->getContent());
 
-        $html = new Html('');
+        $html = new HtmlBlock('');
         $this->assertNull($html->getParent());
         $this->assertNull($html->getContent()); // la chaine vide a été transformée en null
 
-        $html = new Html(false);
+        $html = new HtmlBlock(false);
         $this->assertNull($html->getParent());
         $this->assertNull($html->getContent()); // false a été transformée en null
 
         $parent = $this->getContainer('parent');
-        $html = new Html('test', $parent);
+        $html = new HtmlBlock('test', $parent);
         $this->assertSame('test', $html->getContent());
         $this->assertSame($parent, $html->getParent());
 
         $parent = $this->getContainer('parent');
-        $html = new Html(null, $parent);
+        $html = new HtmlBlock(null, $parent);
         $this->assertNull($html->getContent());
         $this->assertSame($parent, $html->getParent());
     }
 
     public function testDisplay()
     {
-        $html = new Html('<p>Hello!</p>');
+        $html = new HtmlBlock('<p>Hello!</p>');
         $this->assertSame($html->getContent(), $html->render());
     }
 }
