@@ -494,12 +494,26 @@ abstract class Controller
 
         return $result;
     }
+
+    /**
+     * Retourne l'url de base du contrôleur.
+     *
+     * @return string
+     *
+     * @deprecated Remplacée par getBaseUrl().
+     */
+    protected function baseUrl()
+    {
+        _deprecated_function(__METHOD__, '0.14', 'getBaseUrl');
+        return $this->getBaseUrl();
+    }
+
     /**
      * Retourne l'url de base du contrôleur.
      *
      * @return string
      */
-    protected function baseUrl()
+    public function getBaseUrl()
     {
         return add_query_arg(
             [$this->controllerParameter => $this->getID()],
