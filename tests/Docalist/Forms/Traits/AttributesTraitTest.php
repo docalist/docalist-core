@@ -27,7 +27,7 @@ class AttributesTraitTest extends WP_UnitTestCase
      */
     protected function getTrait()
     {
-        return $this->getMockForTrait('Docalist\Forms\Traits\AttributesTrait', func_get_args());
+        return $this->getMockForTrait(AttributesTrait::class, func_get_args());
     }
 
     public function testHasGetSetAttributes()
@@ -187,12 +187,12 @@ class AttributesTraitTest extends WP_UnitTestCase
 
     /**
      * Vérifie qu'une exception est générée si la valeur de l'attribut n'est pas un scalaire.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid value
      */
     public function testInvalidAttributeName()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value');
+
         $this->getTrait()->setAttribute('class', []);
     }
 }
