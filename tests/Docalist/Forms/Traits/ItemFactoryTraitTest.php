@@ -56,7 +56,7 @@ class ItemFactoryTraitTest extends WP_UnitTestCase
         $az = ['type' => 'reset'] + $a;
         return [
             ['comment'  , ['c']         , 'Comment'  , ['getContent']],
-            ['html'     , ['c']         , 'Html'     , ['getContent']],
+            ['html'     , ['c']         , 'HtmlBlock', ['getContent']],
             ['tag'      , ['t', 'c', $a], 'Tag'      , ['getTag', 'getContent', 'getAttributes', 'getTag' => 'div']],
             ['p'        , ['c', $a]     , 'Tag'      , ['getContent' , 'getAttributes', 'getTag' => 'p']],
             ['span'     , ['c', $a]     , 'Tag'      , ['getContent' , 'getAttributes', 'getTag' => 'span']],
