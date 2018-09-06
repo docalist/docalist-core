@@ -316,8 +316,6 @@ class Container extends Element implements Countable, IteratorAggregate
                     continue;
                 }
 
-                /** @var Element $item */
-
                 // Si l'élément a un nom, fait le binding sur cet élément
                 if ($name = $item->getName()) {
                     $item->bindData(isset($data[$name]) ? $data[$name] : null);
@@ -356,8 +354,6 @@ class Container extends Element implements Countable, IteratorAggregate
                 if (! $item instanceof Element) {
                     continue;
                 }
-
-                /** @var Element $item */
 
                 // Si l'élément a un nom, fait le binding sur cet élément
                 if ($name = $item->getName()) {

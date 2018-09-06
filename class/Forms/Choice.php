@@ -84,7 +84,7 @@ abstract class Choice extends Element
         if (is_string($this->options)) {
             list(, $name) = explode(':', $this->options);
 
-            $table = docalist('table-manager')->get($name); /** @var TableInterface $table */
+            $table = docalist('table-manager')->get($name); /* @var TableInterface $table */
 
             return $table->search('code,label');
         }

@@ -294,7 +294,7 @@ class Schema implements JsonSerializable
             return $this;
         }
 
-        $collection = $properties['collection']; /** @var Collection $collection */
+        $collection = $properties['collection']; /* @var Collection $collection */
         if (! is_string($collection)) {
             throw new InvalidArgumentException("Invalid 'collection': expected string, got " . gettype($collection));
         }

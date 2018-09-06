@@ -236,7 +236,7 @@ class Composite extends Any
 
     public function filterEmpty($strict = true)
     {
-        foreach ($this->phpValue as $key => $item) { /** @var Any $item */
+        foreach ($this->phpValue as $key => $item) { /* @var Any $item */
             if ($item->filterEmpty($strict)) {
                 unset($this->phpValue[$key]);
             }
@@ -335,7 +335,7 @@ class Composite extends Any
         }
 
         // Récupère le champ
-        $field = $this->phpValue[$name]; /** @var Any $field */
+        $field = $this->phpValue[$name]; /* @var Any $field */
 
         // Si aucune option n'a été indiquée pour le champ, utilise le formattage par défaut
         if (empty($options['fields'][$name])) {

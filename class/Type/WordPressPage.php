@@ -60,7 +60,7 @@ class WordPressPage extends ListEntry
     protected function getEntries()
     {
         $pages = ['…'];
-        foreach (get_pages() as $page) { /** @var WP_Post $page */
+        foreach (get_pages() as $page) { /* @var WP_Post $page */
             $pages[$page->ID] = str_repeat('   ', count($page->ancestors)) . $page->post_title;
         }
 

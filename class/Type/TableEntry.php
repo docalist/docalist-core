@@ -11,6 +11,7 @@ namespace Docalist\Type;
 
 use Docalist\Type\ListEntry;
 use Docalist\Schema\Schema;
+use Docalist\Table\TableInfo;
 use Docalist\Table\TableManager;
 use Docalist\Forms\EntryPicker;
 use InvalidArgumentException;
@@ -169,12 +170,12 @@ class TableEntry extends ListEntry
         $table = explode(':', $this->schema->table())[1];
 
         // Détermine son type
-        $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
+        $tableManager = docalist('table-manager'); /* @var TableManager $tableManager */
         $type = $tableManager->table($table)->type();
 
         // Récupère toutes les tables qui ont le même type, sauf les tables de conversion
         $tables = [];
-        foreach ($tableManager->tables($type) as $table) { /** @var TableInfo $tableInfo */
+        foreach ($tableManager->tables($type) as $table) { /* @var TableInfo $tableInfo */
             if ($table->format() !== 'conversion') {
                 $key = $table->format() . ':' . $table->name();
                 $tables[$key] = sprintf('%s (%s)', $table->label(), $table->name());

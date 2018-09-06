@@ -114,7 +114,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Si value n'est pas du bon type, on l'instancie
         if (! $value instanceof $type) {
-            $value = new $type($value, $this->schema); /** @var Any $value */
+            $value = new $type($value, $this->schema); /* @var Any $value */
         }
 
         // Si c'est une collection indexée, ignore offset et indexe les éléments de la collection
@@ -255,7 +255,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
     public function filterEmpty($strict = true)
     {
-        foreach ($this->phpValue as $key => $item) { /** @var Any $item */
+        foreach ($this->phpValue as $key => $item) { /* @var Any $item */
             if ($item->filterEmpty($strict)) {
                 unset($this->phpValue[$key]);
             }
@@ -295,10 +295,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         if ($explode) {
             // Formatte tous les items en les classant par catégorie (libellé)
             foreach ($items as $item) {
-                /** @var Categorizable $item */
+                /* @var Categorizable $item */
                 $category = $item->getCategoryLabel();
 
-                /** @var Any $item */
+                /* @var Any $item */
                 $result[$category][] = $prefix . $item->getFormattedValue($options) . $suffix;
             }
 
@@ -324,7 +324,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $truncate = $this->truncate($items, $limit);
 
         // Formatte chaque item
-        foreach ($items as $item) { /** @var Any $item */
+        foreach ($items as $item) { /* @var Any $item */
             $result[] = $prefix . $item->getFormattedValue($options) . $suffix;
         }
 
@@ -382,7 +382,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $name = $this->schema->name();
 
         // Propose l'option "vue éclatée" si le champ est catégorisable
-        if ($item instanceof Categorizable) { /** @var Categorizable $item */
+        if ($item instanceof Categorizable) { /* @var Categorizable $item */
             $form->checkbox('explode')
                 ->setLabel(__('Vue éclatée', 'docalist-core'))
                 ->setDescription(sprintf(
