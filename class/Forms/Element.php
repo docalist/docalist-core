@@ -63,14 +63,14 @@ abstract class Element extends Item
     /**
      * Les données de l'élément, initialisées par bind().
      *
-     * @var null|scalar|array
+     * @var mixed
      */
     protected $data;
 
     /**
      * Occurence en cours pour un champ répétable.
      *
-     * @var scalar
+     * @var int|string
      */
     protected $occurence;
 
@@ -370,7 +370,7 @@ abstract class Element extends Item
     /**
      * Initialise l'élément à partir des données passées en paramètre.
      *
-     * @param scalar|array|null $data
+     * @param mixed $data
      */
     protected function bindData($data)
     {
@@ -409,7 +409,7 @@ abstract class Element extends Item
     /**
      * Initialise les données de l'élément à partir des données passées en paramétre.
      *
-     * @param array|ArrayAccess|Object|Scalar $data
+     * @param mixed $data
      */
     final public function bind($data)
     {
@@ -432,7 +432,7 @@ abstract class Element extends Item
     /**
      * Retourne les données de l'élément.
      *
-     * @return scalar|array|null La méthode retourne les données qui ont été stockées lors du dernier appel
+     * @return mixed La méthode retourne les données qui ont été stockées lors du dernier appel
      * à la méthode bind(). Si bind() n'a jamais été appellée, elle retourne null.
      */
     final public function getData()
@@ -448,7 +448,7 @@ abstract class Element extends Item
      * - pour un champ répétable
      * - après que bind() a été appellé.
      *
-     * @param scalar $occurence Une des clés des données du champ.
+     * @param int|string $occurence Une des clés des données du champ.
      *
      * @return self
      */
@@ -481,7 +481,7 @@ abstract class Element extends Item
     /**
      * Retourne le numéro d'occurence du champ.
      *
-     * @return scalar
+     * @return int|string
      */
     public function getOccurence()
     {
