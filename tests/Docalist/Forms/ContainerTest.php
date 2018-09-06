@@ -9,6 +9,7 @@
  */
 namespace Docalist\Tests\Forms;
 
+use InvalidArgumentException;
 use WP_UnitTestCase;
 use Docalist\Forms\Item;
 use Docalist\Forms\Element;
@@ -67,21 +68,19 @@ class ContainerTest extends WP_UnitTestCase
 
     /**
      * Teste les références circulaires.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Circular reference
      */
     public function testAddCircular1()
     {
         $container = $this->getContainer();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Circular reference');
+
         $container->add($container);
     }
 
     /**
      * Teste les références circulaires.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Circular reference
      */
     public function testAddCircular2()
     {
@@ -91,6 +90,10 @@ class ContainerTest extends WP_UnitTestCase
 
         $container1->add($container2);
         $container2->add($container3);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Circular reference');
+
         $container3->add($container1);
     }
 
