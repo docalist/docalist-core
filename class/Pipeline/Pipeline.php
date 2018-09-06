@@ -9,6 +9,8 @@
  */
 namespace Docalist\Pipeline;
 
+use InvalidArgumentException;
+
 /**
  * Interface d'un pipeline de données.
  *
