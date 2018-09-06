@@ -536,8 +536,6 @@ class XmlReader
      * Retourne le numéro de la ligne en cours dans le fichier XML.
      *
      * @return int Le numéro de la ligne en cours ou 0 si elle ne peut pas être déterminée.
-     *
-     * @throws XmlNoFileException   S'il n'y a pas de fichier en cours.
      */
     public function getCurrentLineNumber()
     {
