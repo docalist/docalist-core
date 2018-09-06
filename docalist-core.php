@@ -10,7 +10,7 @@
  * Plugin Name: Docalist Core
  * Plugin URI:  http://docalist.org
  * Description: Docalist: socle de base.
- * Version:     0.14.0
+ * Version:     0.15
  * Author:      Daniel Ménard
  * Author URI:  http://docalist.org/
  * Text Domain: docalist-core
@@ -23,7 +23,7 @@ namespace Docalist\Core;
 /**
  * Version du plugin.
  */
-define('DOCALIST_CORE_VERSION', '0.14.0'); // Garder synchro avec la version indiquée dans l'entête
+define('DOCALIST_CORE_VERSION', '0.15'); // Garder synchro avec la version indiquée dans l'entête
 
 /**
  * Path absolu du répertoire dans lequel le plugin est installé.
