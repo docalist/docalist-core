@@ -438,7 +438,7 @@ abstract class Controller
         // Vérifie que l'utilisateur a les droits requis pour l'action
         if (! $this->canRun($action)) {
             $msg = __("Vous n'avez pas les droits requis pour faire un lien vers l'action %s.", 'docalist-biblio');
-            throw new Exception($msg, $action);
+            throw new Exception($msg);
         }
 
         // Construit la liste des paramètres de la méthode
