@@ -9,6 +9,7 @@
  */
 namespace Docalist\Tests\Forms;
 
+use InvalidArgumentException;
 use WP_UnitTestCase;
 use Docalist\Forms\Select;
 
@@ -45,34 +46,34 @@ class SelectTest extends WP_UnitTestCase
 
     /**
      * Teste setFirstOption avec un tableau vide.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage array must contain one item
      */
     public function testSetFirstOptionEmptyArray()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('array must contain one item');
+
         (new Select())->setFirstOption([]);
     }
 
     /**
      * Teste setFirstOption avec un tableau de plus d'un élément.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage array must contain one item
      */
     public function testSetFirstOptionBadArray()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('array must contain one item');
+
         (new Select())->setFirstOption([1, 2]);
     }
 
     /**
      * Teste setFirstOption avec une mauvaise valeur.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage invalid firstOption
      */
     public function testSetFirstOptionBadArg()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid firstOption');
+
         (new Select())->setFirstOption(new Select());
     }
 }

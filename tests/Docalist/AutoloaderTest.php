@@ -63,14 +63,14 @@ class AutoloaderTest extends WP_UnitTestCase
 
     /**
      * Teste add() avec un namespace déjà enregistré (et différent)
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage already registered with a different path
      */
     public function testAddConflict()
     {
         $autoloader = new Autoloader();
         $autoloader->add('test', 'test');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('already registered with a different path');
 
         $autoloader->add('test', 'test2');
     }

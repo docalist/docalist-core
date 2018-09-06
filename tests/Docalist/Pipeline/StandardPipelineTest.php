@@ -80,13 +80,14 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
 
     /**
      * Une exception TypeError est générée si une opération n'est pas un callable.
-     *
-     * @expectedException TypeError
-     * @expectedExceptionMessage must be callable
      */
     public function testConstructWithNotCallableOperation()
     {
         $pipeline = new StandardPipeline();
+
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('must be callable');
+
         $pipeline->appendOperation('a');
     }
 
@@ -147,14 +148,15 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
 
     /**
      * Une exception InvalidArgumentException si on appelle appendOperation() avec une clé qui existe déjà.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage already exists
      */
     public function testAppendDuplicateKey()
     {
         $pipeline = new StandardPipeline();
         $pipeline->appendOperation('trim', 'a');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('already exists');
+
         $pipeline->appendOperation('md5', 'a');
     }
 
@@ -192,14 +194,15 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
 
     /**
      * Une exception InvalidArgumentException si on appelle prependOperation() avec une clé qui existe déjà.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage already exists
      */
     public function testPrependDuplicateKey()
     {
         $pipeline = new StandardPipeline();
         $pipeline->appendOperation('trim', 'a');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('already exists');
+
         $pipeline->prependOperation('md5', 'a');
     }
 
@@ -227,13 +230,14 @@ class StandardPipelineTest extends PHPUnit_Framework_TestCase
 
     /**
      * Une exception InvalidArgumentException si on appelle getOperation() avec une clé inexistante.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage not found
      */
     public function testGetOperationInvalidKey()
     {
         $pipeline = new StandardPipeline();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('not found');
+
         $pipeline->getOperation('b');
     }
 

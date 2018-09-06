@@ -67,23 +67,23 @@ class ElementTest extends WP_UnitTestCase
 
     /**
      * Teste setName avec un entier.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid name
      */
     public function testSetBadName1()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid name');
+
         $this->getElement()->setName(12);
     }
 
     /**
      * Teste setName avec un tableau.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid name
      */
     public function testSetBadName2()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid name');
+
         $this->getElement()->setName(['login']);
     }
 
@@ -189,23 +189,23 @@ class ElementTest extends WP_UnitTestCase
 
     /**
      * Teste le binding d'un champ monovalué avec un tableau.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage expected scalar
      */
     public function testBindMonoWithArray()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('expected scalar');
+
         $this->getElement()->bind([]);
     }
 
     /**
      * Teste le binding d'un champ monovalué avec un objet.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage expected scalar
      */
     public function testBindMonoWithObject()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('expected scalar');
+
         $this->getElement()->bind((object) []);
     }
 
@@ -266,12 +266,12 @@ class ElementTest extends WP_UnitTestCase
 
     /**
      * Teste le binding d'un champ répétable avec un scalaire.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage expected array
      */
     public function testBindRepeatWithScalar()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('expected array');
+
         $this->getElement()->setRepeatable(true)->bind('daniel');
     }
 
@@ -297,17 +297,6 @@ class ElementTest extends WP_UnitTestCase
         // Vérifie que l'occurence est à null
         $this->assertNull($element->getOccurence());
     }
-
-    /**
-     * Teste le binding d'un champ répétable avec un tableau contenant autre chose que des scalaires.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage must be scalar
-     */
-//     public function testBindRepeatWithBadPhpArray()
-//     {
-//         $this->getElement()->setRepeatable(true)->bind(['daniel', []]);
-//     }
 
     /**
      * Teste le binding d'un champ monovalué avec un scalaire Docalist sans schéma.
@@ -342,24 +331,28 @@ class ElementTest extends WP_UnitTestCase
 
     /**
      * Teste le binding d'un champ monovalué avec une Collection.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage expected scalar
      */
     public function testBindMonoWithCollection()
     {
-        $this->getElement()->bind(new Collection());
+        $data = new Collection();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('expected scalar');
+
+        $this->getElement()->bind($data);
     }
 
     /**
      * Teste le binding d'un champ monovalué avec un Composite.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage expected scalar
      */
     public function testBindMonoWithComposite()
     {
-        $this->getElement()->bind(new Composite());
+        $data = new Composite();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('expected scalar');
+
+        $this->getElement()->bind($data);
     }
 
     /**
@@ -439,34 +432,34 @@ class ElementTest extends WP_UnitTestCase
 
     /**
      * Teste setOccurence sur un élément non répétable.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage not repeatable
      */
     public function testSetOccurenceOnNonRepeat()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('not repeatable');
+
         $this->getElement()->setOccurence(1);
     }
 
     /**
      * Teste setOccurence avec des données à null (bind non appellé par exemple).
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage do not have data
      */
     public function testSetOccurenceOnNullData()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('do not have data');
+
         $this->getElement()->setRepeatable(true)->setOccurence(12);
     }
 
     /**
      * Teste setOccurence avec une clé inexistante.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage do not have data
      */
     public function testSetInexistantOccurence()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('do not have data');
+
         $this->getElement()->setRepeatable(true)->bind(['a'])->setOccurence(12);
     }
 

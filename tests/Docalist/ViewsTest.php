@@ -24,13 +24,22 @@ class ViewsTest extends WP_UnitTestCase
         $views = new Views();
         $this->assertSame([], $views->getGroups());
 
-        $groups = ['' => '/a/', 'test' => ['/b/', '/c/']];
-        $views = new Views($groups);
-        $this->assertSame($groups, $views->getGroups());
+        $ds = DIRECTORY_SEPARATOR;
 
-        $groups2 = ['' => '/z/'];
-        $views->setGroups($groups2);
-        $this->assertSame($groups2, $views->getGroups());
+        $views = new Views(['' => '/a/', 'test' => ['/b/', '/c/']]);
+        $this->assertSame(
+            [
+                '' => "{$ds}a{$ds}",
+                'test' => ["{$ds}c{$ds}", "{$ds}b{$ds}"] // Ordre inverse
+            ],
+            $views->getGroups()
+        );
+
+        $views->setGroups(['' => '/z/']);
+        $this->assertSame(
+            ['' => "{$ds}z{$ds}"],
+            $views->getGroups()
+        );
 
         $views->setGroups([]);
         $this->assertSame([], $views->getGroups());
@@ -46,12 +55,14 @@ class ViewsTest extends WP_UnitTestCase
     {
         $views = new Views(['' => __DIR__ . '/views/']);
 
+        $ds = DIRECTORY_SEPARATOR;
+
         $tests = [
             [], // aucun paramètre
             ['hello' => 'world'],
             ['firstname' => 'john', 'surname' => 'smith'],
             ['nb' => 2, 'values' => [1, 2, 3]],
-            ['nb' => 2, 'values' => [1, 2, 3], 'this' => $this],
+            ['nb' => 2, 'values' => [1, 2, 3], /*'this' => $this*/],
         ];
 
         foreach ($tests as $data) {
@@ -59,7 +70,7 @@ class ViewsTest extends WP_UnitTestCase
             $this->assertSame([
                 'view' => [
                     'name' => 'vars',
-                    'path' => __DIR__ . '/views/vars.php',
+                    'path' => __DIR__ . "{$ds}views{$ds}vars.php",
                     'data' => $data
                 ],
             ] + $data, $vars);
@@ -101,8 +112,10 @@ class ViewsTest extends WP_UnitTestCase
             'dir' => [__DIR__ . '/views/dir1/', __DIR__ . '/views/dir2/'],
         ]);
 
-        $this->assertSame(__DIR__ . '/views/vars.php', $views->getPath('vars'));
-        $this->assertSame(__DIR__ . '/views/dir1/view.php', $views->getPath('dir:view'));
+        $ds = DIRECTORY_SEPARATOR;
+
+        $this->assertSame(__DIR__ . "{$ds}views{$ds}vars.php", $views->getPath('vars'));
+        $this->assertSame(__DIR__ . "{$ds}views{$ds}dir2{$ds}view.php", $views->getPath('dir:view'));
         $this->assertFalse($views->getPath('toto'));
         $this->assertFalse($views->getPath('dir:toto'));
 
@@ -112,8 +125,8 @@ class ViewsTest extends WP_UnitTestCase
             'dir' => [__DIR__ . '/views/dir2/', __DIR__ . '/views/dir1/'],
         ]);
 
-        $this->assertSame(__DIR__ . '/views/vars.php', $views->getPath('vars'));
-        $this->assertSame(__DIR__ . '/views/dir2/view.php', $views->getPath('dir:view'));
+        $this->assertSame(__DIR__ . "{$ds}views{$ds}vars.php", $views->getPath('vars'));
+        $this->assertSame(__DIR__ . "{$ds}views{$ds}dir1{$ds}view.php", $views->getPath('dir:view'));
     }
 
     public function testDisplay()
@@ -128,8 +141,8 @@ class ViewsTest extends WP_UnitTestCase
         $return = $views->display('dir:view');
         $result = ob_get_clean();
 
-        $this->assertSame('dir1', $result);
-        $this->assertSame(1, $return);
+        $this->assertSame('dir2', $result);
+        $this->assertSame(2, $return);
 
         // dir2 prioritaire
         $views = new Views([
@@ -141,8 +154,8 @@ class ViewsTest extends WP_UnitTestCase
         $return = $views->display('dir:view');
         $result = ob_get_clean();
 
-        $this->assertSame('dir2', $result);
-        $this->assertSame(2, $return);
+        $this->assertSame('dir1', $result);
+        $this->assertSame(1, $return);
     }
 
     public function testRender()
@@ -153,7 +166,7 @@ class ViewsTest extends WP_UnitTestCase
             'dir' => [__DIR__ . '/views/dir1/', __DIR__ . '/views/dir2/'],
         ]);
 
-        $this->assertSame('dir1', $views->render('dir:view'));
+        $this->assertSame('dir2', $views->render('dir:view'));
 
         // dir2 prioritaire
         $views = new Views([
@@ -161,54 +174,58 @@ class ViewsTest extends WP_UnitTestCase
             'dir' => [__DIR__ . '/views/dir2/', __DIR__ . '/views/dir1/'],
         ]);
 
-        $this->assertSame('dir2', $views->render('dir:view'));
+        $this->assertSame('dir1', $views->render('dir:view'));
     }
 
     /**
      * Teste getPath() avec une vue sans group quand le groupe '' n'existe pas.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid group
      */
     public function testDefaultGroupNotFound()
     {
         $views = new Views();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown group');
+
         $views->getPath('toto');
     }
 
     /**
      * Teste getPath() avec un groupe qui n'existe pas.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid group
      */
     public function testNoGroupNotFound()
     {
         $views = new Views();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown group');
+
         $views->getPath('docalist-core:toto');
     }
 
     /**
      * Teste display() avec une vue qui n'existe pas.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage View not found
      */
     public function testViewNotFound1()
     {
         $views = new Views(['' => __DIR__ . '/views/']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('View not found');
+
         $views->display('toto');
     }
 
     /**
      * Teste display() avec une vue qui n'existe pas.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage View not found
      */
     public function testViewNotFound2()
     {
         $views = new Views(['dir1' => __DIR__ . '/views/dir1/']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('View not found');
+
         $views->display('dir1:toto');
     }
 }

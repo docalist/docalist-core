@@ -91,12 +91,12 @@ class TagTest extends WP_UnitTestCase
 
     /**
      * Vérifie qu'une exception est générée avec un nom de tag incorrect.
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Incorrect tag
      */
     public function testInvalidTagName()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Incorrect tag');
+
         new Tag('hello world');
     }
 }

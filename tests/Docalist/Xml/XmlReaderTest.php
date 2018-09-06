@@ -12,6 +12,7 @@ namespace Docalist\Tests\Xml;
 use WP_UnitTestCase;
 use Docalist\Xml\XmlReader;
 use Docalist\Xml\XmlParseException;
+use InvalidArgumentException;
 use LogicException;
 use DOMText, DOMElement;
 
@@ -50,13 +51,12 @@ class XmlReaderTest extends WP_UnitTestCase
      * @param $xml
      *
      * @dataProvider emptyXmlProvider
-     *
-     * @expectedException           Docalist\Xml\XmlParseException
-     * @expectedExceptionMessage    Invalid or empy XML string
-     *
      */
     public function testFromStringWithEmptyXml($xml)
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('Invalid or empy XML string');
+
         XmlReader::fromString($xml);
     }
 
@@ -66,12 +66,12 @@ class XmlReaderTest extends WP_UnitTestCase
      * @param $xml
      *
      * @dataProvider emptyXmlProvider
-     *
-     * @expectedException           Docalist\Xml\XmlParseException
-     * @expectedExceptionMessage    XML error line 1
      */
     public function testFromFileWithEmptyXml($xml)
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('XML error line 1');
+
         XmlReader::fromFile($this->fileURI($xml));
     }
 
@@ -97,12 +97,12 @@ class XmlReaderTest extends WP_UnitTestCase
      * @param $xml
      *
      * @dataProvider invalidXmlProvider
-     *
-     * @expectedException           Docalist\Xml\XmlParseException
-     * @expectedExceptionMessage    XML error line 1
      */
     public function testFromStringWithInvalidXml($xml)
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('XML error line 1');
+
         XmlReader::fromString($xml);
     }
 
@@ -112,12 +112,12 @@ class XmlReaderTest extends WP_UnitTestCase
      * @param $xml
      *
      * @dataProvider invalidXmlProvider
-     *
-     * @expectedException           Docalist\Xml\XmlParseException
-     * @expectedExceptionMessage    XML error line 1
      */
     public function testFromFileWithInvalidXml($xml)
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('XML error line 1');
+
         XmlReader::fromFile($this->fileURI($xml))->enter('a');
     }
 
@@ -126,12 +126,12 @@ class XmlReaderTest extends WP_UnitTestCase
      * fromFile() avec un fichier inexistant génère une exception.
      *
      * @param $xml
-     *
-     * @expectedException           InvalidArgumentException
-     * @expectedExceptionMessage    Unable to open XML file
      */
     public function testFromFileWithInexistentFile()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to open XML file');
+
         XmlReader::fromFile('/do/not/exists.xml');
     }
 
@@ -213,24 +213,24 @@ class XmlReaderTest extends WP_UnitTestCase
 
     /**
      * Une exception est générée si on appelle leave() sans avoir appellé enter().
-     *
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    Call to leave('a') without enter('a') before
      */
     public function testLeaveWithoutEnter()
     {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("Call to leave('a') without enter('a') before");
+
         $xml = XmlReader::fromString('<a></a>');
         $xml->leave('a');
     }
 
     /**
      * Une exception est générée si on appelle leave() avec un tag différent de celui indiqué pour enter().
-     *
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    Call to leave('b') in tag <a>
      */
     public function testEnterLeaveMisMatch1()
     {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("Call to leave('b') in tag <a>");
+
         $xml = XmlReader::fromString('<a></a>');
         $xml->enter('a');
         $xml->leave('b');
@@ -238,12 +238,12 @@ class XmlReaderTest extends WP_UnitTestCase
 
     /**
      * Une exception est générée si on appelle leave() avec un tag différent de celui indiqué pour enter().
-     *
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    Call to leave('a') in tag <b>
      */
     public function testEnterLeaveMisMatch2()
     {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("Call to leave('a') in tag <b>");
+
         $xml = XmlReader::fromString('<a><b></b></a>');
         $xml->enter('a');
         $xml->enter('b');
@@ -252,12 +252,12 @@ class XmlReaderTest extends WP_UnitTestCase
 
     /**
      * Une exception est générée si on appelle leave() avec un tag différent de celui indiqué pour enter().
-     *
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    Call to leave('b') in empty tag <a/>
      */
     public function testEnterLeaveMisMatch3()
     {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("Call to leave('b') in empty tag <a/>");
+
         $xml = XmlReader::fromString('<a/>');
         $xml->enter('a');
         $xml->leave('b');
@@ -314,34 +314,34 @@ class XmlReaderTest extends WP_UnitTestCase
 
     /**
      * Une exception est générée si on appelle mustBe() et que le type ou le nom ne correspondent pas.
-     *
-     * @expectedException           Docalist\Xml\XmlParseException
-     * @expectedExceptionMessage    XML error line 1: expected start tag <b>
      */
     public function testMustBeFails1()
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage("XML error line 1: expected start tag <b>");
+
         XmlReader::fromString('<a></a>')->mustBe('b', XmlReader::OPEN_TAG);
     }
 
     /**
      * Une exception est générée si on appelle mustBe() et que le type ou le nom ne correspondent pas.
-     *
-     * @expectedException           Docalist\Xml\XmlParseException
-     * @expectedExceptionMessage    XML error line 1: expected end tag </b>
      */
     public function testMustBeFails2()
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage("XML error line 1: expected end tag </b>");
+
         XmlReader::fromString('<a></a>')->mustBe('b', XmlReader::CLOSE_TAG);
     }
 
     /**
      * Une exception est générée si on appelle mustBe() et que le type ou le nom ne correspondent pas.
-     *
-     * @expectedException           Docalist\Xml\XmlParseException
-     * @expectedExceptionMessage    XML error line 1: expected node of type 8 with name "b"
      */
     public function testMustBeFails3()
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('XML error line 1: expected node of type 8 with name "b"');
+
         XmlReader::fromString('<a></a>')->mustBe('b', XmlReader::COMMENT);
     }
 
@@ -527,13 +527,13 @@ class XmlReaderTest extends WP_UnitTestCase
             </a>');
 
         $xml->next();
-        $a = $xml->getNode(); /** @var DOMElement $a */
+        $a = $xml->getNode(); /* @var DOMElement $a */
         $this->assertSame('a', $a->tagName);
 
         $xml->enter('a');
         $xml->next();
 
-        $b = $xml->getNode(); /** @var DOMElement $b */
+        $b = $xml->getNode(); /* @var DOMElement $b */
         $this->assertSame('b', $b->tagName);
         $this->assertSame('value', $b->nodeValue);
         $this->assertSame('value', $b->textContent);
@@ -545,13 +545,13 @@ class XmlReaderTest extends WP_UnitTestCase
 
         $xml->next();
 
-        $c = $xml->getNode(); /** @var DOMElement $c */
+        $c = $xml->getNode(); /* @var DOMElement $c */
         $this->assertSame('c', $c->tagName);
         $this->assertSame('', $c->nodeValue);
         $this->assertSame('', $c->textContent);
 
         $xml->enter('c');
-        $emptycontent = $xml->getNode(); /** @var DOMText $emptyContent */
+        $emptycontent = $xml->getNode(); /* @var DOMText $emptyContent */
         $this->assertTrue($emptycontent instanceOf DOMText);
         $this->assertSame(null, $emptycontent->nodeValue);
         $this->assertSame('', $emptycontent->textContent);
@@ -570,9 +570,6 @@ class XmlReaderTest extends WP_UnitTestCase
      * @param $xml
      *
      * @dataProvider invalidXmlProvider
-     *
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    Call to getNode() at EOF
      */
     public function testGetNodeAtEnd()
     {
@@ -581,6 +578,10 @@ class XmlReaderTest extends WP_UnitTestCase
         $xml->next(); // passe <a>
 
         $xml->next(); // on est à la fin
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Call to getNode() at EOF');
+
         $a = $xml->getNode(); // exception
     }
 }

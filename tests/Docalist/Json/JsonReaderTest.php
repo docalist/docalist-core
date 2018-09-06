@@ -318,25 +318,27 @@ class JsonReaderTest extends WP_UnitTestCase
 
     /**
      * Vérifie qu'une exception est générée si on a une chaine plus longue que STRING_MAX_LEN
-     *
-     * @expectedException Docalist\Json\JsonParseException
-     * @expectedExceptionMessage string exceeds
      */
     public function testStringTooLong()
     {
         $json = $this->stringReader('"' . str_repeat('x', JsonReader::STRING_MAX_LEN), '"'); // ie max + 2 en tout
+
+        $this->expectException(JsonParseException::class);
+        $this->expectExceptionMessage('string exceeds');
+
         $json->getString();
     }
 
     /**
      * Vérifie qu'une exception est générée si on a une chaine non fermée.
-     *
-     * @expectedException Docalist\Json\JsonParseException
-     * @expectedExceptionMessage missing closing quote
      */
     public function testStringNotClosed()
     {
         $json = $this->stringReader('"xxx');
+
+        $this->expectException(JsonParseException::class);
+        $this->expectExceptionMessage('missing closing quote');
+
         $json->getString();
     }
 
@@ -365,15 +367,16 @@ class JsonReaderTest extends WP_UnitTestCase
      * Vérifie qu'une exception est générée si on a séquence d'échappement invalide.
      *
      * @dataProvider invalidEscapeSequenceProvider
-     *
-     * @expectedException Docalist\Json\JsonParseException
-     * @expectedExceptionMessage bad escape sequence
      */
     public function testStringInvalidControlChar($string)
     {
-        // Remarque : on n'a pas de message d'erreur spécifique dans ce cas : la chaine n'est pas accepté par la
-        // regexp et donc on ale message "invalid string"
+        // Remarque : on n'a pas de message d'erreur spécifique dans ce cas : la chaine n'est pas acceptée par la
+        // regexp et donc on a le message "invalid string"
         $json = $this->stringReader($string);
+
+        $this->expectException(JsonParseException::class);
+        $this->expectExceptionMessage('bad escape sequence');
+
         $json->getString();
     }
 
@@ -397,13 +400,14 @@ class JsonReaderTest extends WP_UnitTestCase
 
     /**
      * @dataProvider malformedUnicodeSequencesProvider
-     *
-     * @expectedException Docalist\Json\JsonParseException
-     * @expectedExceptionMessage bad escape sequence
      */
     public function testStringWithMalformedUnicodeSequences($string)
     {
         $json = $this->stringReader($string);
+
+        $this->expectException(JsonParseException::class);
+        $this->expectExceptionMessage('bad escape sequence');
+
         $json->getString();
     }
 
@@ -424,14 +428,15 @@ class JsonReaderTest extends WP_UnitTestCase
 
     /**
      * @dataProvider invalidUnicodeSequencesProvider
-     *
-     * @expectedException Docalist\Json\JsonParseException
-     * @expectedExceptionMessage Invalid JSON string
      */
     public function testStringWithInvalidUnicodeSequences($string)
     {
         $json = $this->stringReader($string);
-        var_dump(json_encode($json->getString()));
+
+        $this->expectException(JsonParseException::class);
+        $this->expectExceptionMessage('Invalid JSON string');
+
+        $json->getString();
     }
 
     /**
@@ -562,13 +567,14 @@ class JsonReaderTest extends WP_UnitTestCase
      * Vérifie qu'une exception est générée si on appelle getValue() sur autre chose qu'une valeur.
      *
      * @dataProvider invalidValueStartProvider
-     *
-     * @expectedException Docalist\Json\JsonParseException
-     * @expectedExceptionMessage unexpected char
      */
     public function testInvalidValueStart($string)
     {
         $json = $this->stringReader($string);
+
+        $this->expectException(JsonParseException::class);
+        $this->expectExceptionMessage('unexpected char');
+
         $json->getValue();
     }
 
@@ -576,13 +582,14 @@ class JsonReaderTest extends WP_UnitTestCase
      * Vérifie qu'une exception est générée si on appelle getEof() alors qu'on n'st pas à la fin.
      *
      * @dataProvider invalidValueStartProvider
-     *
-     * @expectedException Docalist\Json\JsonParseException
-     * @expectedExceptionMessage expected EOF
      */
     public function testNotEof($string)
     {
         $json = $this->stringReader('x');
+
+        $this->expectException(JsonParseException::class);
+        $this->expectExceptionMessage('expected EOF');
+
         $json->getEof();
     }
 }
