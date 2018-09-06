@@ -4,9 +4,8 @@ use Docalist\Tests\ViewsTest;
 
 /**
  * Affiche un message d'information.
- *
- * @var ViewsTest $this
  */
+/* @var ViewsTest $this */
 return [
     $this->publicMethod(),
     $this->protectedMethod(),
