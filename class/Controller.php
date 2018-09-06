@@ -318,7 +318,7 @@ abstract class Controller
 
         // Construit la liste des paramètres
         try {
-            $parameters = $this->runParameters($method, $_REQUEST, false, true);
+            $parameters = $this->runParameters($method, $_REQUEST);
         } catch (Exception $e) {
             return $this->view(
                 'docalist-core:controller/bad-request',
