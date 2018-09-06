@@ -67,7 +67,7 @@ class SettingsRepository extends Repository
      * Pour permettre de retrouver tous les settings, on ajoute le préfixe
      * 'docalist-' à l'ID s'id ne le contient pas déjà.
      *
-     * @param scalar $id
+     * @param int|string $id
      * @return string
      */
     protected function key($id)
