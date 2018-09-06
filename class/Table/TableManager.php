@@ -10,6 +10,7 @@
 namespace Docalist\Table;
 
 use Docalist\Cache\FileCache;
+use Psr\Log\LoggerInterface;
 use Exception;
 use InvalidArgumentException;
 
@@ -209,7 +210,7 @@ class TableManager
     /**
      * Met à jour les propriétés et/ou le contenu d'une table personnalisée.
      *
-     * @param unknown $name
+     * @param string $name
      * @param string $newName
      * @param string $label
      * @param array $data
