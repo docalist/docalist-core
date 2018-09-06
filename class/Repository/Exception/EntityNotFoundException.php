@@ -19,7 +19,7 @@ class EntityNotFoundException extends RepositoryException
     /**
      * Construit l'exception.
      *
-     * @param scalar $id Identifiant de l'entité..
+     * @param int|string $id Identifiant de l'entité..
      */
     public function __construct($id)
     {
