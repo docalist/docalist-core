@@ -77,7 +77,7 @@ class StandardPipeline implements Pipeline
     public function process(Iterable $items): Iterable
     {
         return array_reduce($this->operations, function (Iterable $items, callable $stage) {
-            foreach ($items as $key => $item) {
+            foreach ($items as $item) {
                 $result = $stage($item);
                 if (! is_null($result)) {
                     ($result instanceof Generator) ? yield from $result : yield $result;
