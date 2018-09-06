@@ -14,8 +14,6 @@ use IteratorAggregate;
 use ArrayIterator;
 use Docalist\Forms\Traits\ItemFactoryTrait;
 use Closure;
-use Docalist\Type\Composite;
-use Docalist\Type\Collection;
 use Docalist\Schema\Schema;
 use InvalidArgumentException;
 
