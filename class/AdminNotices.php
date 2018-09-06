@@ -34,7 +34,6 @@ class AdminNotices
      * - La méthode principale pour ajouter une notice est "add" mais il y a
      *   plusieurs helpers disponibles (info, success, warning, error).
      * - Chaque notice a un contenu et peut avoir un titre.
-     * - Le contenu comme le titre peuvent être une chaine ou un callable.
      */
     /**
      * Nom du meta utilisateur qui contient les notices.
@@ -61,8 +60,8 @@ class AdminNotices
      *
      * @param string $type Type de la notice : 'info', 'succcess', 'warning' ou
      * 'error'.
-     * @param string|closure $content Le contenu de la notice.
-     * @param string|closure|null $title Optionnel, le titre de la notice.
+     * @param string $content Le contenu de la notice.
+     * @param string|null $title Optionnel, le titre de la notice.
      *
      * @return self
      */
@@ -80,8 +79,8 @@ class AdminNotices
     /**
      * Enregistre une notice de type "info".
      *
-     * @param string|closure $content Le contenu de la notice.
-     * @param string|closure|null $title Optionnel, le titre de la notice.
+     * @param string $content Le contenu de la notice.
+     * @param string|null $title Optionnel, le titre de la notice.
      *
      * @return self
      */
@@ -93,8 +92,8 @@ class AdminNotices
     /**
      * Enregistre une notice de type "success".
      *
-     * @param string|closure $content Le contenu de la notice.
-     * @param string|closure|null $title Optionnel, le titre de la notice.
+     * @param string $content Le contenu de la notice.
+     * @param string|null $title Optionnel, le titre de la notice.
      *
      * @return self
      */
@@ -106,8 +105,8 @@ class AdminNotices
     /**
      * Enregistre une notice de type "warning".
      *
-     * @param string|closure $content Le contenu de la notice.
-     * @param string|closure|null $title Optionnel, le titre de la notice.
+     * @param string $content Le contenu de la notice.
+     * @param string|null $title Optionnel, le titre de la notice.
      *
      * @return self
      */
@@ -119,8 +118,8 @@ class AdminNotices
     /**
      * Enregistre une notice de type "error".
      *
-     * @param string|closure $content Le contenu de la notice.
-     * @param string|closure|null $title Optionnel, le titre de la notice.
+     * @param string $content Le contenu de la notice.
+     * @param string|null $title Optionnel, le titre de la notice.
      *
      * @return self
      */
@@ -155,15 +154,11 @@ class AdminNotices
 
             // Titre de la notice (<h3>)
             if ($title) {
-                echo '<h3>';
-                is_callable($title) ? $title() : print($title);
-                echo '</h3>';
+                echo '<h3>', $title, '</h3>';
             }
 
             // Contenu de la notice (<p>)
-            echo '<p>';
-            is_callable($content) ? $content() : print($content);
-            echo '</p>';
+            echo '<p>', $content, '</p>';
 
             echo '</div>';
         }
