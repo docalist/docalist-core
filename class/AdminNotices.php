@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -12,8 +12,7 @@ namespace Docalist;
 /**
  * Service "admin notices".
  *
- * Permet de générer facilement des messages qui seront affichés dans le back
- * office de WordPress :
+ * Permet de générer facilement des messages qui seront affichés dans le back office de WordPress :
  * - info : message d'information générique (en bleu)
  * - success : message de confirmation, opération réussie (en vert)
  * - warning : message d'avertissement, confirmation, etc. (en orange)
@@ -50,7 +49,7 @@ class AdminNotices
      */
     public function __construct()
     {
-        is_admin() && add_action('admin_notices', function () {
+        add_action('admin_notices', function () {
             $this->render();
         });
     }
@@ -58,115 +57,89 @@ class AdminNotices
     /**
      * Enregistre une notice.
      *
-     * @param string $type Type de la notice : 'info', 'succcess', 'warning' ou
-     * 'error'.
-     * @param string $content Le contenu de la notice.
-     * @param string|null $title Optionnel, le titre de la notice.
-     *
-     * @return self
+     * @param string        $type       Type de la notice : 'info', 'succcess', 'warning' ou 'error'.
+     * @param string        $content    Le contenu de la notice.
+     * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function add($type, $content, $title = null)
+    public function add(string $type, string $content, string $title = null)
     {
-        // Si on n'a pas de user en cours, on ne peut rien faire
-        if ($user = get_current_user_id()) {
-            add_user_meta($user, self::META, [$type, $content, $title], false);
-        }
-
-        // Ok
-        return $this;
+        // Inutile de tester si on a un user, add_user_meta vérifie que l'id passé n'est pas vide
+        add_user_meta(get_current_user_id(), self::META, [$type, $content, $title], false);
     }
 
     /**
      * Enregistre une notice de type "info".
      *
-     * @param string $content Le contenu de la notice.
-     * @param string|null $title Optionnel, le titre de la notice.
-     *
-     * @return self
+     * @param string        $content    Le contenu de la notice.
+     * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function info($content, $title = null)
+    public function info(string $content, string $title = null)
     {
-        return $this->add('info', $content, $title);
+        $this->add('info', $content, $title);
     }
 
     /**
      * Enregistre une notice de type "success".
      *
-     * @param string $content Le contenu de la notice.
-     * @param string|null $title Optionnel, le titre de la notice.
-     *
-     * @return self
+     * @param string        $content    Le contenu de la notice.
+     * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function success($content, $title = null)
+    public function success(string $content, string $title = null)
     {
-        return $this->add('success', $content, $title);
+        $this->add('success', $content, $title);
     }
 
     /**
      * Enregistre une notice de type "warning".
      *
-     * @param string $content Le contenu de la notice.
-     * @param string|null $title Optionnel, le titre de la notice.
-     *
-     * @return self
+     * @param string        $content    Le contenu de la notice.
+     * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function warning($content, $title = null)
+    public function warning(string $content, string $title = null)
     {
-        return $this->add('warning', $content, $title);
+        $this->add('warning', $content, $title);
     }
 
     /**
      * Enregistre une notice de type "error".
      *
-     * @param string $content Le contenu de la notice.
-     * @param string|null $title Optionnel, le titre de la notice.
-     *
-     * @return self
+     * @param string        $content    Le contenu de la notice.
+     * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function error($content, $title = null)
+    public function error(string $content, string $title = null)
     {
-        return $this->add('error', $content, $title);
+        $this->add('error', $content, $title);
     }
 
     /**
      * Affiche les notices qui ont été enregistrées.
-     *
-     * @return self
      */
     protected function render()
     {
         // Si on n'a pas de user en cours, on ne peut rien faire
         if (0 === $user = get_current_user_id()) {
-            return $this;
+            return;
         }
 
         // Charge les notices enregistrées
         $notices = get_user_meta($user, self::META, false);
         if (empty($notices)) {
-            return $this;
+            return;
         }
 
         // Affiche les notices dans l'ordre où elles ont été ajoutées
         foreach ($notices as $notice) {
             list($type, $content, $title) = $notice;
 
-            printf('<div class="notice notice-%s is-dismissible">', $type);
-
-            // Titre de la notice (<h3>)
-            if ($title) {
-                echo '<h3>', $title, '</h3>';
-            }
-
-            // Contenu de la notice (<p>)
-            echo '<p>', $content, '</p>';
-
-            echo '</div>';
+            printf(
+                '<div class="notice notice-%s is-dismissible">%s<p>%s</p></div>',
+                $type,
+                empty($title) ? '' : '<h3>' . $title . '</h3>',
+                $content
+            );
         }
 
         // Réinitialise la liste des notices enregistrées
         delete_user_meta($user, self::META);
-
-        // Ok
-        return $this;
     }
 }
