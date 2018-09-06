@@ -362,7 +362,7 @@ class JsonReader
      *
      * @param string $text Le texte à consommer.
      *
-     * @throws JsonParseError Si le buffer ne commence pas par le texte indiqué.
+     * @throws JsonParseException Si le buffer ne commence pas par le texte indiqué.
      */
     public function get($text)
     {
@@ -386,7 +386,7 @@ class JsonReader
      *
      * @param string $char Caractère à consommer.
      *
-     * @throws JsonParseError Si le caractère en cours ne correspond pas au caractère indiqué.
+     * @throws JsonParseException Si le caractère en cours ne correspond pas au caractère indiqué.
      */
     protected function getChar($char)
     {
@@ -419,7 +419,7 @@ class JsonReader
      *
      * @return null
      *
-     * @throws JsonParseError Si le buffer contient autre chose que 'null'.
+     * @throws JsonParseException Si le buffer contient autre chose que 'null'.
      */
     public function getNull()
     {
@@ -443,7 +443,7 @@ class JsonReader
      *
      * @return bool La valeur lue (true ou false).
      *
-     * @throws JsonParseError Si le buffer contient autre chose que 'true' ou 'false'.
+     * @throws JsonParseException Si le buffer contient autre chose que 'true' ou 'false'.
      *
      * @SuppressWarnings(PHPMD.BooleanGetMethodName) Par défaut, PHPMD considère que les méthodes qui retournent
      * un booléen doivent être nommées isXXX() ou hasXXX(). Dans notre cas, on veut que le nom soit cohérent avec
@@ -490,7 +490,7 @@ class JsonReader
      *
      * @return int|float Le nombre lu.
      *
-     * @throws JsonParseError Si le buffer contient autre chose qu'un nombre.
+     * @throws JsonParseException Si le buffer contient autre chose qu'un nombre.
      */
     public function getNumber()
     {
@@ -534,7 +534,7 @@ class JsonReader
      *
      * @return string La chaine lue.
      *
-     * @throws JsonParseError Si le buffer contient autre chose qu'une chaine de caractères.
+     * @throws JsonParseException Si le buffer contient autre chose qu'une chaine de caractères.
      */
     public function getString()
     {
@@ -601,7 +601,7 @@ class JsonReader
      *
      * @return string|int|float|object|array|bool|null La valeur lue.
      *
-     * @throws JsonParseError Si le buffer contient autre chose qu'une valeur.
+     * @throws JsonParseException Si le buffer contient autre chose qu'une valeur.
      */
     public function getValue()
     {
@@ -641,7 +641,7 @@ class JsonReader
      *
      * @return object|array L'objet lu ou un tableau associatif si vous passez true en paramètre.
      *
-     * @throws JsonParseError Si le buffer contient autre chose qu'un objet.
+     * @throws JsonParseException Si le buffer contient autre chose qu'un objet.
      */
     public function getObject($assoc = null)
     {
@@ -689,7 +689,7 @@ class JsonReader
      *
      * @return array Le tableau lu.
      *
-     * @throws JsonParseError Si le buffer contient autre chose qu'un tableau.
+     * @throws JsonParseException Si le buffer contient autre chose qu'un tableau.
      */
     public function getArray()
     {
@@ -730,7 +730,7 @@ class JsonReader
      *
      * @return string Une chaine vide.
      *
-     * @throws JsonParseError S'il reste des caractères non consommés dans le buffer.
+     * @throws JsonParseException S'il reste des caractères non consommés dans le buffer.
      */
     public function getEof()
     {
