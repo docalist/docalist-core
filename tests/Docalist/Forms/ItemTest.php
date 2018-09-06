@@ -13,7 +13,6 @@ use WP_UnitTestCase;
 use Docalist\Forms\Item;
 use Docalist\Forms\Input;
 use Docalist\Forms\Container;
-use Docalist\Forms\Theme;
 use Docalist\Forms\EntryPicker;
 
 /**
