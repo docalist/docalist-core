@@ -10,7 +10,6 @@
 namespace Docalist\Type;
 
 use Docalist\Type\Any;
-use Docalist\Schema\Schema;
 use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Container;
 use Docalist\Forms\Table;
