@@ -586,7 +586,7 @@ class Schema implements JsonSerializable
      * 3. sinon, un tableau contenant la valeur par défaut des différents champs si la propriété 'fields' existe ;
      * 4. sinon, null.
      *
-     * @return array|scalar|null
+     * @return mixed
      */
     public function getDefaultValue()
     {
