@@ -168,7 +168,7 @@ interface TableInterface
      *
      * @param string $where Critères de recherche de la clause.
      *
-     * @return false|scalar|object Le premier élément trouvé ou false si aucune
+     * @return mixed Le premier élément trouvé ou false si aucune
      * réponse n'a été trouvée.
      *
      * Le type de la valeur retournée dépend du nombre de champs demandés
