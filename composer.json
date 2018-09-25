@@ -18,10 +18,11 @@
 		"forum" : "https://groups.google.com/forum/#!forum/docalist-discuss"
 	},
 	"require" : {
-		"composer/installers" : "~1.0",
-		"php" : ">=7.2",
-		"psr/log" : "~1.0",
-		"monolog/monolog" : "~1.23"
+		"php": ">=7.2",
+		"composer/installers": "~1.0",
+		"monolog/monolog": "~1.23",
+		"psr/log": "~1.0",
+		"symfony/http-foundation": "~2.4.0"
 	},
 	"autoload" : {
 		"psr-4" : {
