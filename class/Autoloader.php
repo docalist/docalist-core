@@ -37,7 +37,7 @@ class Autoloader
     public function __construct(array $namespaces = [])
     {
         $this->namespaces = $namespaces;
-        spl_autoload_register([$this, 'autoload'], true, true);
+        spl_autoload_register([$this, 'autoload'], true, false);
     }
 
     /**
