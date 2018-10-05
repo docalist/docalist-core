@@ -320,9 +320,8 @@ abstract class AdminPage extends Controller
         $controller = new ReflectionObject($this);
         foreach ($controller->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             // Ignore les méthodes qui ne sont pas des actions
-            try {
-                $action = $this->getAction($method->getName());
-            } catch (InvalidArgumentException $e) {
+            $action = $this->getAction($method->getName());
+            if (empty($action)) {
                 continue;
             }
 
