@@ -193,8 +193,8 @@ class PostTypeRepository extends Repository
         if (!isset($post['post_author'])) {
             $post['post_author'] = get_current_user_id();
         }
-        if (!isset($post['post_date'  ])) {
-            $post['post_date'  ] = current_time('mysql');
+        if (!isset($post['post_date'])) {
+            $post['post_date'] = current_time('mysql');
         }
         if (!isset($post['post_date_gmt'])) {
             $post['post_date_gmt'] = get_gmt_from_date($post['post_date']);
@@ -233,7 +233,7 @@ class PostTypeRepository extends Repository
             $post['post_modified'] = $post['post_date'];
         }
         if (!isset($post['post_modified_gmt'])) {
-            $post['post_modified_gmt'] = $post['post_date_gmt'];
+            $post['post_modified_gmt'] = get_gmt_from_date($post['post_modified']);
         }
         if (!isset($post['post_content_filtered'])) {
             $post['post_content_filtered'] = '';
