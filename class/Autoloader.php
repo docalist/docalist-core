@@ -120,9 +120,11 @@ class Autoloader
         if (false !== $path = $this->resolve($class)) {
             require_once $path;
 
-            add_action('shutdown', function () use ($class, $path) {
-                echo'<script>console.log("docalist autoload:", ', json_encode($class), ', " -> ", ', json_encode($path), ');</script>';
-            });
+            if (! wp_doing_ajax()) {
+                add_action('shutdown', function () use ($class, $path) {
+                    echo'<script>console.log("docalist autoload:", ', json_encode($class), ', " -> ", ', json_encode($path), ');</script>';
+                });
+            }
 
             return true;
         }
