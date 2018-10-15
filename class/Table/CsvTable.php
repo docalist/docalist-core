@@ -88,8 +88,12 @@ class CsvTable extends SQLite
         // Ferme le fichier texte
         fclose($file);
 
-        // Retourne false pour indiquer que la base est déjà ouverte
-        return false;
+        // Enregistre la base sqlite
+        $this->commit();
+        $this->db = null;
+
+        // Retourne le path de la base sqlite à ouvrir
+        return $path;
     }
 
     public function type()
