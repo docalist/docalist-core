@@ -22,6 +22,7 @@ use Docalist\Lookup\TableLookup;
 use Docalist\Lookup\ThesaurusLookup;
 use InvalidArgumentException;
 use Docalist\Html;
+use Docalist\Tools\ToolsPage;
 
 /**
  * Plugin Docalist-Core.
@@ -216,6 +217,9 @@ class Plugin
         add_action('admin_menu', function () {
             new AdminTables();
         });
+
+        // Crée la page "Outils Docalist" dans le back-office
+        ToolsPage::setup();
 
         return $this;
     }
