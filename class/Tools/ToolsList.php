@@ -70,7 +70,7 @@ class ToolsList implements Tools
         if (is_callable($this->tools)) {
             $this->tools = call_user_func($this->tools);
             if (! is_array($this->tools)) {
-                throw new InvalidArgumentException('Tools callback must return an array, got ', gettype($this->tools));
+                throw new InvalidArgumentException('Tools must be an array, got ' . gettype($this->tools));
             }
         }
 
