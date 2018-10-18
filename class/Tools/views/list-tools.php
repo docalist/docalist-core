@@ -31,7 +31,7 @@ use Docalist\Tools\Tool;
                 <li>
                     <h3>
                         <a href="<?= esc_attr($this->getUrl('run', ['tool' => $id])) ?>">
-                            <?= $tool->getLabel() ?>
+                            <?= $tool->getLabel() ?: get_class($tool) ?>
                         </a>
                     </h3>
                     <p class="description">
