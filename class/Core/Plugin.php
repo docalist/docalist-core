@@ -23,6 +23,7 @@ use Docalist\Lookup\ThesaurusLookup;
 use InvalidArgumentException;
 use Docalist\Html;
 use Docalist\Tools\ToolsPage;
+use Docalist\Services;
 
 /**
  * Plugin Docalist-Core.
@@ -175,8 +176,8 @@ class Plugin
                 return new LookupManager();
             },
 
-            'table-lookup' => function () {
-                return new TableLookup();
+            'table-lookup' => function (Services $services) {
+                return new TableLookup($services->get('table-manager'));
             },
 
             'thesaurus-lookup' => function () {
