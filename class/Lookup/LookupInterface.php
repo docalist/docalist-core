@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -30,7 +30,7 @@ interface LookupInterface
      *
      * @return bool
      */
-    public function hasMultipleSources();
+    public function hasMultipleSources(): bool;
 
     /**
      * Retourne la durée (en secondes) pendant laquelle les suggestions retournées peuvent être mises en cache.
@@ -40,23 +40,23 @@ interface LookupInterface
      *
      * @return int Durée de mise en cache, en secondes, ou zéro pour désactiver le cache.
      */
-    public function getCacheMaxAge();
+    public function getCacheMaxAge(): int;
 
     /**
      * Retourne une liste de suggestions par défaut.
      *
-     * Typiquement, cette méthode utilisée quand l'utilisateur veut voir les suggestions proposées mais qu'il n'a
-     * pas encore tapé quoi que ce soit.
+     * Typiquement, cette méthode est utilisée quand l'utilisateur veut voir les suggestions proposées mais qu'il
+     * n'a pas encore tapé quoi que ce soit.
      *
      * Le résultat retourné dépend du service de lookups utilisé : une table retournera les premières entrées, un
      * index retournera les termes les plus fréquents, etc.
      *
      * @param string $source Source des données (pour un service multi-sources uniquement).
      *
-     * @return array Retourne un tableau contenant les suggestions obtenues ou un tableau vide si aucune entrée
+     * @return array[] Retourne un tableau contenant les suggestions obtenues ou un tableau vide si aucune entrée
      * n'est disponible. La structure des éléments du tableau dépend du service de lookup utilisé.
      */
-    public function getDefaultSuggestions($source = '');
+    public function getDefaultSuggestions(string $source = ''): array;
 
     /**
      * Retourne une liste de suggestions pour les termes de recherche passés en paramètre.
@@ -69,11 +69,11 @@ interface LookupInterface
      *
      * Pour les services de lookups mono-source, ce paramètre n'est pas utilisé.
      *
-     * @return array Retourne un tableau contenant les suggestions obtenues ou un tableau vide si aucune entrée n'a
-     * été trouvée pour les termes de recherche indiqués. La structure des éléments du tableau dépend du service de
-     * lookup utilisé.
+     * @return array[] Retourne un tableau contenant les suggestions obtenues ou un tableau vide si aucune entrée
+     * n'a été trouvée pour les termes de recherche indiqués. La structure des éléments du tableau dépend du service
+     * de lookup utilisé.
      */
-    public function getSuggestions($search, $source = '');
+    public function getSuggestions(string $search, string $source = ''): array;
 
     /**
      * Détermine le libellé à afficher pour la liste de codes passés en paramètres.
@@ -83,10 +83,10 @@ interface LookupInterface
      * Typiquement, les données à convertir sont des codes (par exemple issus d'une table) et la conversion va
      * consister à indiquer le libellé de chacun des codes.
      *
-     * @param array     $data   Un tableau contenant les données à convertir (par exemple ['FR', 'DE']).
-     * @param string    $source La source à utiliser (pour un service multi-sources uniquement).
+     * @param array  $data   Un tableau contenant les données à convertir (par exemple ['FR', 'DE']).
+     * @param string $source La source à utiliser (pour un service multi-sources uniquement).
      *
      * @return array Les données converties (par exemple ['FR' => 'France', 'DE' => 'Allemagne']).
      */
-    public function convertCodes(array $data, $source = '');
+    public function convertCodes(array $data, string $source = ''): array;
 }
