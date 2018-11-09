@@ -13,8 +13,7 @@ use Docalist\Lookup\LookupInterface;
 use Docalist\Table\TableManager;
 use Docalist\Table\TableInterface;
 use Docalist\Tokenizer;
-
-// Injecter le TableManager à utiliser
+use InvalidArgumentException;
 
 /**
  * Lookup sur une table d'autorité.
@@ -43,17 +42,27 @@ class TableLookup implements LookupInterface
     /**
      * {@inheritDoc}
      */
-    public function hasMultipleSources(): bool
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getCacheMaxAge(): int
     {
         return 1 * WEEK_IN_SECONDS; // Une table n'est pas censée changer sans arrêt
+    }
+
+    /**
+     * Retourne la table demandée indiquée dans la source.
+     *
+     * @param string $source Nom de la table à retourner.
+     *
+     * @throws InvalidArgumentException Si source est vide.
+     *
+     * @return TableInterface
+     */
+    private function getTable(string $source): TableInterface
+    {
+        if (empty($source)) {
+            throw new InvalidArgumentException('source is required');
+        }
+
+        return $this->tableManager->get($source);
     }
 
     /**
@@ -62,7 +71,7 @@ class TableLookup implements LookupInterface
     public function getDefaultSuggestions(string $source = ''): array
     {
         // Récupère la table
-        $table = $this->tableManager->get($source);
+        $table = $this->getTable($source);
 
         // Lance la recherche
         $result = $table->search($this->getFields(), '', '_label', 100);
@@ -77,7 +86,7 @@ class TableLookup implements LookupInterface
     public function getSuggestions(string $search, string $source = ''): array
     {
         // Récupère la table
-        $table = $this->tableManager->get($source);
+        $table = $this->getTable($source);
 
         // Tokenize la chaine de recherche pour être insensible aux accents, etc.
         $arg = implode(' ', Tokenizer::tokenize($search));
@@ -135,7 +144,7 @@ class TableLookup implements LookupInterface
         }
 
         // Récupère la table
-        $table = $this->tableManager->get($source);
+        $table = $this->getTable($source);
 
         // Construit la clause WHERE ... IN (...)
         $codes = [];
