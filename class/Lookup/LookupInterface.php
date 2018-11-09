@@ -20,19 +20,6 @@ namespace Docalist\Lookup;
 interface LookupInterface
 {
     /**
-     * Indique si le service de lookups gère une ou plusieurs sources de données.
-     *
-     * Le service TableLookup, par exemple, gère plusieurs sources (les tables disponibles) alors que la classe
-     * UserLookup ne gère qu'une seule source de données (la liste des utilisateurs WordPress).
-     *
-     * Pour un service multi-sources, le gestionnaire de lookups vérifie que le paramètre "source" a été indiqué
-     * et génèrera une exception si ce n'est pas le cas.
-     *
-     * @return bool
-     */
-    public function hasMultipleSources(): bool;
-
-    /**
      * Retourne la durée (en secondes) pendant laquelle les suggestions retournées peuvent être mises en cache.
      *
      * Cette méthode est utilisée par les requêtes ajax pour définir la durée de mise en cache des résultats dans le
