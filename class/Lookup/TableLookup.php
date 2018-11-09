@@ -10,6 +10,7 @@
 namespace Docalist\Lookup;
 
 use Docalist\Lookup\LookupInterface;
+use Docalist\Table\TableManager;
 use Docalist\Table\TableInterface;
 use Docalist\Tokenizer;
 
@@ -22,6 +23,23 @@ use Docalist\Tokenizer;
  */
 class TableLookup implements LookupInterface
 {
+    /**
+     * Le gestionnaire de tables à utiliser.
+     *
+     * @var TableManager
+     */
+    protected $tableManager;
+
+    /**
+     * Constructeur.
+     *
+     * @param TableManager $tableManager Le gestionnaire de tables à utiliser.
+     */
+    public function __construct(TableManager $tableManager)
+    {
+        $this->tableManager = $tableManager;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -44,7 +62,7 @@ class TableLookup implements LookupInterface
     public function getDefaultSuggestions(string $source = ''): array
     {
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = $this->tableManager->get($source);
 
         // Lance la recherche
         $result = $table->search($this->getFields(), '', '_label', 100);
@@ -59,7 +77,7 @@ class TableLookup implements LookupInterface
     public function getSuggestions(string $search, string $source = ''): array
     {
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = $this->tableManager->get($source);
 
         // Tokenize la chaine de recherche pour être insensible aux accents, etc.
         $arg = implode(' ', Tokenizer::tokenize($search));
@@ -117,7 +135,7 @@ class TableLookup implements LookupInterface
         }
 
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = $this->tableManager->get($source);
 
         // Construit la clause WHERE ... IN (...)
         $codes = [];
