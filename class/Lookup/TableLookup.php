@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -13,6 +13,8 @@ use Docalist\Lookup\LookupInterface;
 use Docalist\Table\TableInterface;
 use Docalist\Tokenizer;
 
+// Injecter le TableManager à utiliser
+
 /**
  * Lookup sur une table d'autorité.
  *
@@ -20,17 +22,26 @@ use Docalist\Tokenizer;
  */
 class TableLookup implements LookupInterface
 {
-    public function hasMultipleSources()
+    /**
+     * {@inheritDoc}
+     */
+    public function hasMultipleSources(): bool
     {
         return true;
     }
 
-    public function getCacheMaxAge()
+    /**
+     * {@inheritDoc}
+     */
+    public function getCacheMaxAge(): int
     {
         return 1 * WEEK_IN_SECONDS; // Une table n'est pas censée changer sans arrêt
     }
 
-    public function getDefaultSuggestions($source = '')
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultSuggestions(string $source = ''): array
     {
         // Récupère la table
         $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
@@ -42,7 +53,10 @@ class TableLookup implements LookupInterface
         return $this->processResults($result, $table);
     }
 
-    public function getSuggestions($search, $source = '')
+    /**
+     * {@inheritDoc}
+     */
+    public function getSuggestions(string $search, string $source = ''): array
     {
         // Récupère la table
         $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
@@ -92,7 +106,10 @@ class TableLookup implements LookupInterface
         return array_values($result);
     }
 
-    public function convertCodes(array $data, $source = '')
+    /**
+     * {@inheritDoc}
+     */
+    public function convertCodes(array $data, string $source = ''): array
     {
         // Sanity check
         if (empty($data)) {
