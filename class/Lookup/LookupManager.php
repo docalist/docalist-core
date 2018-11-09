@@ -77,11 +77,6 @@ class LookupManager
         // Récupère le service qui gère les lookups du type indiqué
         $lookup = $this->getLookupService($type);
 
-        // S'il s'agit d'un lookup multi-sources, la source est obligatoire
-        if (empty($source) && $lookup->hasMultipleSources()) {
-            throw new InvalidArgumentException("Source is required for lookups of type $type");
-        }
-
         // Exécute le lookup
         return empty($search) ? $lookup->getDefaultSuggestions($source) : $lookup->getSuggestions($search, $source);
     }
