@@ -180,8 +180,8 @@ class Plugin
                 return new TableLookup($services->get('table-manager'));
             },
 
-            'thesaurus-lookup' => function () {
-                return new ThesaurusLookup();
+            'thesaurus-lookup' => function (Services $services) {
+                return new ThesaurusLookup($services->get('table-manager'));
             },
 
             // Admin Notices
