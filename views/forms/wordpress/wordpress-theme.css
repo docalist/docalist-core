@@ -70,6 +70,18 @@ button.cloner span::before {
 }
 
 /*
+ * Donne un style temporaire aux contrôles "selectize" jusqu'à ce qu'ils soient initialisés.
+ * L'objectif c'est que les select et les input .selectize aient à peu près la même taille 
+ * avant et après l'initialisation pour éviter autant que possible un FOUC.
+ */
+select.entrypicker, input.entrypicker {
+    /* Entrypicker génère des select avec size=1 et les inputs ont une seule ligne donc on donne juste une largeur */
+    width: 100%;
+    /* Ignore ce qui dépsse pour ne pas afficher d'ascenseur vertical */
+    overflow: hidden; 
+}
+
+/*
     Ajuste les styles de Selectize pour que ça s'intègre dans le BO WordPress.
 */
 .selectize-control{
