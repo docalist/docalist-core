@@ -35,8 +35,13 @@ if ($this->data instanceof Collection) {
 // Si les lookups portent sur une table, il faut convertir les codes en libellés
 $options = $this->convertCodes($data);
 
-// Garantit que le contrôle a un ID, pour y accèder dans le tag <script>
-$id = $this->generateId();
+// Ajoute la classe "entrypicker" au select (docalist-forms se base dessus pour l'initialisation)
+$this->addClass('entrypicker');
+
+// Affiche les select multiple sur une seule ligne tant qu'ils n'ont pas été initialisés (pour limiter FOUC)
+if ($this->hasAttribute('multiple')) {
+    $this->setAttribute('size', 1);
+}
 
 // Détermine les attributs du select
 list($type, $source) = explode(':', $this->getOptions(), 2);
@@ -65,10 +70,3 @@ if (! empty($badValues)) {
 
 // Fin du Select
 $theme->end('select');
-
-// Génère le script inline qui initialise selectize()
-$theme->tag(
-    'script',
-    ['type' => 'text/javascript', 'class' => 'do-not-clone'],
-    'jQuery("#' . $id . '").tableLookup();'
-);
