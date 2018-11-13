@@ -41,6 +41,7 @@ $theme->text(' ');
 
 // Détermine les attributs du bouton
 $attributes = ['type' => 'button', 'class' => 'cloner button button-link'];
+$args; // évite warning eclipse
 if (isset($args['data-clone']) && $args['data-clone'] !== '<') {
     $attributes['data-clone'] = $args['data-clone'];
 }
