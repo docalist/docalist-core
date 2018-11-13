@@ -406,7 +406,7 @@ class Plugin
             'selectize',
             "$url/lib/selectize/js/standalone/selectize.$js",
             ['jquery'],
-            '0.8.5',
+            '0.12.4',
             false
         );
 
@@ -414,7 +414,7 @@ class Plugin
             'selectize',
             "$url/lib/selectize/css/selectize.default.css",
             [],
-            '0.8.5'
+            '0.12.4'
         );
 
         // docalist-forms
