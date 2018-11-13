@@ -54,7 +54,7 @@ foreach (array_keys($this->getOccurences()) as $key) {
     }
     $theme->end('tr');
 }
-$theme->start('tbody');
+$theme->end('tbody');
 
 // Fin de la table
 $theme->end('table');
