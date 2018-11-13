@@ -104,52 +104,10 @@ jQuery(document).ready(function ($) {
      */
     function createClone(node)
     {
-        // Si on a des éléments input ou select sur lesquels selectize() a été
-        // appliqué, cela pose un problème pour le clonage : le noeud d'origine
-        // et le noeud cloné restent plus ou moins liés (on ne peut pas
-        // sélectionner certaines options, le contrôle n'obtient pas le focus,
-        // etc.)
-        // La seule solution que j'ai trouvée consiste à supprimer selectize()
-        // avant de faire le clonage puis à réinstaller selectize.
-        // Il faut également faire une sauvegarde de la valeur actuelle de
-        // l'élément avant de supprimer selectize puis restaurer cette
-        // sauvegarde.
-
-        // Détermine les éléments du noeud qui sont des selectize()
-        var selectized = $('input.selectized,select.selectized', node);
-
-        // Pour chacun des selectize, fait une sauvegarde et appelle destroy
-        selectized.each(function () {
-            // Sauvegarde la valeur actuelle dans l'attribut data-save
-            $(this).data('save', {
-                'value': this.selectize.getValue(),
-                'options': this.selectize.options
-            });
-
-            // Quand on var faire "destroy", selectize va réinitialiser le
-            // select avec les options d'origine, telles qu'elles figuraient
-            // dans le code html initial.
-            // Celles-ci sont sauvegardées dans revertSettings.$children.
-            // Dans notre cas, cela ne sert à rien, car :
-            // - on va restaurer notre propre sauvegarde ensuite
-            // - de toute façon, on ne veut pas récupérer ces options dans le
-            //   clone
-            // Donc on efface simplement la sauvegarde faite par selectize.
-            // Du coup :
-            // - le noeud d'origine se retrouve avec une valeur à vide (mais
-            //   on va restaurer notre sauvegarde data-save)
-            // - le noeud cloné sera vide également (et là c'est ce qu'on veut)
-            this.selectize.revertSettings.$children = [];
-
-            // Supprime selectize du select
-            this.selectize.destroy();
-        });
-
         // Clone le noeud
         var clone = node.clone();
 
-        // Supprime du clone les éléments qu'il ne faut pas cloner (.do-not-clone)
-        // (clones existants, scripts d'init des TableLookup, eléments créés par selectize, etc.)
+        // Supprime du clone les éléments qu'il ne faut pas cloner (ceux qui ont la classe .do-not-clone)
         $('.do-not-clone', clone).remove();
         if (clone.is(':input')) {
             clone.addClass('do-not-clone');
@@ -157,30 +115,9 @@ jQuery(document).ready(function ($) {
             // on ne veut pas cloner tous les mots-clés, juste le premier
         }
 
-        // Réinstalle selectize sur les éléments du noeud à cloner
-        selectized.tableLookup();
-
-        // Restaure la sauvegarde qu'on a faite dans le noeud d'origine
-        selectized.each(function () {
-            var save = $(this).data('save');
-            for (var i in save.options) {
-                this.selectize.addOption(save.options[i]);
-            }
-            this.selectize.setValue(save.value);
-        });
-
-        // 5. Fait un clear sur tous les champs présents dans le clone
-        // Source : http://goo.gl/RE9f1
+        // Fait un clear sur tous les champs présents dans le clone (source : http://goo.gl/RE9f1)
         clone.find('input:text, input:password, input:file, select, textarea').addBack().val('');
         clone.find('input:radio, input:checkbox').removeAttr('checked').addBack().removeAttr('selected');
-
-        // Si on voulait faire un reset, j'ai trouvé la méthode suivante :
-        // var form = $('<form>').append(clone).get(0).reset();
-        // pb : si on édite une notice, on récupère dans le clone les valeurs
-        // déjà saisies.
-
-        // Installe selectize sur les éléments du clone
-        $('.selectized', clone).tableLookup();
 
         // Ok
         return clone;
@@ -225,7 +162,7 @@ jQuery(document).ready(function ($) {
 
             // Renomme les attributs id et for
             $.each(['id', 'for', 'data-editor'], function (i, name) {
- // data-editor : bouton "add media" de wp-editor
+                // dans la liste ci-dessus, data-editor correspond au bouton "add media" de wp-editor
                 var value = input.attr(name); // valeur de l'attribut name, id ou for
                 if (! value) {
                     return;
@@ -308,6 +245,60 @@ jQuery(document).ready(function ($) {
     }
 
     /* ------------------------------------------------------------------------
+     * Gère le clonage des champs lookups
+     * ------------------------------------------------------------------------*/
+    var selectized;
+    $(document).on('docalist:forms:before-clone', function (event, node) {
+        // Détermine les éléments du noeud qui sont des selectize()
+        selectized = $('input.selectized,select.selectized', node);
+
+        // Pour chacun des selectize, fait une sauvegarde et appelle destroy
+        selectized.each(function () {
+            // Sauvegarde la valeur actuelle dans l'attribut data-save
+            $(this).data('save', {
+                'value': this.selectize.getValue(),
+                'options': this.selectize.options
+            });
+
+            // Quand on var faire "destroy", selectize va réinitialiser le
+            // select avec les options d'origine, telles qu'elles figuraient
+            // dans le code html initial.
+            // Celles-ci sont sauvegardées dans revertSettings.$children.
+            // Dans notre cas, cela ne sert à rien, car :
+            // - on va restaurer notre propre sauvegarde ensuite
+            // - de toute façon, on ne veut pas récupérer ces options dans le
+            //   clone
+            // Donc on efface simplement la sauvegarde faite par selectize.
+            // Du coup :
+            // - le noeud d'origine se retrouve avec une valeur à vide (mais
+            //   on va restaurer notre sauvegarde data-save)
+            // - le noeud cloné sera vide également (et là c'est ce qu'on veut)
+            this.selectize.revertSettings.$children = [];
+
+            // Supprime selectize du select
+            this.selectize.destroy();
+        });
+    });
+
+    $(document).on('docalist:forms:after-clone', function (event, node, clone) {
+        // Réinstalle selectize sur les éléments du noeud à cloner
+        selectized.tableLookup();
+
+        // Restaure la sauvegarde qu'on a faite dans le noeud d'origine
+        selectized.each(function () {
+            var save = $(this).data('save');
+            for (var i in save.options) {
+                this.selectize.addOption(save.options[i]);
+            }
+            this.selectize.setValue(save.value);
+        });
+
+        // Installe selectize sur les éléments du clone
+        //$('.selectized', clone).tableLookup();
+        $('.entrypicker', clone).tableLookup();
+    });
+
+    /* ------------------------------------------------------------------------
      * Gère le clonage de l'éditeur wordpress / tinymce
      * ------------------------------------------------------------------------*/
     $(document).on('docalist:forms:before-clone', function (event, node) {
@@ -319,7 +310,7 @@ jQuery(document).ready(function ($) {
 
     $(document).on('docalist:forms:after-clone', function (event, node, clone) {
         // Lors du premier appel, WP fait un wp_print_styles('editor-button-css')
-        // On ne veut pas cloner ces liens, donc on les supprimer
+        // On ne veut pas cloner ces liens, donc on les supprime
         $('link', clone).remove(); // <link> id='dashicons-css' + 'editor-buttons-css' +
 
         // Les quicktags ne fonctionnent pas une fois cloné. Si on a une toolbar, on la supprime
@@ -357,6 +348,8 @@ jQuery(document).ready(function ($) {
 //    $(document).on('docalist:forms:after-clone', function(event, node, clone) {
 //        console.log(event.type, node, clone);
 //    });
+    
+    $('.entrypicker').tableLookup();
 });
 
 // Libellé des relations.
@@ -409,7 +402,8 @@ jQuery.fn.tableLookup = function () {
             create: settings.lookupType === 'index' ? true : false,
 
             // Charge les options dispo en tâche de fond dès l'initialisation
-            preload: true,
+            //preload: true,
+            preload: 'focus',
 
             // Crée le popup dans le body plutôt que dans le contrôle
             dropdownParent: 'body',
