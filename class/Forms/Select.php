@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -8,6 +8,8 @@
  * LICENSE file that was distributed with this source code.
  */
 namespace Docalist\Forms;
+
+use InvalidArgumentException;
 
 /**
  * Un menu déroulant de type select.
@@ -20,20 +22,29 @@ namespace Docalist\Forms;
 class Select extends Choice
 {
     /**
-     * @var boolean|array Valeur et libellé de la première option du select ou false pour désactiver le placeholder.
+     * {@inheritdoc}
+     */
+    const CSS_CLASS = 'select';
+
+    /**
+     * Code et libellé de la première option du select ou false pour désactiver le placeholder.
+     *
+     * @var boolean|array
      */
     protected $firstOption = ['' => '…'];
 
     /**
-     * Modifie le libellé et la valeur de la première option du select.
+     * Modifie le code et le libellé de la première option du select.
      *
      * Cette option est utilisée pour les select simples, elle est ignorée pour les select multiples.
      *
      * @param boolean|string|array $firstOption Optionnel, valeur de l'option.
      *
+     * @throws InvalidArgumentException Si $firstOption ets invalide.
+     *
      * @return self
      */
-    public function setFirstOption($firstOption = true)
+    public function setFirstOption($firstOption = true): self
     {
         switch (true) {
             case $firstOption === false:
@@ -58,12 +69,12 @@ class Select extends Choice
     }
 
     /**
-     * Retourne le libellé et la valeur de la première option du select ou false si la première option est
+     * Retourne le code et le libellé de la première option du select ou false si la première option est
      * désactivée.
      *
      * @return boolean|array
      */
-    public function getFirstOption()
+    public function getFirstOption()// : mixed
     {
         return $this->firstOption;
     }
@@ -73,7 +84,7 @@ class Select extends Choice
      *
      * Si le select est multivalué (multiple=true), la méthode ajoute '[]' au nom du contrôle.
      */
-    protected function getControlName()
+    protected function getControlName(): string
     {
         $name = parent::getControlName();
         $this->hasAttribute('multiple') && $name .= '[]';
@@ -81,41 +92,61 @@ class Select extends Choice
         return $name;
     }
 
-    protected function isMultivalued()
+    /**
+     * {@inheritdoc}
+     */
+    protected function isMultivalued(): bool
     {
         return parent::isMultivalued() || $this->hasAttribute('multiple');
     }
 
-    protected function displayOptions(Theme $theme, array $options = [], array $data = [], array $attributes = [])
+    /**
+     * {@inheritdoc}
+     */
+    protected function displayOptions(Theme $theme, array $selected): void
     {
-        static $depth = 0;
-
-        $visited = [];
-        foreach ($options as $value => $label) {
-            // Si label est un tableau c'est un optgroup : value contient le libellé du optgroup et label les options
-            if (is_array($label)) {
-                $depth && $this->invalidArgument('%s: options groups cannot be nested.');
-                ++$depth;
-                $theme->start('optgroup', ['label' => sprintf(__('%s :', 'docalist-core'), $value)]);
-                $this->displayOptions($theme, $label, $data);
-                foreach ($label as $value => $label) {
-                    $visited[$value] = $value;
-                }
-                $theme->end('optgroup');
-                --$depth;
-                continue;
-            }
-
-            // Option normale
-            $attr = $attributes + ['value' => $value];
-            if (in_array($value, $data, false)) {
-                $attr['selected'] = 'selected';
-                $visited[$value] = $value;
-            }
-
-            $theme->tag('option', $attr, $label);
+        // Affiche l'option vide (firstOption) si elle est activée et que ce n'est pas un select multiple
+        if (! $this->hasAttribute('multiple') && $option = $this->getFirstOption()) {
+            $this->displayOption($theme, key($option), current($option), false, false);
         }
 
-        return array_diff_key(array_combine($data, $data), $visited);
+        // Affiche les options disponibles
+        parent::displayOptions($theme, $selected);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function displayOption(Theme $theme, string $value, string $label, bool $selected, bool $invalid): void
+    {
+        // Détermine les attributs de l'option
+        $attributes = ['value' => $value];
+        $selected && $attributes['selected'] = 'selected';
+        if ($invalid) {
+            $class = static::CSS_CLASS . '-invalid-entry';
+            $this->isRepeatable() && $class .= ' do-not-clone'; // évite de clone les options invalides
+            $attributes['class'] = $class;
+            $attributes['title'] = __('Option invalide', 'docalist-core');
+            $label = __('Invalide : ', 'docalist-core') . $label;
+        }
+
+        // Génère l'option
+        $theme->tag('option', $attributes, $label);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function startOptionGroup(string $label, Theme $theme): void
+    {
+        $theme->start('optgroup', ['label' => $label]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function endOptionGroup(Theme $theme): void
+    {
+        $theme->end('optgroup');
     }
 }
