@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -16,7 +16,15 @@ namespace Docalist\Forms;
  */
 class Checklist extends Radiolist
 {
+    /**
+     * {@inheritdoc}
+     */
     const INPUT_TYPE = 'checkbox';
+
+    /**
+     * {@inheritdoc}
+     */
+    const CSS_CLASS = 'checklist';
 
     /**
      * {@inheritdoc}
@@ -24,12 +32,15 @@ class Checklist extends Radiolist
      * Une checklist est obligatoirement multivaluée (et indépendemment de ça, elle peut être repeatable).
      * Le nom du contrôle a toujours '[]' à la fin.
      */
-    protected function getControlName()
+    protected function getControlName(): string
     {
         return parent::getControlName() . '[]';
     }
 
-    protected function isMultivalued()
+    /**
+     * {@inheritdoc}
+     */
+    protected function isMultivalued(): bool
     {
         return true;
     }
