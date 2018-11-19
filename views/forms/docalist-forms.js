@@ -609,73 +609,74 @@ jQuery(document).ready(function ($) {
 /**
  * Plugin pour Selectize permettant de naviguer dans un thesaurus.
  */
-Selectize.define("subnavigate", function (options) {
-    var self = this;
+(function ($) {
+    Selectize.define("subnavigate", function (options) {
+        var self = this;
 
-    /**
-     * Surcharge la méthode onOptionSelect
-     *
-     * On regarde
-     * - si le tag qui a été cliqué dans l'option en cours a un attribut href
-     * - si l'option en cours a un attribut href
-     *
-     * Si c'est le cas, on relance une recherche par valeur sur le contenu de
-     * l'attribut href et on affiche les résultats obtenus, sinon, on appelle
-     * la méthode onOptionSelect d'origine.
-     */
-    self.onOptionSelect = (function () {
-        var original = self.onOptionSelect;
-
-        var show = function (value) {
-            if (!self.options.hasOwnProperty(value)) {
-                return;
-            }
-
-            var option = self.options[value];
-            var html = self.render("option", option);
-            self.$dropdown_content.html(html);
-
-        };
-
-        var loaded = function (value, results) {
-            if (results && results.length) {
-                self.addOption(results);
-            }
-            show(value);
-        };
-
-        return function (e) {
-            // soit selectize nous a passé un event mouse ($dropdown.on("mousedown"))
-            // soit un objet contenant juste currentTarget (onKeyDown:KEY_RETURN)
-
-            // Teste si c'est un lien
-            var target = e.target || e.currentTarget;
-            var value = $(target).attr("rel");
-
-            // On a trouvé un lien
-            if (value) {
-                // Empêche la fermeture du dropdown
-                e.preventDefault && e.preventDefault();
-                e.stopPropagation && e.stopPropagation();
-
-                if (self.options.hasOwnProperty(value)) {
-                    show(value);
-                } else {
-                    var load = self.settings.load;
-                    if (!load) {
-                        return;
-                    }
-                    load.apply(self, ["[" + value + "]", function (results) {
-                        loaded(value, results);
-                    }]);
+        /**
+         * Surcharge la méthode onOptionSelect
+         *
+         * On regarde
+         * - si le tag qui a été cliqué dans l'option en cours a un attribut href
+         * - si l'option en cours a un attribut href
+         *
+         * Si c'est le cas, on relance une recherche par valeur sur le contenu de
+         * l'attribut href et on affiche les résultats obtenus, sinon, on appelle
+         * la méthode onOptionSelect d'origine.
+         */
+        self.onOptionSelect = (function () {
+            var original = self.onOptionSelect;
+    
+            var show = function (value) {
+                if (!self.options.hasOwnProperty(value)) {
+                    return;
                 }
-                return false;
-            }
+    
+                var option = self.options[value];
+                var html = self.render("option", option);
+                self.$dropdown_content.html(html);
+            };
 
-            // Ce n'est pas un lien, laisse la méthode d'origine s'exécuter
-            else {
-                return original.apply(this, arguments);
-            }
-        };
-    })();
-});
+            var loaded = function (value, results) {
+                if (results && results.length) {
+                    self.addOption(results);
+                }
+                show(value);
+            };
+
+            return function (e) {
+                // soit selectize nous a passé un event mouse ($dropdown.on("mousedown"))
+                // soit un objet contenant juste currentTarget (onKeyDown:KEY_RETURN)
+
+                // Teste si c'est un lien
+                var target = e.target || e.currentTarget;
+                var value = $(target).attr("rel");
+
+                // On a trouvé un lien
+                if (value) {
+                    // Empêche la fermeture du dropdown
+                    e.preventDefault && e.preventDefault();
+                    e.stopPropagation && e.stopPropagation();
+    
+                    if (self.options.hasOwnProperty(value)) {
+                        show(value);
+                    } else {
+                        var load = self.settings.load;
+                        if (!load) {
+                            return;
+                        }
+                        load.apply(self, ["[" + value + "]", function (results) {
+                            loaded(value, results);
+                        }]);
+                    }
+                    return false;
+                }
+
+                // Ce n'est pas un lien, laisse la méthode d'origine s'exécuter
+                else {
+                    return original.apply(this, arguments);
+                }
+            };
+        })();
+    });
+})(jQuery);
