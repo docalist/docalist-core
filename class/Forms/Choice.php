@@ -164,7 +164,7 @@ abstract class Choice extends Element
             // Si label est une chaine, c'est une option simple
             if (is_string($label)) {
                 // Affiche l'option
-                $this->displayOption($theme, $value, $label, isset($selected[$value]), false);
+                $this->displayOption($theme, (string) $value, $label, isset($selected[$value]), false);
 
                 // Supprime l'option de la liste des options sélectionnées
                 unset($selected[$value]);
@@ -186,7 +186,7 @@ abstract class Choice extends Element
                 // Si label est une chaine, c'est une option simple
                 if (is_string($label)) {
                     // Affiche l'option
-                    $this->displayOption($theme, $value, $label, isset($selected[$value]), false);
+                    $this->displayOption($theme, (string) $value, $label, isset($selected[$value]), false);
 
                     // Supprime l'option de la liste des options sélectionnées
                     unset($selected[$value]);
@@ -207,7 +207,7 @@ abstract class Choice extends Element
 
         // S'il reste encore des données dans selected, ce sont des options invalides
         foreach ($selected as $value) {
-            $this->displayOption($theme, $value, $value, true, true);
+            $this->displayOption($theme, (string) $value, $value, true, true);
         }
     }
 
