@@ -423,7 +423,7 @@ class Plugin
             "$url/views/forms/docalist-forms.js",
             ['jquery', 'jquery-ui-sortable', 'selectize'],
             '160311',
-            false
+            true
         );
 
         // Thème par défaut des formulaires
