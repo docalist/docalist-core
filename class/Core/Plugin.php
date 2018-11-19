@@ -393,14 +393,6 @@ class Plugin
 
         $url = DOCALIST_CORE_URL;
 
-        // Bootstrap
-        wp_register_style(
-            'bootstrap',
-            '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css',
-            [],
-            '2.3.0'
-        );
-
         // Selectize
         wp_register_script(
             'selectize',
@@ -424,22 +416,6 @@ class Plugin
             ['jquery', 'jquery-ui-sortable', 'selectize'],
             '181119',
             true
-        );
-
-        // Thème par défaut des formulaires
-        wp_register_style(
-            'docalist-forms-default',
-            "$url/views/forms/default/default.css",
-            ['wp-admin'],
-            '140318'
-        );
-
-        // Thème bootstrap des formulaires
-        wp_register_style(
-            'docalist-forms-bootstrap',
-            "$url/views/forms/bootstrap/bootstrap-theme.css",
-            ['bootstrap'],
-            '140318'
         );
 
         // Thème wordpress des formulaires
