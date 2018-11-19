@@ -9,76 +9,144 @@
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 
-jQuery(document).ready(function ($) {
+// Pour la maintenance du code, ce serait bien de découper ce fichier en
+// plusieurs fichiers puis de minifier/ré-assembler avec webpack ou autre.
 
-    /**
-     * Génère un effet highlight sur l'élément passé en paramètre : l'élément
-     * apparaît en jaune clair quelques instants puis s'estompe.
-     *
-     * On gère l'effet nous-même pour éviter d'avoir une dépendance envers
-     * jquery-ui.
-     *
-     * @param DomElement note l'élément à highlighter
-     */
-    function highlight(node)
-    {
-        // Principe : on crée une div jaune avec exactement les mêmes dimensions
-        // que l'élément et on la place au dessus en absolute puis on l'estompe
-        // (fadeout) gentiment avant de la supprimer.
+// -----------------------------------------------------------------------------------------------------------------
+
+/**
+ * Module - Génère un effet highlight sur l'élément passé en paramètre.
+ *
+ * L'élément apparaît en jaune clair quelques instants puis s'estompe.
+ *
+ * On gère l'effet nous-même pour éviter une dépendance envers jquery-ui.
+ */
+(function ($) {
+    $.fn.docalistHighlight = function () {
+        // Principe : on crée une div jaune avec exactement les mêmes
+        // dimensions que l'élément et on la place au dessus en absolute puis
+        // on l'estompe (fadeout) gentiment avant de la supprimer.
         // Adapté de : http://stackoverflow.com/a/13106698
-        $('<div/>').width(node.outerWidth()).height(node.outerHeight()).css({
-            'position' : 'absolute',
-            'left' : node.offset().left,
-            'top' : node.offset().top,
-            'background-color' : '#ffff44',
-            'opacity' : '0.5',
-            'z-index' : '9999999'
-        }).appendTo('body').fadeOut(1000, function () {
-            $(this).remove();
+        $(this).each(function () {
+            var node = $(this);
+            $("<div/>").width(node.outerWidth()).height(node.outerHeight()).css({
+                "position" : "absolute",
+                "left" : node.offset().left,
+                "top" : node.offset().top,
+                "background-color" : "#ffff44",
+                "opacity" : "0.5",
+                "z-index" : "9999999"
+            }).appendTo("body").fadeOut(1000, function () {
+                $(this).remove();
+            });
+        });
+    };
+}(jQuery));
+
+// -----------------------------------------------------------------------------------------------------------------
+
+/**
+ * Module - Autosize des textarea (celles d'origine et celles qu'on clone)
+ */
+jQuery(document).ready(function ($) {
+    if (typeof autosize === "function") {
+        // Autosize sur les textareas qui existent initiallement dans la page
+        autosize($("textarea.autosize"));
+
+        // Autosize sur les textarea qui figurent dans les blocs clonés
+        // On intercepte "after-insert-clone" (et non pas "after-clone") car
+        // le noeud doit être inséré dasn le DOM pour que autosize détermine
+        // correctement la hauteur du texte.
+        $(document).on("docalist:forms:after-insert-clone", function (event, node, clone) {
+            autosize($("textarea.autosize", clone));
         });
     }
+});
+
+//-----------------------------------------------------------------------------------------------------------------
+
+/**
+ * Module - clonage des champs répétables.
+ *
+ * Les boutons doivent avoir la classe "cloner" et ils peuvent avoir les attributs suivant :
+ * - "data-clone" : un pseudo sélecteur qui indique l'élément à cloner (par exemple "<^^div.aa"),
+ * - "data-level" : indique le niveau auquel on est (1 par défaut).
+ */
+(function ($, document) {
+    /**
+     * Lance le clonage quand on clique sur les boutons qui ont la classe "cloner"
+     */
+    $(document).on("click", ".cloner", function () {
+        // 1. Détermine le noeud qu'on doit cloner
+        var node = nodeToClone(this);
+
+        // 2. Génère l'événement "before-clone" en passant le noeud qui va être cloné
+        $(document).trigger("docalist:forms:before-clone", node);
+
+        // 3. Clone le noeud
+        var clone = createClone(node);
+
+        // 4. Renomme les champs (Le niveau auquel on est figure dans l'attribut data-level du bouton)
+        var level = parseInt($(this).data("level")) || 1; // NaN ou 0 -> 1
+        renumber(clone, level);
+
+        // 5. Génère l'événement "after-clone" en passant le noeud d'origine et le clone
+        $(document).trigger("docalist:forms:after-clone", [node, clone]);
+
+        // 6. Insère le clone juste après le noeud d'origine, avec un espace entre deux
+        node.after(" ", clone);
+
+        // 7. Génère l'événement "after-insert-clone" en passant le noeud d'origine et le clone
+        $(document).trigger("docalist:forms:after-insert-clone", [node, clone]);
+
+        // 7. Donne le focus au premier champ trouvé dans le clone
+        var first = clone.is(":input") ? clone : $(":input:first", clone);
+        first.is(".selectized") ? first[0].selectize.focus() : first.focus();
+
+        // 8. Fait flasher le clone pour que l'utilisateur voit l'élément inséré
+        $(clone).docalistHighlight();
+    });
 
     /**
      * Détermine l'élément à cloner en fonction du bouton "+" qui a été cliqué.
      *
-     * Principe : les boutons "+" ont un attribut "data-clone" qui contient un
-     * pseudo sélecteur utilisé pour indiquer où se trouve l'élément à cloner.
-     * Ce sélecteur est un sélecteur jQuery auquel on peut ajouter (en préfixe)
-     * les caractères :
-     * - '<' pour dire qu'on veut se déplacer sur le noeud précédent
+     * Principe : les boutons "+" ont un attribut "data-clone" qui contient un pseudo sélecteur utilisé pour
+     * indiquer où se trouve l'élément à cloner.
+     * Ce sélecteur est un sélecteur jQuery auquel on peut ajouter (en préfixe) les caractères :
+     * - '<' pour dire qu'on veut se déplacer sur le noeud précédent,
      * - '^' pour dire qu'on veut aller au noeud parent.
      * Exemple pour "<^^div.aa"
-     * - on a cliqué sur le "+"
+     * - on a cliqué sur le bouton "+"
      * - aller au noeud qui précède
      * - remonter au grand-parent
      * - sélectionner la div.aa qui figure dans le noeud obtenu.
      *
-     * Le sélecteur par défaut est "<" ce qui signifie que si l'attribut
-     * data-clone est absent, c'est le noeud qui précède le bouton qui sera
-     * cloné.
+     * Le sélecteur par défaut est "<" ce qui signifie que si l'attribut data-clone est absent, c'est le noeud
+     * qui précède le bouton qui sera cloné.
      *
-     * @param DomElement button le bouton "+" qui a été cliqué
-     * @return DomElement le noeud à cloner
+     * @param   DomElement button le bouton "+" qui a été cliqué
+     *
+     * @return  DomElement le noeud à cloner
      */
     function nodeToClone(button)
     {
         var node = $(button);
 
         // Récupère le sélecteur à appliquer (attribut data-clone, '<' par défaut)
-        var selector = node.data('clone') || '<';
+        var selector = node.data("clone") || "<";
 
         // Exécute les commandes contenues dans le préfixe (< = prev, ^ = parent)
         for (var i = 0; i < selector.length; i++) {
             switch (selector.substr(i, 1)) {
-                // parent
-                case '^':
-                    node = node.parent();
-                    continue;
+            // parent
+            case "^":
+                node = node.parent();
+                continue;
 
-                // previous
-                case '<':
-                    node = node.prev();
-                    continue;
+            // previous
+            case "<":
+                node = node.prev();
+                continue;
             }
 
             // Autre caractère = début du sélecteur jquery
@@ -96,11 +164,12 @@ jQuery(document).ready(function ($) {
     }
 
     /**
-     * Fait un clonage sélectif du noeud passé en paramètre, en prenant en
-     * compte les éléments sur lesquels selectize() a été appliqué.
+     * Fait un clone du noeud passé en paramètre, supprime les éléments à ignorer et en réinitialise la valeur
+     * des champs.
      *
-     * @param DomElement noeud à cloner
-     * @return DomElement noeud cloné
+     * @param   DomElement node noeud à cloner
+     *
+     * @return  DomElement noeud cloné
      */
     function createClone(node)
     {
@@ -108,44 +177,44 @@ jQuery(document).ready(function ($) {
         var clone = node.clone();
 
         // Supprime du clone les éléments qu'il ne faut pas cloner (ceux qui ont la classe .do-not-clone)
-        $('.do-not-clone', clone).remove();
-        if (clone.is(':input')) {
-            clone.addClass('do-not-clone');
+        $(".do-not-clone", clone).remove();
+        if (clone.is(":input")) {
+            clone.addClass("do-not-clone");
             // exemple : si une zone mots-clés contient plusieurs mots-clés,
             // on ne veut pas cloner tous les mots-clés, juste le premier
         }
 
         // Fait un clear sur tous les champs présents dans le clone (source : http://goo.gl/RE9f1)
-        clone.find('input:text, input:password, input:file, select, textarea').addBack().val('');
-        clone.find('input:radio, input:checkbox').removeAttr('checked').addBack().removeAttr('selected');
+        clone.find("input:text, input:password, input:file, select, textarea").addBack().val("");
+        clone.find("input:radio, input:checkbox").removeAttr("checked").addBack().removeAttr("selected");
 
         // Ok
         return clone;
     }
 
     /**
-     * Renumérote les attributs name, id et for du noeud passé en paramètre (un
-     * clone) et des noeuds input et label qu'il contient.
+     * Renumérote les attributs name, id et for présents dans le clone passé en paramètre.
      *
-     * Les attributs id et for sont de la forme "group-i-champ-j-zone-k".
-     * Les attributs name sont de la forme "group[i][champ][j][zone][k]".
-     * La méthode va incrémenter soit i, soit j, soit k en fonction de la valeur
-     * du level passé en paramètre (1 pour i, 2 pour j, etc.)
+     * - Les attributs id et for sont de la forme "group-i-champ-j-zone-k".
+     * - Les attributs name sont de la forme "group[i][champ][j][zone][k]".
      *
-     * Par exemple pour "topic[0][term][1]" avec level=2 on obtiendra
-     * "topic[0][term][2]".
+     * La méthode va incrémenter soit i, soit j, soit k en fonction de la valeur du level passé en
+     * paramètre (1 pour i, 2 pour j, etc.)
      *
-     * @param DomElement le noeud à renuméroter.
-     * @param integer level le niveau de renumérotation.
-     * @return DomElement le noeud final.
+     * Par exemple pour "topic[0][term][1]" avec level=2 on obtiendra "topic[0][term][2]".
+     *
+     * @param   DomElement  clone    le noeud à renuméroter.
+     * @param   integer     level   le niveau de renumérotation.
+     *
+     * @return  DomElement le noeud final.
      */
     function renumber(clone, level)
     {
-        $(':input,label,div', clone).addBack().each(function () {
+        $(":input,label,div", clone).addBack().each(function () {
             var input = $(this);
 
             // Renomme l'attribut name
-            $.each(['name'], function (i, name) {
+            $.each(["name"], function (i, name) {
                 var value = input.attr(name); // valeur de l'attribut name, id ou for
                 if (! value) {
                     return;
@@ -155,24 +224,24 @@ jQuery(document).ready(function ($) {
                     if (++curLevel !== level) {
                         return match;
                     }
-                    return '[' + (parseInt(i)+1) + ']';
+                    return "[" + (parseInt(i)+1) + "]";
                 });
                 input.attr(name, value);
             });
 
             // Renomme les attributs id et for
-            $.each(['id', 'for', 'data-editor'], function (i, name) {
+            $.each(["id", "for", "data-editor"], function (i, name) {
                 // dans la liste ci-dessus, data-editor correspond au bouton "add media" de wp-editor
                 var value = input.attr(name); // valeur de l'attribut name, id ou for
                 if (! value) {
                     return;
                 }
                 var curLevel = 0;
-                value = value.replace(/-(\d+)(-|$)/g, function (match, i, end) {
+                value = value.replace(/-(\d+)(-|$)/mg, function (match, i, end) {
                     if (++curLevel !== level) {
                         return match;
                     }
-                    return '-' + (parseInt(i)+1) + (end ? '-' : '');
+                    return "-" + (parseInt(i)+1) + (end ? "-" : "");
                 });
                 input.attr(name, value);
             });
@@ -180,149 +249,37 @@ jQuery(document).ready(function ($) {
 
         return clone;
     }
+}(jQuery, document));
 
-    /**
-     * Gère les boutons de répétition des champs.
-     *
-     * Les boutons doivent avoir la classe "cloner" et peuvent avoir un attribut
-     * "data-clone" qui indique l'élément à cloner.
-     */
-    $('body').on('click', '.cloner', function () {
-        // this = le bouton "+" qui a été cliqué.
 
-        // On va travailler en plusieurs étapes :
-        //
-        // 1. déterminer l'élément à cloner à partir du bouton qui a été cliqué
-        // 2. cloner cet élément
-        // 3. supprime du clone les éléments qu'il ne faut pas cloner (.do-not-clone)
-        // 4. renommer les attributs name, id, for, etc.
-        // 5. réinitialiser les champs du clone à vide
-        // 6. insérer le clone au bon endroit
-        // 7. highlighte le nouveau champ et lui donne le focus
+//-----------------------------------------------------------------------------------------------------------------
 
-        // 1. Détermine le noeud qu'on doit cloner
-        var node = nodeToClone(this);
-
-        // Génère l'événement "before-clone" en passant le noeud qui va être cloné
-        $(document).trigger('docalist:forms:before-clone', node);
-
-        // 2. Clone le noeud
-        var clone = createClone(node);
-
-        // 4. Renomme les champs
-        // Le niveau de clonage auquel on est figure dans l'attribut data-level
-        // du bouton de clonage.
-        var level = parseInt($(this).data('level')) || 1; // NaN ou 0 -> 1
-        renumber(clone, level);
-
-        // 6. Insère le clone juste après le noeud d'origine, avec un espace entre deux
-        node.after(' ', clone);
-
-        // Génère l'événement "after-clone" en passant le noeud d'origine et le clone
-        // Remarque : quand l'evt est généré, le clone a déjà été inséré dans le DOM
-        // C'est important, par exemple pour que autosize puisse faire un calcul exact.
-        $(document).trigger('docalist:forms:after-clone', [node, clone]);
-
-        // Donne le focus au premier champ trouvé dans le clone
-        var first = clone.is(':input') ? clone : $(':input:first', clone);
-        first.is('.selectized') ? first[0].selectize.focus() : first.focus();
-
-        // 7. Fait flasher le clone pour que l'utilisateur voit l'élément inséré
-        highlight(clone);
-    });
-
-    /* ------------------------------------------------------------------------
-     * Autosize des textarea (celles d'origine et celles qu'on clone)
-     * ------------------------------------------------------------------------*/
-    if (typeof autosize === 'function') {
-        // Autosize sur les textareas qui existent initiallement
-        autosize($('textarea.autosize'));
-
-        // Autosize sur les textarea qui sont clonées
-        $(document).on('docalist:forms:after-clone', function (event, node, clone) {
-            autosize($('textarea.autosize', clone));
-        });
-    }
-
-    /* ------------------------------------------------------------------------
-     * Gère le clonage des champs lookups
-     * ------------------------------------------------------------------------*/
-    var selectized;
-    $(document).on('docalist:forms:before-clone', function (event, node) {
-        // Détermine les éléments du noeud qui sont des selectize()
-        selectized = $('input.selectized,select.selectized', node);
-
-        // Pour chacun des selectize, fait une sauvegarde et appelle destroy
-        selectized.each(function () {
-            // Sauvegarde la valeur actuelle dans l'attribut data-save
-            $(this).data('save', {
-                'value': this.selectize.getValue(),
-                'options': this.selectize.options
-            });
-
-            // Quand on var faire "destroy", selectize va réinitialiser le
-            // select avec les options d'origine, telles qu'elles figuraient
-            // dans le code html initial.
-            // Celles-ci sont sauvegardées dans revertSettings.$children.
-            // Dans notre cas, cela ne sert à rien, car :
-            // - on va restaurer notre propre sauvegarde ensuite
-            // - de toute façon, on ne veut pas récupérer ces options dans le
-            //   clone
-            // Donc on efface simplement la sauvegarde faite par selectize.
-            // Du coup :
-            // - le noeud d'origine se retrouve avec une valeur à vide (mais
-            //   on va restaurer notre sauvegarde data-save)
-            // - le noeud cloné sera vide également (et là c'est ce qu'on veut)
-            this.selectize.revertSettings.$children = [];
-
-            // Supprime selectize du select
-            this.selectize.destroy();
-        });
-    });
-
-    $(document).on('docalist:forms:after-clone', function (event, node, clone) {
-        // Réinstalle selectize sur les éléments du noeud à cloner
-        selectized.tableLookup();
-
-        // Restaure la sauvegarde qu'on a faite dans le noeud d'origine
-        selectized.each(function () {
-            var save = $(this).data('save');
-            for (var i in save.options) {
-                this.selectize.addOption(save.options[i]);
-            }
-            this.selectize.setValue(save.value);
-        });
-
-        // Installe selectize sur les éléments du clone
-        //$('.selectized', clone).tableLookup();
-        $('.entrypicker', clone).tableLookup();
-    });
-
-    /* ------------------------------------------------------------------------
-     * Gère le clonage de l'éditeur wordpress / tinymce
-     * ------------------------------------------------------------------------*/
-    $(document).on('docalist:forms:before-clone', function (event, node) {
+/**
+ * Module - clonage de l'éditeur wordpress / tinymce
+ */
+(function ($, document) {
+    $(document).on("docalist:forms:before-clone", function (event, node) {
         // Désactive les tinymce qui existent dans le noeud d'origine
-        $('.wp-editor-area', node).each(function (index, textarea) {
+        $(".wp-editor-area", node).each(function (index, textarea) {
             tinymce.execCommand("mceRemoveEditor",false, textarea.id);
         });
     });
 
-    $(document).on('docalist:forms:after-clone', function (event, node, clone) {
+    $(document).on("docalist:forms:after-insert-clone", function (event, node, clone) {
         // Lors du premier appel, WP fait un wp_print_styles('editor-button-css')
         // On ne veut pas cloner ces liens, donc on les supprime
-        $('link', clone).remove(); // <link> id='dashicons-css' + 'editor-buttons-css' +
+        $("link", clone).remove();
 
         // Les quicktags ne fonctionnent pas une fois cloné. Si on a une toolbar, on la supprime
-        $('div.quicktags-toolbar', clone).remove();
+        $("div.quicktags-toolbar", clone).remove();
 
         // Ré-active les tinymce qui existaient dans le noeud d'origine
-        $('.wp-editor-area', node).each(function (index, textarea) {
+        $(".wp-editor-area", node).each(function (index, textarea) {
             tinymce.execCommand("mceAddEditor",false, textarea.id);
         });
 
         // Active les tinymce qui existent dans le clone
-        $('.wp-editor-area', clone).each(function (index, textarea) {
+        $(".wp-editor-area", clone).each(function (index, textarea) {
             tinymce.execCommand("mceAddEditor",false, textarea.id);
 
             // pour les quicktags, la config est stockée dans la var globale tinyMCEPreInit
@@ -330,115 +287,97 @@ jQuery(document).ready(function ($) {
             // [{id => {id:"dbref-content-0-value", buttons:"strong, em, ..."}}]
             // Dans notre cas, tous les éditeurs ont la même config, donc on prend juste le premier item
             // Mais au final, les quicktags clonés ne fonctionnent pas, dasactivation
-//            for (var i in tinyMCEPreInit.qtInit) {
-//                var config = tinyMCEPreInit.qtInit[i];
-//                config.id = textarea.id;
-//                tinyMCEPreInit.qtInit[config.id] = config;
-//                quicktags(config);
-//                break;
-//            }
+            // for (var i in tinyMCEPreInit.qtInit) {
+            //     var config = tinyMCEPreInit.qtInit[i];
+            //     config.id = textarea.id;
+            //     tinyMCEPreInit.qtInit[config.id] = config;
+            //     quicktags(config);
+            //     break;
+            // }
         });
-
     });
+})(jQuery, document);
 
-//    $(document).on('docalist:forms:before-clone', function(event, node) {
-//        console.log(event.type, node);
-//    });
-//
-//    $(document).on('docalist:forms:after-clone', function(event, node, clone) {
-//        console.log(event.type, node, clone);
-//    });
-    
-    $('.entrypicker').tableLookup();
-});
-
-// Libellé des relations.
-// A localizer plus tard
-var docalistLookupRelNames = {
-    USE: 'em',
-    MT: 'mt',
-    BT: 'tg',
-    NT: 'ts',
-    RT: 'ta',
-    UF: 'ep',
-    description: 'df',
-    SN: 'na'
-};
+//-----------------------------------------------------------------------------------------------------------------
 
 /**
- * Initialise un contrôle de type TableLookup.
+ * Module - Contrôle EntryPicker.
  */
-jQuery.fn.tableLookup = function () {
-    $=jQuery;
-    return this.each(function () {
+(function ($, document) {
+    jQuery.fn.docalistEntryPicker = function () {
+        return this.each(function () {
 
-        var createId = function (label) {
-            return label;
-        }
+            /**
+             * Settings du champ EntryPicker
+             */
+            var settings = $(this).data();
+            settings = $.extend({
+                valueField: settings.lookupType === "index" ? "text" : "code",  // Nom du champ qui contient le code
+                labelField: settings.lookupType === "index" ? "text" : "label"  // Nom du champ qui contient le libellé
+            }, settings);
 
-        // Les paramètres figurent en attributs "data-" du select
-        var settings = $(this).data();
+            /**
+             * Libellé des relations
+             */
+            var relations = {
+                USE: "em",
+                MT: "mt",
+                BT: "tg",
+                NT: "ts",
+                RT: "ta",
+                UF: "ep",
+                description: "df",
+                SN: "na"
+            };
 
-        settings = $.extend({
-            valueField: settings.lookupType === 'index' ? 'text' : 'code',  // Nom du champ qui contient le code
-            labelField: settings.lookupType === 'index' ? 'text' : 'label'  // Nom du champ qui contient le libellé
-        }, settings);
+            /**
+             * Retourne le libellé à utiliser pour désigner un type de relation donné.
+             *
+             * Exemple : getRelationLabel("BT"); // -> "tg".
+             *
+             * @param string type Type de relation.
+             *
+             * @return string Le libellé à utiliser.
+             */
+            function getRelationLabel(type) {
 
-        $(this).selectize({
-            plugins: {
-                'subnavigate': {}, // définit un peu plus bas
-                'drag_drop': {},
-                'remove_button': { 'title': '' }, // pour ne pas avoir à gérer les trados
-            },
-
-            // Le JSON retourné par "docalist-table-lookup" est de la forme :
-            // [ { "code": "xx", "label": "aa" }, { "code": "yy", "label": "bb" } ]
-
-            valueField: settings.valueField, // Nom du champ qui contient la valeur
-            labelField: settings.labelField, // Nom du champ qui contient le libellé
-
-            // Table d'autorité = liste fermée, on ne peut pas créer de nouvelles valeurs
-            // Lookup sur index = liste ouverte, on peut créer de nouvelles valeurs
-            create: settings.lookupType === 'index' ? true : false,
-
-            // Charge les options dispo en tâche de fond dès l'initialisation
-            //preload: true,
-            preload: 'focus',
-
-            // Crée le popup dans le body plutôt que dans le contrôle
-            dropdownParent: 'body',
-
-            // Par défaut, selectize trie par score. On veut un tri alpha.
-            sortField: settings.labelField,
-
-            // Ajoute la classe "do-not-clone" aux containers créés par selectize
-            wrapperClass: 'selectize-control do-not-clone',
-
-            // La recherche porte à la fois sur le libellé et sur le code
-            // Cela permet par exemple de recherche "ENG" et de trouver "Anglais"
-            searchField: [settings.valueField, settings.labelField],
-
-            highlight: false,
-            hideSelected: true,
-            openOnFocus: true,
-
-            // Lance une requête ajax pour charger les entrées qui commencent par query
-            load: function (query, callback) {
-                // Dans le back-office, la variable ajaxurl est définie par WP et
-                // pointe vers la page "wordpress/wp-admin/admin-ajax.php"
-                // @see http://codex.wordpress.org/AJAX_in_Plugins
-                var url = ajaxurl + '?action=docalist-lookup';
-
-                // Paramètres de la requête : cf. Docalist-core\Plugin\tableLookup()
-                url += '&type=' + encodeURIComponent(settings.lookupType);
-                url += '&source=' + encodeURIComponent(settings.lookupSource);
-                if (query.length) {
-                    url += '&search=' + encodeURIComponent(query);
+                if (relations && relations[type]) {
+                    return relations[type];
                 }
 
+                return type;
+            };
+
+            /**
+             * Crée un ID pour le libellé passé en paramètre.
+             */
+            function createId(label)
+            {
+                return label;
+            };
+
+            /**
+             * Lance un lookup ajax pour charger les options qui commencent par la chaine de recherche indiquée.
+             *
+             *  @param string   search      Chaine recherchée.
+             *  @param callable callback    Callback à appeller une fois que les résultats sont obtenus.
+             */
+            function ajaxLookup(search, callback) {
+                // Dans le back-office, la variable ajaxurl est définie par WP et pointe vers la
+                // page "wordpress/wp-admin/admin-ajax.php" (cf. http://codex.wordpress.org/AJAX_in_Plugins)
+                var url = ajaxurl + "?action=docalist-lookup";
+
+                // Ajoute les paramètres de la requête (cf. LookupManager)
+                url += "&type=" + encodeURIComponent(settings.lookupType);
+                url += "&source=" + encodeURIComponent(settings.lookupSource);
+                if (search.length) {
+                    url += "&search=" + encodeURIComponent(search);
+                }
+
+                // Lance la requête ajax
                 $.ajax({
                     url : url,
-                    type: 'GET',
+                    type: "GET",
                     error: function () {
                         callback();
                     },
@@ -452,106 +391,225 @@ jQuery.fn.tableLookup = function () {
                         callback(res);
                     }
                 });
-            },
+            };
 
-            render: {
-                option: function (item, escape) {
+            /**
+             * Génère l'affichage des liens d'un terme pour un type de relation donné.
+             *
+             * La méthode est appelée avec un code de relation et un objet qui liste les liens pour ce type de
+             * relation. Par exemple :
+             *
+             * renderRelation(
+             *     "NT",                            // Type de relation
+             *     {
+             *         "CODEABS": "Abstinence",     // Première relation de ce type sous la forme code => valeur
+             *         "CODEALC": "Alcoolisme"      // Seconde relation
+             *     }
+             *     function(html){}                 // Escaper
+             * );
+             *
+             * @param string    type        Type de relation.
+             * @param object    relations   Liste des relations de ce type.
+             * @param callback  escape      Callback à utiliser pour escaper le code html généré.
+             *
+             * @return string Elle retourne un code html de la forme suivante :
+             *
+             * <div class="NT">
+             *     <i>Termes spécifiques :</i>
+             *     <b rel="CODEABS">Abstinence</b>,
+             *     <b rel="CODEALC">Alcoolisme</b>
+             * </div>
+             */
+            function renderRelation(type, relations, escape) {
+                var all=[];
 
-                    /**
-                     * Retourne le libellé à utiliser pour une relation donnée.
-                     * Par exemple relName('BT') -> 'TG'.
-                     * Les libellés utilisés sont définis dans la variable globale
-                     * javascript 'docalistLookupRelNames' qui est internationalisée
-                     * et injectée dans la page.
-                     */
-                    var relName = function (field) {
-                        if (docalistLookupRelNames && docalistLookupRelNames[field]) {
-                            return docalistLookupRelNames[field];
-                        }
-                        return field;
-                    };
-
-                    /**
-                     * Crée une liste de liens.
-                     */
-                    /*
-                     * on nous passe un objet qui est une collection de relations
-                     * de la forme code => valeur
-                     * RT: Object
-                     *     ABSENTEISME PROFESSIONNEL: "Absentéisme professionnel"
-                     *     ABSENTEISME SCOLAIRE: "Absentéisme scolaire"
-                     */
-                    var listRelations = function (name, relations) {
-                        var all=[];
-
-                        $.each(relations, function (code, label) {
-                            if (typeof code === 'number') {
-                                code = createId(label);
-                            }
-                            all.push('<b rel="' + escape(code) + '">' + escape(label) + '</b>');
-                        });
-
-                        return  '<div class="' + name + '">' +
-                                    '<i>' + relName(name) + '</i> ' +
-                                    all.join(', ') +
-                                '</div>';
-                    };
-
-                    var html;
-
-                    // Cas d'un non-descripteur
-                    if (item.USE) {
-                        // USE est de la forme { "code" : "label }
-                        var code = Object.keys(item.USE)[0];
-                        html = '<div class="nondes" rel="' + escape(code) + '">';
-                        html += '<span class="term" rel="' + escape(code) + '">' + escape(item.label) + '</span>';
+                $.each(relations, function (code, label) {
+                    if (typeof code === "number") {
+                        code = createId(label);
                     }
+                    all.push("<b rel=\"" + escape(code) + "\">" + escape(label) + "</b>");
+                });
 
-                    // Cas d'un descripteur
-                    else {
-                        html = '<div class="des">';
-                        html += '<span class="term">' + escape(item[settings.labelField]) + '</span>';
-                    }
+                return  "<div class=\"" + escape(type) + "\">"
+                    +       "<i>" + escape(getRelationLabel(type)) + "</i> "
+                    +       all.join(", ")
+                    +   "</div>";
+            };
 
-                    /*
-                    // Description
-                    if (item.description) {
-                        html += '<span class="title" title="' + escape(item.description) + '">?</span>';
-                    }
-                    */
+            /**
+             * Génère l'affichage d'une option disponible
+             *
+             * @param object    option      L'option à afficher.
+             * @param callback  escape      Callback à utiliser pour escaper le code html généré.
+             *
+             * @return string Le code html généré.
+             */
+            function renderOption(option, escape) {
+                var html;
 
-                    // Description
-                    if (item.description) {
-                        html += '<span class="description" title="' + escape(item.description) + '">?</span>';
-                    }
-
-                    // Scope Note
-                    if (item.SN) {
-                        html += '<span class="SN" title="' + escape(item.SN) + '">!</span>';
-                    }
-
-                    // Relations
-                    $.each(['USE','MT','BT','NT', 'RT','UF'], function (index, field) {
-                        if (item[field]) {
-                            html += listRelations(field, item[field]);
-                        }
-                    });
-
-                    // +SN
-                    // Fin du terme
-                    html += '</div>';
-
-                    return html;
+                // Cas d'un non-descripteur
+                if (option.USE) {
+                    // USE est de la forme { "code" : "label }
+                    var code = Object.keys(option.USE)[0];
+                    html = "<div class=\"nondes\" rel=\"" + escape(code) + "\">";
+                    html += "<span class=\"term\" rel=\"" + escape(code) + "\">" + escape(option.label) + "</span>";
                 }
+
+                // Cas d'un descripteur
+                else {
+                    html = "<div class=\"des\">";
+                    html += "<span class=\"term\">" + escape(option[settings.labelField]) + "</span>";
+                }
+
+                /*
+                // Description
+                if (option.description) {
+                    html += "<span class=\"title\" title=\"" + escape(option.description) + "\">?</span>";
+                }
+                */
+
+                // Description
+                if (option.description) {
+                    html += "<span class=\"description\" title=\"" + escape(option.description) + "\">?</span>";
+                }
+
+                // Scope Note
+                if (option.SN) {
+                    html += "<span class=\"SN\" title=\"" + escape(option.SN) + "\">!</span>";
+                }
+
+                // Relations
+                $.each(["USE","MT","BT","NT", "RT","UF"], function (index, field) {
+                    if (option[field]) {
+                        html += renderRelation(field, option[field], escape);
+                    }
+                });
+
+                // Fin du terme
+                html += "</div>";
+
+                return html;
             }
+
+            /**
+             * Initialize selectize sur ce champ
+             */
+            $(this).selectize({
+                // Liste des plugins selectize.js qui sont activés
+                plugins: {
+                    "subnavigate": {},                  // définit un peu plus bas
+                    "drag_drop": {},
+                    "remove_button": { "title": "" },   // pour ne pas avoir à gérer les trados
+                },
+
+                // Le JSON retourné par "docalist-table-lookup" est de la forme :
+                // [ { "code": "xx", "label": "aa" }, { "code": "yy", "label": "bb" } ]
+
+                // Nom du champ qui contient le code des options
+                valueField: settings.valueField,
+
+                // Nom du champ qui contient le libellé des options
+                labelField: settings.labelField,
+
+                // On ne peut pas ajouter une option non autorisée, sauf pour un lookup sur index (liste ouverte)
+                create: settings.lookupType === "index" ? true : false,
+
+                // Charge les options disponibles lorsque le contrôle obtient le focus
+                preload: "focus",
+
+                // Crée le popup dans le body plutôt que dans le contrôle
+                dropdownParent: "body",
+
+                // Trie les otpions par ordre alpha sur le label
+                sortField: settings.labelField,
+
+                // Ajoute la classe "do-not-clone" aux containers créés par selectize
+                wrapperClass: "selectize-control do-not-clone",
+
+                // La recherche porte à la fois sur le libellé et sur le code
+                searchField: [settings.valueField, settings.labelField],
+
+                // Ne pas mettre en surbrillance la chaine recherchée (ça highlight trop de choses)
+                highlight: true,
+
+                // Masque les options déjà sélectionnées
+                hideSelected: true,
+
+                // Ouvre le popup automatiquement lorsque le champ obtient le focus
+                openOnFocus: true,
+
+                // Fonction utilisée pour charger les options disponibles
+                load: ajaxLookup,
+
+                // Fonctions de rendu
+                render: {
+                    option: renderOption
+                }
+            });
+        });
+    };
+})(jQuery, document);
+
+//-----------------------------------------------------------------------------------------------------------------
+
+/**
+ * Module - Initialise automatiquement les champs qui ont la classe "entrypicker" et gère le clonage.
+ */
+(function ($) {
+    /**
+     * Initialise automatiquement les contrôles qui ont la classe "entrypicker".
+     */
+    jQuery(document).ready(function ($) {
+        $("select.entrypicker").docalistEntryPicker();
+    });
+
+    $(document).on("docalist:forms:before-clone", function (event, node) {
+        // Fait une sauvegarde et appelle destroy sur les entrypicker sur lesquels selectize a été appliqué ,
+        $("select.entrypicker.selectized", node).each(function () {
+            // Sauvegarde la valeur actuelle dans l'attribut data-save
+            $(this).data("save", {
+                "value": this.selectize.getValue(),
+                "options": this.selectize.options
+            }).removeClass("selectized");
+
+            // Quand on var faire "destroy", selectize va réinitialiser le select avec les options d'origine,
+            // telles qu'elles figuraient dans le code html initial.
+            // Celles-ci sont sauvegardées dans revertSettings.$children. Dans notre cas, cela ne sert à rien, car :
+            // - on va restaurer notre propre sauvegarde ensuite
+            // - de toute façon, on ne veut pas récupérer ces options dans le clone
+            // Donc on efface simplement la sauvegarde faite par selectize.
+            // Du coup :
+            // - le noeud d'origine se retrouve avec une valeur à vide (mais on va restaurer la sauvegarde ensuite)
+            // - le noeud cloné sera vide également (et là c'est ce qu'on veut)
+            this.selectize.revertSettings.$children = [];
+
+            // Supprime selectize du select
+            this.selectize.destroy();
         });
     });
-};
+
+    $(document).on("docalist:forms:after-clone", function (event, node, clone) {
+        // Réinstalle entrypicker sur les éléments du noeud à cloner et restaure la sauvegarde
+        $("select.entrypicker", node).each(function () {
+            $(this).docalistEntryPicker();
+            var save = $(this).data("save");
+            for (var i in save.options) {
+                this.selectize.addOption(save.options[i]);
+            }
+            this.selectize.setValue(save.value);
+        });
+
+        // Installe selectize sur les éléments du clone
+        $("select.entrypicker", clone).docalistEntryPicker();
+    });
+})(jQuery);
+
+//-----------------------------------------------------------------------------------------------------------------
 
 /**
  * Plugin pour Selectize permettant de naviguer dans un thesaurus.
  */
-Selectize.define('subnavigate', function (options) {
+Selectize.define("subnavigate", function (options) {
     var self = this;
 
     /**
@@ -573,8 +631,8 @@ Selectize.define('subnavigate', function (options) {
                 return;
             }
 
-            var option      = self.options[value];
-            var html = self.render('option', option);
+            var option = self.options[value];
+            var html = self.render("option", option);
             self.$dropdown_content.html(html);
 
         };
@@ -587,12 +645,12 @@ Selectize.define('subnavigate', function (options) {
         };
 
         return function (e) {
-            // soit selectize nous a passé un event mouse ($dropdown.on('mousedown'))
+            // soit selectize nous a passé un event mouse ($dropdown.on("mousedown"))
             // soit un objet contenant juste currentTarget (onKeyDown:KEY_RETURN)
 
             // Teste si c'est un lien
             var target = e.target || e.currentTarget;
-            var value = $(target).attr('rel');
+            var value = $(target).attr("rel");
 
             // On a trouvé un lien
             if (value) {
@@ -607,7 +665,7 @@ Selectize.define('subnavigate', function (options) {
                     if (!load) {
                         return;
                     }
-                    load.apply(self, ['[' + value + ']', function (results) {
+                    load.apply(self, ["[" + value + "]", function (results) {
                         loaded(value, results);
                     }]);
                 }
