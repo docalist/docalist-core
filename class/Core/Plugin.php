@@ -431,7 +431,7 @@ class Plugin
             'docalist-textarea-autosize',
             "$url/lib/autosize/autosize.$js",
             [],
-            '4.0.0',
+            '4.0.2',
             true
         );
 
