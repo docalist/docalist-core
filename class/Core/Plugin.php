@@ -23,6 +23,7 @@ use Docalist\Lookup\ThesaurusLookup;
 use InvalidArgumentException;
 use Docalist\Html;
 use Docalist\Tools\ToolsPage;
+use Docalist\Services;
 
 /**
  * Plugin Docalist-Core.
@@ -175,12 +176,12 @@ class Plugin
                 return new LookupManager();
             },
 
-            'table-lookup' => function () {
-                return new TableLookup();
+            'table-lookup' => function (Services $services) {
+                return new TableLookup($services->get('table-manager'));
             },
 
-            'thesaurus-lookup' => function () {
-                return new ThesaurusLookup();
+            'thesaurus-lookup' => function (Services $services) {
+                return new ThesaurusLookup($services->get('table-manager'));
             },
 
             // Admin Notices
@@ -392,20 +393,12 @@ class Plugin
 
         $url = DOCALIST_CORE_URL;
 
-        // Bootstrap
-        wp_register_style(
-            'bootstrap',
-            '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css',
-            [],
-            '2.3.0'
-        );
-
         // Selectize
         wp_register_script(
             'selectize',
             "$url/lib/selectize/js/standalone/selectize.$js",
             ['jquery'],
-            '0.8.5',
+            '0.12.4',
             false
         );
 
@@ -413,7 +406,7 @@ class Plugin
             'selectize',
             "$url/lib/selectize/css/selectize.default.css",
             [],
-            '0.8.5'
+            '0.12.4'
         );
 
         // docalist-forms
@@ -421,24 +414,8 @@ class Plugin
             'docalist-forms',
             "$url/views/forms/docalist-forms.js",
             ['jquery', 'jquery-ui-sortable', 'selectize'],
-            '160311',
-            false
-        );
-
-        // Thème par défaut des formulaires
-        wp_register_style(
-            'docalist-forms-default',
-            "$url/views/forms/default/default.css",
-            ['wp-admin'],
-            '140318'
-        );
-
-        // Thème bootstrap des formulaires
-        wp_register_style(
-            'docalist-forms-bootstrap',
-            "$url/views/forms/bootstrap/bootstrap-theme.css",
-            ['bootstrap'],
-            '140318'
+            '181119',
+            true
         );
 
         // Thème wordpress des formulaires
@@ -446,7 +423,7 @@ class Plugin
             'docalist-forms-wordpress',
             "$url/views/forms/wordpress/wordpress-theme.css",
             ['wp-admin'],
-            '160310'
+            '181119'
         );
 
         // Auto resize des textarea
@@ -454,7 +431,7 @@ class Plugin
             'docalist-textarea-autosize',
             "$url/lib/autosize/autosize.$js",
             [],
-            '4.0.0',
+            '4.0.2',
             true
         );
 

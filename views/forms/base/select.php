@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -9,7 +9,7 @@
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-namespace Docalist\Views\Forms; /* default */
+namespace Docalist\Views\Forms;
 
 use Docalist\Forms\Select;
 use Docalist\Forms\Theme;
@@ -19,31 +19,18 @@ use Docalist\Forms\Theme;
  * @var Theme  $theme Le thème de formulaire en cours.
  * @var array  $args  Paramètres transmis à la vue.
  */
-$options = $this->loadOptions();
+$this->addClass($this::CSS_CLASS);
 foreach ($this->getOccurences() as $key => $data) {
+    // Définit l'occurence en cours
     $this->setOccurence($key);
 
-    // Début du Select
+    // Génère le début du Select
     $theme->start('select', ['name' => $this->getControlName()] + $this->getAttributes());
 
-    // Affiche l'option vide (firstOption) si elle est activée et que ce n'est pas un select multiple
-    if (! $this->hasAttribute('multiple') && $option = $this->getFirstOption()) {
-        $this->displayOptions($theme, $option);
-    }
+    // Affiche les options disponibles
+    $this->displayOptions($theme, (array) $data);
 
-    // Affiche les options
-    $badValues = $this->displayOptions($theme, $options, (array) $data);
-
-    // Si data contient des options non autorisées, on les affiche en rouge
-    if (! empty($badValues)) {
-        $attributes = [
-            'style' => 'color:red',
-            'title' => "Cette valeur figure dans le champ mais ce n'est pas une entrée autorisée."
-        ];
-        $this->displayOptions($theme, $badValues, $badValues, $attributes);
-    }
-
-    // Fin du Select
+    // Génère la fin du Select
     $theme->end('select');
 }
 $this->isRepeatable() && $theme->display($this, '_add');

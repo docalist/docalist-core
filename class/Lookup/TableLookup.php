@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -10,8 +10,10 @@
 namespace Docalist\Lookup;
 
 use Docalist\Lookup\LookupInterface;
+use Docalist\Table\TableManager;
 use Docalist\Table\TableInterface;
 use Docalist\Tokenizer;
+use InvalidArgumentException;
 
 /**
  * Lookup sur une table d'autorité.
@@ -20,20 +22,56 @@ use Docalist\Tokenizer;
  */
 class TableLookup implements LookupInterface
 {
-    public function hasMultipleSources()
+    /**
+     * Le gestionnaire de tables à utiliser.
+     *
+     * @var TableManager
+     */
+    protected $tableManager;
+
+    /**
+     * Constructeur.
+     *
+     * @param TableManager $tableManager Le gestionnaire de tables à utiliser.
+     */
+    public function __construct(TableManager $tableManager)
     {
-        return true;
+        $this->tableManager = $tableManager;
     }
 
-    public function getCacheMaxAge()
+    /**
+     * {@inheritDoc}
+     */
+    public function getCacheMaxAge(): int
     {
         return 1 * WEEK_IN_SECONDS; // Une table n'est pas censée changer sans arrêt
     }
 
-    public function getDefaultSuggestions($source = '')
+    /**
+     * Retourne la table demandée indiquée dans la source.
+     *
+     * @param string $source Nom de la table à retourner.
+     *
+     * @throws InvalidArgumentException Si source est vide.
+     *
+     * @return TableInterface
+     */
+    private function getTable(string $source): TableInterface
+    {
+        if (empty($source)) {
+            throw new InvalidArgumentException('source is required');
+        }
+
+        return $this->tableManager->get($source);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultSuggestions(string $source = ''): array
     {
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = $this->getTable($source);
 
         // Lance la recherche
         $result = $table->search($this->getFields(), '', '_label', 100);
@@ -42,10 +80,13 @@ class TableLookup implements LookupInterface
         return $this->processResults($result, $table);
     }
 
-    public function getSuggestions($search, $source = '')
+    /**
+     * {@inheritDoc}
+     */
+    public function getSuggestions(string $search, string $source = ''): array
     {
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = $this->getTable($source);
 
         // Tokenize la chaine de recherche pour être insensible aux accents, etc.
         $arg = implode(' ', Tokenizer::tokenize($search));
@@ -92,7 +133,10 @@ class TableLookup implements LookupInterface
         return array_values($result);
     }
 
-    public function convertCodes(array $data, $source = '')
+    /**
+     * {@inheritDoc}
+     */
+    public function convertCodes(array $data, string $source = ''): array
     {
         // Sanity check
         if (empty($data)) {
@@ -100,7 +144,7 @@ class TableLookup implements LookupInterface
         }
 
         // Récupère la table
-        $table = docalist('table-manager')->get($source); /* @var TableInterface $table */
+        $table = $this->getTable($source);
 
         // Construit la clause WHERE ... IN (...)
         $codes = [];

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -12,7 +12,8 @@ namespace Docalist\Forms;
 use Docalist\Lookup\LookupManager;
 
 /**
- * Un contrôle qui permet à l'utilisateur de choisir une ou plusieurs valeurs définies dans une table d'autorité.
+ * Une version améliorée du contrôle Select qui simplifie la sélection d'une ou plusieurs valeurs dans des listes
+ * contenant un grand nombre d'éléments.
  *
  * L'implémentation actuelle est basée sur selectize.
  *
@@ -20,39 +21,42 @@ use Docalist\Lookup\LookupManager;
  */
 class EntryPicker extends Select
 {
-    public function setOptions($options)
-    {
-        // Dans Choice, on peut définir les options via un array, un callable ou une chaine de lookup("type:source")
-        // Dans un EntryPicker, seul les chaines de lookup sont valides.
-        if (is_string($options) && false !== strpos($options, ':')) {
-            return parent::setOptions($options);
-        }
+    /**
+     * {@inheritdoc}
+     */
+    const CSS_CLASS = 'entrypicker';
 
-        return $this->invalidArgument('%s: invalid lookup options, expected string ("type:source")');
+    /**
+     * {@inheritdoc}
+     */
+    public function setRepeatable($repeatable = true): self
+    {
+        if ($repeatable) {
+            $this->invalidArgument("An EntryPicker can not be repeatable (cloning is not handled)");
+        }
+        $this->repeatable = $repeatable;
+
+        return $this;
     }
 
     /**
-     * Convertit les codes passés en paramètre et détermine le libellé à afficher pour chacun des codes.
-     *
-     * @param array $data Un tableau de codes (par exemple ['FR', 'DE']).
-     *
-     * @return array Le tableau converti (par exemple ['FR' => 'France', 'DE' => 'Allemagne']).
+     * {@inheritdoc}
      */
-    protected function convertCodes($data)
+    protected function loadOptions(array $selected = []): array
     {
-        // Sanity check
-        if (empty($data)) {
-            return $data;
+        // Si le entrypicker ne porte pas sur un lookup, on laisse la classe Select gérer
+        if (!is_string($this->options)) {
+            return parent::loadOptions($selected);
         }
 
         // Détermine le type et la source des lookups
         list($type, $source) = explode(':', $this->options, 2);
 
-        // Récupère le service de lookups qui gère les lookups de ce type
+        // Récupère le service qui gère les lookups de ce type
         $lookupManager = docalist('lookup'); /* @var LookupManager $lookupManager */
         $lookup = $lookupManager->getLookupService($type);
 
         // Convertit les données
-        return $lookup->convertCodes($data, $source);
+        return $lookup->convertCodes($selected, $source);
     }
 }

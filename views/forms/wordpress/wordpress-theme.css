@@ -70,6 +70,18 @@ button.cloner span::before {
 }
 
 /*
+ * Donne un style temporaire aux contrôles "selectize" jusqu'à ce qu'ils soient initialisés.
+ * L'objectif c'est que les select et les input .selectize aient à peu près la même taille 
+ * avant et après l'initialisation pour éviter autant que possible un FOUC.
+ */
+select.entrypicker, input.entrypicker {
+    /* Entrypicker génère des select avec size=1 et les inputs ont une seule ligne donc on donne juste une largeur */
+    width: 100%;
+    /* Ignore ce qui dépsse pour ne pas afficher d'ascenseur vertical */
+    overflow: hidden; 
+}
+
+/*
     Ajuste les styles de Selectize pour que ça s'intègre dans le BO WordPress.
 */
 .selectize-control{
@@ -177,34 +189,98 @@ button.cloner span::before {
     text-decoration: underline;
 }
 
-/* inline checklist / radiolist */
-ul.checklist.inline,
-ul.radiolist.inline
+
+/* -----------------------------------------------------------------------------------------------------------------
+ * RadioList / CheckList
+ * ----------------------------------------------------------------------------------------------------------------- */
+ 
+/* Styles de base */
+.radiolist,
+.checklist 
+{
+}
+
+/* Listes répétable, insère un liseré entre les occurences */
+.checklist + .checklist, 
+.radiolist + .radiolist
+{
+    border-top: 1px dotted #ddd;
+    padding-top: 5px;
+}
+
+/* Listes inline */
+.radiolist.inline,
+.checklist.inline
 {
     display: flex;
     flex-wrap: wrap;
     margin-top: 0;
 }
-
-ul.checklist.inline li,
-ul.radiolist.inline li
+.radiolist.inline li,
+.checklist.inline li
 {
     flex: 1 0 200px;
     max-width: 200px;
 }
 
-ul.checklist .optgroup-label,
-ul.radiolist .optgroup-label
-{
-    margin: 4px 0;
-}
-
-ul.checklist li.optgroup > ul,
-ul.radiolist li.optgroup > ul
+/* Groupes d'options */
+.radiolist-group ul,
+.checklist-group ul
 {
     margin-left: 1.8em;
 }
+.radiolist.inline .radiolist-group ul,
+.radiolist.inline .checklist-group ul
+{
+    margin-left: 0;
+}
 
+/* Libellé des groupes d'option */
+.radiolist-group-label,
+.checklist-group-label
+{
+}
+
+/* Options invalides */
+.radiolist-invalid-entry,
+.checklist-invalid-entry
+{
+    font-weight: bold;
+    color: red;
+}
+
+/* -----------------------------------------------------------------------------------------------------------------
+ * Select
+ * ----------------------------------------------------------------------------------------------------------------- */
+
+/* Styles de base */
+.select
+{
+}
+
+.select li
+{
+}
+
+/* Groupe d'options */
+.select optgroup
+{
+}
+.select optgroup li
+{
+}
+
+/* Options invalides */
+.select-invalid-entry
+{
+    font-weight: bold;
+    color: red;
+}
+
+
+/* -----------------------------------------------------------------------------------------------------------------
+ * 
+ * ----------------------------------------------------------------------------------------------------------------- */
 .typed-large-text textarea {
     width: 100%;
 }

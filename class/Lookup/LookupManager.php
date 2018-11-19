@@ -13,6 +13,7 @@ use Docalist\Lookup\LookupInterface;
 use Docalist\Http\JsonResponse;
 use InvalidArgumentException;
 use Exception;
+use Docalist\Http\HtmlResponse;
 
 /**
  * Gestionnaire de lookups.
@@ -77,11 +78,6 @@ class LookupManager
         // Récupère le service qui gère les lookups du type indiqué
         $lookup = $this->getLookupService($type);
 
-        // S'il s'agit d'un lookup multi-sources, la source est obligatoire
-        if (empty($source) && $lookup->hasMultipleSources()) {
-            throw new InvalidArgumentException("Source is required for lookups of type $type");
-        }
-
         // Exécute le lookup
         return empty($search) ? $lookup->getDefaultSuggestions($source) : $lookup->getSuggestions($search, $source);
     }
@@ -128,7 +124,9 @@ class LookupManager
         $search = isset($_GET['search']) ? $_GET['search'] : '';
 
         // Exécute le lookup
+        ob_start();
         $result = $this->lookup($type, $search, $source);
+        $garbage = ob_get_clean();
 
         // Crée une réponse JSON contenant les résultats
         $json = new JsonResponse();
@@ -140,6 +138,13 @@ class LookupManager
 
         // Par défaut, WordPress désactive la mise en cache et ajoute des entêtes "no-cache" (cf. admin_ajax.php)
         // Donc si le service nous a retourné 0 (pas de cache), on n'a rien à faire.
+
+        if (!empty($garbage)) {
+            $maxAge = 0; // pas de cache
+            $response = new HtmlResponse();
+            $response->setContent($garbage . '<pre>' . $json->getContent() . '</pre>');
+            $json = $response;
+        }
 
         // Ajoute les entêtes http permettant au navigateur de mettre la réponse ajax en cache
         if ($maxAge > 0) {

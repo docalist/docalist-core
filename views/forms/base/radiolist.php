@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of Docalist Core.
  *
@@ -9,7 +9,7 @@
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-namespace Docalist\Views\Forms; /* default */
+namespace Docalist\Views\Forms;
 
 use Docalist\Forms\Radiolist;
 use Docalist\Forms\Theme;
@@ -19,27 +19,18 @@ use Docalist\Forms\Theme;
  * @var Theme     $theme Le thème de formulaire en cours.
  * @var array     $args  Paramètres transmis à la vue.
  */
-$options = $this->loadOptions();
+$this->addClass($this::CSS_CLASS);
 foreach ($this->getOccurences() as $key => $data) {
+    // Définit l'occurence en cours
     $this->setOccurence($key);
 
-    // Début de la radiolist
-    $this->addClass('radiolist');
+    // Génère le début de la radiolist
     $theme->start('ul', $this->getAttributes());
 
-    // Affiche les options
-    $badValues = $this->displayOptions($theme, $options, (array) $data);
+    // Affiche les options disponibles
+    $this->displayOptions($theme, (array) $data);
 
-    // Si data contient des options non autorisées, on les affiche en rouge
-    if (! empty($badValues)) {
-        $attributes = [
-            'style' => 'color:red',
-            'title' => "Cette valeur figure dans le champ mais ce n'est pas une entrée autorisée."
-        ];
-        $this->displayOptions($theme, $badValues, $badValues, $attributes);
-    }
-
-    // Fin de la radiolist
+    // Génère la fin de la radiolist
     $theme->end('ul');
 }
 $this->isRepeatable() && $theme->display($this, '_add');
