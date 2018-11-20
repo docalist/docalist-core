@@ -10,6 +10,7 @@
 namespace Docalist\Type;
 
 use Docalist\Forms\Select;
+use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Radiolist;
 use Docalist\Forms\Checklist;
 use InvalidArgumentException;
@@ -55,9 +56,10 @@ abstract class ListEntry extends Text
     public function getAvailableEditors()
     {
         return [
-            'select'        => __('Menu déroulant contenant toutes les entrées', 'docalist-core'),
-            'list'          => __('Liste à cocher', 'docalist-core'),
-            'list-inline'   => __("Liste à cocher 'inline'", 'docalist-core'),
+            'select'        => __('Menu déroulant (select)', 'docalist-core'),
+            'entry-picker'  => __('Menu déroulant dynamique (entrypicker)', 'docalist-core'),
+            'list'          => __('Liste verticale (list)', 'docalist-core'),
+            'list-inline'   => __("Liste horizontale (list inline)", 'docalist-core'),
         ];
     }
 
@@ -74,6 +76,10 @@ abstract class ListEntry extends Text
             case 'select':
                 $form = new Select();
                 $form->setFirstOption(false);
+                break;
+
+            case 'entry-picker':
+                $form = new EntryPicker();
                 break;
 
             case 'list-inline':
