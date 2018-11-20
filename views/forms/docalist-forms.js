@@ -310,12 +310,26 @@ jQuery(document).ready(function ($) {
             /**
              * Settings du champ EntryPicker
              */
-            var settings = $(this).data();
-            settings = $.extend({
-                valueField: settings.lookupType === "index" ? "text" : "code",  // Nom du champ qui contient le code
-                labelField: settings.lookupType === "index" ? "text" : "label"  // Nom du champ qui contient le libellé
-            }, settings);
-
+            var settings = $.extend({
+                // Type de lookup (table, thesaurus, index, search) ou vide si pas d'ajax
+                lookupType: "",
+                
+                // Source de lookup (nom de la table, du thésaurus, de l'index, etc.) ou vide si pas d'ajax
+                lookupSource: "",
+                
+                // Dans les options, nom du champ qui contient le code de l'option
+                valueField: "code",
+                
+                // Dans les options, nom du champ qui contient le libellé de l'option
+                labelField: "label" 
+            }, $(this).data());
+            
+            // Pour les lookups de type "index" les options retournées ont une structure différente 
+            if (settings.lookupType === "index") {
+                settings.valueField = "text";
+                settings.labelField = "text";
+            }
+            
             /**
              * Libellé des relations
              */
@@ -539,7 +553,7 @@ jQuery(document).ready(function ($) {
                 openOnFocus: true,
 
                 // Fonction utilisée pour charger les options disponibles
-                load: ajaxLookup,
+                load: settings.lookupType ? ajaxLookup : null,
 
                 // Fonctions de rendu
                 render: {
@@ -573,15 +587,19 @@ jQuery(document).ready(function ($) {
             }).removeClass("selectized");
 
             // Quand on var faire "destroy", selectize va réinitialiser le select avec les options d'origine,
-            // telles qu'elles figuraient dans le code html initial.
-            // Celles-ci sont sauvegardées dans revertSettings.$children. Dans notre cas, cela ne sert à rien, car :
-            // - on va restaurer notre propre sauvegarde ensuite
-            // - de toute façon, on ne veut pas récupérer ces options dans le clone
-            // Donc on efface simplement la sauvegarde faite par selectize.
-            // Du coup :
+            // telles qu'elles figuraient dans le code html initial (sauvegardées dans revertSettings.$children) :
+            // 1. si on a une source de lookups, ce sont les options actuellement sélectionnées dans le champ.
+            // 2. si c'est un entrypicker sans lookups, c'est la liste complète des options disponibles.
+            // Dans le premier cas, cela ne sert à rien de conserver ces options car :
+            // - dans le noeud d'origine, on va restaurer notre propre sauvegarde ensuite
+            // - dans le clone, on veut un champ "vide", donc on ne veut pas récupérer ces options
+            // Donc on efface simplement la sauvegarde faite par selectize. Du coup :
             // - le noeud d'origine se retrouve avec une valeur à vide (mais on va restaurer la sauvegarde ensuite)
-            // - le noeud cloné sera vide également (et là c'est ce qu'on veut)
-            this.selectize.revertSettings.$children = [];
+            // - le noeud cloné sera vide également (c'est ce qu'on veut)
+            // Dans le second cas, par contre, il faut conserver les options.
+            if ($(this).data('lookup-source')) {
+                this.selectize.revertSettings.$children = [];
+            }
 
             // Supprime selectize du select
             this.selectize.destroy();
