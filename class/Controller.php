@@ -420,7 +420,7 @@ abstract class Controller
         // Vérifie que la méthode existe
         $class = new ReflectionObject($this);
         if (!$class->hasMethod($name)) {
-            $msg = __("L'action %s n'existe pas", 'docalist-biblio');
+            $msg = __("L'action %s n'existe pas", 'docalist-core');
             throw new Exception(sprintf($msg, $action));
         }
 
@@ -437,7 +437,7 @@ abstract class Controller
 
         // Vérifie que l'utilisateur a les droits requis pour l'action
         if (! $this->canRun($action)) {
-            $msg = __("Vous n'avez pas les droits requis pour faire un lien vers l'action %s.", 'docalist-biblio');
+            $msg = __("Vous n'avez pas les droits requis pour faire un lien vers l'action %s.", 'docalist-core');
             throw new Exception($msg);
         }
 
