@@ -26,6 +26,15 @@ use Docalist\Views;
 class ToolsPage extends AdminPage
 {
     /**
+     * La capacité requise pour pouvoir exécuter un outil quelconque.
+     *
+     * La page "outils docalist" n'est affichée dans le menu admin que pour les utilisateurs qui ont cette capacité.
+     *
+     * @var string
+     */
+    public const CAPABILITY = 'docalist_tools_page';
+
+    /**
      * La liste des outils disponibles.
      *
      * @var Tools
@@ -54,6 +63,15 @@ class ToolsPage extends AdminPage
             // Crée la page "Outils Docalist"
             new ToolsPage($tools);
         });
+
+        // Accorde la capacité "docalist_tools_page" aux admins
+//         add_filter('user_has_cap', function(array $caps): array {
+//             if (empty($caps[self::CAPABILITY]) && !empty($caps['manage_options'])) {
+//                 $caps[self::CAPABILITY] = true;
+//             }
+
+//             return $caps;
+//         });
     }
 
     /**
@@ -66,6 +84,11 @@ class ToolsPage extends AdminPage
         $this->tools = $tools;
         parent::__construct('docalist-tools', 'tools.php', __('Outils Docalist', 'docalist-core'));
         $this->addCard();
+    }
+
+    protected function getCapability($action = '')
+    {
+        return self::CAPABILITY;
     }
 
     /**
@@ -165,6 +188,9 @@ class ToolsPage extends AdminPage
 
     /**
      * Prépare l'exécution du script.
+     *
+     * Permet au script de s'exécuter longtemps et désactive la compression gzip pour permettre à la sortie
+     * générée d'être envoyée directement au navigateur.
      */
     private function prepareRun(): void
     {
@@ -172,10 +198,18 @@ class ToolsPage extends AdminPage
         ignore_user_abort(true);
         set_time_limit(3600);
 
+        // Désactive la compression gzip. On le fait ici (et non dans disableOutputBuffering) car ça doit être
+        // fait avant que quoi que ce soit ait été envoyé au navigateur. Comme WordPress génère des cookies pour
+        // les pages admin (cf. wp_user_settings() dans options.php), il faut que ce soit fait avant.
         ini_set('zlib.output_compression', 'off');
-        ini_set('output_buffering', 'Off');
+    }
 
-        // Supprime la bufferisation pour voir le suivi en temps réel
+    /**
+     * Supprime la bufferisation de sortie pour permettre de suivre l'exécution du script en temps réel.
+     */
+    private function disableOutputBuffering(): void
+    {
+        ini_set('output_buffering', 'Off');
         while (ob_get_level()) {
             ob_end_flush();
         }
@@ -198,6 +232,7 @@ class ToolsPage extends AdminPage
 
         // On retourne une réponse de type "callback" qui affiche la vue qui exécute l'outil
         $response = new CallbackResponse(function () use ($tool) {
+            $this->disableOutputBuffering();
             docalist('views')->display('docalist-tools:run-tool', [
                 'this' => $this,
                 'tool' => $tool,
