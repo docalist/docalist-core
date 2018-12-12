@@ -66,9 +66,9 @@ class Entity extends Composite
     public function setID($id)
     {
         // Vérifie que l'ID n'a pas déjà été défini
-        if (! is_null($this->id)) {
-            throw new LogicException(sprintf('ID already set (%s) for entity "%s"', $this->id, get_class($this)));
-        }
+//         if (! is_null($this->id)) {
+//             throw new LogicException(sprintf('ID already set (%s) for entity "%s"', $this->id, get_class($this)));
+//         }
 
         // Stocke l'id
         $this->id = $id;
