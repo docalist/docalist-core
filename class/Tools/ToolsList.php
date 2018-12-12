@@ -23,83 +23,52 @@ class ToolsList implements Tools
     /**
      * La liste des outils disponibles.
      *
-     * Initialement, la propriété contient soit un callable, soit un tableau avec le nom de classe PHP des outils.
-     *
-     * Une fois que load() a été appellée, elle contient un tableau de la forme : Nom => Classe PHP.
-     *
      * @var array|callable
      */
     private $tools;
 
     /**
-     * Indique si load() a déjà été appellée.
-     *
-     * @var bool
-     */
-    private $loaded = false;
-
-    /**
      * Initialise la liste des outils disponibles.
      *
-     * @param array|callable $tools Un tableau ou une fonction qui fournit le nom de classe PHP des outils disponibles.
+     * @param array|callable $tools Un tableau d'outils ou un callback qui retourne un tableau d'outils.
+     *
+     * Chaque élément du tableau (fourni ou retourné par le callback) doit être de la forme id => factory. La clé est
+     * un identifiant unique qui indique le nom de l'outil et la valeur associée indique comment instancier l'outil.
+     *
+     * Il peut s'agir :
+     * - object : d'un outil déjà instancié (i.e. un objet qui implémente l'interface Tool),
+     * - callable : un callback qui se charge d'instancier l'outil (doit retourner une objet Tool),
+     * - string : le nom d'une classe PHP qui implemente l'interface Tool et dont le constructeur peut être appellé
+     *   sans paramètres.
      */
     public function __construct($tools)
     {
         if (!is_array($tools) && !is_callable($tools)) {
             throw new InvalidArgumentException('Invalid tools, expected array or callable');
         }
+
         $this->tools = $tools;
     }
 
     /**
      * Initialise la liste des outils.
      *
-     * - Exécute le callback si on a passé une fonction au constructeur au lieu d'un tableau.
-     * - Convertit le nom de classe des outils en ID.
+     * Exécute le callback si on a passé une fonction au constructeur au lieu d'un tableau.
      *
      * @throws InvalidArgumentException
      */
-    private function load(): void
+    private function loadList(): void
     {
         // Terminé si on a déjà fait l'initialisation
-        if ($this->loaded) {
+        if (is_array($this->tools)) {
             return;
         }
 
-        // Si on nous a fourni un callback, on l'exécute et on vérifie qu'il retourne un tableau
-        if (is_callable($this->tools)) {
-            $this->tools = call_user_func($this->tools);
-            if (! is_array($this->tools)) {
-                throw new InvalidArgumentException('Tools must be an array, got ' . gettype($this->tools));
-            }
+        // Exécute le callable et vérifie qu'il retourne un tableau
+        $this->tools = call_user_func($this->tools);
+        if (! is_array($this->tools)) {
+            throw new InvalidArgumentException('Tools callback must return an array, got ' . gettype($this->tools));
         }
-
-        // Crée un tableau de la forme Nom => Classe
-        $tools = [];
-        foreach ($this->tools as $class) {
-            $tools[$this->getToolName($class)] = $class;
-        }
-
-        // Ok
-        $this->tools = $tools;
-        $this->loaded = true;
-    }
-
-    /**
-     * Convertit un nom de classe en nom d'outil.
-     *
-     * @param string $class Nom de classe PHP.
-     *
-     * @return string Nom de l'outil.
-     */
-    private function getToolName(string $class): string
-    {
-        // On ne garde que le nom court, il ne faut pas que deux outils aient le même nom de classe.
-        // L'implémentation peut être changée si besoin sans que ça n'ait d'impact.
-        $class = substr(strrchr($class, '\\'), 1);
-
-        // Transforme le nom de classe en snake case (SearchReplace -> search-replace)
-        return strtolower(preg_replace('/[A-Z]/', '-\\0', lcfirst($class)));
     }
 
     /**
@@ -107,7 +76,7 @@ class ToolsList implements Tools
      */
     public function getList(): array
     {
-        $this->load();
+        $this->loadList();
 
         return array_keys($this->tools);
     }
@@ -115,24 +84,54 @@ class ToolsList implements Tools
     /**
      * {@inheritDoc}
      */
-    public function has(string $tool): bool
+    public function has(string $name): bool
     {
-        $this->load();
+        $this->loadList();
 
-        return isset($this->tools[$tool]);
+        return array_key_exists($name, $this->tools);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function get(string $tool): Tool
+    public function get(string $name): Tool
     {
-        if (! $this->has($tool)) {
-            throw new InvalidArgumentException(sprintf('Invalid tool "%s"', $tool));
+        // Vérifie que l'outil existe
+        if (! $this->has($name)) {
+            throw new InvalidArgumentException(sprintf('Invalid tool "%s"', $name));
         }
 
-        $class = $this->tools[$tool];
+        // Regarde ce qu'on a dans le tableau pour le moment
+        $tool = $this->tools[$name];
 
-        return new $class();
+        // Si l'outil est déjà instancié, terminé
+        if ($tool instanceof Tool) {
+            return $tool;
+        }
+
+        // Si l'outil est défini via un callback, on l'appelle
+        if (is_callable($tool)) {
+            $tool = call_user_func($tool);
+
+            if (! $tool instanceof Tool) {
+                throw new InvalidArgumentException(sprintf('Callback for tool "%s" must return a Tool', $name));
+            }
+
+            $this->tools[$name] = $tool;
+
+            return $tool;
+        }
+
+        // Nom de classe PHP
+        if (is_string($tool) && is_a($tool, Tool::class, true)) {
+
+            $tool = new $tool();
+            $this->tools[$name] = $tool;
+
+            return $tool;
+        }
+
+        // Impossible de créer l'outil
+        throw new InvalidArgumentException(sprintf('Invalid factory for tool "%s"', $name));
     }
 }
