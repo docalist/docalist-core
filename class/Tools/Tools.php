@@ -29,20 +29,20 @@ interface Tools
     /**
      * Teste si l'outil indiqué figure dans la liste des outils disponibles.
      *
-     * @param string $tool Nom de l'outil à tester.
+     * @param string $name Nom de l'outil à tester.
      *
      * @return bool True si l'outil figure dans la liste, false sinon.
      */
-    public function has(string $tool): bool;
+    public function has(string $name): bool;
 
     /**
      * Retourne un outil.
      *
-     * @param string $tool Nom de l'outil à retourner.
+     * @param string $name Nom de l'outil à retourner.
      *
      * @throws InvalidArgumentException Si l'outil indiqué n'existe pas.
      *
      * @return Tool L'outil demandé.
      */
-    public function get(string $tool): Tool;
+    public function get(string $name): Tool;
 }
