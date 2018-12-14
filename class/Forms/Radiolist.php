@@ -62,7 +62,7 @@ class Radiolist extends Choice
         // Case à cocher
         $attributes = ['name' => $this->getControlName(), 'type' => static::INPUT_TYPE, 'value' => $value];
         $selected && $attributes['checked'] = 'checked';
-        $theme->tag('input', $attributes)->html($label);
+        $theme->tag('input', $attributes)->html(' ' . $label);
 
         // Fin du <label>
         $theme->end('label');
