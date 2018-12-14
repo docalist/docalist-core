@@ -389,10 +389,11 @@ abstract class Element extends Item
         else {
             // On accepte un tableau ou null
             if (! is_array($data) && ! is_null($data)) {
-                return $this->invalidArgument(
-                    'Element %s is multivalued, expected array or null, got %s',
-                    gettype($data)
-                );
+                $data = (array) $data; // 'article' => ['article'], null => []
+//                 return $this->invalidArgument(
+//                     'Element %s is multivalued, expected array or null, got %s',
+//                     gettype($data)
+//                 );
             }
 
             // Si c'est un tableau vide, on stocke null plutôt que array()
