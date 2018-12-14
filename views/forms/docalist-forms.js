@@ -471,8 +471,10 @@ jQuery(document).ready(function ($) {
 
                 // Cas d'un descripteur
                 else {
+                    var label = option[settings.labelField].replace(/¤+/g, ', ').replace(/[, ]+$/, '');
+                    
                     html = "<div class=\"des\">";
-                    html += "<span class=\"term\">" + escape(option[settings.labelField]) + "</span>";
+                    html += "<span class=\"term\">" + escape(label) + "</span>";
                 }
 
                 /*
