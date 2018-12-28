@@ -21,7 +21,7 @@ use InvalidArgumentException;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-abstract class ListEntry extends Text
+class ListEntry extends Text
 {
     public static function loadSchema()
     {
