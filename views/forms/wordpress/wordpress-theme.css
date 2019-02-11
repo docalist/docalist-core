@@ -3,11 +3,35 @@
     font-weight: bold;
 }
 
-/* Réduit un peu la largeur des th (label) dans le formulaire (200px par défaut) */
+/* Réduit la largeur des th (label) dans le formulaire (200px par défaut) */
 .form-table th {
     width: 120px;
     min-width: 120px;
 }
+
+/* Supprime le padding généré par WP */
+.form-table th, .form-table td {
+    padding: 30px 0 0 0;
+}
+
+/* Supprime le padding top de la première ligne de champ d'une metabox */ 
+.form-table tr:first-child>th, .form-table tr:first-child>td {
+    padding-top: 0px;
+}
+
+/* form-table imbriqués (topics) */
+.form-table .form-table th, .form-table .form-table td {
+    padding: 15px 0 0 0;
+}
+
+/* Par défaut, tous les contrôles font 100% de large */
+.field-table td input[type=text], 
+.field-table td select, 
+.field-table td textarea {
+    width: 100%;
+}
+
+
 
 /* Nouveau style field-table */
 .field-table {
