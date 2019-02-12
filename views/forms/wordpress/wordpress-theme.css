@@ -26,9 +26,11 @@
 
 /* Par défaut, tous les contrôles font 100% de large */
 .field-table td input[type=text], 
+.field-table td input[type=number], 
 .field-table td select, 
 .field-table td textarea {
     width: 100%;
+    box-sizing: border-box;
 }
 
 

@@ -423,7 +423,7 @@ class Plugin
             'docalist-forms-wordpress',
             "$url/views/forms/wordpress/wordpress-theme.css",
             ['wp-admin'],
-            '181119'
+            '190212'
         );
 
         // Auto resize des textarea
