@@ -29,13 +29,13 @@ class DateTimeInterval extends Composite
             'fields' => [
                 'start' => [
                     'type' => DateTime::class,
-                    'label' => __('Début', 'docalist-biblio-export'),
-                    'description' => __("Date / heure de début", 'docalist-biblio-export'),
+                    'label' => __('Début', 'docalist-core'),
+                    'description' => __("Date / heure de début", 'docalist-core'),
                 ],
                 'end' => [
                     'type' => DateTime::class,
-                    'label' => __('Fin', 'docalist-biblio-export'),
-                    'description' => __("Date / heure de fin", 'docalist-biblio-export'),
+                    'label' => __('Fin', 'docalist-core'),
+                    'description' => __("Date / heure de fin", 'docalist-core'),
                 ],
             ],
         ];
