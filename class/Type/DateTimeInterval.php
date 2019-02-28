@@ -23,6 +23,9 @@ use Docalist\Type\DateTime;
  */
 class DateTimeInterval extends Composite
 {
+    /**
+     * {@inheritDoc}
+     */
     public static function loadSchema()
     {
         return [
@@ -39,5 +42,13 @@ class DateTimeInterval extends Composite
                 ],
             ],
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultEditor()
+    {
+        return 'table';
     }
 }
