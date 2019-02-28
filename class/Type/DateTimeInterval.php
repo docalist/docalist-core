@@ -10,6 +10,7 @@
 namespace Docalist\Type;
 
 use Docalist\Type\DateTime;
+use Docalist\Type\Collection\DateTimeIntervalCollection;
 
 /**
  * Une période composée d'un DateTime de début et de fin.
@@ -42,6 +43,14 @@ class DateTimeInterval extends Composite
                 ],
             ],
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getCollectionClass()
+    {
+        return DateTimeIntervalCollection::class;
     }
 
     /**
