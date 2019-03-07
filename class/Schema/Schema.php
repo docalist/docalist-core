@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2018 Daniel Ménard
+ * Copyright (C) 2012-2019 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -162,9 +162,9 @@ class Schema implements JsonSerializable
             }
             if ($repeatable) {
                 $collection = $type::getCollectionClass();
-                if (isset($properties['collection']) && $properties['collection'] !== $collection) {
-                    throw new InvalidArgumentException('Repeatable : collection already defined');
-                }
+//                 if (isset($properties['collection']) && $properties['collection'] !== $collection) {
+//                     throw new InvalidArgumentException('Repeatable : collection already defined');
+//                 }
                 $properties['collection'] = $collection;
             }
         }
