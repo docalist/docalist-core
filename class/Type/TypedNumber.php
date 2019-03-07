@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2018 Daniel Ménard
+ * Copyright (C) 2012-2019 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -10,22 +10,24 @@
 namespace Docalist\Type;
 
 use Docalist\Type\TypedText;
-use Docalist\Type\TableEntry;
 use Docalist\Type\Text;
 
 /**
- * Numéro typé : un type composite associant un type provenant d'une table d'autorité de type number à une
- * valeur de type texte : ISBN, DOI, Numéro de licence, numéro de sécu...
+ * TypedNumber : un TypedValue dont la valeur contient des numéros.
  *
- * La table associée contient une colonne format qui indique comment formatter les entrées.
+ * Exemples : ISBN, DOI, Numéro de licence, numéro de sécu...
  *
- * @property TableEntry $type   Type    Type de numéro.
- * @property Text       $value  Value   Numéro associé.
+ * La table associée au champ type contient une colonne format qui indique comment formatter les entrées.
+ *
+ * @property Text $value Value Numéro associé.
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class TypedNumber extends TypedText
 {
+    // la classe n'est pas forcément bien nommée car il y a confusion avec la classe Number (un nombre) et on
+    // s'attend à ce que TypedNumber ce soit Type+Number (numéro) alors que c'est Type+Text
+
     public static function loadSchema()
     {
         return [
