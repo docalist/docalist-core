@@ -9,6 +9,7 @@
  */
 namespace Docalist\Type\Collection;
 
+use Docalist\Type\Collection\MultiFieldCollection;
 use Docalist\Type\Collection;
 use Docalist\Type\TypedValue;
 use Docalist\Type\Any;
@@ -18,7 +19,7 @@ use Docalist\Type\Any;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class TypedValueCollection extends Collection
+class TypedValueCollection extends MultiFieldCollection
 {
     /**
      * Filtre les éléments de la collection sur le champ type des éléments et retourne les champ value.
