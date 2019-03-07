@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2018 Daniel Ménard
+ * Copyright (C) 2012-2019 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -17,6 +17,7 @@ use Closure;
 use Docalist\Forms\Choice;
 use Docalist\Type\Any;
 use Docalist\Type\Interfaces\Categorizable;
+use Docalist\Type\Interfaces\Filterable;
 use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
 
@@ -25,7 +26,7 @@ use InvalidArgumentException;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate
+class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate, Filterable
 {
     public static function getClassDefault()
     {
@@ -496,5 +497,67 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     public function map(Closure $transformer)
     {
         return array_map($transformer, $this->phpValue);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    final public function filter(array $include = [], array $exclude = [], int $limit = 0): Collection
+    {
+        // Détermine la liste des éléments à retourner
+        $items = [];
+        foreach ($this->phpValue as $item) { /** @var Any $item */
+            // Filtre l'elément
+            if (is_null($item = $this->filterItem($item, $include, $exclude))) {
+                continue;
+            }
+
+            // Ajoute l'élément à la liste
+            $items[] = $item;
+
+            // On s'arrête quand la limite indiquée est atteinte
+            if ($limit && count($items) >= $limit) {
+                break;
+            }
+        }
+
+        // Crée une nouvelle collection contenant les éléments obtenus
+        $result = new static([], $this->getSchema());
+        $result->phpValue = $items;
+
+        // Ok
+        return $result;
+    }
+
+    /**
+     * Détermine si l'élément passé en paramètre doit être retourné ou non par les méthodes filter() et similaires.
+     *
+     * @param Any   $item       L'item à filtrer.
+     * @param array $include    Liste des valeurs à inclure.
+     * @param array $exclude    Liste des valeurs à exclure.
+     *
+     * @return Any|null Retourne l'item à insérer dans la collection retournée par filter() ou null pour filtrer
+     * l'élément.
+     *
+     * Remarque : l'item retourné peut être différent de l'item passé en paramètre (par exemple la classe
+     * MultiFieldCollection filtre sur le champ type et retourne le champ value).
+     */
+    protected function filterItem(Any $item, array $include = [], array $exclude = []): ?Any
+    {
+        // On filtre sur la valeur des items
+        $value = $item->getPhpValue();
+
+        // Si on a une liste blanche et que l'item n'y figure pas, on l'ignore
+        if ($include && !in_array($value, $include, true)) {
+            return null;
+        }
+
+        // Si on a une liste noire et que l'item y figure, on l'ignore
+        if ($exclude && in_array($value, $exclude, true)) {
+            return null;
+        }
+
+        // Ok
+        return $item;
     }
 }
