@@ -10,6 +10,7 @@
 namespace Docalist\Type;
 
 use Docalist\Type\Interfaces\Categorizable;
+use Docalist\Type\Collection\MultiFieldCollection;
 
 /**
  * Un MultiField est un composite qui permet de regrouper plusieurs champs
@@ -76,6 +77,14 @@ class MultiField extends Composite implements Categorizable
     public function getDefaultEditor()
     {
         return 'table';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getCollectionClass()
+    {
+        return MultiFieldCollection::class;
     }
 
     // -------------------------------------------------------------------------
