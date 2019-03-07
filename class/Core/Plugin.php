@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2018 Daniel Ménard
+ * Copyright (C) 2012-2019 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -24,6 +24,7 @@ use InvalidArgumentException;
 use Docalist\Html;
 use Docalist\Tools\ToolsPage;
 use Docalist\Services;
+use Docalist\Type\Collection\MultiFieldCollection;
 
 /**
  * Plugin Docalist-Core.
@@ -222,6 +223,12 @@ class Plugin
         // Crée la page "Outils Docalist" dans le back-office
         ToolsPage::setup();
 
+        // Indique aux collections MultiField si l'utilisateur a accès ou non aux éléments "internal*"
+        $enable = !current_user_can('manage_options'); // par défaut, active le filtre si l'utilisateur n'est pas admin
+        $enable = apply_filters('docalist_collection_filter_internal', $enable);  // les plugins peuvent changer ça
+        $enable ? MultiFieldCollection::enableInternalFilter() : MultiFieldCollection::disableInternalFilter();
+
+        // Ok
         return $this;
     }
 
