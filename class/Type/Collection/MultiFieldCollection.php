@@ -54,7 +54,7 @@ class MultiFieldCollection extends Collection
      * Lorsque le filtre est désactivé, les méthodes filter() et similaires ne filtrent pas les éléments qui ont un
      * type de la forme "internal*".
      */
-    public function disableInternalFilter(): void
+    public static function disableInternalFilter(): void
     {
         self::$internalFilter = false;
     }
