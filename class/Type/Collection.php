@@ -506,14 +506,14 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     {
         // Détermine la liste des éléments à retourner
         $items = [];
-        foreach ($this->phpValue as $item) { /** @var Any $item */
+        foreach ($this->phpValue as $key => $item) { /** @var Any $item */
             // Filtre l'elément
             if (is_null($item = $this->filterItem($item, $include, $exclude))) {
                 continue;
             }
 
             // Ajoute l'élément à la liste
-            $items[] = $item;
+            $items[$key] = $item;
 
             // On s'arrête quand la limite indiquée est atteinte
             if ($limit && count($items) >= $limit) {
@@ -559,5 +559,30 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Ok
         return $item;
+    }
+
+    /**
+     * Fusionne deux collections et retourne une nouvelle collection.
+     *
+     * Les items des deux collections sont fusionnés avec array_merge. Si les collections sont indexées par clés et
+     * qu'elles ont des clés en commun, ce sont les items de la collection passée en paramètre qui sont retournés.
+     *
+     * @param Collection $collection
+     *
+     * @return Collection Retourne une nouvelle collection (les collections d'origine ne sont pas modifiées).
+     */
+    public function merge(Collection $collection): Collection
+    {
+        if (!is_a($collection, get_class($this))) {
+            throw new InvalidArgumentException(sprintf(
+                '"%s" is not mergeable with "%s"',
+                get_class($collection),
+                get_class($this)
+            ));
+        }
+        $result = new static([], $this->getSchema());
+        $result->phpValue = array_unique(array_merge($this->phpValue, $collection->phpValue));
+
+        return $result;
     }
 }
