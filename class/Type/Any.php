@@ -204,7 +204,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return Schema
      */
-    final public function getSchema()
+    final public function getSchema(): Schema
     {
         return $this->schema;
     }
@@ -213,7 +213,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // Interface Stringable
     // -------------------------------------------------------------------------
 
-    final public function __toString()
+    final public function __toString(): string
     {
         return json_encode($this->getPhpValue(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
@@ -227,7 +227,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return string
      */
-    final public function serialize()
+    final public function serialize(): string
     {
         return serialize([$this->phpValue, $this->schema]);
     }
@@ -237,8 +237,9 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @param string $serialized
      */
-    final public function unserialize($serialized)
+    final public function unserialize($serialized): void
     {
+        // php 7.2 ne veut pas qu'on indique le type string du paramètre ("declaration must be compatible with")
         list($this->phpValue, $this->schema) = unserialize($serialized);
     }
 

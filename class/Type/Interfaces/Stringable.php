@@ -28,5 +28,5 @@ interface Stringable
      *
      * @return string Une représentation textuelle du type.
      */
-    public function __toString();
+    public function __toString(): string;
 }
