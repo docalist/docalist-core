@@ -9,7 +9,9 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Type\Scalar;
 use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Forms\Element;
 
 /**
  * Type booléen.
@@ -36,7 +38,7 @@ class Boolean extends Scalar
         $this->phpValue = $value;
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         return parent::getEditorForm($options)->setAttribute('type', 'checkbox');
     }

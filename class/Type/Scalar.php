@@ -38,7 +38,7 @@ class Scalar extends Any
         return (string) $this->phpValue;
     }
 
-    public function filterEmpty($strict = true)
+    public function filterEmpty(bool $strict = true): bool
     {
         return false;
     }

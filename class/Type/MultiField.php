@@ -74,7 +74,7 @@ class MultiField extends Composite implements Categorizable
         return 'type';
     }
 
-    public function getDefaultEditor()
+    public function getDefaultEditor(): string
     {
         return 'table';
     }

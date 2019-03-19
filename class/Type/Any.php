@@ -18,6 +18,7 @@ use Serializable;
 use JsonSerializable;
 use Docalist\Schema\Schema;
 use Docalist\Forms\Container;
+use Docalist\Forms\Element;
 use Docalist\Forms\Input;
 use InvalidArgumentException;
 
@@ -286,7 +287,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return bool true si le champ est vide, false sinon.
      */
-    public function filterEmpty($strict = true)
+    public function filterEmpty(bool $strict = true): bool
     {
         return empty($this->phpValue);
     }
@@ -295,7 +296,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // Interface Configurable
     // -------------------------------------------------------------------------
 
-    public function getSettingsForm()
+    public function getSettingsForm(): Container
     {
         $name = $this->schema->name();
         $form = new Container($name);
@@ -326,7 +327,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return $form;
     }
 
-    public function validateSettings(array $settings)
+    public function validateSettings(array $settings): array
     {
         return $settings;
     }
@@ -335,17 +336,17 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // Interface Formattable
     // -------------------------------------------------------------------------
 
-    public function getAvailableFormats()
+    public function getAvailableFormats(): array
     {
         return [];
     }
 
-    public function getDefaultFormat()
+    public function getDefaultFormat(): string
     {
         return key($this->getAvailableFormats()); // key() retourne null si tableau vide
     }
 
-    public function getFormatSettingsForm()
+    public function getFormatSettingsForm(): Container
     {
         $name = $this->schema->name();
         $form = new Container($name);
@@ -399,7 +400,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return $form;
     }
 
-    public function validateFormatSettings(array $settings)
+    public function validateFormatSettings(array $settings): array
     {
         return $settings;
     }
@@ -417,17 +418,17 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     // Interface Editable
     // -------------------------------------------------------------------------
 
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return [];
     }
 
-    public function getDefaultEditor()
+    public function getDefaultEditor(): string
     {
         return key($this->getAvailableEditors()); // key() retourne null si tableau vide
     }
 
-    public function getEditorSettingsForm()
+    public function getEditorSettingsForm(): Container
     {
         $name = $this->schema->name();
         $form = new Container($name);
@@ -483,7 +484,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return $form;
     }
 
-    public function validateEditorSettings(array $settings)
+    public function validateEditorSettings(array $settings): array
     {
         return $settings;
     }
@@ -509,7 +510,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return string Une chaine contenant les classes CSS à ajouter à l'éditeur.
      */
-    protected function getEditorClass($editor = '', $additional = '')
+    protected function getEditorClass($editor = '', $additional = ''): string
     {
         $css = '';
 
@@ -535,7 +536,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return ltrim($css);
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         $form = new Input();
 
@@ -577,7 +578,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return scalar
      */
-    protected function getOption($name, $options = null, $default = null)
+    final protected function getOption(string $name, $options = null, $default = null)
     {
         // Si des options ont été fournies sous forme d'un schéma et que l'option existe, terminé
         if ($options instanceof Schema && !is_null($value = $options->__call($name))) { /** Schema $options */

@@ -39,7 +39,7 @@ class UserRole extends ListEntry
         return $roles;
     }
 
-    public function getDefaultEditor()
+    public function getDefaultEditor(): string
     {
         return 'list-inline';
     }

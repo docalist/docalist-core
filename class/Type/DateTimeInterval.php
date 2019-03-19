@@ -56,7 +56,7 @@ class DateTimeInterval extends Composite
     /**
      * {@inheritDoc}
      */
-    public function getDefaultEditor()
+    public function getDefaultEditor(): string
     {
         return 'table';
     }

@@ -13,6 +13,8 @@ use Docalist\Type\ListEntry;
 use Docalist\Schema\Schema;
 use Docalist\Table\TableInfo;
 use Docalist\Table\TableManager;
+use Docalist\Forms\Element;
+use Docalist\Forms\Container;
 use Docalist\Forms\EntryPicker;
 use InvalidArgumentException;
 
@@ -76,7 +78,7 @@ class TableEntry extends ListEntry
         return $this->getEntry('label') ?: $this->phpValue;
     }
 
-    public function getSettingsForm()
+    public function getSettingsForm(): Container
     {
         // Récupère le formulaire par défaut
         $form = parent::getSettingsForm();
@@ -93,19 +95,19 @@ class TableEntry extends ListEntry
         return $form;
     }
 
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return parent::getAvailableEditors() + [
             'lookup' => __('Lookup dynamique', 'docalist-core'),
         ];
     }
 
-    public function getDefaultEditor()
+    public function getDefaultEditor(): string
     {
         return 'lookup';
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
@@ -128,7 +130,7 @@ class TableEntry extends ListEntry
             ->setDescription($this->getOption('description', $options));
     }
 
-    public function getAvailableFormats()
+    public function getAvailableFormats(): array
     {
         return parent::getAvailableFormats() + [
             'label+description' => __("Libellé de l'entrée et description en bulle d'aide", 'docalist-core'),

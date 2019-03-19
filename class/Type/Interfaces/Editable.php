@@ -11,6 +11,7 @@ namespace Docalist\Type\Interfaces;
 
 use Docalist\Forms\Element;
 use Docalist\Schema\Schema;
+use Docalist\Forms\Container;
 
 /**
  * API permettant de saisir et modifier un type de données docalist.
@@ -42,7 +43,7 @@ interface Editable
      *
      * Remarque : le tableau retourné peut être vide si le champ n'a qu'un seul format d'édition.
      */
-    public function getAvailableEditors();
+    public function getAvailableEditors(): array;
 
     /**
      * Retourne le nom de l'éditeur par défaut.
@@ -52,7 +53,7 @@ interface Editable
      *
      * @return string|null Retourne le nom de l'éditeur par défaut.
      */
-    public function getDefaultEditor();
+    public function getDefaultEditor(): string;
 
     /**
      * Retourne un élément de formulaire permettant de saisir et de modifier les paramètres de saisie du type :
@@ -60,9 +61,9 @@ interface Editable
      *
      * Retourne le formulaire "paramètres de saisie" du champ.
      *
-     * @return Element Un élément de formulaire.
+     * @return Container Un élément de formulaire.
      */
-    public function getEditorSettingsForm();
+    public function getEditorSettingsForm(): Container;
 
     /**
      * Valide les paramètres de saisie du type.
@@ -77,7 +78,7 @@ interface Editable
      *
      * @return array Les paramétres validés.
      */
-    public function validateEditorSettings(array $settings);
+    public function validateEditorSettings(array $settings): array;
 
     /**
      * Retourne un élément de formulaire permettant de saisir ce champ.
@@ -86,5 +87,5 @@ interface Editable
      *
      * @return Element Un élément de formulaire.
      */
-    public function getEditorForm($options = null);
+    public function getEditorForm($options = null): Element;
 }

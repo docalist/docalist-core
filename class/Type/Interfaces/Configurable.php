@@ -9,7 +9,7 @@
  */
 namespace Docalist\Type\Interfaces;
 
-use Docalist\Forms\Element;
+use Docalist\Forms\Container;
 
 /**
  * API permettant de modifier les paramètres d'un type de données docalist.
@@ -31,9 +31,9 @@ interface Configurable
      * Retourne un élément de formulaire permettant de saisir et de modifier les paramètres du type : libellé
      * à utiliser, description, droit requis, etc.
      *
-     * @return Element Un élément de formulaire.
+     * @return Container Un élément de formulaire.
      */
-    public function getSettingsForm();
+    public function getSettingsForm(): Container;
 
     /**
      * Valide les paramètres de base du type.
@@ -48,5 +48,5 @@ interface Configurable
      *
      * @return array Les paramètres validés.
      */
-    public function validateSettings(array $settings);
+    public function validateSettings(array $settings): array;
 }

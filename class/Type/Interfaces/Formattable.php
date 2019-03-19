@@ -9,7 +9,7 @@
  */
 namespace Docalist\Type\Interfaces;
 
-use Docalist\Forms\Element;
+use Docalist\Forms\Container;
 use Docalist\Schema\Schema;
 
 /**
@@ -44,7 +44,7 @@ interface Formattable
      *
      * Remarque : le tableau retourné peut être vide si le champ n'a qu'un seul format d'affichage.
      */
-    public function getAvailableFormats();
+    public function getAvailableFormats(): array;
 
     /**
      * Retourne le nom du format d'affichage par défaut.
@@ -54,15 +54,15 @@ interface Formattable
      *
      * @return string|null Retourne le nom du format par défaut.
      */
-    public function getDefaultFormat();
+    public function getDefaultFormat(): string;
 
     /**
      * Retourne un élément de formulaire permettant de saisir et de modifier les paramètres d'affichage du type :
      * libellé à afficher, format d'affichage, etc.
      *
-     * @return Element Un élément de formulaire.
+     * @return Container Un élément de formulaire.
      */
-    public function getFormatSettingsForm();
+    public function getFormatSettingsForm(): Container;
 
     /**
      * Valide les paramètres d'affichage du type.
@@ -77,7 +77,7 @@ interface Formattable
      *
      * @return array Les paramètres validés.
      */
-    public function validateFormatSettings(array $settings);
+    public function validateFormatSettings(array $settings): array;
 
     /**
      * Formatte le type.

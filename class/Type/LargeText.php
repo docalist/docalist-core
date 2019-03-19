@@ -9,10 +9,11 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Forms\Element;
 use Docalist\Forms\Textarea;
 use Docalist\Forms\WPEditor;
-use InvalidArgumentException;
 use Docalist\Forms\CodeEditor;
+use InvalidArgumentException;
 
 /**
  * Un bloc de texte multiligne contenant ou non du code html.
@@ -21,7 +22,7 @@ use Docalist\Forms\CodeEditor;
  */
 class LargeText extends Text
 {
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return [
             'textarea'       => __('Zone de texte sur plusieurs lignes', 'docalist-core'),
@@ -32,7 +33,7 @@ class LargeText extends Text
         ];
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         $css = '';

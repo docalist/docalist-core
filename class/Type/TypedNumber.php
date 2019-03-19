@@ -45,14 +45,14 @@ class TypedNumber extends TypedText
         ];
     }
 
-    public function getAvailableFormats()
+    public function getAvailableFormats(): array
     {
         return [
             'format' => __("Format indiqué dans la table d'autorité", 'docalist-core'),
         ] + parent::getAvailableFormats();
     }
 
-    public function getDefaultFormat()
+    public function getDefaultFormat(): string
     {
         return 'format';
     }

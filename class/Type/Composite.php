@@ -11,6 +11,7 @@ namespace Docalist\Type;
 
 use Docalist\Type\Any;
 use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Forms\Element;
 use Docalist\Forms\Container;
 use Docalist\Forms\Table;
 use InvalidArgumentException;
@@ -232,7 +233,7 @@ class Composite extends Any
         return $class::getClassDefault();
     }
 
-    public function filterEmpty($strict = true)
+    public function filterEmpty(bool $strict = true): bool
     {
         foreach ($this->phpValue as $key => $item) { /* @var Any $item */
             if ($item->filterEmpty($strict)) {
@@ -255,7 +256,7 @@ class Composite extends Any
         return ! isset($this->phpValue[$name]) || $this->phpValue[$name]->filterEmpty($strict);
     }
 
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return [
             'container' => __('Container', 'docalist-core'),
@@ -264,7 +265,7 @@ class Composite extends Any
         ];
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         // TEMP : pour le moment on peut nous passer une grille ou un schéma, à terme, on ne passera que des array
         $options && is_object($options) && $options = $options->value();

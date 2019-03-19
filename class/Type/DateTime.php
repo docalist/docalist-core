@@ -10,6 +10,7 @@
 namespace Docalist\Type;
 
 use Docalist\Forms\Input;
+use Docalist\Forms\Element;
 use DateTime as PhpDateTime;
 use Exception;
 
@@ -22,7 +23,7 @@ use Exception;
  */
 class DateTime extends Text
 {
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return  parent::getAvailableEditors() + [
             'datetime-local' => __('Champ date/heure', 'docalist-core'),
@@ -30,7 +31,7 @@ class DateTime extends Text
         ];
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
@@ -53,7 +54,7 @@ class DateTime extends Text
             ->setAttribute('type', $type);
     }
 
-    public function getAvailableFormats()
+    public function getAvailableFormats(): array
     {
         // Formats dispos
         $formats = [

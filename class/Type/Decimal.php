@@ -9,6 +9,7 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Forms\Element;
 use Docalist\Type\Exception\InvalidTypeException;
 
 /**
@@ -32,7 +33,7 @@ class Decimal extends Number
         $this->phpValue = $value;
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         return parent::getEditorForm($options)->setAttribute('step', '0.01');
     }

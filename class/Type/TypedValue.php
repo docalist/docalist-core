@@ -51,7 +51,7 @@ class TypedValue extends MultiField
         return TypedValueCollection::class;
     }
 
-    public function getAvailableFormats()
+    public function getAvailableFormats(): array
     {
         return [
             'v'     => __('Valeur', 'docalist-core'),
@@ -62,7 +62,7 @@ class TypedValue extends MultiField
         ];
     }
 
-    public function getDefaultFormat()
+    public function getDefaultFormat(): string
     {
         return 't: v';
     }
@@ -94,7 +94,7 @@ class TypedValue extends MultiField
         return parent::getFormattedValue($options);
     }
 
-    public function filterEmpty($strict = true)
+    public function filterEmpty(bool $strict = true): bool
     {
         // Supprime les éléments vides
         $empty = parent::filterEmpty();

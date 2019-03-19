@@ -10,6 +10,7 @@
 namespace Docalist\Type;
 
 use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Forms\Element;
 
 /**
  * Type entier.
@@ -32,7 +33,7 @@ class Integer extends Number
         $this->phpValue = $value;
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         return parent::getEditorForm($options)->setAttribute('step', '1');
     }

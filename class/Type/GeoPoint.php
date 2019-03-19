@@ -11,8 +11,9 @@ namespace Docalist\Type;
 
 use Docalist\Type\Any;
 use Docalist\Forms\Div;
-use InvalidArgumentException;
 use Docalist\Forms\Table;
+use Docalist\Forms\Element;
+use InvalidArgumentException;
 
 /**
  * Un point géographique sur la terre, défini par sa latitude et sa longitude.
@@ -211,7 +212,7 @@ class GeoPoint extends Any
         return $this->assignArray(array_reverse(array_map('trim', explode(',', $value))));
     }
 
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return [
             'inputs'    => __('Champs texte distincts pour la latitude et la longitude', 'docalist-core'),
@@ -219,7 +220,7 @@ class GeoPoint extends Any
         ];
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {

@@ -14,6 +14,8 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Closure;
+use Docalist\Forms\Element;
+use Docalist\Forms\Container;
 use Docalist\Forms\Choice;
 use Docalist\Type\Any;
 use Docalist\Type\Interfaces\Categorizable;
@@ -252,7 +254,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $this;
     }
 
-    public function filterEmpty($strict = true)
+    public function filterEmpty(bool $strict = true): bool
     {
         foreach ($this->phpValue as $key => $item) { /* @var Any $item */
             if ($item->filterEmpty($strict)) {
@@ -263,7 +265,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return empty($this->phpValue);
     }
 
-    public function getSettingsForm()
+    public function getSettingsForm(): Container
     {
         return $this->createTemporaryItem()->getSettingsForm();
     }
@@ -373,7 +375,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return true;
     }
 
-    public function getFormatSettingsForm()
+    public function getFormatSettingsForm(): Container
     {
         // Crée un item pour récupérer son formulaire
         $item = $this->createTemporaryItem();
@@ -431,12 +433,12 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $form;
     }
 
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return $this->createTemporaryItem()->getAvailableEditors();
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         // Récupère le premier item ou crée un item temporaire si la collection est vide
         $item = reset($this->phpValue) ?: $this->createTemporaryItem();

@@ -9,6 +9,8 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Type\Scalar;
+use Docalist\Forms\Element;
 use Docalist\Forms\Input;
 use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
@@ -33,12 +35,12 @@ class Text extends Scalar
         $this->phpValue = $value;
     }
 
-    public function filterEmpty($strict = true)
+    public function filterEmpty(bool $strict = true): bool
     {
         return ($this->phpValue === '');
     }
 
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return [
             'input'         => __('Zone de texte sur une seule ligne (par défaut)', 'docalist-core'),
@@ -48,7 +50,7 @@ class Text extends Scalar
         ];
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         $css = '';

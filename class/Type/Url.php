@@ -9,6 +9,8 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Forms\Container;
+
 /**
  * Une URL.
  *
@@ -18,7 +20,7 @@ namespace Docalist\Type;
  */
 class Url extends Text
 {
-    public function getFormatSettingsForm()
+    public function getFormatSettingsForm(): Container
     {
         $form = parent::getFormatSettingsForm();
         $form->checkbox('add-protocol')
@@ -67,7 +69,7 @@ class Url extends Text
         return $url;
     }
 
-    public function getDefaultEditor()
+    public function getDefaultEditor(): string
     {
         return 'input-large';
     }

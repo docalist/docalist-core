@@ -9,6 +9,7 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Forms\Element;
 use Docalist\Forms\Select;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Radiolist;
@@ -53,7 +54,7 @@ class ListEntry extends Text
         return isset($entries[$this->phpValue]) ? $entries[$this->phpValue] : $this->phpValue;
     }
 
-    public function getAvailableEditors()
+    public function getAvailableEditors(): array
     {
         return [
             'select'        => __('Menu déroulant (select)', 'docalist-core'),
@@ -63,12 +64,12 @@ class ListEntry extends Text
         ];
     }
 
-    public function getDefaultEditor()
+    public function getDefaultEditor(): string
     {
         return 'select';
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         $css = '';
@@ -104,7 +105,7 @@ class ListEntry extends Text
             ->setDescription($this->getOption('description', $options));
     }
 
-    public function getAvailableFormats()
+    public function getAvailableFormats(): array
     {
         return [
             'code'  => __("Code de l'entrée", 'docalist-core'),
@@ -112,7 +113,7 @@ class ListEntry extends Text
         ];
     }
 
-    public function getDefaultFormat()
+    public function getDefaultFormat(): string
     {
         return 'label';
     }

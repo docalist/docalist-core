@@ -9,6 +9,7 @@
  */
 namespace Docalist\Type;
 
+use Docalist\Forms\Element;
 use InvalidArgumentException;
 
 /**
@@ -33,7 +34,7 @@ class FuzzyDate extends Text
         'Y-m-d' => ['Y',    'Y-m',  'Y-m-d' ],
     ];
 
-    public function getAvailableFormats()
+    public function getAvailableFormats(): array
     {
         return [
             'Y'     => __('AAAA', 'docalist-core'),
@@ -50,7 +51,7 @@ class FuzzyDate extends Text
         ];
     }
 
-    public function getDefaultFormat()
+    public function getDefaultFormat(): string
     {
         return 'd/m/Y';
     }
@@ -103,7 +104,7 @@ class FuzzyDate extends Text
         ]);
     }
 
-    public function getEditorForm($options = null)
+    public function getEditorForm($options = null): Element
     {
         return parent::getEditorForm($options)
             ->setAttribute('pattern', $this->getValidationPattern());
