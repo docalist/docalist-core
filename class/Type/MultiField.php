@@ -82,7 +82,7 @@ class MultiField extends Composite implements Categorizable
     /**
      * {@inheritDoc}
      */
-    public static function getCollectionClass()
+    public static function getCollectionClass(): string
     {
         return MultiFieldCollection::class;
     }

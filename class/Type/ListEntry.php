@@ -23,7 +23,7 @@ use InvalidArgumentException;
  */
 class ListEntry extends Text
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Entrée', 'docalist-core'),

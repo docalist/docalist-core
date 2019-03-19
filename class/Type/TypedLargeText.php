@@ -21,7 +21,7 @@ use Docalist\Type\LargeText;
  */
 class TypedLargeText extends TypedText
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'fields' => [

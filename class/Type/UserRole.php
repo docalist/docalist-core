@@ -18,7 +18,7 @@ use Docalist\Type\ListEntry;
  */
 class UserRole extends ListEntry
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Rôle WordPress', 'docalist-core'),

@@ -19,7 +19,7 @@ use Docalist\Tests\Type\Fixtures\Facture;
  */
 class Client extends Entity
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'fields' => [

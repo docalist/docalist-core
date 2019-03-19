@@ -19,7 +19,7 @@ use Docalist\Type\Integer;
  */
 class Facture extends Composite
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'fields' => [

@@ -23,7 +23,7 @@ class Number extends Scalar
         return 0;
     }
 
-    public function assign($value)
+    public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_numeric($value)) {
@@ -33,8 +33,6 @@ class Number extends Scalar
         }
 
         $this->phpValue = $value;
-
-        return $this;
     }
 
     public function getEditorForm($options = null)

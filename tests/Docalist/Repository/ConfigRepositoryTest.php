@@ -24,7 +24,7 @@ use Docalist\Type\Integer;
  */
 class MySettings extends Settings
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'fields' => [

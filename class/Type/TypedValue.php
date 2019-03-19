@@ -24,7 +24,7 @@ use Docalist\Type\Collection\TypedValueCollection;
  */
 class TypedValue extends MultiField
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Valeur typée', 'docalist-core'),
@@ -46,7 +46,7 @@ class TypedValue extends MultiField
     /**
      * {@inheritDoc}
      */
-    public static function getCollectionClass()
+    public static function getCollectionClass(): string
     {
         return TypedValueCollection::class;
     }

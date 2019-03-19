@@ -22,7 +22,7 @@ use Docalist\Type\Exception\InvalidTypeException;
  */
 class WordPressPage extends ListEntry
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Page WordPress', 'docalist-core'),
@@ -35,7 +35,7 @@ class WordPressPage extends ListEntry
      * on surcharge assign (copier/coller de ce qu'on a dans Integer).
      * Idée : que ListEntry soit un trait et qu'on ait des classes comme TextEntry, IntegerEntry, etc.
      */
-    public function assign($value)
+    public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_int($value)) {
@@ -47,8 +47,6 @@ class WordPressPage extends ListEntry
         }
 
         $this->phpValue = $value;
-
-        return $this;
     }
 
     /**

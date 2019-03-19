@@ -27,7 +27,7 @@ class DateTimeInterval extends Composite
     /**
      * {@inheritDoc}
      */
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'fields' => [
@@ -48,7 +48,7 @@ class DateTimeInterval extends Composite
     /**
      * {@inheritDoc}
      */
-    public static function getCollectionClass()
+    public static function getCollectionClass(): string
     {
         return DateTimeIntervalCollection::class;
     }

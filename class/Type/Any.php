@@ -68,7 +68,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return array Un tableau représentant les données du schéma.
      */
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [];
     }
@@ -81,7 +81,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return Schema
      */
-    public static function getDefaultSchema()
+    final public static function getDefaultSchema(): Schema
     {
         $key = get_called_class();
 
@@ -117,7 +117,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return string Le nom complet de la classe "collection" à utiliser pour ce type.
      */
-    public static function getCollectionClass()
+    public static function getCollectionClass(): string
     {
         return Collection::class;
     }
@@ -165,11 +165,9 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return self $this
      */
-    public function assign($value)
+    public function assign($value): void
     {
         $this->phpValue = ($value instanceof self) ? $value->getPhpValue() : $value;
-
-        return $this;
     }
 
     // -------------------------------------------------------------------------

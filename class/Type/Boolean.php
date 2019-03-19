@@ -23,7 +23,7 @@ class Boolean extends Scalar
         return true;
     }
 
-    public function assign($value)
+    public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_bool($value)) {
@@ -34,8 +34,6 @@ class Boolean extends Scalar
         }
 
         $this->phpValue = $value;
-
-        return $this;
     }
 
     public function getEditorForm($options = null)

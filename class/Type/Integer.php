@@ -18,7 +18,7 @@ use Docalist\Type\Exception\InvalidTypeException;
  */
 class Integer extends Number
 {
-    public function assign($value)
+    public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_int($value)) {
@@ -30,8 +30,6 @@ class Integer extends Number
         }
 
         $this->phpValue = $value;
-
-        return $this;
     }
 
     public function getEditorForm($options = null)

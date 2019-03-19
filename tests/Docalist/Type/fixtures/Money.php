@@ -19,7 +19,7 @@ use Docalist\Type\Text;
  */
 class Money extends Composite
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => 'prix',

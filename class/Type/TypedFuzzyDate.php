@@ -21,7 +21,7 @@ use Docalist\Type\FuzzyDate;
  */
 class TypedFuzzyDate extends TypedValue
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Date', 'docalist-core'),

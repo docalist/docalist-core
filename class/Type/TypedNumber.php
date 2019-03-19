@@ -28,7 +28,7 @@ class TypedNumber extends TypedText
     // la classe n'est pas forcément bien nommée car il y a confusion avec la classe Number (un nombre) et on
     // s'attend à ce que TypedNumber ce soit Type+Number (numéro) alors que c'est Type+Text
 
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Numéro', 'docalist-core'),

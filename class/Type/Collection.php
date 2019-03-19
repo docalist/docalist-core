@@ -43,7 +43,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return [];
     }
 
-    public function assign($value)
+    public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_array($value)) {
@@ -54,8 +54,6 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         foreach ($value as $item) {
             !empty($item) && $this->offsetSet(null, $item);
         }
-
-        return $this;
     }
 
     public function getPhpValue()

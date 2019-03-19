@@ -47,7 +47,7 @@ class GeoPoint extends Any
      * A voir : on devrait plutôt hériter de la classe Composite et déclarer explicitement les champs lat/lon
      */
 
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Coordonnées', 'docalist-core'),
@@ -136,7 +136,7 @@ class GeoPoint extends Any
      *
      * @return self $this
      */
-    public function assign($value)
+    public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
 
@@ -147,16 +147,20 @@ class GeoPoint extends Any
         if (empty($value)) {
             $this->phpValue = $this->getDefaultValue();
 
-            return $this;
+            return;
         }
 
 
         if (is_array($value)) {
-            return $this->assignArray($value);
+            $this->assignArray($value);
+
+            return;
         }
 
         if (is_string($value)) {
-            return $this->assignString($value);
+            $this->assignString($value);
+
+            return;
         }
 
         throw new InvalidArgumentException("Invalid GeoPoint value, expected string or array");

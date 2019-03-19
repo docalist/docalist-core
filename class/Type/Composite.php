@@ -51,7 +51,7 @@ class Composite extends Any
         return [];
     }
 
-    public function assign($value)
+    public function assign($value): void
     {
         $array = ($value instanceof Any) ? $value->getPhpValue() : $value;
         if (! is_array($array)) {
@@ -62,8 +62,6 @@ class Composite extends Any
         foreach ($array as $name => $fieldValue) {
             $this->__set($name, $fieldValue);
         }
-
-        return $this;
     }
 
     public function getPhpValue()

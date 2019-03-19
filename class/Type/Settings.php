@@ -123,6 +123,8 @@ class Settings extends Entity
             $this->repository->delete($id);
         }
 
-        return $this->assign($this->getDefaultValue());
+        $this->assign($this->getDefaultValue());
+
+        return $this;
     }
 }

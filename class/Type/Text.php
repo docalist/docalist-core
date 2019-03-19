@@ -20,7 +20,7 @@ use InvalidArgumentException;
  */
 class Text extends Scalar
 {
-    public function assign($value)
+    public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_string($value)) {
@@ -31,8 +31,6 @@ class Text extends Scalar
         }
 
         $this->phpValue = $value;
-
-        return $this;
     }
 
     public function filterEmpty($strict = true)

@@ -21,7 +21,7 @@ use Docalist\Type\Text;
  */
 class TypedText extends TypedValue
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Texte', 'docalist-core'),

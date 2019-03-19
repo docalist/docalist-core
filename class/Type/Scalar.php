@@ -23,7 +23,7 @@ class Scalar extends Any
         return '';
     }
 
-    public function assign($value)
+    public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
         if (! is_scalar($value)) {
@@ -31,8 +31,6 @@ class Scalar extends Any
         }
 
         $this->phpValue = $value;
-
-        return $this;
     }
 
     public function getFormattedValue($options = null)

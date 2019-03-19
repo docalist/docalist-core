@@ -30,7 +30,7 @@ use Docalist\Type\DateTime;
  */
 class TableInfo extends Composite
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'fields' => [

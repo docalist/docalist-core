@@ -26,7 +26,7 @@ use Docalist\Type\Decimal;
  */
 class TypedDecimal extends TypedNumber
 {
-    public static function loadSchema()
+    public static function loadSchema(): array
     {
         return [
             'label' => __('Chiffres clés', 'docalist-core'),
