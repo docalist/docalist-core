@@ -9,6 +9,8 @@
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
+declare(strict_types=1);
+
 namespace Docalist\Views;
 
 use Docalist\Controller;

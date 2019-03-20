@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * This file is part of Docalist Core.
  *
@@ -9,6 +9,8 @@
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
+declare(strict_types=1);
+
 namespace Docalist\Views\Forms;
 
 use Docalist\Forms\Select;
