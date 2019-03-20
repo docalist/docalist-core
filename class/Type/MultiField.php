@@ -11,6 +11,7 @@ namespace Docalist\Type;
 
 use Docalist\Type\Interfaces\Categorizable;
 use Docalist\Type\Collection\MultiFieldCollection;
+use Docalist\Type\TableEntry;
 
 /**
  * Un MultiField est un composite qui permet de regrouper plusieurs champs
@@ -40,9 +41,6 @@ use Docalist\Type\Collection\MultiFieldCollection;
  * utilisable pour classer les différentes entrées et pour permettre au MultiField
  * d'implémenter l'interface {@link Categorizable}.
  *
- * Par défaut, c'est le champ "type" qui sert de clé de classement. Si le champ a
- * un autre nom, il faut surcharger la méthode {@link getCategoryField()}.
- *
  * Exemples de champs MultiField (dans docalist-biblio) :
  * - author : classement par role,
  * - corporation : classement par role,
@@ -59,21 +57,18 @@ use Docalist\Type\Collection\MultiFieldCollection;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class MultiField extends Composite implements Categorizable
+abstract class MultiField extends Composite implements Categorizable
 {
     /**
-     * Retourne le nom du champ utilisé pour classer les occurences du champ.
+     * Retourne le sous-champ utilisé pour classer les occurences du champ.
      *
-     * @return string Par défaut, il s'agit du champ 'type'. Les classes descendantes
-     * doivent surcharger cette méthode si le nom du champ à utiliser est différent.
-     *
-     * Remarque : le champ retourné doit exister et doit être de type {@link TableEntry}.
+     * @return TableEntry
      */
-    protected function getCategoryField(): string
-    {
-        return 'type';
-    }
+    abstract protected function getCategoryField(): TableEntry;
 
+    /**
+     * {@inheritDoc}
+     */
     public function getDefaultEditor(): string
     {
         return 'table';
@@ -91,19 +86,28 @@ class MultiField extends Composite implements Categorizable
     // Interface Categorizable
     // -------------------------------------------------------------------------
 
+    /**
+     * {@inheritDoc}
+     */
     public function getCategoryCode(): string
     {
-        return $this->__get($this->getCategoryField())->getPhpValue();
+        return $this->getCategoryField()->getPhpValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getCategoryLabel(): string
     {
-        return $this->__get($this->getCategoryField())->getEntryLabel();
+        return $this->getCategoryField()->getEntryLabel();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getCategoryName(): string
     {
-        if ($schema = $this->__get($this->getCategoryField())->getSchema()) {
+        if ($schema = $this->getCategoryField()->getSchema()) {
             $name = $schema->label();
             if ($name) {
                 return lcfirst($name);
