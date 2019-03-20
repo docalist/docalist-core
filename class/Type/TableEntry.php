@@ -17,6 +17,7 @@ use Docalist\Forms\Element;
 use Docalist\Forms\Container;
 use Docalist\Forms\EntryPicker;
 use InvalidArgumentException;
+use Docalist\Forms\Select;
 
 /**
  * Un champ texte contenant un code provenant d'un table d'autorité associée au champ.
@@ -116,7 +117,8 @@ class TableEntry extends ListEntry
                 break;
 
             case 'select': // Par défaut ListEntry mets firstEntry à false, pour les tables on le veut à true
-                return parent::getEditorForm($options)->setFirstOption(true);
+                $select = parent::getEditorForm($options); /** @var Select $select */
+                return $select->setFirstOption(true);
 
             default:
                 return parent::getEditorForm($options);
