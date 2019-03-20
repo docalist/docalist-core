@@ -89,7 +89,7 @@ trait ItemFactoryTrait
      *
      * @param string    $tag        Optionnel, le tag de l'élément (div par défaut).
      * @param string    $content    Optionnel, le contenu de l'élément.
-     * @param array $   attributes  Optionnel, les attributs de l'élément.
+     * @param array     $attributes Optionnel, les attributs de l'élément.
      *
      * @return Tag
      */
