@@ -55,28 +55,10 @@ class Entity extends Composite
      * Définit l'identifiant unique de l'entité (ID).
      *
      * @param scalar $id L'identifiant de l'entité
-     *
-     * @return self
      */
     public function setID($id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * Retourne ou modifie l'identifiant de l'entité.
-     *
-     * @deprecated Utilisez les méthodes getID() ou setID() à la place.
-     *
-     * @param scalar|null $id
-     *
-     * @return scalar|self
-     */
-    public function id($id = null)
-    {
-        trigger_error(__METHOD__ . ' is deprecated, use getID() ou setID()');
-
-        return is_null($id) ? $this->getID() : $this->setID($id);
     }
 
     /**
