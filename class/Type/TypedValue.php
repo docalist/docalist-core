@@ -51,6 +51,11 @@ class TypedValue extends MultiField
         return TypedValueCollection::class;
     }
 
+    protected function getCategoryField(): TableEntry
+    {
+        return $this->type;
+    }
+
     public function getAvailableFormats(): array
     {
         return [
