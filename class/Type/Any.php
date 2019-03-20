@@ -510,7 +510,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return string Une chaine contenant les classes CSS à ajouter à l'éditeur.
      */
-    protected function getEditorClass($editor = '', $additional = ''): string
+    protected function getEditorClass(string $editor = '', string $additional = ''): string
     {
         $css = '';
 
