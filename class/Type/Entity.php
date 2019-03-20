@@ -98,7 +98,7 @@ class Entity extends Composite
      *
      * @param Repository $repository Le dépôt dans lequel l'entité va être enregistrée.
      */
-    public function beforeSave(Repository $repository)
+    public function beforeSave(Repository $repository): void
     {
     }
 
@@ -107,7 +107,7 @@ class Entity extends Composite
      *
      * @param Repository $repository Le dépôt dans lequel l'entité a été enregistrée.
      */
-    public function afterSave(Repository $repository)
+    public function afterSave(Repository $repository): void
     {
     }
 }
