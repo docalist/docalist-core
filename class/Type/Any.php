@@ -343,7 +343,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getDefaultFormat(): string
     {
-        return key($this->getAvailableFormats()); // key() retourne null si tableau vide
+        return key($this->getAvailableFormats()) ?: ''; // key() retourne null si tableau vide
     }
 
     public function getFormatSettingsForm(): Container
