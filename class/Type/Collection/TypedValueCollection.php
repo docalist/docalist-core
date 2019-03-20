@@ -38,9 +38,9 @@ class TypedValueCollection extends MultiFieldCollection
     {
         // Détermine la liste des éléments à retourner
         $items = [];
-        foreach ($this->phpValue as $item) { /** @var TypedValue $item */
+        foreach ($this->phpValue as $item) {
             // Filtre les eléments
-            if (is_null($item = $this->filterItem($item, $include, $exclude))) {
+            if (is_null($item = $this->filterItem($item, $include, $exclude))) { /** @var TypedValue $item */
                 continue;
             }
 
