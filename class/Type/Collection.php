@@ -546,12 +546,12 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $value = $item->getPhpValue();
 
         // Si on a une liste blanche et que l'item n'y figure pas, on l'ignore
-        if ($include && !in_array($value, $include, true)) {
+        if (!empty($include) && !in_array($value, $include, true)) {
             return null;
         }
 
         // Si on a une liste noire et que l'item y figure, on l'ignore
-        if ($exclude && in_array($value, $exclude, true)) {
+        if (!empty($exclude) && in_array($value, $exclude, true)) {
             return null;
         }
 
