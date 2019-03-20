@@ -37,7 +37,7 @@ class ListEntry extends Text
      *
      * @return array Un tableau de la forme 'code => label', par exemple : ['fr' => 'french', 'en' => english].
      */
-    protected function getEntries()
+    protected function getEntries(): array
     {
         return [];
     }
@@ -47,7 +47,7 @@ class ListEntry extends Text
      *
      * @return string Retourne le libellé de l'entrée ou son code si ce n'est pas une entrée valide.
      */
-    public function getEntryLabel()
+    public function getEntryLabel(): string
     {
         $entries = $this->getEntries();
 

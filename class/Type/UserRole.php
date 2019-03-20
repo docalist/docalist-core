@@ -30,7 +30,7 @@ class UserRole extends ListEntry
      *
      * @return array Un tableau de la forme [Nom du rôle => Libellé du rôle]
      */
-    protected function getEntries()
+    protected function getEntries(): array
     {
         static $roles = null;
 

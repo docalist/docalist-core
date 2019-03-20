@@ -39,7 +39,7 @@ class TableEntry extends ListEntry
         }
     }
 
-    protected function getEntries()
+    protected function getEntries(): array
     {
         // Cette méthode n'est pas utilisée directement par TableEntry, mais elle peut être appellée par notre
         // classe parent (ListEntry), par exemple lorsque l'éditeur est paramétré sur 'select'.
@@ -73,7 +73,7 @@ class TableEntry extends ListEntry
         return $table->find($returns, 'code=' . $table->quote($this->phpValue));
     }
 
-    public function getEntryLabel()
+    public function getEntryLabel(): string
     {
         return $this->getEntry('label') ?: $this->phpValue;
     }

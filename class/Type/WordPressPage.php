@@ -55,7 +55,7 @@ class WordPressPage extends ListEntry
      *
      * @return array Un tableau de la forme PageID => PageTitle
      */
-    protected function getEntries()
+    protected function getEntries(): array
     {
         $pages = ['…'];
         foreach (get_pages() as $page) { /* @var WP_Post $page */
