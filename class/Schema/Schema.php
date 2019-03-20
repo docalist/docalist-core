@@ -33,6 +33,7 @@ use Docalist\Type\Any;
  * @method string   type()          Pour un champ répétable, retourne le nom complet de la classe Collection.
  * @method string   capability()    Capacité requise pour voir ou éditer le champ.
  * @method string   collection()    Retourne le type du champ, de la grille ou du schéma.
+ * @method string   key()           Pour un composite répétable, champ à utiliser comme clé dans la collection.
  * @method string   label()         Retourne le libellé du champ, de la grille ou du schéma.
  * @method string   description()   Retourne la description du champ, de la grille ou du schéma.
  * @method string   table()         Pour un champ sur table, indique le nom de la table d'autorité associée.
