@@ -166,7 +166,7 @@ class TableEntry extends ListEntry
      *
      * @return array Un tableau de la forme code => libellé contenant les tables compatibles.
      */
-    protected function getPossibleTables()
+    private function getPossibleTables(): array
     {
         // Le nom de la table est de la forme "type:nom", on ne veut que le nom
         $table = explode(':', $this->schema->table())[1];
