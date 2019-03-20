@@ -267,7 +267,7 @@ class Composite extends Any
         // TEMP : pour le moment on peut nous passer une grille ou un schéma, à terme, on ne passera que des array
         $options && is_object($options) && $options = $options->value();
 
-        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'container':
                 $form = $wrapper = new Container();
