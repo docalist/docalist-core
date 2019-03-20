@@ -47,7 +47,7 @@ class CodeEditor extends Textarea
     /**
      * Options de l'éditeur.
      *
-     * @var bool
+     * @var array
      */
     protected $options = [];
 
