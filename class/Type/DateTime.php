@@ -33,7 +33,7 @@ class DateTime extends Text
 
     public function getEditorForm($options = null): Element
     {
-        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'datetime':
             case 'datetime-local':
