@@ -91,17 +91,17 @@ class MultiField extends Composite implements Categorizable
     // Interface Categorizable
     // -------------------------------------------------------------------------
 
-    public function getCategoryCode()
+    public function getCategoryCode(): string
     {
         return $this->__get($this->getCategoryField())->getPhpValue();
     }
 
-    public function getCategoryLabel()
+    public function getCategoryLabel(): string
     {
         return $this->__get($this->getCategoryField())->getEntryLabel();
     }
 
-    public function getCategoryName()
+    public function getCategoryName(): string
     {
         if ($schema = $this->__get($this->getCategoryField())->getSchema()) {
             $name = $schema->label();
