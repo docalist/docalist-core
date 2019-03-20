@@ -152,7 +152,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     {
         $default = $this->schema->getDefaultValue();
 
-        return is_null($default) ? static::getClassDefault() : $default;
+        return is_null($default) ? $this->getClassDefault() : $default;
     }
 
     // -------------------------------------------------------------------------
