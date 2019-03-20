@@ -181,8 +181,8 @@ class TableEntry extends ListEntry
         $tables = [];
         foreach ($tableManager->tables($type) as $table) { /* @var TableInfo $tableInfo */
             if ($table->format() !== 'conversion') {
-                $key = $table->format() . ':' . $table->name();
-                $tables[$key] = sprintf('%s (%s)', $table->label(), $table->name());
+                $key = $table->format->getPhpValue() . ':' . $table->name->getPhpValue();
+                $tables[$key] = sprintf('%s (%s)', $table->label->getPhpValue(), $table->name->getPhpValue());
             }
         }
 
