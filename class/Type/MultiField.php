@@ -69,7 +69,7 @@ class MultiField extends Composite implements Categorizable
      *
      * Remarque : le champ retourné doit exister et doit être de type {@link TableEntry}.
      */
-    protected function getCategoryField()
+    protected function getCategoryField(): string
     {
         return 'type';
     }
