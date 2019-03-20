@@ -61,7 +61,7 @@ class FuzzyDate extends Text
      *
      * @return array Retourne un tableau de 1, 2 ou 3 éléments.
      */
-    protected function parse()
+    protected function parse(): array
     {
         $date = $this->phpValue;
         $parts = [];
@@ -130,7 +130,7 @@ class FuzzyDate extends Text
      *
      * @return string L'expression régulière générée.
      */
-    protected function getValidationPattern($separator = '')
+    protected function getValidationPattern(string $separator = ''): string
     {
         $monthday = $day = function ($pattern) use ($separator) {
             return $separator ? "(?:$separator(?:$pattern))?" : "(?:$pattern)?";
