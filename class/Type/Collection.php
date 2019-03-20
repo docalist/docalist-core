@@ -271,12 +271,12 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     public function getFormattedValue($options = null)
     {
         // Paramètres d'affichage
-        $prefix = $this->getOption('prefix', $options, '');
-        $suffix = $this->getOption('suffix', $options, '');
-        $sep = $this->getOption('sep', $options, ', ');
-        $limit = $this->getOption('limit', $options, 0);
-        $explode = $this->getOption('explode', $options, false);
-        $ellipsis = $this->getOption('ellipsis', $options, '');
+        $prefix = (string) $this->getOption('prefix', $options, '');
+        $suffix = (string) $this->getOption('suffix', $options, '');
+        $sep = (string) $this->getOption('sep', $options, ', ');
+        $limit = (int) $this->getOption('limit', $options, 0);
+        $explode = (bool) $this->getOption('explode', $options, false);
+        $ellipsis = (string) $this->getOption('ellipsis', $options, '');
 
         // Les items à formatter
         $items = $this->phpValue;
