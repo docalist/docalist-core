@@ -196,7 +196,7 @@ class TableEntry extends ListEntry
      *
      * @return string
      */
-    protected function getTableLabel()
+    protected function getTableLabel(): string
     {
         return __("Table d'autorité", 'docalist-core');
     }
