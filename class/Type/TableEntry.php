@@ -175,7 +175,7 @@ class TableEntry extends ListEntry
 
         // Détermine son type
         $tableManager = docalist('table-manager'); /* @var TableManager $tableManager */
-        $type = $tableManager->table($table)->type();
+        $type = $tableManager->table($table)->type->getPhpValue();
 
         // Récupère toutes les tables qui ont le même type, sauf les tables de conversion
         $tables = [];
