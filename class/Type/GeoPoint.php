@@ -222,7 +222,7 @@ class GeoPoint extends Any
 
     public function getEditorForm($options = null): Element
     {
-        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'inputs':
                 $form = new Table();

@@ -71,7 +71,7 @@ class ListEntry extends Text
 
     public function getEditorForm($options = null): Element
     {
-        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
         $css = '';
         switch ($editor) {
             case 'select':
