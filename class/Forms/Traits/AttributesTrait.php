@@ -33,7 +33,7 @@ trait AttributesTrait
      *
      * @return array
      */
-    final public function getAttributes()
+    final public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -45,7 +45,7 @@ trait AttributesTrait
      *
      * @return self
      */
-    final public function setAttributes(array $attributes)
+    final public function setAttributes(array $attributes): self
     {
         $this->attributes = [];
 
@@ -62,7 +62,7 @@ trait AttributesTrait
      *
      * @return self
      */
-    final public function addAttributes(array $attributes)
+    final public function addAttributes(array $attributes): self
     {
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
@@ -78,7 +78,7 @@ trait AttributesTrait
      *
      * @return bool
      */
-    final public function hasAttribute($name)
+    final public function hasAttribute(string $name): bool
     {
         return isset($this->attributes[$name]);
     }
@@ -90,7 +90,7 @@ trait AttributesTrait
      *
      * @return string|null
      */
-    final public function getAttribute($name)
+    final public function getAttribute(string $name)
     {
         return isset($this->attributes[$name]) ? $this->attributes[$name] : null;
     }
@@ -103,7 +103,7 @@ trait AttributesTrait
      *
      * @return self
      */
-    final public function setAttribute($name, $value = true)
+    final public function setAttribute(string $name, $value = true): self
     {
         // Supprime l'attribut si la valeur est vide
         if (is_null($value) || $value === false) {
@@ -130,7 +130,7 @@ trait AttributesTrait
      *
      * @return self
      */
-    final public function removeAttribute($name)
+    final public function removeAttribute(string $name): self
     {
         return $this->setAttribute($name, null);
     }
@@ -148,7 +148,7 @@ trait AttributesTrait
      *
      * @return self
      */
-    final public function addClass($class)
+    final public function addClass(string $class): self
     {
         // Si l'attribut class n'existe pas encore, on le crée et terminé
         if (!isset($this->attributes['class'])) {
@@ -181,7 +181,7 @@ trait AttributesTrait
      *
      * @return self
      */
-    final public function removeClass($class = null)
+    final public function removeClass($class = null): self
     {
         // Si l'attribut class n'existe pas, il n'y a rien à supprimer
         if (!isset($this->attributes['class'])) {
@@ -234,7 +234,7 @@ trait AttributesTrait
      *
      * @return bool
      */
-    final public function hasClass($class)
+    final public function hasClass(string $class): bool
     {
         // Si on n'a aucune classe, la réponse est simple
         if (!isset($this->attributes['class'])) {
@@ -263,7 +263,7 @@ trait AttributesTrait
      *
      * @return self
      */
-    final public function toggleClass($class)
+    final public function toggleClass(string $class): self
     {
         foreach (explode(' ', $class) as $class) {
             if (empty($class)) {
