@@ -124,8 +124,8 @@ class CollectionTest extends WP_UnitTestCase
     public function testFirst()
     {
         $c = new Collection();
-        $this->assertFalse($c->first());
-        $this->assertFalse($c->current());
+        $this->assertNull($c->first());
+        $this->assertNull($c->current());
         $this->assertNull($c->key());
 
         $c = new Collection(['a', true, 5, 3.14]);
@@ -139,8 +139,8 @@ class CollectionTest extends WP_UnitTestCase
     public function testLast()
     {
         $c = new Collection();
-        $this->assertFalse($c->last());
-        $this->assertFalse($c->current());
+        $this->assertNull($c->last());
+        $this->assertNull($c->current());
         $this->assertNull($c->key());
 
         $c = new Collection(['a', true, 5, 3.14]);
@@ -154,8 +154,8 @@ class CollectionTest extends WP_UnitTestCase
     public function testNext()
     {
         $c = new Collection();
-        $this->assertFalse($c->next());
-        $this->assertFalse($c->current());
+        $this->assertNull($c->next());
+        $this->assertNull($c->current());
         $this->assertNull($c->key());
 
         $c = new Collection(['a', true, 5, 3.14]);

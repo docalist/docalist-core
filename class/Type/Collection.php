@@ -168,27 +168,27 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Retourne le premier élément de la collection et positionne l'itérateur interne au début.
      *
-     * @return mixed Le premier élément ou false si la collection est vide.
+     * @return Any|null Le premier élément ou null si la collection est vide.
      */
-    public function first()
+    public function first(): ?Any
     {
-        return reset($this->phpValue);
+        return reset($this->phpValue) ?: null;
     }
 
     /**
      * Retourne le dernier élément de la collection et positionne l'itérateur interne à la fin.
      *
-     * @return mixed Le dernier élément ou false si la collection est vide.
+     * @return Any|null Le dernier élément ou null si la collection est vide.
      */
-    public function last()
+    public function last(): ?Any
     {
-        return end($this->phpValue);
+        return end($this->phpValue) ?: null;
     }
 
     /**
      * Retourne la clé ou l'index de l'élément en cours.
      *
-     * @return int|string La clé de l'élément en cours ou null s'il n'y a pas d'élément courant.
+     * @return int|string|null La clé de l'élément en cours ou null s'il n'y a pas d'élément courant.
      */
     public function key()
     {
@@ -198,21 +198,21 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Retourne l'élément en cours.
      *
-     * @return mixed L'élément ou false si la collection est vide.
+     * @return Any|null L'élément ou null si la collection est vide.
      */
-    public function current()
+    public function current(): ?Any
     {
-        return current($this->phpValue);
+        return current($this->phpValue) ?: null;
     }
 
     /**
      * Avance l'itérateur interne à l'élément suivant.
      *
-     * @return mixed L'élément suivant ou false s'il n'y a plus d'éléments.
+     * @return Any|null L'élément suivant ou null s'il n'y a plus d'éléments.
      */
-    public function next()
+    public function next(): ?Any
     {
-        return next($this->phpValue);
+        return next($this->phpValue) ?: null;
     }
 
     /**
@@ -238,8 +238,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         if ($this->schema && $key = $this->schema->key()) {
             $result = [];
             foreach ($this->phpValue as $item) {
-                $key = ($key === true) ? $value->getPhpValue() : $value->$key();
-                $result[$key] = $item;
+                $offset = ($key === true) ? $item->getPhpValue() : $item->$key->getPhpValue();
+                $result[$offset] = $item;
             }
             $this->phpValue = $result;
 
