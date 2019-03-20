@@ -102,7 +102,7 @@ class Composite extends Any
      *
      * @return Any[]
      */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->phpValue;
     }
@@ -112,16 +112,14 @@ class Composite extends Any
      *
      * @param string $name
      * @param mixed $value
-     *
-     * @return self $this
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value): void
     {
         // Si le champ a déjà été créé, on change simplement sa valeur
         if (isset($this->phpValue[$name])) {
             $this->phpValue[$name]->assign(is_null($value) ? $this->phpValue[$name]->getDefaultValue() : $value);
 
-            return $this;
+            return;
         }
 
         // Vérifie que le champ existe et récupère son schéma
@@ -137,9 +135,6 @@ class Composite extends Any
 
         // Si value est déjà du bon type, on le prend tel quel, sinon, on instancie
         $this->phpValue[$name] = ($value instanceof $type) ? $value : new $type($value, $field);
-
-        // Ok
-        return $this;
     }
 
     /**
@@ -149,7 +144,7 @@ class Composite extends Any
      *
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return isset($this->phpValue[$name]);
     }
@@ -159,7 +154,7 @@ class Composite extends Any
      *
      * @param string $name
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         unset($this->phpValue[$name]);
     }
@@ -173,7 +168,7 @@ class Composite extends Any
      *
      * @throws InvalidArgumentException Si la propriété n'existe pas dans le schéma.
      */
-    public function __get($name)
+    public function __get(string $name): Any
     {
         // Initialise le champ s'il n'existe pas encore
         ! isset($this->phpValue[$name]) && $this->__set($name, null);
@@ -212,11 +207,13 @@ class Composite extends Any
      * comme getter), soit l'objet en cours (utilisation comme setter) pour
      * permettre le chainage de méthodes.
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         // $composite->property($x) permet de modifier la valeur d'un champ
         if (!empty($arguments)) {
-            return $this->__set($name, $arguments[0]);
+            $this->__set($name, $arguments[0]);
+
+             return $this;
         }
 
         // Appel de la forme : $composite->property()
@@ -251,7 +248,7 @@ class Composite extends Any
      * @param string $name      Nom de la propriété à filtrer
      * @param bool   $strict    Mode de comparaison.
      */
-    protected function filterEmptyProperty($name, $strict = true)
+    protected function filterEmptyProperty(string $name, bool $strict = true)
     {
         return ! isset($this->phpValue[$name]) || $this->phpValue[$name]->filterEmpty($strict);
     }
@@ -326,7 +323,7 @@ class Composite extends Any
      *
      * @return string Le champ formatté.
      */
-    protected function formatField($name, $options = null)
+    protected function formatField(string $name, $options = null)
     {
         // Si le champ est vide, terminé
         if (empty($this->phpValue[$name])) {
