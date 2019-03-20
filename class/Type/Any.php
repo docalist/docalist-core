@@ -425,7 +425,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getDefaultEditor(): string
     {
-        return key($this->getAvailableEditors()); // key() retourne null si tableau vide
+        return key($this->getAvailableEditors()) ?: ''; // key() retourne null si tableau vide
     }
 
     public function getEditorSettingsForm(): Container
