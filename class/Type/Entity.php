@@ -11,7 +11,6 @@ namespace Docalist\Type;
 
 use Docalist\Schema\Schema;
 use Docalist\Repository\Repository;
-use LogicException;
 
 /**
  * Classe de base pour les entités.
@@ -55,26 +54,13 @@ class Entity extends Composite
     /**
      * Définit l'identifiant unique de l'entité (ID).
      *
-     * L'ID de l'entité ne peut être définit qu'une seule fois ("write once"), il est en lecture seule une fois défini.
-     *
      * @param scalar $id L'identifiant de l'entité
      *
      * @return self
-     *
-     * @throws LogicException Si vous essayez de modifier l'identifiant d'une entité qui a déjà un ID.
      */
-    public function setID($id)
+    public function setID($id): void
     {
-        // Vérifie que l'ID n'a pas déjà été défini
-//         if (! is_null($this->id)) {
-//             throw new LogicException(sprintf('ID already set (%s) for entity "%s"', $this->id, get_class($this)));
-//         }
-
-        // Stocke l'id
         $this->id = $id;
-
-        // Ok
-        return $this;
     }
 
     /**
