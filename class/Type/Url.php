@@ -54,7 +54,7 @@ class Url extends Text
      *
      * @return string Url corrigée.
      */
-    private function addProtocol($url)
+    private function addProtocol(string $url): string
     {
         // Adresse e-mail
         if (strpos($url, '@') !== false) {
