@@ -75,7 +75,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->phpValue[$offset]);
     }
@@ -108,7 +108,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @param mixed $value Les données de l'élément.
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         // Détermine le type des éléments de cette collection
         $type = $this->schema->type() ?: Any::class;
@@ -140,7 +140,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @param int $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->phpValue[$offset]);
     }
@@ -150,7 +150,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->phpValue);
     }
@@ -158,9 +158,9 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Retourne un itérateur permettant de parcourir la collection (implémentation de l'interface IteratorAggregate).
      *
-     * @return ArrayIterator
+     * @return iterable
      */
-    public function getIterator()
+    public function getIterator(): iterable
     {
         return new ArrayIterator($this->phpValue);
     }
@@ -220,7 +220,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return string[]
      */
-    public function keys()
+    public function keys(): array
     {
         return array_keys($this->phpValue);
     }
@@ -231,10 +231,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * Pour une collection simple, les éléments de la collection sont simplement renumérotés de façon continue
      * à partir de zéro. Si une clé a été définie dans le schéma de la collection, la collection est réindexée en
      * utilisant la clé de chacun des éléments.
-     *
-     * @return self $this
      */
-    public function refreshKeys()
+    public function refreshKeys(): void
     {
         // Cas d'une collection à clé
         if ($this->schema && $key = $this->schema->key()) {
@@ -245,13 +243,13 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
             }
             $this->phpValue = $result;
 
-            return $this;
+            return;
         }
 
         // Collection sans clés
         $this->phpValue = array_values($this->phpValue);
 
-        return $this;
+        return;
     }
 
     public function filterEmpty(bool $strict = true): bool
@@ -352,7 +350,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return bool true si le tableau a été tronqué, false sinon.
      */
-    protected function truncate(array & $items, $limit)
+    private function truncate(array & $items, int $limit): bool
     {
         // Détermine s'il faut tronquer la liste
         $truncate = $limit && (abs($limit) < count($items));
@@ -463,7 +461,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return Any
      */
-    private function createTemporaryItem()
+    private function createTemporaryItem(): Any
     {
         // Récupère le type des items de la collection
         $type = $this->schema->type();
@@ -494,7 +492,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return array
      */
-    public function map(Closure $transformer)
+    public function map(Closure $transformer): array
     {
         return array_map($transformer, $this->phpValue);
     }
