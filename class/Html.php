@@ -41,7 +41,7 @@ class Html
      *
      * @param string    $dialect    Dialecte html (xhtml, html4, html5) généré par ce thème (html5 par défaut).
      */
-    public function __construct($dialect = 'html5')
+    public function __construct(string $dialect = 'html5')
     {
         $this->setDialect($dialect);
     }
@@ -61,7 +61,7 @@ class Html
      *
      * @return self
      */
-    final public function setDialect($dialect)
+    final public function setDialect(string $dialect): self
     {
         $this->dialect = $dialect;
 
@@ -73,7 +73,7 @@ class Html
      *
      * @return string $dialect 'xhtml', 'html4' ou 'html5'.
      */
-    final public function getDialect()
+    final public function getDialect(): string
     {
         return $this->dialect;
     }
@@ -85,7 +85,7 @@ class Html
      *
      * @return self
      */
-    final public function setIndent($indent)
+    final public function setIndent(bool $indent): self
     {
         $this->indent = $indent ? 0 : false;
 
@@ -97,7 +97,7 @@ class Html
      *
      * @return bool
      */
-    final public function getIndent()
+    final public function getIndent(): bool
     {
         return !($this->indent === false); // $indent peut être à 0, on ne peut pas utiliser (bool)$indent
     }
@@ -107,7 +107,7 @@ class Html
      *
      * @return string Une suite d'espaces si l'option 'indent' est activée, une chaine vide sinon.
      */
-    private function indent()
+    private function indent(): string
     {
         return $this->indent ? str_repeat('    ', $this->indent) : '';
     }
@@ -117,7 +117,7 @@ class Html
      *
      * @return string
      */
-    private function newline()
+    private function newline(): string
     {
         return $this->indent === false ? '' : "\n"; // ↩
     }
@@ -129,7 +129,7 @@ class Html
      *
      * @return string
      */
-    protected function escapeText($text)
+    protected function escapeText(string $text): string
     {
         // - Dans du texte (contenu d'un tag), on a uniquement besoin d'escaper '<', '&' et '>'.
         // - Les guillemets doubles et simples peuvent être laissés tels quels (ENT_NOQUOTES)
@@ -152,7 +152,7 @@ class Html
      *
      * @return string
      */
-    protected function escapeAttr($value)
+    protected function escapeAttr(string $value): string
     {
         // - Pour un attribut, on fait tout ce qu'on fait dans escapeText(), mais en plus on encode '"'
         // - Comme on contrôle la génération des attributs et qu'on utilise toujours des guillemets
@@ -183,7 +183,7 @@ class Html
      *
      * @param string $comment
      */
-    protected function escapeComment($comment)
+    protected function escapeComment(string $comment): string
     {
         if (empty($comment)) {
             return ' ';
@@ -207,7 +207,7 @@ class Html
      *
      * @return self
      */
-    public function comment($comment)
+    public function comment(string $comment): self
     {
         echo $this->indent(), '<!--', $this->escapeComment($comment), '-->', $this->newline();
 
@@ -221,7 +221,7 @@ class Html
      *
      * @return self
      */
-    public function text($text)
+    public function text(string $text): self
     {
         echo $this->indent(), $this->escapeText($text), $this->newline();
 
@@ -235,7 +235,7 @@ class Html
      *
      * @return self
      */
-    public function html($html)
+    public function html(string $html): self
     {
         echo $this->indent(), $html, $this->newline();
 
@@ -249,7 +249,7 @@ class Html
      *
      * @return string Une chaine contenant les attributs générés.
      */
-    protected function attr(array $attributes)
+    protected function attr(array $attributes): string
     {
         $result = '';
         foreach ($attributes as $name => $value) {
@@ -293,7 +293,7 @@ class Html
      *
      * @return self
      */
-    public function tag($tag, array $attributes = [], $content = null)
+    public function tag(string $tag, array $attributes = [], string $content = ''): self
     {
         if ($this->isEmptyTag($tag)) {
             echo $this->indent(), '<', $tag, $this->attr($attributes);
@@ -314,7 +314,7 @@ class Html
      *
      * @return self
      */
-    public function start($tag, array $attributes = [])
+    public function start(string $tag, array $attributes = []): self
     {
         echo $this->indent(), '<', $tag, $this->attr($attributes), '>', $this->newline();
         $this->indent !== false && ++$this->indent;
@@ -329,7 +329,7 @@ class Html
      *
      * @return self
      */
-    public function end($tag)
+    public function end(string $tag): self
     {
         $this->indent !== false && --$this->indent;
         if ($this->dialect === 'html5' && $this->isOptionalTag($tag)) {
@@ -350,7 +350,7 @@ class Html
      *
      * @return bool
      */
-    private function isBooleanAttribute($attribute)
+    private function isBooleanAttribute(string $attribute): bool
     {
         // Sources
         // - https://github.com/kangax/html-minifier/issues/63
@@ -373,7 +373,7 @@ class Html
      *
      * @return bool
      */
-    private function attributeNeedQuotes($value)
+    private function attributeNeedQuotes(string $value): bool
     {
         // A valid unquoted attribute value in HTML is any string of text
         // - that is not the empty string and
@@ -395,12 +395,12 @@ class Html
     /**
      * Teste si l'attribut passé en paramètre peut être supprimé lorsque sa valeur est vide.
      *
-     * @param string $name  Le nom de l'attribut à tester.
-     * @param string $value La valeur de l'attribut.
+     * @param string $name      Le nom de l'attribut à tester.
+     * @param string|bool|null  $value La valeur de l'attribut.
      *
      * @return bool
      */
-    private function isEmptyAttribute($name, $value)
+    private function isEmptyAttribute(string $name, $value): bool
     {
         if ($value === false || is_null($value)) {
             return true;
@@ -410,7 +410,7 @@ class Html
             return false;
         }
 
-        // value === '', on teste le nom de l'attribut pour savoir s'il est optionnel
+        // On a une valeur non vide, on teste le nom de l'attribut pour savoir s'il est optionnel
 
         // Source http://kangax.github.io/html-minifier/
         $attrs = '|class|id|style|title|lang|dir|onfocus|onblur|onchange|onclick|ondblclick|onmousedown|
@@ -431,7 +431,7 @@ class Html
      *
      * @return bool
      */
-    private function isEmptyTag($tag)
+    private function isEmptyTag(string $tag): bool
     {
         // https://developer.mozilla.org/en-US/docs/Glossary/empty_element
         // http://xahlee.info/js/html5_non-closing_tag.html
@@ -449,7 +449,7 @@ class Html
      *
      * @return bool
      */
-    private function isOptionalTag($tag)
+    private function isOptionalTag(string $tag): bool
     {
         // https://github.com/kangax/html-minifier/blob/gh-pages/src/htmlminifier.js
         $tags = '|html|body|tbody|head|thead|tfoot|tr|td|th|dt|dd|option|colgroup|source|track|';
