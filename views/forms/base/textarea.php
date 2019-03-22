@@ -28,9 +28,8 @@ $this->hasClass('autosize') && $theme->enqueueScript('docalist-textarea-autosize
 foreach ($this->getOccurences() as $key => $data) {
     $this->setOccurence($key);
     $attributes = ['name' => $this->getControlName()] + $this->getAttributes();
-    $theme
-        ->start('textarea', $attributes)
-        ->text($data)
-        ->end('textarea');
+    $theme->start('textarea', $attributes);
+    !empty($data) && $theme->text($data);
+    $theme->end('textarea');
 }
 $this->isRepeatable() && $theme->display($this, '_add');
