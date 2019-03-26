@@ -238,7 +238,7 @@ class ToolsPage extends AdminPage
             docalist('views')->display('docalist-tools:run-tool', [
                 'this' => $this,
                 'tool' => $tool,
-                'args' => $_REQUEST
+                'args' => wp_unslash($_REQUEST)
             ]);
         });
 
