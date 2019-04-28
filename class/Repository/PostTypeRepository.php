@@ -91,6 +91,17 @@ class PostTypeRepository extends Repository
      *
      * @return string
      */
+    final public function getPostType(): string
+    {
+        return $this->postType;
+    }
+
+    /**
+     *
+     * @deprecated Utiliser getPostType()
+     *
+     * @return string
+     */
     public function postType()
     {
         return $this->postType;
