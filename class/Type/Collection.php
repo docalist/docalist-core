@@ -463,7 +463,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return Any
      */
-    private function createTemporaryItem(): Any
+    public function createTemporaryItem(): Any // public car utilisée par IndexableCollectionTrait
     {
         // Récupère le type des items de la collection
         $type = $this->schema->type();
