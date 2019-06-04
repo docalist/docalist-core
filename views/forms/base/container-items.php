@@ -16,6 +16,7 @@ namespace Docalist\Views\Forms\Base;
 use Docalist\Forms\Container;
 use Docalist\Forms\Theme;
 use Docalist\Forms\Element;
+use Docalist\Forms\TopicsInput;
 
 /**
  * @var Container $this  Le container à afficher.
@@ -47,7 +48,7 @@ foreach ($this->getItems() as $item) {
     $attr = [];
     if ($item instanceof Element) { /** @var Element $item */
         $name = $item->getName();
-        !empty($name) && $attr['class'] = $name . '-group';
+        !empty($name) && $attr['class'] = 'field-' . $name . '-group';
     }
     $theme->start('tr', $attr);
 
@@ -59,9 +60,13 @@ foreach ($this->getItems() as $item) {
     // it is sufficient to simply use the TH elements without scope.
     // source : http://www.w3.org/TR/WCAG20-TECHS/H63.html
 
-    $class = $item instanceof Container ? ['class' => $item->getAttribute('class')] : [];
-    $theme->start('td', $class)->display($item);
-    $item->hasDescriptionBlock() &&$theme->display($item, '_description');
+    $container = ($item instanceof Container) || ($item instanceof TopicsInput);
+    $class = $container ? ['class' => $item->getAttribute('class')] : [];
+    $theme->start('td', $class);
+//    $theme->text('container ? ' . var_export($container, true) . ', type=' . get_class($item));
+    $container && $theme->display($item, '_description');
+    $theme->display($item);
+    !$container && $item->hasDescriptionBlock() && $theme->display($item, '_description');
     $theme->end('td');
 
     $theme->end('tr');
