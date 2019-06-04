@@ -42,7 +42,7 @@ class TableEntry extends ListEntry
         }
     }
 
-    protected function getEntries(): array
+    public function getEntries(): array
     {
         // Cette méthode n'est pas utilisée directement par TableEntry, mais elle peut être appellée par notre
         // classe parent (ListEntry), par exemple lorsque l'éditeur est paramétré sur 'select'.
