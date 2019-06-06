@@ -28,8 +28,13 @@ foreach ($this->getOccurences() as $key => $data) {
     // Si la checknox a une description, on l'utilise comme libellé supplémentaire
     $description && $theme->start('label');
 
-    // Génère un input hidden qui sert à transmettre '' lorsque la case est décochée
-    $theme->tag('input', ['type' => 'hidden', 'name' => $this->getControlName()]);
+    // Génère un input hidden qui contient la valeur à transmettre lorsque la checkbox est décochée
+    // Pour une checkbox disabled, on transmet l'ancienne valeur, sinon on transmet une chaine vide
+    $theme->tag('input', [
+        'type' => 'hidden',
+        'name' => $this->getControlName(),
+        'value' => $this->hasAttribute('disabled') ? $data : ''
+    ]);
 
     // Génère la checkbox
     $theme->tag('input', ['name' => $this->getControlName(), 'checked' => (bool)$data] + $this->getAttributes());
