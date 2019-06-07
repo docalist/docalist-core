@@ -123,9 +123,9 @@ class Autoloader
             require_once $path;
 
             if (! wp_doing_ajax()) {
-                add_action('shutdown', function () use ($class, $path) {
+                add_action('wp_footer', function () use ($class, $path) {
                     echo'<script>console.log("docalist autoload:", ', json_encode($class), ', " -> ", ', json_encode($path), ');</script>';
-                });
+                }, 9999);
             }
 
             return true;
