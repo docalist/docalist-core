@@ -24,7 +24,7 @@ use InvalidArgumentException;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Tag extends HtmlBlock
+final class Tag extends HtmlBlock
 {
     use AttributesTrait;
 
@@ -41,11 +41,11 @@ class Tag extends HtmlBlock
      * @param array     $attributes Optionnel, les attributs de l'élément.
      * @param Container $parent     Optionnel, le containeur parent de l'item.
      */
-    public function __construct($tag = 'div', $content = null, array $attributes = null, Container $parent = null)
+    public function __construct(string $tag = 'div', string $content = '', array $attributes = [], Container $parent = null)
     {
         parent::__construct($content, $parent);
         $this->setTag($tag);
-        !is_null($attributes) && $this->addAttributes($attributes);
+        !empty($attributes) && $this->addAttributes($attributes);
     }
 
     /**
@@ -63,10 +63,8 @@ class Tag extends HtmlBlock
      *
      * Tous les éléments du sélecteur sont optionnels (sauf le nom de tag), mais ils doivent apparaître dans
      * l'ordre indiqué ('p#id.class' fonctionnera, 'p.class#id' générera une erreur).
-     *
-     * @return self
      */
-    public function setTag($tag)
+    final public function setTag(string $tag): void
     {
         $regexp =
             '~^
@@ -98,8 +96,6 @@ class Tag extends HtmlBlock
         $match[2] && $this->setAttribute('name', $match[2]);
         $match[3] && $this->setAttribute('id', $match[3]);
         $match[4] && $this->setAttribute('class', strtr($match[4], '.', ' '));
-
-        return $this;
     }
 
     /**
@@ -107,7 +103,7 @@ class Tag extends HtmlBlock
      *
      * @return string
      */
-    public function getTag()
+    final public function getTag(): string
     {
         return $this->tag;
     }
