@@ -44,7 +44,7 @@ class HtmlBlock extends Item
      * @param string    $content    Optionnel, le contenu du bloc html.
      * @param Container $parent     Optionnel, le containeur parent de cet item.
      */
-    public function __construct($content = null, Container $parent = null)
+    public function __construct(string $content = '', Container $parent = null)
     {
         parent::__construct($parent);
         $this->setContent($content);
@@ -57,11 +57,9 @@ class HtmlBlock extends Item
      *
      * @return self
      */
-    public function setContent($content)
+    final public function setContent(string $content): void
     {
-        $this->content = ($content === '' || $content === false) ? null : $content;
-
-        return $this;
+        $this->content = $content;
     }
 
     /**
@@ -69,7 +67,7 @@ class HtmlBlock extends Item
      *
      * @return string
      */
-    public function getContent()
+    final public function getContent(): string
     {
         return $this->content;
     }
