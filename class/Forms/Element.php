@@ -37,23 +37,23 @@ abstract class Element extends Item
     /**
      * Nom de l'élément.
      *
-     * @var string|null
+     * @var string
      */
-    protected $name;
+    protected $name = '';
 
     /**
      * Libellé associé à l'élément.
      *
-     * @var string|null
+     * @var string
      */
-    protected $label;
+    protected $label = '';
 
     /**
      * Description de l'élément.
      *
-     * @var string|null
+     * @var string
      */
-    protected $description;
+    protected $description = '';
 
     /**
      * Indique si le champ est répétable.
@@ -79,15 +79,15 @@ abstract class Element extends Item
     /**
      * Crée un élément de formulaire.
      *
-     * @param string|null       $name       Optionnel, le nom de l'élément.
-     * @param array|null        $attributes Optionnel, les attributs de l'élément.
+     * @param string            $name       Optionnel, le nom de l'élément.
+     * @param array             $attributes Optionnel, les attributs de l'élément.
      * @param Container|null    $parent     Optionnel, le containeur parent de l'item.
      */
-    public function __construct($name = null, array $attributes = null, Container $parent = null)
+    public function __construct(string $name = '', array $attributes = [], Container $parent = null)
     {
         parent::__construct($parent);
-        !is_null($name) && $this->setName($name);
-        !is_null($attributes) && $this->addAttributes($attributes);
+        !empty($name) && $this->setName($name);
+        !empty($attributes) && $this->addAttributes($attributes);
     }
 
     /**
@@ -100,7 +100,7 @@ abstract class Element extends Item
      *
      * @return bool
      */
-    protected function hasLayout()
+    protected function hasLayout(): bool
     {
          return true;
     }
@@ -113,7 +113,7 @@ abstract class Element extends Item
      *
      * @return bool
      */
-    protected function hasLabelBlock()
+    protected function hasLabelBlock(): bool
     {
         return true;
     }
@@ -126,7 +126,7 @@ abstract class Element extends Item
      *
      * @return bool
      */
-    protected function hasDescriptionBlock()
+    protected function hasDescriptionBlock(): bool
     {
         return true;
     }
@@ -134,16 +134,12 @@ abstract class Element extends Item
     /**
      * Modifie le nom du champ.
      *
-     * @param string|null $name
+     * @param string $name
      *
      * @return self
      */
-    public function setName($name)
+    final public function setName(string $name): self
     {
-        ($name === '' || $name === false) && $name = null;
-        if (! is_string($name) && ! is_null($name)) {
-            return $this->invalidArgument('Invalid name in %s, expected string or null, got %s', gettype($name));
-        }
         $this->name = $name;
 
         return $this;
@@ -152,9 +148,9 @@ abstract class Element extends Item
     /**
      * Retourne le nom du champ.
      *
-     * @return string|null
+     * @return string
      */
-    public function getName()
+    final public function getName(): string
     {
         return $this->name;
     }
@@ -172,10 +168,10 @@ abstract class Element extends Item
      *
      * @return string
      */
-    protected function getControlName()
+    protected function getControlName(): string
     {
         // Si l'élément n'a pas de nom, retourne une chaine vide
-        if (is_null($this->name)) {
+        if (empty($this->name)) {
             return '';
         }
 
@@ -192,11 +188,14 @@ abstract class Element extends Item
         return $name;
     }
 
-    final public function getPath($separator = '/')
+    /**
+     * {@inheritDoc}
+     */
+    final public function getPath(string $separator = '/'): string
     {
         $path = $this->parent ? $this->parent->getPath($separator) : '';
-        if (! is_null($this->name)) {
-            $path && $path .= $separator;
+        if (!empty($this->name)) {
+            !empty($path) && $path .= $separator;
             $path .= $this->name;
         }
 
@@ -206,13 +205,13 @@ abstract class Element extends Item
     /**
      * Modifie le libellé du champ.
      *
-     * @param string|null $label
+     * @param string $label
      *
      * @return self
      */
-    public function setLabel($label)
+    final public function setLabel(string $label): self
     {
-        $this->label = ($label === '' || $label === false) ? null : $label;
+        $this->label = $label;
 
         return $this;
     }
@@ -220,9 +219,9 @@ abstract class Element extends Item
     /**
      * Retourne le libellé du champ.
      *
-     * @return string|null
+     * @return string
      */
-    public function getLabel()
+    final public function getLabel(): string
     {
         return $this->label;
     }
@@ -230,13 +229,13 @@ abstract class Element extends Item
     /**
      * Modifie la description du champ.
      *
-     * @param string|null $description
+     * @param string $description
      *
      * @return self
      */
-    public function setDescription($description)
+    final public function setDescription(string $description): self
     {
-        $this->description = ($description === '' || $description === false) ? null : $description;
+        $this->description = $description;
 
         return $this;
     }
@@ -244,9 +243,9 @@ abstract class Element extends Item
     /**
      * Retourne la description du champ.
      *
-     * @return string|null
+     * @return string
      */
-    public function getDescription()
+    final public function getDescription(): string
     {
         return $this->description;
     }
@@ -258,8 +257,9 @@ abstract class Element extends Item
      *
      * @return self
      */
-    public function setRepeatable($repeatable = true)
+    public function setRepeatable(?bool $repeatable = true)
     {
+        // pas "final", surchargée dans EntryPicker
         $this->repeatable = $repeatable;
 
         return $this;
@@ -277,7 +277,7 @@ abstract class Element extends Item
      * Remarque : en général, il est préférable d'utiliser la méthode {@link isRepeatable()} qui retourne toujours
      * soit true soit false.
      */
-    public function getRepeatable()
+    final public function getRepeatable(): ?bool
     {
         return $this->repeatable;
     }
@@ -287,7 +287,7 @@ abstract class Element extends Item
      *
      * @return bool
      */
-    public function isRepeatable()
+    final public function isRepeatable(): bool
     {
         return $this->repeatable === true;
     }
@@ -303,7 +303,7 @@ abstract class Element extends Item
      *
      * @return int
      */
-    protected function getRepeatLevel()
+    final protected function getRepeatLevel(): int
     {
         $level = $this->parent ? $this->parent->getRepeatLevel() : 0;
         $this->isRepeatable() && ++$level;
@@ -332,7 +332,7 @@ abstract class Element extends Item
      *
      * @return bool
      */
-    protected function isMultivalued()
+    protected function isMultivalued(): bool
     {
         return $this->isRepeatable();
     }
@@ -344,7 +344,7 @@ abstract class Element extends Item
      *
      * @param Schema $schema
      */
-    protected function bindSchema(Schema $schema)
+    protected function bindSchema(Schema $schema): void
     {
         // Initialise la propriété "repeatable"
         if (is_null($this->repeatable)) {
@@ -360,13 +360,10 @@ abstract class Element extends Item
         }
 
         // Initialise le libellé
-        is_null($this->label) && $this->setLabel($schema->label());
+        empty($this->label) && $this->setLabel($schema->label() ?? '');
 
         // Initialise la description
-        is_null($this->description) && $this->setDescription($schema->description());
-
-        // Ok
-        return $this;
+        empty($this->description) && $this->setDescription($schema->description() ?? '');
     }
 
     /**
@@ -374,13 +371,13 @@ abstract class Element extends Item
      *
      * @param mixed $data
      */
-    protected function bindData($data)
+    protected function bindData($data): void
     {
         // Cas d'un champ monovalué
         if (! $this->isMultivalued()) { // ni repeatable, ni multiple
             // Data doit être un scalaire
             if (!is_scalar($data) && ! is_null($data)) {
-                return $this->invalidArgument(
+                $this->invalidArgument(
                     'Element %s is monovalued, expected scalar or null, got %s',
                     gettype($data)
                 );
@@ -404,9 +401,6 @@ abstract class Element extends Item
 
         // Stocke les données
         $this->data = $data;
-
-        // Ok
-        return $this;
     }
 
     /**
@@ -414,7 +408,7 @@ abstract class Element extends Item
      *
      * @param mixed $data
      */
-    final public function bind($data)
+    final public function bind($data): void
     {
         // Si c'est un type docalist, initialise le schéma et récupère les données
         if ($data instanceof Any) {
@@ -427,9 +421,6 @@ abstract class Element extends Item
 
         // Initialise l'occurence en cours
         $this->isRepeatable() && $this->occurence = is_null($this->data) ? null : key($this->data);
-
-        // Ok
-        return $this;
     }
 
     /**
@@ -452,10 +443,8 @@ abstract class Element extends Item
      * - après que bind() a été appellé.
      *
      * @param int|string $occurence Une des clés des données du champ.
-     *
-     * @return self
      */
-    protected function setOccurence($occurence)
+    protected function setOccurence($occurence): void
     {
         // Si le champ n'est pas répétable, c'est une erreur d'appeller setOccurence
         // On accepte néanmoins setOccurence(0) pour un champ non répétable car cela
@@ -463,22 +452,20 @@ abstract class Element extends Item
         // cas en faisant "foreach ( (array) $data )" (cf. base/input.php par exemple).
         if (! $this->isRepeatable()) {
             if ($occurence === 0) {
-                return $this;
+                return;
             }
 
-            return $this->invalidArgument('Element "%s" is not repeatable, occurence cannot be set.');
+            $this->invalidArgument('Element "%s" is not repeatable, occurence cannot be set.');
         }
 
         // Vérifie que la clé indiquée existe dans data
         $valid = empty($this->data) ? empty($occurence) : array_key_exists($occurence, $this->data);
         if (! $valid) {
-            return $this->invalidArgument('Element "%s" do not have data for occurence "%s".', $occurence);
+            $this->invalidArgument('Element "%s" do not have data for occurence "%s".', $occurence);
         }
 
         // Ok
         $this->occurence = $occurence;
-
-        return $this;
     }
 
     /**
@@ -509,7 +496,7 @@ abstract class Element extends Item
      *
      * @return string
      */
-    final protected function generateID()
+    final protected function generateID(): string
     {
         // Génère un ID à partir du nom ou du type de l'élément
         $id = $this->getControlName() ?: $this->getType();
@@ -545,7 +532,7 @@ abstract class Element extends Item
      *
      * @throws InvalidArgumentException
      */
-    protected function invalidArgument($message)
+    protected function invalidArgument($message): void
     {
         $args = func_get_args();
 
