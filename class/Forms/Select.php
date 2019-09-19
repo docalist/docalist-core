@@ -46,7 +46,7 @@ class Select extends Choice
      *
      * @return self
      */
-    public function setFirstOption($firstOption = true): self
+    final public function setFirstOption($firstOption = true): self
     {
         switch (true) {
             case $firstOption === false:
@@ -59,7 +59,7 @@ class Select extends Choice
                 break;
             case is_array($firstOption):
                 if (count($firstOption) !== 1) {
-                    return $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
+                    $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
                 }
                 break;
             default:
@@ -76,7 +76,7 @@ class Select extends Choice
      *
      * @return boolean|array
      */
-    public function getFirstOption()// : mixed
+    final public function getFirstOption()// : mixed
     {
         return $this->firstOption;
     }
@@ -86,7 +86,7 @@ class Select extends Choice
      *
      * Si le select est multivalué (multiple=true), la méthode ajoute '[]' au nom du contrôle.
      */
-    protected function getControlName(): string
+    final protected function getControlName(): string
     {
         $name = parent::getControlName();
         $this->hasAttribute('multiple') && $name .= '[]';
@@ -97,7 +97,7 @@ class Select extends Choice
     /**
      * {@inheritdoc}
      */
-    protected function isMultivalued(): bool
+    final protected function isMultivalued(): bool
     {
         return parent::isMultivalued() || $this->hasAttribute('multiple');
     }
@@ -105,7 +105,7 @@ class Select extends Choice
     /**
      * {@inheritdoc}
      */
-    protected function displayOptions(Theme $theme, array $selected): void
+    final protected function displayOptions(Theme $theme, array $selected): void
     {
         // Affiche l'option vide (firstOption) si elle est activée et que ce n'est pas un select multiple
         if (! $this->hasAttribute('multiple') && $option = $this->getFirstOption()) {
@@ -119,7 +119,7 @@ class Select extends Choice
     /**
      * {@inheritdoc}
      */
-    protected function displayOption(Theme $theme, string $value, string $label, bool $selected, bool $invalid): void
+    final protected function displayOption(Theme $theme, string $value, string $label, bool $selected, bool $invalid): void
     {
         // Détermine les attributs de l'option
         $attributes = ['value' => $value];
@@ -139,7 +139,7 @@ class Select extends Choice
     /**
      * {@inheritdoc}
      */
-    protected function startOptionGroup(string $label, Theme $theme): void
+    final protected function startOptionGroup(string $label, Theme $theme): void
     {
         $theme->start('optgroup', ['label' => $label]);
     }
@@ -147,7 +147,7 @@ class Select extends Choice
     /**
      * {@inheritdoc}
      */
-    protected function endOptionGroup(Theme $theme): void
+    final protected function endOptionGroup(Theme $theme): void
     {
         $theme->end('optgroup');
     }
