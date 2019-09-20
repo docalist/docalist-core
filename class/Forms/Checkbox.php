@@ -32,7 +32,7 @@ class Checkbox extends Input
      *
      * @return bool
      */
-    protected function hasDescriptionBlock()
+    protected function hasDescriptionBlock(): bool
     {
         return false;
     }
