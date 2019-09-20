@@ -19,11 +19,14 @@ namespace Docalist\Forms;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Hidden extends Input
+final class Hidden extends Input
 {
     protected $attributes = ['type' => 'hidden'];
 
-    protected function hasLayout()
+    /**
+     * {@inheritDoc}
+     */
+    protected function hasLayout(): bool
     {
         return false;
     }

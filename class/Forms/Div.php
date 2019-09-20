@@ -16,14 +16,20 @@ namespace Docalist\Forms;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Div extends Container
+final class Div extends Container
 {
-    protected function hasLayout()
+    /**
+     * {@inheritdoc}
+     */
+    protected function hasLayout(): bool
     {
         return false;
     }
 
-    protected function hasDescriptionBlock()
+    /**
+     * {@inheritdoc}
+     */
+    protected function hasDescriptionBlock(): bool
     {
         return false;
     }

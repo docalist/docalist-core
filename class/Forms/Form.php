@@ -19,7 +19,7 @@ namespace Docalist\Forms;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Form extends Container
+final class Form extends Container
 {
     /**
      * Crée un nouveau formulaire.
@@ -27,8 +27,8 @@ class Form extends Container
      * @param string $action L'action du formulaire.
      * @param string $method La méthode du formulaire : "get" ou "post", post par défaut.
      */
-    public function __construct($action = '', $method = 'post')
+    public function __construct(string $action = '', string $method = 'post')
     {
-        parent::__construct(null, ['action' => $action, 'method' => $method]);
+        parent::__construct('', ['action' => $action, 'method' => $method]);
     }
 }

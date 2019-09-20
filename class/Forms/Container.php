@@ -18,6 +18,7 @@ use Docalist\Forms\Traits\ItemFactoryTrait;
 use Closure;
 use Docalist\Schema\Schema;
 use InvalidArgumentException;
+use Traversable;
 
 /**
  * Un container est un élément de formulaire qui peut contenir d'autres items.
@@ -40,10 +41,10 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return Item L'item ajouté à la liste.
      */
-    public function add(Item $item)
+    final public function add(Item $item): Item
     {
-        if ($item instanceof self && $this->inTree($item)) {
-            return $this->invalidArgument('Circular reference detected in %s');
+        if ($item instanceof Container && $this->inTree($item)) {
+            $this->invalidArgument('Circular reference detected in %s');
         }
 
         $item->parent = $this;
@@ -56,16 +57,12 @@ class Container extends Element implements Countable, IteratorAggregate
      * Ajoute plusieurs items dans le container.
      *
      * @param Item[] $items
-     *
-     * @return self
      */
-    public function addItems(array $items)
+    final public function addItems(array $items): void
     {
         foreach ($items as $item) {
             $this->add($item);
         }
-
-        return $this;
     }
 
     /**
@@ -77,10 +74,8 @@ class Container extends Element implements Countable, IteratorAggregate
      * de la liste ayant ce nom seront supprimé.
      *
      * @param string|Item $item
-     *
-     * @return self
      */
-    public function remove($item)
+    final public function remove($item): void
     {
         $isSame = $this->getComparator($item);
 
@@ -90,24 +85,18 @@ class Container extends Element implements Countable, IteratorAggregate
                 unset($this->items[$index]);
             }
         }
-
-        return $this;
     }
 
     /**
      * Supprime tous les items du container.
-     *
-     * @return self
      */
-    public function removeAll()
+    final public function removeAll(): void
     {
         foreach ($this->items as $item) {
             $item->parent = null;
         }
 
         $this->items = [];
-
-        return $this;
     }
 
     /**
@@ -117,7 +106,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return bool
      */
-    public function has($item)
+    final public function has($item): bool
     {
         return !is_null($this->get($item));
     }
@@ -129,7 +118,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return Item|null
      */
-    public function get($item)
+    final public function get($item): ?Item
     {
         $isSame = $this->getComparator($item);
 
@@ -147,7 +136,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return bool
      */
-    public function hasItems()
+    final public function hasItems(): bool
     {
         return !empty($this->items);
     }
@@ -157,7 +146,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return Item[]
      */
-    public function getItems()
+    final public function getItems(): array
     {
         return $this->items;
     }
@@ -169,31 +158,21 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return self
      */
-    public function setItems(array $items)
+    final public function setItems(array $items): self
     {
-        return $this->removeAll()->addItems($items);
+        $this->removeAll();
+        $this->addItems($items);
+
+        return $this;
     }
 
     /**
-     * Retourne le nom du contrôle html du container.
-     *
-     * La nom du contrôle est construit à partir du nom du nom du container, de son numéro d'occurence (s'il est
-     * répétable) et du nom de son container parent éventuel.
-     *
-     * Par exemple, si on a un container "livraison" dans un container "addresses" répétable, la méthode
-     * retournera une chaine de la forme : "adresses[i][livraison]".
-     *
-     * Important : si le conteneur n'a pas de nom, la méthode retourne le nom de son container parent.
-     * Cela permet à un container sans nom d'être "neutre". On peut ainsi ajouter des containers intermédiaires
-     * (sans nom) dans un formulaire (pour l'UI ou pour regrouper certains champs par exemple), sans que cela
-     * influe sur le nom des contrôles générés.
-     *
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getControlName()
+    final protected function getControlName(): string
     {
         // Un container sans nom retourne le nom de son container parent
-        if (is_null($this->name)) {
+        if (empty($this->name)) {
             return $this->parent ? $this->parent->getControlName() : '';
         }
 
@@ -201,7 +180,10 @@ class Container extends Element implements Countable, IteratorAggregate
         return parent::getControlName();
     }
 
-    protected function isLabelable()
+    /**
+     * {@inheritDoc}
+     */
+    final protected function isLabelable(): bool
     {
         return false;
     }
@@ -213,7 +195,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return int
      */
-    public function count()
+    final public function count(): int
     {
         return count($this->items);
     }
@@ -225,7 +207,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @return ArrayIterator
      */
-    public function getIterator()
+    final public function getIterator(): Traversable
     {
         return new ArrayIterator($this->items);
     }
@@ -238,7 +220,7 @@ class Container extends Element implements Countable, IteratorAggregate
      * @param Container $item
      * @return bool
      */
-    private function inTree(Container $item)
+    private function inTree(Container $item): bool
     {
         return ($item === $this) || ($this->parent && $this->parent->inTree($item));
     }
@@ -252,7 +234,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @throws InvalidArgumentException
      */
-    private function getComparator($item)
+    private function getComparator($item): Closure
     {
         // Un item : true si c'est le même objet
         if ($item instanceof Item) {
@@ -271,7 +253,10 @@ class Container extends Element implements Countable, IteratorAggregate
         throw new InvalidArgumentException('Bad comparator type');
     }
 
-    protected function bindSchema(Schema $schema = null)
+    /**
+     * {@inheritDoc}
+     */
+    final protected function bindSchema(Schema $schema): void
     {
         parent::bindSchema($schema);
 
@@ -282,7 +267,10 @@ class Container extends Element implements Countable, IteratorAggregate
         }
     }
 
-    public function bindData($data)
+    /**
+     * {@inheritDoc}
+     */
+    final public function bindData($data): void
     {
         if (is_null($data)) {
             return;
@@ -291,7 +279,7 @@ class Container extends Element implements Countable, IteratorAggregate
         // Si le container est répétable, $data doit être un tableau (en général numérique : liste des valeurs)
         if ($this->isMultivalued()) {
             if (! is_array($data)) {
-                return $this->invalidArgument(
+                $this->invalidArgument(
                     'Container "%s" is repeatable, expected Collection or array, got "%s"',
                     gettype($data)
                 );
@@ -304,7 +292,7 @@ class Container extends Element implements Countable, IteratorAggregate
         foreach ($data as $key => $data) {
             // Chaque valeur du container doit être un un tableau associatif (liste des champs)
             if (! is_array($data)) {
-                return $this->invalidArgument(
+                $this->invalidArgument(
                     'Value for "%s" must be a Composite or an array, got "%s"',
                     gettype($data)
                 );
@@ -313,20 +301,20 @@ class Container extends Element implements Countable, IteratorAggregate
             // Binde chacun des champs
             $result = [];
             foreach ($this->items as $item) {
-                // Seuls les éléments peuvent être avoir une valeur (i.e. pas les items, les tags, etc.)
+                // Seuls les éléments peuvent avoir une valeur (i.e. pas les items, les tags, etc.)
                 if (! $item instanceof Element) {
                     continue;
                 }
 
                 // Si l'élément a un nom, fait le binding sur cet élément
                 if ($name = $item->getName()) {
-                    $item->bindData(isset($data[$name]) ? $data[$name] : null);
+                    $item->bindData($data[$name] ?? null);
                     $result[$name] = $item->getData();
                     continue;
                 }
 
                 // Elément sans nom. Si c'est un container, on lui passe toutes les données pour qu'il transmette
-                if ($item instanceof self) {
+                if ($item instanceof Container) {
                     $item->bindData($data);
                     foreach ($item->getData() as $name => $value) {
                         $result[$name] = $value; // tester si existe déjà ?
@@ -341,11 +329,12 @@ class Container extends Element implements Countable, IteratorAggregate
         if (! $this->isMultivalued()) {
             $this->data = reset($this->data);
         }
-
-        return $this;
     }
 
-    protected function setOccurence($occurence)
+    /**
+     * {@inheritDoc}
+     */
+    protected function setOccurence($occurence): void
     {
         parent::setOccurence($occurence);
 
@@ -367,7 +356,5 @@ class Container extends Element implements Countable, IteratorAggregate
                 ($item instanceof self) && $item->bindData($data);
             }
         }
-
-        return $this;
     }
 }

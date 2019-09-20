@@ -58,15 +58,21 @@ foreach ($table->search() as $code => $topic) {
     $theme->end('th');
 
     $theme->start('td');
-    $hidden = (new Hidden($name . '[type]'))->bind($code);
-    $lookup = (new EntryPicker($name . '[value]'))
-        ->setOptions($topic->source)
-        ->setAttribute('multiple');
+
+    $hidden = new Hidden($name . '[type]');
+    $hidden->bind($code);
+    $theme->display($hidden);
+
+    $lookup = new EntryPicker($name . '[value]');
+    $lookup->setOptions($topic->source);
+    $lookup->setAttribute('multiple');
     if (isset($data[$code])) {
         $lookup->bind($data[$code]);
         unset($data[$code]);
     }
-    $theme->display($hidden)->display($lookup)->tag('p', ['class' => 'description'], $topic->description);
+    $theme->display($lookup);
+
+    $theme->tag('p', ['class' => 'description'], $topic->description);
 
     $theme->end('td');
 
@@ -84,13 +90,18 @@ foreach ($data as $code => $terms) {
     $theme->end('th');
 
     $theme->start('td');
-        $hidden = (new Hidden($name . '[type]'))->bind($code);
-        $lookup = (new EntryPicker($name . '[value]'))
-            ->setOptions('index:' . $this->getName() . '.' . $code)
-            ->setAttribute('multiple')
-            ->bind($terms);
+        $hidden = new Hidden($name . '[type]');
+        $hidden->bind($code);
+        $theme->display($hidden);
+
+        $lookup = new EntryPicker($name . '[value]');
+        $lookup->setOptions('index:' . $this->getName() . '.' . $code);
+        $lookup->setAttribute('multiple');
+        $lookup->bind($terms);
+        $theme->display($lookup);
+
         $tag = (new Tag('p.description', "Le type de topic '$code' ne figure pas dans la table $tableName."));
-        $theme->display($hidden)->display($lookup)->display($tag);
+        $theme->display($tag);
     $theme->end('td');
 
     $theme->end('tr');

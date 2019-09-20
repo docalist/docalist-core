@@ -51,6 +51,7 @@ use Docalist\Forms\Form;
 
         $form->submit(__('Enregistrer les modifications', 'docalist-search'));
 
-        $form->bind($tableInfo)->display();
+        $form->bind($tableInfo);
+        $form->display();
     ?>
 </div>

@@ -289,10 +289,10 @@ class Composite extends Any
         }
 
         $form
-            ->setName($this->schema->name())
+            ->setName($this->schema->name() ?? '')
             ->addClass($this->getEditorClass($editor))
-            ->setLabel($this->getOption('label', $options))
-            ->setDescription($this->getOption('description', $options));
+            ->setLabel($this->getOption('label', $options, ''))
+            ->setDescription($this->getOption('description', $options, ''));
 
         // Récupère la liste des champs à afficher
         $fields = array_keys(isset($options['fields']) ? $options['fields'] : $this->schema->getFields());

@@ -29,18 +29,18 @@ namespace Docalist\Forms;
 abstract class Item
 {
     /**
-     * @var Container Le containeur parent de l'item.
+     * @var Container|null Le containeur parent de l'item.
      */
     protected $parent;
 
     /**
      * Crée un nouvel item.
      *
-     * @param Container $parent Optionnel, le containeur parent de l'item.
+     * @param Container|null $parent Optionnel, le containeur parent de l'item.
      */
     public function __construct(Container $parent = null)
     {
-        ! is_null($parent) && $parent->add($this);
+        !is_null($parent) && $parent->add($this);
     }
 
     /**
@@ -62,7 +62,7 @@ abstract class Item
      *
      * @return string
      */
-    final public function getType()
+    final public function getType(): string
     {
         $class = get_class($this);
         $pos = strrchr($class, '\\');
@@ -84,8 +84,8 @@ abstract class Item
      */
     final public function setParent(Container $parent = null)
     {
-        ! is_null($this->parent) && $this->parent->remove($this);
-        ! is_null($parent) && $parent->add($this);
+        !is_null($this->parent) && $this->parent->remove($this);
+        !is_null($parent) && $parent->add($this);
 
         return $this;
     }
@@ -93,23 +93,23 @@ abstract class Item
     /**
      * Retourne le container parent de l'item ou null si l'élément ne figure pas dans un {@link Container}.
      *
-     * @return Container
+     * @return Container|null
      */
-    final public function getParent()
+    final public function getParent(): ?Container
     {
         return $this->parent;
     }
 
     /**
-     * Retourne le container racine de la hiérarchie.
+     * Retourne l'item racine de la hiérarchie.
      *
      * La méthode retourne le Container de plus haut niveau qui contient l'item.
      *
      * Si l'item ne figure pas dans un {@link Container} (s'il n'a pas de parent), elle retourne l'item lui-même.
      *
-     * @return Container|Item
+     * @return Item
      */
-    final public function getRoot()
+    final public function getRoot(): Item
     {
         return $this->parent ? $this->parent->getRoot() : $this;
     }
@@ -122,7 +122,7 @@ abstract class Item
      *
      * @return int
      */
-    final public function getDepth()
+    final public function getDepth(): int
     {
         return $this->parent ? 1 + $this->parent->getDepth() : 0;
     }
@@ -140,8 +140,9 @@ abstract class Item
      *
      * @return string
      */
-    public function getPath($separator = '/')
+    public function getPath(string $separator = '/'): string
     {
+        // pas "final" car surchargée dans Element (qui la rend "final")
         return $this->parent ? $this->parent->getPath($separator) : '';
     }
 
@@ -153,7 +154,7 @@ abstract class Item
      *
      * @return string Le code html de l'item.
      */
-    final public function render($theme = null)
+    final public function render($theme = null): string
     {
         return Theme::get($theme)->render($this);
     }
@@ -165,7 +166,7 @@ abstract class Item
      *
      * @return self
      */
-    final public function display($theme = null)
+    final public function display($theme = null): self
     {
         Theme::get($theme)->display($this);
 
@@ -180,7 +181,7 @@ abstract class Item
      *
      * @return bool
      */
-    protected function hasLayout()
+    protected function hasLayout(): bool
     {
         return false;
     }
@@ -196,7 +197,7 @@ abstract class Item
      *
      * @return bool
      */
-    protected function hasLabelBlock()
+    protected function hasLabelBlock(): bool
     {
         return false;
     }
@@ -212,7 +213,7 @@ abstract class Item
      *
      * @return bool
      */
-    protected function hasDescriptionBlock()
+    protected function hasDescriptionBlock(): bool
     {
         return false;
     }
@@ -227,7 +228,7 @@ abstract class Item
      *
      * @return bool
      */
-    protected function isLabelable()
+    protected function isLabelable(): bool
     {
         return true;
     }

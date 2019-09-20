@@ -127,11 +127,11 @@ class TableEntry extends ListEntry
         }
 
         return $form
-            ->setName($this->schema->name())
+            ->setName($this->schema->name() ?? '')
             ->addClass($this->getEditorClass($editor))
             ->setOptions($this->schema->table())
-            ->setLabel($this->getOption('label', $options))
-            ->setDescription($this->getOption('description', $options));
+            ->setLabel($this->getOption('label', $options, ''))
+            ->setDescription($this->getOption('description', $options, ''));
     }
 
     public function getAvailableFormats(): array

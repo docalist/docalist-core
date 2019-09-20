@@ -31,10 +31,10 @@ class Button extends Element
      * @param array     $attributes Optionnel, les attributs du bouton.
      * @param Container $parent     Optionnel, le containeur parent du bouton.
      */
-    public function __construct($label = null, $name = null, array $attributes = null, Container $parent = null)
+    public function __construct(string $label = '', string $name = '', array $attributes = [], Container $parent = null)
     {
         parent::__construct($name, $attributes, $parent);
-        !is_null($label) && $this->setLabel($label);
+        !empty($label) && $this->setLabel($label);
     }
 
     /**
@@ -44,7 +44,7 @@ class Button extends Element
      *
      * @return bool
      */
-    protected function hasLabelBlock()
+    protected function hasLabelBlock(): bool
     {
         return false;
     }

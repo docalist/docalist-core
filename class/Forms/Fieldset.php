@@ -12,21 +12,27 @@ declare(strict_types=1);
 namespace Docalist\Forms;
 
 /**
- * Un champ input de type hidden.
+ * Un groupe de champs.
  *
  * Référence W3C :
  * {@link http://www.w3.org/TR/html5/forms.html#the-fieldset-element The fieldset element}.
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Fieldset extends Container
+final class Fieldset extends Container
 {
-    protected function hasLayout()
+    /**
+     * {@inheritDoc}
+     */
+    protected function hasLayout(): bool
     {
         return false;
     }
 
-    protected function hasDescriptionBlock()
+    /**
+     * {@inheritDoc}
+     */
+    protected function hasDescriptionBlock(): bool
     {
         return false;
     }

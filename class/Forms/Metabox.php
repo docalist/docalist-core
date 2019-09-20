@@ -16,14 +16,20 @@ namespace Docalist\Forms;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Metabox extends Container
+final class Metabox extends Container
 {
-    protected function hasLayout()
+    /**
+     * {@inheritDoc}
+     */
+    protected function hasLayout(): bool
     {
         return false;
     }
 
-    protected function hasDescriptionBlock()
+    /**
+     * {@inheritDoc}
+     */
+    protected function hasDescriptionBlock(): bool
     {
         return false;
     }

@@ -19,7 +19,7 @@ namespace Docalist\Forms;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class WPEditor extends Textarea
+final class WPEditor extends Textarea
 {
     /**
      * Version simplifiée ou complète de l'éditeur.
@@ -33,7 +33,7 @@ class WPEditor extends Textarea
      *
      * @return bool true si l'éditeur est en version simplifie, false s'il est en version complète.
      */
-    public function getTeeny()
+    final public function getTeeny(): bool
     {
         return $this->teeny;
     }
@@ -42,13 +42,9 @@ class WPEditor extends Textarea
      * Définit la version de l'éditeur à utiliser.
      *
      * @param bool $teeny
-     *
-     * @return self
      */
-    public function setTeeny($teeny = true)
+    final public function setTeeny(bool $teeny = true): void
     {
-        $this->teeny = (bool) $teeny;
-
-        return $this;
+        $this->teeny = $teeny;
     }
 }

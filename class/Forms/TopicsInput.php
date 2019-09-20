@@ -21,22 +21,41 @@ namespace Docalist\Forms;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class TopicsInput extends Element
+final class TopicsInput extends Element
 {
+    /**
+     * Table d'autorité.
+     *
+     * @var string
+     */
     protected $table;
 
-    public function __construct($name = null, $table = null)
+    /**
+     * Crée le champ de saisie.
+     *
+     * @param string            $name       Optionnel, le nom de l'élément.
+     * @param string            $table      Table d'autorité.
+     */
+    final public function __construct(string $name = '', string $table = '')
     {
         parent::__construct($name);
         $this->table = $table;
     }
 
-    public function getTable()
+    /**
+     * Retourne la table d'autorité.
+     *
+     * @return string
+     */
+    final public function getTable(): string
     {
         return $this->table;
     }
 
-    protected function isMultivalued()
+    /**
+     * {@inheritDoc}
+     */
+    final protected function isMultivalued(): bool
     {
         return true;
     }
