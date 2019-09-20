@@ -57,7 +57,7 @@ trait ItemFactoryTrait
      *
      * @return Comment
      */
-    public function comment($content = null)
+    public function comment(string $content = ''): Comment
     {
         return new Comment($content, $this);
     }
@@ -69,7 +69,7 @@ trait ItemFactoryTrait
      *
      * @return Text
      */
-    public function text($content = null)
+    public function text(string $content = ''): Text
     {
         return new Text($content, $this);
     }
@@ -81,7 +81,7 @@ trait ItemFactoryTrait
      *
      * @return HtmlBlock
      */
-    public function html($content = null)
+    public function html(string $content = ''): HtmlBlock
     {
         return new HtmlBlock($content, $this);
     }
@@ -95,7 +95,7 @@ trait ItemFactoryTrait
      *
      * @return Tag
      */
-    public function tag($tag = 'div', $content = null, array $attributes = null)
+    public function tag(string $tag = 'div', string $content = '', array $attributes = []): Tag
     {
         return new Tag($tag, $content, $attributes, $this);
     }
@@ -108,7 +108,7 @@ trait ItemFactoryTrait
      *
      * @return Tag
      */
-    public function p($content = null, array $attributes = null)
+    public function p(string $content = '', array $attributes = []): Tag
     {
         return new Tag('p', $content, $attributes, $this);
     }
@@ -121,7 +121,7 @@ trait ItemFactoryTrait
      *
      * @return Tag
      */
-    public function span($content = null, array $attributes = null)
+    public function span(string $content = '', array $attributes = []): Tag
     {
         return new Tag('span', $content, $attributes, $this);
     }
@@ -134,7 +134,7 @@ trait ItemFactoryTrait
      *
      * @return Input
      */
-    public function input($name = null, array $attributes = null)
+    public function input(string $name = '', array $attributes = []): Input
     {
         return new Input($name, $attributes, $this);
     }
@@ -147,7 +147,7 @@ trait ItemFactoryTrait
      *
      * @return Password
      */
-    public function password($name = null, array $attributes = null)
+    public function password(string $name = '', array $attributes = []): Password
     {
         return new Password($name, $attributes, $this);
     }
@@ -160,7 +160,7 @@ trait ItemFactoryTrait
      *
      * @return Hidden
      */
-    public function hidden($name = null, array $attributes = null)
+    public function hidden(string $name = '', array $attributes = []): Hidden
     {
         return new Hidden($name, $attributes, $this);
     }
@@ -173,7 +173,7 @@ trait ItemFactoryTrait
      *
      * @return Textarea
      */
-    public function textarea($name = null, array $attributes = null)
+    public function textarea(string $name = '', array $attributes = []): TextArea
     {
         return new Textarea($name, $attributes, $this);
     }
@@ -186,7 +186,7 @@ trait ItemFactoryTrait
      *
      * @return Checkbox
      */
-    public function checkbox($name = null, array $attributes = null)
+    public function checkbox(string $name = '', array $attributes = []): Checkbox
     {
         return new Checkbox($name, $attributes, $this);
     }
@@ -199,7 +199,7 @@ trait ItemFactoryTrait
      *
      * @return Radio
      */
-    public function radio($name = null, array $attributes = null)
+    public function radio(string $name = '', array $attributes = []): Radio
     {
         return new Radio($name, $attributes, $this);
     }
@@ -213,7 +213,7 @@ trait ItemFactoryTrait
      *
      * @return Button
      */
-    public function button($label = null, $name = null, array $attributes = null)
+    public function button(string $label = '', string $name = '', array $attributes = []): Button
     {
         return new Button($label, $name, $attributes, $this);
     }
@@ -227,7 +227,7 @@ trait ItemFactoryTrait
      *
      * @return Submit
      */
-    public function submit($label = null, $name = null, array $attributes = null)
+    public function submit(string $label = '', string $name = '', array $attributes = []): Submit
     {
         return new Submit($label, $name, $attributes, $this);
     }
@@ -241,7 +241,7 @@ trait ItemFactoryTrait
      *
      * @return Reset
      */
-    public function reset($label = null, $name = null, array $attributes = null)
+    public function reset(string $label = '', string $name = '', array $attributes = []): Reset
     {
         return new Reset($label, $name, $attributes, $this);
     }
@@ -254,7 +254,7 @@ trait ItemFactoryTrait
      *
      * @return Select
      */
-    public function select($name = null, array $attributes = null)
+    public function select(string $name = '', array $attributes = []): Select
     {
         return new Select($name, $attributes, $this);
     }
@@ -267,7 +267,7 @@ trait ItemFactoryTrait
      *
      * @return Checklist
      */
-    public function checklist($name = null, array $attributes = null)
+    public function checklist(string $name = '', array $attributes = []): CheckList
     {
         return new Checklist($name, $attributes, $this);
     }
@@ -280,7 +280,7 @@ trait ItemFactoryTrait
      *
      * @return Radiolist
      */
-    public function radiolist($name = null, array $attributes = null)
+    public function radiolist(string $name = '', array $attributes = []): Radiolist
     {
         return new Radiolist($name, $attributes, $this);
     }
@@ -293,7 +293,7 @@ trait ItemFactoryTrait
      *
      * @return Container
      */
-    public function container($name = null, array $attributes = null)
+    public function container(string $name = '', array $attributes = []): Container
     {
         return new Container($name, $attributes, $this);
     }
@@ -306,7 +306,7 @@ trait ItemFactoryTrait
      *
      * @return EntryPicker
      */
-    public function entryPicker($name = null, array $attributes = null)
+    public function entryPicker(string $name = '', array $attributes = []): EntryPicker
     {
         return new EntryPicker($name, $attributes, $this);
     }
@@ -319,7 +319,7 @@ trait ItemFactoryTrait
      *
      * @return Table
      */
-    public function table($name = null, array $attributes = null)
+    public function table(string $name = '', array $attributes = []): Table
     {
         return new Table($name, $attributes, $this);
     }
@@ -332,7 +332,7 @@ trait ItemFactoryTrait
      *
      * @return Fieldset
      */
-    public function fieldset($name = null, array $attributes = null)
+    public function fieldset(string $name = '', array $attributes = []): FieldSet
     {
         return new Fieldset($name, $attributes, $this);
     }
@@ -345,7 +345,7 @@ trait ItemFactoryTrait
      *
      * @return Div
      */
-    public function div($name = null, array $attributes = null)
+    public function div(string $name = '', array $attributes = []): Div
     {
         return new Div($name, $attributes, $this);
     }
