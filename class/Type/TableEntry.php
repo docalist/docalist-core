@@ -127,7 +127,7 @@ class TableEntry extends ListEntry
         }
 
         return $form
-        	->setName($this->schema->name() ?? '')
+            ->setName($this->schema->name() ?? '')
             ->addClass($this->getEditorClass($editor))
             ->setOptions($this->schema->table())
             ->setLabel($this->getOption('label', $options, ''))

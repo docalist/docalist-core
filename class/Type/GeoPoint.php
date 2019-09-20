@@ -243,7 +243,7 @@ class GeoPoint extends Any
         }
 
         return $form
-        	->setName($this->schema->name() ?? '')
+            ->setName($this->schema->name() ?? '')
             ->addClass($this->getEditorClass($editor))
             ->setLabel($this->getOption('label', $options, ''))
             ->setDescription($this->getOption('description', $options, ''));
