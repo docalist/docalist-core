@@ -48,6 +48,7 @@ use Docalist\Table\TableInfo;
              ->setDescription(__('Ne pas recopier les données', 'docalist-core'));
         $form->submit(__('Créer la table', 'docalist-search'));
 
-        $form->bind($tableInfo)->display();
+        $form->bind($tableInfo);
+        $form->display();
     ?>
 </div>
