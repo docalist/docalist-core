@@ -44,14 +44,11 @@ trait AttributesTrait
      * Initialise les attributs de l'élément.
      *
      * @param array $attributes Un tableau de la forme nom  => valeur.
-     *
-     * @return self
      */
-    final public function setAttributes(array $attributes): self
+    final public function setAttributes(array $attributes): void
     {
         $this->attributes = [];
-
-        return $this->addAttributes($attributes);
+        $this->addAttributes($attributes);
     }
 
     /**
@@ -61,16 +58,12 @@ trait AttributesTrait
      * existante est écrasée.
      *
      * @param array $attributes Un tableau de la forme nom  => valeur.
-     *
-     * @return self
      */
-    final public function addAttributes(array $attributes): self
+    final public function addAttributes(array $attributes): void
     {
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
         }
-
-        return $this;
     }
 
     /**
@@ -90,7 +83,7 @@ trait AttributesTrait
      *
      * @param string $name le nom de l'attribut.
      *
-     * @return string|null
+     * @return string|int|bool
      */
     final public function getAttribute(string $name)
     {
@@ -100,8 +93,8 @@ trait AttributesTrait
     /**
      * Modifie la valeur d'un attribut.
      *
-     * @param string            $name   Le nom de l'attribut à modifier.
-     * @param string|bool|null  $value  La valeur de l'attribut.
+     * @param string                $name   Le nom de l'attribut à modifier.
+     * @param string|int|bool|null  $value  La valeur de l'attribut.
      *
      * @return self
      */
