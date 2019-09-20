@@ -256,7 +256,7 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * {@inheritDoc}
      */
-    final protected function bindSchema(Schema $schema ): void
+    final protected function bindSchema(Schema $schema): void
     {
         parent::bindSchema($schema);
 

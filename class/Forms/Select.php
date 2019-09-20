@@ -119,8 +119,13 @@ class Select extends Choice
     /**
      * {@inheritdoc}
      */
-    final protected function displayOption(Theme $theme, string $value, string $label, bool $selected, bool $invalid): void
-    {
+    final protected function displayOption(
+        Theme $theme,
+        string $value,
+        string $label,
+        bool $selected,
+        bool $invalid
+    ): void {
         // Détermine les attributs de l'option
         $attributes = ['value' => $value];
         $selected && $attributes['selected'] = 'selected';

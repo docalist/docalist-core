@@ -41,8 +41,12 @@ final class Tag extends HtmlBlock
      * @param array     $attributes Optionnel, les attributs de l'élément.
      * @param Container $parent     Optionnel, le containeur parent de l'item.
      */
-    public function __construct(string $tag = 'div', string $content = '', array $attributes = [], Container $parent = null)
-    {
+    public function __construct(
+        string $tag = 'div',
+        string $content = '',
+        array $attributes = [],
+        Container $parent = null
+    ) {
         parent::__construct($content, $parent);
         $this->setTag($tag);
         !empty($attributes) && $this->addAttributes($attributes);
