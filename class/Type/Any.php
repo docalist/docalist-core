@@ -543,10 +543,10 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         $form = new Input();
 
         return $form
-            ->setName($this->schema->name())
+            ->setName($this->schema->name() ?? '')
             ->addClass($this->getEditorClass())
-            ->setLabel($this->getOption('label', $options))
-            ->setDescription($this->getOption('description', $options));
+            ->setLabel($this->getOption('label', $options, ''))
+            ->setDescription($this->getOption('description', $options, ''));
     }
 
     // -------------------------------------------------------------------------
