@@ -21,7 +21,7 @@ use Docalist\Lookup\LookupManager;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class EntryPicker extends Select
+final class EntryPicker extends Select
 {
     /**
      * {@inheritdoc}
@@ -31,7 +31,7 @@ class EntryPicker extends Select
     /**
      * {@inheritdoc}
      */
-    public function setRepeatable($repeatable = true): self
+    final public function setRepeatable(?bool $repeatable = true)
     {
         if ($repeatable) {
             $this->invalidArgument("An EntryPicker can not be repeatable (cloning is not handled)");
@@ -44,7 +44,7 @@ class EntryPicker extends Select
     /**
      * {@inheritdoc}
      */
-    protected function loadOptions(array $selected = []): array
+    final protected function loadOptions(array $selected = []): array
     {
         // Si le entrypicker ne porte pas sur un lookup, on laisse la classe Select gérer
         if (!is_string($this->options)) {
