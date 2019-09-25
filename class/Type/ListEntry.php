@@ -16,7 +16,6 @@ use Docalist\Forms\Select;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Radiolist;
 use Docalist\Forms\Checklist;
-use InvalidArgumentException;
 
 /**
  * Classe de base abstraite représentant un champ texte permettant à l'utilisateur de choisir une entrée dans une
@@ -96,15 +95,13 @@ class ListEntry extends Text
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid Entry editor '$editor'");
+                return parent::getEditorForm($options);
         }
 
-        return $form
-            ->setName($this->schema->name() ?? '')
-            ->addClass($this->getEditorClass($editor, $css))
-            ->setOptions($this->getEntries())
-            ->setLabel($this->getOption('label', $options, ''))
-            ->setDescription($this->getOption('description', $options, ''));
+        $form->setOptions($this->getEntries());
+        $form->addClass($css);
+
+        return $this->configureEditorForm($form, $options);
     }
 
     public function getAvailableFormats(): array
