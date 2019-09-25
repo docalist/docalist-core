@@ -267,8 +267,8 @@ abstract class Element extends Item
         return [
             'mark-before'       => __('Astérique avant', 'docalist-core'),
             'mark-after'        => __('Astérique après', 'docalist-core'),
-            'heavy-mark-before' => __('Astérique lourde avant', 'docalist-core'),
-            'heavy-mark-after'  => __('Astérisque lourde après', 'docalist-core'),
+            'heavy-mark-before' => __('Astérique lourd avant', 'docalist-core'),
+            'heavy-mark-after'  => __('Astérisque lourd après', 'docalist-core'),
             'color-label'       => __('Libellé coloré', 'docalist-core'),
             'color-container'   => __('Fond coloré', 'docalist-core'),
         ];
