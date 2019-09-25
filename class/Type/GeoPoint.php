@@ -242,10 +242,6 @@ class GeoPoint extends Any
                 throw new InvalidArgumentException('Invalid GeoPoint editor "' . $editor . '"');
         }
 
-        return $form
-            ->setName($this->schema->name() ?? '')
-            ->addClass($this->getEditorClass($editor))
-            ->setLabel($this->getOption('label', $options, ''))
-            ->setDescription($this->getOption('description', $options, ''));
+        return $this->configureEditorForm($form, $options);
     }
 }
