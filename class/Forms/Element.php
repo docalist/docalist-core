@@ -265,12 +265,12 @@ abstract class Element extends Item
     final public function requiredModes(): array
     {
         return [
-            'mark-before'       => __('Astérique avant', 'docalist-core'),
-            'mark-after'        => __('Astérique après', 'docalist-core'),
-            'heavy-mark-before' => __('Astérique lourd avant', 'docalist-core'),
-            'heavy-mark-after'  => __('Astérisque lourd après', 'docalist-core'),
-            'color-label'       => __('Libellé coloré', 'docalist-core'),
-            'color-container'   => __('Fond coloré', 'docalist-core'),
+            'mark-before'       => __('Insérer un astérique rouge avant le libellé', 'docalist-core'),
+            'mark-after'        => __('Ajouter un astérique rouge après le libellé', 'docalist-core'),
+            'heavy-mark-before' => __('Insérer un gros astérique rouge avant le libellé', 'docalist-core'),
+            'heavy-mark-after'  => __('Ajouter un gros astérisque rouge après le libellé', 'docalist-core'),
+            'color-label'       => __('Afficher le libellé en rouge', 'docalist-core'),
+            'color-container'   => __('Ajouter un fond rouge au formulaire', 'docalist-core'),
         ];
     }
 
