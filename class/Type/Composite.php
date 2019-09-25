@@ -285,14 +285,8 @@ class Composite extends Any
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid Composite editor '$editor'");
+                return parent::getEditorForm($options);
         }
-
-        $form
-            ->setName($this->schema->name() ?? '')
-            ->addClass($this->getEditorClass($editor))
-            ->setLabel($this->getOption('label', $options, ''))
-            ->setDescription($this->getOption('description', $options, ''));
 
         // Récupère la liste des champs à afficher
         $fields = array_keys(isset($options['fields']) ? $options['fields'] : $this->schema->getFields());
@@ -311,7 +305,7 @@ class Composite extends Any
             $wrapper->add($this->__get($name)->getEditorForm($fieldOptions));
         }
 
-        return $form;
+        return $this->configureEditorForm($form, $options);
     }
 
     /**
