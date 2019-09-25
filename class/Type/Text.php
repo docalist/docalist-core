@@ -73,15 +73,12 @@ class Text extends Scalar
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid Text editor '$editor'");
+                return parent::getEditorForm($options);
         }
 
         $form = new Input();
+        !empty($css) && $form->addClass($css);
 
-        return $form
-            ->setName($this->schema->name() ?? '')
-            ->addClass($this->getEditorClass($editor, $css))
-            ->setLabel($this->getOption('label', $options, ''))
-            ->setDescription($this->getOption('description', $options, ''));
+        return $this->configureEditorForm($form, $options);
     }
 }
