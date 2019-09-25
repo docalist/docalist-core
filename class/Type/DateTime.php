@@ -47,13 +47,9 @@ class DateTime extends Text
         }
 
         $form = new Input();
+        $form->setAttribute('type', $type);
 
-        return $form
-            ->setName($this->schema->name() ?? '')
-            ->addClass($this->getEditorClass($editor))
-            ->setLabel($this->getOption('label', $options, ''))
-            ->setDescription($this->getOption('description', $options, ''))
-            ->setAttribute('type', $type);
+        return $this->configureEditorForm($form, $options);
     }
 
     public function getAvailableFormats(): array
