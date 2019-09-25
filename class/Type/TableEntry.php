@@ -126,12 +126,9 @@ class TableEntry extends ListEntry
                 return parent::getEditorForm($options);
         }
 
-        return $form
-            ->setName($this->schema->name() ?? '')
-            ->addClass($this->getEditorClass($editor))
-            ->setOptions($this->schema->table())
-            ->setLabel($this->getOption('label', $options, ''))
-            ->setDescription($this->getOption('description', $options, ''));
+        $form->setOptions($this->schema->table());
+
+        return $this->configureEditorForm($form, $options);
     }
 
     public function getAvailableFormats(): array
