@@ -483,6 +483,17 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
                 ->setFirstOption($default);
         }
 
+        $form->select('required')
+            ->addClass('required-mode')
+            ->setLabel(__('Champ obligatoire', 'docalist-core'))
+            ->setDescription(__(
+                "Permet de signaler visuellement (pas de contrôle) qu'un champ est requis.
+                Plusieurs modes d'affichage sont proposés.",
+                'docalist-core'
+            ))
+            ->setOptions($form->requiredModes())
+            ->setFirstOption(__('Non', 'docalist-core'));
+
         return $form;
     }
 
@@ -555,6 +566,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      * - le libellé du champ
      * - la description du champ
      * - les classes css de base
+     * - l'option "required"
      *
      * Les classes descendantes peuvent surcharger la méthode pour configurer les options qu'elles
      * gèrent, mais elles doivent appeller la méthode héritée.
@@ -581,6 +593,10 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         // Classes css
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         $form->addClass($this->getEditorClass($editor));
+
+        // Champ obligatoire
+        $required = $this->getOption('required', $options, '');
+        !empty($required) && $form->setRequired($required);
 
         // Ok
         return $form;
