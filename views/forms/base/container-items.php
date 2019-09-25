@@ -49,6 +49,8 @@ foreach ($this->getItems() as $item) {
     if ($item instanceof Element) { /** @var Element $item */
         $name = $item->getName();
         !empty($name) && $attr['class'] = 'field-' . $name . '-group';
+        $required = $item->getRequired();
+        !empty($required) && $attr['data-required'] = $required;
     }
     $theme->start('tr', $attr);
 
