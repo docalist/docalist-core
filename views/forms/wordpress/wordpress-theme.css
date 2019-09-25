@@ -325,3 +325,55 @@ select.entrypicker, input.entrypicker {
 .cm-s-autosize {
     height: auto;
 }
+
+/* -----------------------------------------------------------------------------------------------------------------
+ * Champs obligatoires, voir les modes disponibles dans Forms/Element::requiredModes() 
+ * ----------------------------------------------------------------------------------------------------------------- */
+/* Astérisque avant */
+tr[data-required="mark-before"]>th>label:before,        /* container-items */
+th[data-required="mark-before"]>label:before            /* table, libellé */
+ {
+    content: "* ";
+    color: red;
+}
+
+/* Astérisque après */
+tr[data-required="mark-after"]>th>label:after,          /* container-items */
+th[data-required="mark-after"]>label:after              /* table, libellé */
+ {
+    content: " *";
+    color: red;
+}
+
+/* Astérisque lourd avant */
+tr[data-required="heavy-mark-before"]>th>label:before,  /* container-items */
+th[data-required="heavy-mark-before"]>label:before      /* table, libellé */
+ {
+    content: "✱ ";
+    color: red;
+    font-weight: normal;
+}
+
+/* Astérisque lourd après */
+tr[data-required="heavy-mark-after"]>th>label:after,    /* container-items */
+th[data-required="heavy-mark-after"]>label:after        /* table, libellé */
+ {
+    content: " ✱";
+    color: red;
+    font-weight: normal;
+}
+
+/* Libellé en rouge */
+tr[data-required="color-label"]>th>label,               /* container-items */
+th[data-required="color-label"]>label                   /* table, libellé */
+ {
+    color: red;
+}
+
+/* Container en rouge */
+tr[data-required="color-container"],                    /* container-items */
+th[data-required="color-container"],                    /* table, libellé */
+td[data-required="color-container"]                     /* table, champ de saisie */
+ {
+    background-color: #FEE;
+}
