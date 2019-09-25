@@ -32,7 +32,11 @@ $theme->start('table', ['class' => 'field-table'] + $this->getAttributes());
 // Entête de la table
 $theme->start('thead')->start('tr');
 foreach ($this->getItems() as $item) { /** @var Element $item */
-    $theme->start('th', ['class' => $item->getAttribute('class'), 'title' => $item->getDescription()]);
+    $attr = ['class' => $item->getAttribute('class'), 'title' => $item->getDescription()];
+    $required = $item->getRequired();
+    !empty($required) && $attr['data-required'] = $required;
+
+    $theme->start('th', $attr);
     $item->hasLabelBlock() && $theme->display($item, '_label');
     $theme->end('th');
 }
@@ -50,7 +54,11 @@ foreach (array_keys($this->getOccurences()) as $key) {
 
     $theme->start('tr');
     foreach ($this->getItems() as $item) {
-        $theme->start('td');
+        $attr = [];
+        $required = $item->getRequired();
+        !empty($required) && $attr['data-required'] = $required;
+
+        $theme->start('td', $attr);
         $theme->display($item);
         $theme->end('td');
     }
