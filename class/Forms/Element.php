@@ -77,6 +77,13 @@ abstract class Element extends Item
     protected $occurence;
 
     /**
+     * Champ requis / mode d'affichage
+     *
+     * @var string
+     */
+    protected $required = '';
+
+    /**
      * Crée un élément de formulaire.
      *
      * @param string            $name       Optionnel, le nom de l'élément.
@@ -248,6 +255,49 @@ abstract class Element extends Item
     final public function getDescription(): string
     {
         return $this->description;
+    }
+
+    /**
+     * Retourne la liste des modes d'affichage disponibles pour un champ requis.
+     *
+     * @return string[] Un tableau de la forme code => libellé.
+     */
+    final public function requiredModes(): array
+    {
+        return [
+            'mark-before'       => __('Astérique avant', 'docalist-core'),
+            'mark-after'        => __('Astérique après', 'docalist-core'),
+            'heavy-mark-before' => __('Astérique lourde avant', 'docalist-core'),
+            'heavy-mark-after'  => __('Astérisque lourde après', 'docalist-core'),
+            'color-label'       => __('Libellé coloré', 'docalist-core'),
+            'color-container'   => __('Fond coloré', 'docalist-core'),
+        ];
+    }
+
+    /**
+     * Définit si le champ est requis ou non
+     *
+     * @param string $mode Un code (cf. requiredModes()) indiquant le mode d'affichage si le champ est requis
+     * ou une chaine vide si le champ est optionnel.
+     */
+    final public function setRequired(string $mode = 'mark-after'): void
+    {
+        $modes = $this->requiredModes();
+        if ($mode !== '' && !isset($modes[$mode])) {
+            $this->invalidArgument('Invalid required mode');
+        }
+        $this->required = $mode;
+    }
+
+    /**
+     * Indique si le champ est requis ou non.
+     *
+     * @return string Un code (cf. requiredModes()) indiquant le mode d'affichage si le champ est requis
+     * ou une chaine vide si le champ est optionnel.
+     */
+    final public function getRequired(): string
+    {
+        return $this->required;
     }
 
     /**
