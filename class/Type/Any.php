@@ -540,13 +540,50 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getEditorForm($options = null): Element
     {
-        $form = new Input();
+        return $this->configureEditorForm(new Input(), $options);
+    }
 
-        return $form
-            ->setName($this->schema->name() ?? '')
-            ->addClass($this->getEditorClass())
-            ->setLabel($this->getOption('label', $options, ''))
-            ->setDescription($this->getOption('description', $options, ''));
+    /**
+     * Configure l'éditeur en fonction des options passées en paramètre.
+     *
+     * La méthode se charge de configurer l'éditeur en fonction des options qui sont gérées par
+     * la classe (cf. getEditorSettingsForm).
+     *
+     * La classe de base (Any) configure :
+     *
+     * - le nom du champ
+     * - le libellé du champ
+     * - la description du champ
+     * - les classes css de base
+     *
+     * Les classes descendantes peuvent surcharger la méthode pour configurer les options qu'elles
+     * gèrent, mais elles doivent appeller la méthode héritée.
+     *
+     * @param Element   $editor     Editeur à configurer.
+     * @param array     $options    Options passées à getEditorForm().
+     *
+     * @return Element
+     */
+    protected function configureEditorForm(Element $form, $options): Element
+    {
+        // Nom du champ
+        $name = $this->schema->name();
+        !empty($name) && $form->setName($name);
+
+        // Libellé
+        $label = $this->getOption('label', $options, $name);
+        !empty($label) && $form->setLabel($label);
+
+        // Description
+        $description = $this->getOption('description', $options, '');
+        !empty($description) && $form->setDescription($description);
+
+        // Classes css
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
+        $form->addClass($this->getEditorClass($editor));
+
+        // Ok
+        return $form;
     }
 
     // -------------------------------------------------------------------------
