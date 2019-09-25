@@ -15,7 +15,6 @@ use Docalist\Forms\Element;
 use Docalist\Forms\Textarea;
 use Docalist\Forms\WPEditor;
 use Docalist\Forms\CodeEditor;
-use InvalidArgumentException;
 
 /**
  * Un bloc de texte multiligne contenant ou non du code html.
@@ -72,15 +71,13 @@ class LargeText extends Text
                 break;
 
             default:
-                throw new InvalidArgumentException("Invalid LargeText editor '$editor'");
+                return parent::getEditorForm($options);
         }
 
-        return $form
-            ->setName($this->schema->name() ?? '')
-            ->addClass($this->getEditorClass($editor, $css))
-            ->setLabel($this->getOption('label', $options, ''))
-            ->setDescription($this->getOption('description', $options, ''))
-            ->setAttribute('rows', '1');
+        $form->setAttribute('rows', '1');
+        $form->addClass($css);
+
+        return $this->configureEditorForm($form, $options);
     }
 
     public function getFormattedValue($options = null)
