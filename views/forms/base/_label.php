@@ -37,6 +37,19 @@ if (empty($label) || $label === '-') {
     return;
 }
 
-// Génère le libellé
+// Détermine les attributs du tag <label>
 $attributes = ($this->isLabelable() && ! $this->isRepeatable()) ? ['for' => $this->generateID()] : [];
-$theme->tag('label', $attributes, $label);
+
+// Ouvre le tag <label>
+$theme->start('label', $attributes);
+
+// génère le libellé
+$theme->html($label);
+
+// Génère une astérisque si le champ est obligatoire
+if (!empty($this->getRequired())) {
+    $theme->tag('span', ['class' => 'screen-reader-text'], __(' (requis)', 'docalist-core'));
+}
+
+// Ferme le tag <label>
+$theme->end('label');
