@@ -209,6 +209,11 @@ abstract class Choice extends Element
 
         // S'il reste encore des données dans selected, ce sont des options invalides
         foreach ($selected as $value) {
+            // Evite de signaler les valeurs vides comme invalides
+            if (is_null($value) || $value === '') {
+                continue;
+            }
+
             $this->displayOption($theme, (string) $value, (string) $value, true, true);
         }
     }
