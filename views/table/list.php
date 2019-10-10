@@ -319,7 +319,7 @@ function formatType($type)
         return $type;
     }
 
-    return $type . ' (bad type)';
+    return 'Bad type : ' . $type;
 /*
     switch ($type) {
         case null:
