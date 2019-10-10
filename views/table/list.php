@@ -303,6 +303,24 @@ function formatFormat($format)
 
 function formatType($type)
 {
+    $types = [
+        'content-type', 'continent', 'country', 'country-conversion', 'date-type', 'figure-type',
+        'format-conversion', 'format', 'genre-conversion', 'genres', 'language', 'language-conversion',
+        'link-type', 'media-conversion', 'thesaurus', 'number-type', 'extent', 'phone-number-type',
+        'postal-address-type', 'relation-type', 'role-conversion', 'roles', 'source-type', 'medias',
+        'title-type', 'topic-type', 'type-conversion'
+    ];
+
+    if (is_null($type)) {
+        return __('Tous les contenus', 'docalist-core');
+    }
+
+    if (in_array($type, $types)) {
+        return $type;
+    }
+
+    return $type . ' (bad type)';
+/*
     switch ($type) {
         case null:
             return __('Tous les contenus', 'docalist-core');
@@ -361,6 +379,7 @@ function formatType($type)
         default:
             return ucfirst($type);
     }
+*/
 }
 
 function formatReadonly($readonly)
