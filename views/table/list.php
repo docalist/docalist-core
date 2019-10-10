@@ -305,7 +305,7 @@ function formatType($type)
 {
     $types = [
         'content-type', 'continent', 'country', 'country-conversion', 'date-type', 'figure-type',
-        'format-conversion', 'format', 'genre-conversion', 'genres', 'language', 'language-conversion',
+        'format-conversion', 'formats', 'genre-conversion', 'genres', 'language', 'language-conversion',
         'link-type', 'media-conversion', 'thesaurus', 'number-type', 'extent', 'phone-number-type',
         'postal-address-type', 'relation-type', 'role-conversion', 'roles', 'source-type', 'medias',
         'title-type', 'topic-type', 'type-conversion'
