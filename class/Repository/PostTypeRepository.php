@@ -17,6 +17,8 @@ use Docalist\Repository\Exception\BadIdException;
 use Docalist\Repository\Exception\RepositoryException;
 use Docalist\Repository\Exception\EntityNotFoundException;
 
+use function Docalist\deprecated;
+
 /**
  * Un dépôt permettant de stocker des entités dans la table wp_posts de WordPress.
  *
@@ -104,6 +106,8 @@ class PostTypeRepository extends Repository
      */
     public function postType()
     {
+        deprecated(get_class($this) . '::postType()', 'getPostType()', '2019-04-28');
+
         return $this->postType;
     }
 
