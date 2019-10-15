@@ -12,6 +12,8 @@
 
 // pas de namespace, la fonction docalist() est globale.
 
+declare(strict_types=1);
+
 use Docalist\Autoloader;
 use Docalist\Services;
 
@@ -22,7 +24,7 @@ use Docalist\Services;
  *
  * @return mixed
  */
-function docalist($service)
+function docalist(string $service)
 {
     static $services = null; /** @var Services $services */
 
