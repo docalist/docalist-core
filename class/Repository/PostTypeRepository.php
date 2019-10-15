@@ -284,7 +284,7 @@ class PostTypeRepository extends Repository
     {
         $wpdb = docalist('wordpress-database');
 
-        $type = $this->postType();
+        $type = $this->getPostType();
         $sql = "SELECT count(*) FROM $wpdb->posts WHERE post_type='$type'";
 
         return (int) $wpdb->get_var($sql);
@@ -314,7 +314,7 @@ class PostTypeRepository extends Repository
     {
         $wpdb = docalist('wordpress-database');
 
-        $type = $this->postType();
+        $type = $this->getPostType();
         $count = $this->count();
 
         // Début de la suppression
