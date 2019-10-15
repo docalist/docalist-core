@@ -14,6 +14,8 @@ namespace Docalist\Cache;
 use InvalidArgumentException;
 use RuntimeException;
 
+use function Docalist\deprecated;
+
 /**
  * Un cache permettant de stocker des fichiers générés sur disque (template compilé, version SQLite d'une
  * table d'autorité, etc.)
@@ -92,7 +94,7 @@ class FileCache
     /** @deprecated */
     public function root()
     {
-        trigger_error('deprecated');
+        deprecated('FileCache::root()', 'getRoot()');
 
         return $this->getRoot();
     }
@@ -124,7 +126,7 @@ class FileCache
     /** @deprecated */
     public function directory()
     {
-        trigger_error('deprecated');
+        deprecated('FileCache::directory()', 'getDirectory()');
 
         return $this->getDirectory();
     }
@@ -157,7 +159,7 @@ class FileCache
     /** @deprecated */
     public function path($file)
     {
-        trigger_error('deprecated');
+        deprecated('FileCache::path()', 'getPath()');
 
         return $this->getPath($file);
     }
