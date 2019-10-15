@@ -24,6 +24,8 @@ use Docalist\Forms\Element;
 use Docalist\Forms\Input;
 use InvalidArgumentException;
 
+use function Docalist\deprecated;
+
 /**
  * Classe de base pour les différents types de données.
  *
@@ -197,7 +199,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      */
     final public function schema()
     {
-        _deprecated_function(__METHOD__, '0.14', 'getSchema');
+        deprecated(get_class($this) . '::schema()', 'getSchema()', '2017-07-04');
 
         return $this->getSchema();
     }
