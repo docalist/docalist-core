@@ -94,7 +94,7 @@ class FileCache
     /** @deprecated */
     public function root()
     {
-        deprecated('FileCache::root()', 'getRoot()');
+        deprecated('FileCache::root()', 'getRoot()', '2017-03-14');
 
         return $this->getRoot();
     }
@@ -126,7 +126,7 @@ class FileCache
     /** @deprecated */
     public function directory()
     {
-        deprecated('FileCache::directory()', 'getDirectory()');
+        deprecated('FileCache::directory()', 'getDirectory()', '2017-03-14');
 
         return $this->getDirectory();
     }
@@ -159,7 +159,7 @@ class FileCache
     /** @deprecated */
     public function path($file)
     {
-        deprecated('FileCache::path()', 'getPath()');
+        deprecated('FileCache::path()', 'getPath()', '2017-03-14');
 
         return $this->getPath($file);
     }
