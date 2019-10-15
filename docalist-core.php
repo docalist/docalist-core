@@ -60,6 +60,11 @@ define('DOCALIST_CORE_URL', plugins_url('', DOCALIST_CORE));
  */
 require_once __DIR__ . '/docalist.php';
 
+/**
+ * Fonctions docalist.
+ */
+require_once __DIR__ . '/docalist-functions.php';
+
 /*
  * Charge le plugin docalist-core en premier (priorité -PHP_INT_MAX).
  */
