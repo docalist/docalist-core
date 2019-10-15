@@ -19,6 +19,8 @@ use ReflectionObject;
 use ReflectionMethod;
 use Exception;
 
+use function Docalist\deprecated;
+
 /**
  * Un contrôleur permet de regrouper plusieurs actions ensemble et d'y accéder à partir d'une url.
  *
@@ -387,7 +389,8 @@ abstract class Controller
      */
     protected function url()
     {
-        _deprecated_function(__METHOD__, '0.14', 'getUrl');
+        deprecated(get_class($this) . '::url()', 'getUrl()', '2018-02-19');
+
         return call_user_func_array([$this, 'getUrl'], func_get_args());
     }
 
@@ -506,7 +509,8 @@ abstract class Controller
      */
     protected function baseUrl()
     {
-        _deprecated_function(__METHOD__, '0.14', 'getBaseUrl');
+        deprecated(get_class($this) . '::url()', 'getUrl()', '2018-09-06');
+
         return $this->getBaseUrl();
     }
 
