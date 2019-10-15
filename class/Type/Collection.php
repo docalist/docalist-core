@@ -298,6 +298,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
             foreach ($items as $item) {
                 /* @var Categorizable $item */
                 $category = $item->getCategoryLabel();
+                empty($category) && $category = $this->getOption('label', $options, '');
 
                 /* @var Any $item */
                 $result[$category][] = $prefix . $item->getFormattedValue($options) . $suffix;
