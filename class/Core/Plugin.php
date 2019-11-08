@@ -407,7 +407,7 @@ class Plugin
             'selectize',
             "$url/lib/selectize/js/standalone/selectize.$js",
             ['jquery'],
-            '0.12.4',
+            '0.12.6',
             false
         );
 
@@ -415,7 +415,7 @@ class Plugin
             'selectize',
             "$url/lib/selectize/css/selectize.default.css",
             [],
-            '0.12.4'
+            '0.12.6'
         );
 
         // docalist-forms
@@ -423,7 +423,7 @@ class Plugin
             'docalist-forms',
             "$url/views/forms/docalist-forms.js",
             ['jquery', 'jquery-ui-sortable', 'selectize'],
-            '181214',
+            '191108',
             true
         );
 
@@ -432,7 +432,7 @@ class Plugin
             'docalist-forms-wordpress',
             "$url/views/forms/wordpress/wordpress-theme.css",
             ['wp-admin'],
-            '190212'
+            '191108'
         );
 
         // Auto resize des textarea
