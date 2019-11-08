@@ -559,7 +559,10 @@ jQuery(document).ready(function ($) {
 
                 // Fonctions de rendu
                 render: {
-                    option: renderOption
+                    option: renderOption,
+                    option_create: function(data, escape) {
+                        return '<div class="create">Ajouter <strong>' + escape(data.input) + '</strong>&hellip;</div>';
+                    }
                 }
             });
         });
