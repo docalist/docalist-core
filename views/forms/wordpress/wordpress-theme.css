@@ -103,8 +103,12 @@ button.cloner span::before {
 select.entrypicker, input.entrypicker {
     /* Entrypicker génère des select avec size=1 et les inputs ont une seule ligne donc on donne juste une largeur */
     width: 100%;
-    /* Ignore ce qui dépsse pour ne pas afficher d'ascenseur vertical */
+    /* Ignore ce qui dépasse pour ne pas afficher d'ascenseur vertical */
     overflow: hidden; 
+}
+select.entrypicker option {
+    /* masque les options des select (elle s'affiche avec un fond gris foncé le temps du chargement de selectize) */
+    display: none;
 }
 
 /*
@@ -131,6 +135,18 @@ select.entrypicker, input.entrypicker {
     border-color: #aaa;
 }
 
+/* Style du bouton "remove" pour les selectize single option */
+.selectize-control.plugin-remove_button .remove-single {
+    font-size: 12px;
+    font-weight: bold;
+    color: inherit;
+    text-decoration: none;
+    
+    display: inline-block;    
+    width: 24px;
+    text-align: center;
+}
+
 /*
     wordpress a une règle générique ".highlight" qui met la zone.
     (dans wp-admin.css et dans colors-fresh.css)
@@ -151,8 +167,10 @@ select.entrypicker, input.entrypicker {
 }
 
 .selectize-dropdown .des,
-.selectize-dropdown .nondes {
+.selectize-dropdown .nondes,
+.selectize-dropdown .create {
     font-size: 13px;
+    padding: 5px 8px;
 }
 
 .selectize-dropdown .des .term, /* le nom du descripteur */
