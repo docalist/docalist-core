@@ -411,6 +411,12 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getFormattedValue($options = null)
     {
+        // Affiche le contenu "brut" si la classe n'a aucun format d'affichage disponible
+        if (empty($this->getAvailableFormats())) {
+            return $this->__toString();
+        }
+
+        // Il y a des formats mais le format indiqué n'existe pas, génère une exception
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
         $class = get_class($this);
         $msg = sprintf('getFormattedValue() : invalid format "%s" for class "%s"', $format, $class);
