@@ -423,7 +423,7 @@ class Plugin
             'docalist-forms',
             "$url/views/forms/docalist-forms.js",
             ['jquery', 'jquery-ui-sortable', 'selectize'],
-            '191108',
+            '191209',
             true
         );
 

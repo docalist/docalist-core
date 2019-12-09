@@ -672,7 +672,10 @@ jQuery(document).ready(function ($) {
                 // soit un objet contenant juste currentTarget (onKeyDown:KEY_RETURN)
 
                 // Teste si c'est un lien
-                var target = e.target || e.currentTarget;
+                var target = $(e.target || e.currentTarget);
+                if (target.is('span.highlight')) {
+                    target = target.parent(); 
+                }
                 var value = $(target).attr("rel");
 
                 // On a trouvé un lien
