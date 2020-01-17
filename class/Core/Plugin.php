@@ -226,9 +226,11 @@ class Plugin
         ToolsPage::setup();
 
         // Indique aux collections MultiField si l'utilisateur a accès ou non aux éléments "internal*"
-        $enable = !current_user_can('manage_options'); // par défaut, active le filtre si l'utilisateur n'est pas admin
-        $enable = apply_filters('docalist_collection_filter_internal', $enable);  // les plugins peuvent changer ça
-        $enable ? MultiFieldCollection::enableInternalFilter() : MultiFieldCollection::disableInternalFilter();
+        // Par défaut, le filtre est activé (cf. MultiField), on le désactive pour les admins et ceux
+        // qui ont la capacité "voir les entrées internal"
+        $disable = current_user_can('manage_options') || current_user_can('docalist_collection_view_internal');
+        $disable = apply_filters('docalist_collection_view_internal', $disable);  // les plugins peuvent changer ça
+        $disable ? MultiFieldCollection::disableInternalFilter() : MultiFieldCollection::enableInternalFilter();
 
         // Ok
         return $this;
