@@ -281,7 +281,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $ellipsis = (string) $this->getOption('ellipsis', $options, '');
 
         // Les items à formatter
-        $items = $this->phpValue;
+        // $items = $this->phpValue;
+        $items = $this->filter()->phpValue; // Supprime les entrées de type "internal" si on n'a pas les droits
 
         // Le résultat
         $result = [];
