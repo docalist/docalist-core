@@ -21,7 +21,16 @@ use InvalidArgumentException;
  */
 class FuzzyDate extends Text
 {
-    // format affichage => format obtenu si on a ['année seulement', 'année et mois', 'année, mois et jour]
+    /**
+     * Indique le format à utiliser en fonction de la longueur de la date.
+     *
+     * @var array Le tableau a la structure suivante :
+     * "Format choisi par l'utilisateur" => [
+     *     "format à utiliser si on n'a que l'année",
+     *     "format à utiliser si on a l'année et le mois",
+     *     "format à utiliser si on une date complète"
+     * ]
+     */
     static protected $map = [
         'Y'     => ['Y',    'Y',    'Y'     ],
 
@@ -36,6 +45,9 @@ class FuzzyDate extends Text
         'Y-m-d' => ['Y',    'Y-m',  'Y-m-d' ],
     ];
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAvailableFormats(): array
     {
         return [
@@ -53,6 +65,9 @@ class FuzzyDate extends Text
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getDefaultFormat(): string
     {
         return 'd/m/Y';
@@ -83,6 +98,9 @@ class FuzzyDate extends Text
         return $parts;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getFormattedValue($options = null)
     {
         // Valide le format demandé
@@ -106,6 +124,9 @@ class FuzzyDate extends Text
         ]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getEditorForm($options = null): Element
     {
         return parent::getEditorForm($options)
