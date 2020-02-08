@@ -12,7 +12,10 @@ declare(strict_types=1);
 namespace Docalist\Type;
 
 use Docalist\Forms\Element;
+use DateTime;
 use InvalidArgumentException;
+
+use function date_i18n;
 
 /**
  * Une date éventuellement incomplète : 'yyyyMMdd', 'yyyyMM' ou 'yyyy'.
@@ -43,6 +46,11 @@ class FuzzyDate extends Text
         'd-m-Y' => ['Y',    'm-Y',  'd-m-Y' ],
         'Y/m/d' => ['Y',    'Y/m',  'Y/m/d' ],
         'Y-m-d' => ['Y',    'Y-m',  'Y-m-d' ],
+
+        'M Y'   => ['Y',    'M Y',  'M Y' ],        // févr. 2020
+        'F Y'   => ['Y',    'F Y',  'F Y' ],        // février 2020
+        'j M Y' => ['Y',    'M Y',  'j M Y' ],      // 8 févr. 2020
+        'j F Y' => ['Y',    'F Y',  'j F Y' ],      // 8 février 2020
     ];
 
     /**
@@ -50,19 +58,17 @@ class FuzzyDate extends Text
      */
     public function getAvailableFormats(): array
     {
-        return [
-            'Y'     => __('AAAA', 'docalist-core'),
+        static $formats = null;
 
-            'Y/m'   => __('AAAA/MM', 'docalist-core'),
-            'm/Y'   => __('MM/AAAA', 'docalist-core'),
-            'Y-m'   => __('AAAA-MM', 'docalist-core'),
-            'm-Y'   => __('MM-AAAA', 'docalist-core'),
+        if (is_null($formats)) {
+            $now = new DateTime();
+            $formats = [];
+            foreach (array_keys(self::$map) as $format) {
+                $formats[$format] = $this->format($now, $format);
+            }
+        }
 
-            'd/m/Y' => __('JJ/MM/AAAA', 'docalist-core'),
-            'd-m-Y' => __('JJ-MM-AAAA', 'docalist-core'),
-            'Y/m/d' => __('AAAA/MM/JJ', 'docalist-core'),
-            'Y-m-d' => __('AAAA-MM-JJ', 'docalist-core'),
-        ];
+        return $formats;
     }
 
     /**
@@ -103,6 +109,16 @@ class FuzzyDate extends Text
      */
     public function getFormattedValue($options = null)
     {
+        // Retourne une chaine vide si la date est vide
+        if (empty($this->phpValue)) {
+            return '';
+        }
+
+        // Retourne la valeur brute si la date est invalide (ne contient pas que des chiffres ou moins de 4 chiffres)
+        if (!ctype_digit($this->phpValue) || strlen($this->phpValue) < 4) {
+            return $this->phpValue;
+        }
+
         // Valide le format demandé
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
         if (! isset(self::$map[$format])) {
@@ -110,18 +126,33 @@ class FuzzyDate extends Text
         }
 
         // Découpe la date
-        $parts = $this->parse(); // 0 = vide, 1=que l'année, 2=année et mois, 3=année, mois et jour
+        $parts = $this->parse();
+
+        // Convertit la date en timestamp, retourne la valeur brute en cas d'erreur
+        $dateTime = DateTime::createFromFormat('Ymd', $parts[0] . ($parts[1] ?? '01') . ($parts[2] ?? '01'));
+        if ($dateTime === false) {
+            return $this->phpValue;
+        }
 
         // Détermine le format effectif en fonction de la précision de la date
         $format = self::$map[$format];
         $format = $format[count($parts) - 1];
 
         // Formatte la date
-        return strtr($format, [
-            'Y' => isset($parts[0]) ? $parts[0] : '????',
-            'm' => isset($parts[1]) ? $parts[1] : '??',
-            'd' => isset($parts[2]) ? $parts[2] : '??',
-        ]);
+        return $this->format($dateTime, $format);
+    }
+
+    /**
+     * Formatte l'objet DateTime passé en paramètre avec le format indiqué.
+     *
+     * @param DateTime $dateTime
+     * @param string $format
+     *
+     * @return string
+     */
+    private function format(DateTime $dateTime, string $format): string
+    {
+        return date_i18n($format, $dateTime->getTimestamp());
     }
 
     /**
