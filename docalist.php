@@ -34,9 +34,6 @@ function docalist(string $service)
         require_once __DIR__ . '/class/Autoloader.php';
         $autoloader = new Autoloader();
         $autoloader->add('Docalist', DOCALIST_CORE_DIR . '/class');
-        $autoloader->add('Symfony', DOCALIST_CORE_DIR . '/lib/Symfony');
-        $autoloader->add('Psr\Log', DOCALIST_CORE_DIR . '/lib/psr/log/Psr/Log');
-        $autoloader->add('Monolog', DOCALIST_CORE_DIR . '/lib/monolog/monolog/src/Monolog');
         $autoloader->add('Docalist\Tests', DOCALIST_CORE_DIR . '/tests/Docalist');
 
         // Initialise le gestionnaire de services
