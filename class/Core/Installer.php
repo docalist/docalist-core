@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Core;
 
+use Docalist\Tools\ToolsPage;
+
 /**
  * Installation/désinstallation de docalist-core.
  *
@@ -30,6 +32,10 @@ class Installer
      */
     public function activate()
     {
+        $adminRole = wp_roles()->get_role('administrator');
+        if (! is_null($adminRole)) {
+            $adminRole->add_cap(ToolsPage::CAPABILITY);
+        }
     }
 
     /**
@@ -37,5 +43,9 @@ class Installer
      */
     public function deactivate()
     {
+        $adminRole = wp_roles()->get_role('administrator');
+        if (! is_null($adminRole)) {
+            $adminRole->remove_cap(ToolsPage::CAPABILITY);
+        }
     }
 }
