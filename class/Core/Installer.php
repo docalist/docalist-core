@@ -18,34 +18,52 @@ use Docalist\Tools\ToolsPage;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Installer
+final class Installer
 {
     /**
-     * Initialise l'installateur.
+     * Retourne la liste des capacités qui seront créées/supprimées lors de
+     * l'activation / la désactivation du plugin.
+     *
+     * @return string[]
      */
-    public function __construct()
+    private function getCapabilities(): array
     {
+        return [
+            // Voir la page "Outils docalist"
+            ToolsPage::CAPABILITY,
+
+            // Voir les entrées de type "internalxxx" des MultiFieldCollection
+            'docalist_collection_view_internal',
+        ];
     }
 
     /**
      * Activation.
      */
-    public function activate()
+    final public function activate(): void
     {
         $adminRole = wp_roles()->get_role('administrator');
-        if (! is_null($adminRole)) {
-            $adminRole->add_cap(ToolsPage::CAPABILITY);
+        if (is_null($adminRole)) {
+            return;
+        }
+
+        foreach ($this->getCapabilities() as $capability) {
+            $adminRole->add_cap($capability);
         }
     }
 
     /**
      * Désactivation.
      */
-    public function deactivate()
+    final public function deactivate(): void
     {
         $adminRole = wp_roles()->get_role('administrator');
-        if (! is_null($adminRole)) {
-            $adminRole->remove_cap(ToolsPage::CAPABILITY);
+        if (is_null($adminRole)) {
+            return;
+        }
+
+        foreach ($this->getCapabilities() as $capability) {
+            $adminRole->remove_cap($capability);
         }
     }
 }
