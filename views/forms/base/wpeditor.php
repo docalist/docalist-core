@@ -30,7 +30,6 @@ foreach ($this->getOccurences() as $key => $data) {
     $settings = [
         'textarea_name'     => $this->getControlName(),
         'drag_drop_upload'  => true,
-        'quicktags'         => false, // teeny : on n'en veux pas, mode full : on ne sait pas les cloner (cf. forms.js)
         'tinymce' => [
             'resize'            => false,
             'wp_autoresize_on'  => true,
@@ -59,6 +58,7 @@ foreach ($this->getOccurences() as $key => $data) {
                 'toolbar1'              => 'bold,italic,bullist,numlist,blockquote,link,unlink,undo,redo',
             ]
         ]);
+        $settings['quicktags'] = false;  // teeny : on n'en veux pas
     }
 
     wp_editor($data, $id, $settings);

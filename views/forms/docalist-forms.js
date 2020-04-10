@@ -230,7 +230,7 @@ jQuery(document).ready(function ($) {
             });
 
             // Renomme les attributs id et for
-            $.each(["id", "for", "data-editor"], function (i, name) {
+            $.each(["id", "for", "data-editor", "data-wp-editor-id"], function (i, name) {
                 // dans la liste ci-dessus, data-editor correspond au bouton "add media" de wp-editor
                 var value = input.attr(name); // valeur de l'attribut name, id ou for
                 if (! value) {
@@ -313,23 +313,23 @@ jQuery(document).ready(function ($) {
             var settings = $.extend({
                 // Type de lookup (table, thesaurus, index, search) ou vide si pas d'ajax
                 lookupType: "",
-                
+
                 // Source de lookup (nom de la table, du thésaurus, de l'index, etc.) ou vide si pas d'ajax
                 lookupSource: "",
-                
+
                 // Dans les options, nom du champ qui contient le code de l'option
                 valueField: "code",
-                
+
                 // Dans les options, nom du champ qui contient le libellé de l'option
-                labelField: "label" 
+                labelField: "label"
             }, $(this).data());
-            
-            // Pour les lookups de type "index" les options retournées ont une structure différente 
+
+            // Pour les lookups de type "index" les options retournées ont une structure différente
             if (settings.lookupType === "index") {
                 settings.valueField = "text";
                 settings.labelField = "text";
             }
-            
+
             /**
              * Libellé des relations
              */
@@ -472,7 +472,7 @@ jQuery(document).ready(function ($) {
                 // Cas d'un descripteur
                 else {
                     var label = option[settings.labelField].replace(/¤+/g, ', ').replace(/[, ]+$/, '');
-                    
+
                     html = "<div class=\"des\">";
                     html += "<span class=\"term\">" + escape(label) + "</span>";
                 }
@@ -649,12 +649,12 @@ jQuery(document).ready(function ($) {
          */
         self.onOptionSelect = (function () {
             var original = self.onOptionSelect;
-    
+
             var show = function (value) {
                 if (!self.options.hasOwnProperty(value)) {
                     return;
                 }
-    
+
                 var option = self.options[value];
                 var html = self.render("option", option);
                 self.$dropdown_content.html(html);
@@ -674,7 +674,7 @@ jQuery(document).ready(function ($) {
                 // Teste si c'est un lien
                 var target = $(e.target || e.currentTarget);
                 if (target.is('span.highlight')) {
-                    target = target.parent(); 
+                    target = target.parent();
                 }
                 var value = $(target).attr("rel");
 
@@ -683,7 +683,7 @@ jQuery(document).ready(function ($) {
                     // Empêche la fermeture du dropdown
                     e.preventDefault && e.preventDefault();
                     e.stopPropagation && e.stopPropagation();
-    
+
                     if (self.options.hasOwnProperty(value)) {
                         show(value);
                     } else {
