@@ -131,9 +131,7 @@ class LookupManager
         $garbage = ob_get_clean();
 
         // Crée une réponse JSON contenant les résultats
-        $json = new JsonResponse();
-        isset($_GET['pretty']) && $json->setPretty(); // Pour le debug, ajouter "&pretty" dans l'url
-        $json->setContent($result);
+        $json = new JsonResponse($result, 200, [], isset($_GET['pretty'])); // Pour le debug, ajouter "&pretty" dans l'url
 
         // Détermine la durée de mise en cache des résultats
         $maxAge = docalist("{$type}-lookup")->getCacheMaxAge();
