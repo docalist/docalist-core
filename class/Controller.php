@@ -359,7 +359,8 @@ abstract class Controller
                 $value = $args[$name];
 
                 // Si la méthode attend un tableau, caste en array
-                $parameter->isArray() && !is_array($value) && $value = [$value];
+                // $parameter->isArray() && !is_array($value) && $value = [$value];
+                $parameter->getType() && $parameter->getType()->getName() === 'array' && !is_array($value) && $value = [$value];
 
                 // Tout est ok
                 $result[$name] = $value;
