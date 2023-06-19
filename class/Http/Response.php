@@ -45,10 +45,10 @@ class Response extends SymfonyResponse
         parent::__construct($content, $status, $headers);
     }
 
-    public function prepare(SymfonyRequest $request = null)
-    {
-        return parent::prepare($request ?: Request::createFromGlobals());
-    }
+    // public function prepare(SymfonyRequest $request = null)
+    // {
+    //     return parent::prepare($request ?: Request::createFromGlobals());
+    // }
 
     public function adminPage($adminPage = null)
     {
