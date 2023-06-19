@@ -24,6 +24,7 @@ use Docalist\Type\Interfaces\Categorizable;
 use Docalist\Type\Interfaces\Filterable;
 use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
+use Traversable;
 
 /**
  * Une collection de types.
@@ -91,7 +92,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @throws InvalidArgumentException Si la position indiquée n'est pas valide.
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         if (isset($this->phpValue[$offset])) {
             return $this->phpValue[$offset];
@@ -159,10 +160,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
     /**
      * Retourne un itérateur permettant de parcourir la collection (implémentation de l'interface IteratorAggregate).
-     *
-     * @return iterable
      */
-    public function getIterator(): iterable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->phpValue);
     }
