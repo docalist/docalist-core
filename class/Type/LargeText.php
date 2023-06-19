@@ -154,7 +154,7 @@ class LargeText extends Text
         }
 
         if (in_array('responsive-images', $filters)) {
-            $value = wp_make_content_images_responsive($value);
+            $value = wp_filter_content_tags($value);
         }
 
         if (in_array('shortcodes', $filters)) {
