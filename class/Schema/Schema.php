@@ -672,7 +672,7 @@ class Schema implements JsonSerializable
      *
      * @return array
      */
-    final public function jsonSerialize()
+    final public function jsonSerialize(): mixed
     {
         // utilisé uniquement par biblio/exporter paramètres
         return $this->properties;
