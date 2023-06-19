@@ -339,7 +339,7 @@ class Container extends Element implements Countable, IteratorAggregate
         parent::setOccurence($occurence);
 
         if ($this->isRepeatable()) {
-            $data = $this->data[$occurence];
+            $data = $this->data[$occurence] ?? null;
             foreach ($this->items as $item) {
                 // Seuls les éléments peuvent être avoir une valeur (i.e. pas les items, les tags, etc.)
                 if (! $item instanceof Element) {
