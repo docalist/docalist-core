@@ -26,7 +26,7 @@ class RedirectResponse extends HtmlResponse
         parent::__construct(null, $status, $headers);
     }
 
-    public function setContent($content)
+    public function setContent(?string $content): static
     {
         if (empty($content)) {
             $url = htmlspecialchars($this->headers->get('Location'), ENT_QUOTES, 'UTF-8');
