@@ -29,14 +29,14 @@ class ViewResponse extends HtmlResponse
         $this->data = $data;
     }
 
-    public function sendContent()
+    public function sendContent(): static
     {
         docalist('views')->display($this->view, $this->data);
 
         return $this;
     }
 
-    public function getContent()
+    public function getContent(): string|false
     {
         return docalist('views')->render($this->view, $this->data);
     }
