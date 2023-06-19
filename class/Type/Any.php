@@ -232,9 +232,14 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return string
      */
-    final public function serialize(): string
+    final public function serialize(): ?string
     {
-        return serialize([$this->phpValue, $this->schema]);
+        return serialize($this->__serialize());
+    }
+
+    final public function __serialize(): array
+    {
+        return [$this->phpValue, $this->schema];
     }
 
     /**
@@ -242,10 +247,15 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @param string $serialized
      */
-    final public function unserialize($serialized): void
+    final public function unserialize(string $serialized): void
     {
-        // php 7.2 ne veut pas qu'on indique le type string du paramètre ("declaration must be compatible with")
-        list($this->phpValue, $this->schema) = unserialize($serialized);
+        $this->__unserialize((array) unserialize($serialized));
+    }
+
+    // @phpstan-ignore-next-line
+    final public function __unserialize(array $data): void
+    {
+        list($this->phpValue, $this->schema) = $data;
     }
 
     // -------------------------------------------------------------------------
@@ -257,7 +267,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *
      * @return mixed
      */
-    final public function jsonSerialize()
+    final public function jsonSerialize(): mixed
     {
         return $this->phpValue;
     }
