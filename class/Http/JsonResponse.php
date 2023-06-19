@@ -31,37 +31,39 @@ class JsonResponse extends Response
      */
     protected $pretty = false;
 
+    public function __construct(mixed $data = null, $status = 200, array $headers = [], bool $pretty = false)
+    {
+        parent::__construct('', $status, $headers);
+
+        $this->setPretty($pretty);
+        $this->setData($data);
+    }
+
     /**
      * Indique si la réponse json sera formattée ("pretty print").
-     *
-     * @return boolean
      */
-    public function getPretty()
+    public function getPretty(): bool
     {
         return $this->pretty;
     }
 
     /**
-     * Active ou désactive le formattage "pretty print" de a réponse jsoN.
-     *
-     * @param bool $pretty
-     *
-     * @return self
+     * Active ou désactive le formattage "pretty print" de a réponse json.
      */
-    public function setPretty($pretty = true)
+    public function setPretty(bool $pretty = true): static
     {
         $this->pretty = $pretty;
 
         return $this;
     }
 
-    public function setContent($content)
+    public function setData(mixed $data = null): static
     {
         $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
         $this->pretty && $options |= JSON_PRETTY_PRINT;
 
-        $this->content = json_encode($content, $options);
-        $this->headers->set('Content-Length', strlen($this->content));
+        $this->content = json_encode($data, $options);
+        $this->headers->set('Content-Length', (string) strlen($this->content));
 
         return $this;
     }
