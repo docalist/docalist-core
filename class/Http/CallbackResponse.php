@@ -31,12 +31,14 @@ class CallbackResponse extends Response
         $this->callback = $callback;
     }
 
-    public function sendContent()
+    public function sendContent(): static
     {
         call_user_func($this->callback);
+
+        return $this;
     }
 
-    public function getContent()
+    public function getContent(): string|false
     {
         $name = null;
         is_callable($this->callback, true, $name);
