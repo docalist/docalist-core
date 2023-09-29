@@ -55,6 +55,8 @@ use Docalist\Type\Any;
  * @method string   relfilter()     Pour un champ relation, query string utilisée pour filtrer les suggestions.
  * reltype() : voir si encore utile
  *
+ * @method bool     repeatable()    Pour un champ, retourne true si le champ est multivalué.
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Schema implements JsonSerializable
