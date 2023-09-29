@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 namespace Docalist\Forms;
 
-use Docalist\Html as Html;
 use Docalist\Forms\Theme\BaseTheme;
 use Docalist\Forms\Theme\WordPressTheme;
+use Docalist\Html;
 use InvalidArgumentException;
 
 /**
  * Un thème de formulaire.
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 class Theme extends Html
 {
@@ -41,17 +41,13 @@ class Theme extends Html
      * Répertoire contenant les vues utilisées par ce thème.
      *
      * (path absolu avec séparateur final)
-     *
-     * @var string
      */
-    protected $directory;
+    protected string $directory;
 
     /**
      * Thème parent de ce thème.
-     *
-     * @var Theme
      */
-    protected $parent;
+    protected ?Theme $parent;
 
     /**
      * Handles des styles CSS nécessaires pour ce thème.
@@ -70,20 +66,20 @@ class Theme extends Html
     /**
      * Crée un thème.
      *
-     * @param string    $directory  Répertoire contenant les vues utilisées par ce thème.
-     * @param Theme     $parent     Thème parent : si une vue n'existe pas dans le répertoire du thème,
-     *                              elle sera recherchée dans le thème parent.
-     * @param string    $dialect    Dialecte html (xhtml, html4, html5) généré par ce thème.
+     * @param string $directory répertoire contenant les vues utilisées par ce thème
+     * @param ?Theme $parent    thème parent : si une vue n'existe pas dans le répertoire du thème,
+     *                          elle sera recherchée dans le thème parent
+     * @param string $dialect   dialecte html (xhtml, html4, html5) généré par ce thème
      *
-     * @throws InvalidArgumentException Si le répertoire indiqué n'existe pas.
+     * @throws InvalidArgumentException si le répertoire indiqué n'existe pas
      */
-    public function __construct($directory, Theme $parent = null, $dialect = 'html5')
+    public function __construct(string $directory, Theme $parent = null, string $dialect = 'html5')
     {
         parent::__construct($dialect);
         if (false === $path = realpath($directory)) {
             throw new InvalidArgumentException("Directory not found: $directory");
         }
-        $this->directory = $path . DIRECTORY_SEPARATOR;
+        $this->directory = $path.DIRECTORY_SEPARATOR;
         $this->parent = $parent;
     }
 
@@ -95,19 +91,17 @@ class Theme extends Html
      * - Si $name est vide, le thème par défaut est retourné.
      * - Si $name est déjà un objet thème, il est retourné tel quel.
      *
-     * @throws InvalidArgumentException Si le thème demandé n'existe pas.
-     *
-     * @return Theme
+     * @throws InvalidArgumentException si le thème demandé n'existe pas
      */
-    final public static function get($name = null)
+    final public static function get($name = null): static
     {
         // Si on nous a passé un thème, on le retourne tel quel
-        if ($name instanceof self) {
+        if ($name instanceof Theme) {
             return $name;
         }
 
         // Thème par défaut
-        if (empty($name) || $name === 'default') {
+        if (null === $name || '' === $name || 'default' === $name) {
             $name = apply_filters('docalist_forms_get_default_theme', 'wordpress');
         }
 
@@ -119,7 +113,7 @@ class Theme extends Html
                 throw new InvalidArgumentException("Form theme '$name' not found.");
             }
 
-            if (! $theme instanceof self) {
+            if (!$theme instanceof Theme) {
                 throw new InvalidArgumentException("Invalid theme returned by 'docalist_forms_get_{$name}_theme'.");
             }
 
@@ -138,20 +132,16 @@ class Theme extends Html
 
     /**
      * Retourne le répertoire contenant les vues utilisées par ce thème.
-     *
-     * @return string
      */
-    final public function getDirectory()
+    final public function getDirectory(): string
     {
         return $this->directory;
     }
 
     /**
      * Retourne le thème parent du thème ou null si le thème n'a pas de thème parent.
-     *
-     * @return Theme|null
      */
-    final public function getParent()
+    final public function getParent(): ?Theme
     {
         return $this->parent;
     }
@@ -159,33 +149,33 @@ class Theme extends Html
     /**
      * Affiche un item de formulaire en utilisant la vue indiquée.
      *
-     * @param Item          $item   L'item à afficher.
-     * @param string|null   $view   La vue à utiliser. Si $view est vide, la méthode getType() de l'item
-     *                              est appellée et le résultat est utilisé comme nom de vue.
+     * @param Item        $item L'item à afficher
+     * @param string|null $view La vue à utiliser. Si $view est vide, la méthode getType() de l'item
+     *                          est appellée et le résultat est utilisé comme nom de vue.
      *
-     * @return self
-     *
-     * @throws InvalidArgumentException Si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents.
+     * @throws InvalidArgumentException si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents
      */
-    public function display(Item $item, $view = null, array $args = [])
+    public function display(Item $item, string $view = null, array $args = []): static
     {
         static $level = 0;
 
         // Valide la vue demandée
-        if (empty($view)) {
+        if (null === $view || '' === $view) {
             $view = $item->getType();
-        } elseif (! preg_match('~^[a-z_][a-z0-9-]+$~i', $view)) {
+        } elseif (!preg_match('~^[a-z_][a-z0-9-]+$~i', $view)) {
             throw new InvalidArgumentException("Invalid view name $view");
         }
 
         // Initialise le thème en cours
-        ! isset($args['theme']) && $args['theme'] = $this;
+        if (!isset($args['theme'])) {
+            $args['theme'] = $this;
+        }
         $theme = $args['theme']; /* @var Theme $theme */
 
         // Teste si ce thème contient la vue indiquée
-        $path = $this->directory . $view . '.php';
-        if (! file_exists($path)) {
-            if (isset($this->parent)) {
+        $path = $this->directory.$view.'.php';
+        if (!file_exists($path)) {
+            if ($this->parent instanceof Theme) {
                 // On demande simplement au parent d'afficher la vue
                 // Mais on veut qu'il utilise les mêmes options que nous (dialect, indent)
                 // Donc on fait une sauvegarde des options du parent, on les modifie temporairement,
@@ -207,7 +197,7 @@ class Theme extends Html
 
         // Crée la closure qui va exécuter le template (sandbox)
         $args['path'] = $path;
-        $view = function () use ($args, $theme) {
+        $view = function () use ($args): void {
             require $args['path'];
         };
 
@@ -220,7 +210,9 @@ class Theme extends Html
         --$level;
 
         // L'appel de plus haut niveau génère un enqueue des assets du thème
-        ($level === 0) && $this->enqueueStyle($theme->styles)->enqueueScript($theme->scripts);
+        if (0 === $level) {
+            $this->enqueueStyle($theme->styles)->enqueueScript($theme->scripts);
+        }
 
         // Ok
         return $this;
@@ -229,15 +221,13 @@ class Theme extends Html
     /**
      * Génère le code html d'un item de formulaire en utilisant la vue indiquée et retourne le résultat.
      *
-     * @param Item          $item   L'item à afficher.
-     * @param string|null   $view   La vue à utiliser. Si $view est vide, la méthode getType() de l'item
-     *                              est appellée et le résultat est utilisé comme nom de vue.
+     * @param Item        $item L'item à afficher
+     * @param string|null $view La vue à utiliser. Si $view est vide, la méthode getType() de l'item
+     *                          est appellée et le résultat est utilisé comme nom de vue.
      *
-     * @return string
-     *
-     * @throws InvalidArgumentException Si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents.
+     * @throws InvalidArgumentException si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents
      */
-    final public function render(Item $item, $view = null)
+    final public function render(Item $item, string $view = null): string
     {
         ob_start();
         $this->display($item, $view);
@@ -250,12 +240,10 @@ class Theme extends Html
      *
      * Alias de la fonction wordpress wp_enqueue_style().
      *
-     * @param string|string[] $handles Un ou plusieurs handles de feuille de styles css préalablement déclarés
-     * via wp_register_style().
-     *
-     * @return self
+     * @param string|string[] $handles un ou plusieurs handles de feuille de styles css préalablement déclarés
+     *                                 via wp_register_style()
      */
-    public function enqueueStyle($handles)
+    public function enqueueStyle($handles): static
     {
         wp_styles()->enqueue($handles);
 
@@ -267,12 +255,10 @@ class Theme extends Html
      *
      * Alias de la fonction wordpress wp_enqueue_script().
      *
-     * @param string|string[] $handles Un ou plusieurs handles de scripts javascript préalablement déclarés via
-     * wp_register_script().
-     *
-     * @return self
+     * @param string|string[] $handles un ou plusieurs handles de scripts javascript préalablement déclarés via
+     *                                 wp_register_script()
      */
-    public function enqueueScript($handles)
+    public function enqueueScript($handles): static
     {
         wp_scripts()->enqueue($handles);
 

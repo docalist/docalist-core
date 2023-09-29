@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -19,22 +19,20 @@ namespace Docalist\Forms;
  * étend wordpress, mais comme wordpress étend déjà base, on se retrouve avec
  * trois niveaux et actuellement ce n'est pas géré.
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 final class TopicsInput extends Element
 {
     /**
      * Table d'autorité.
-     *
-     * @var string
      */
-    protected $table;
+    protected string $table;
 
     /**
      * Crée le champ de saisie.
      *
-     * @param string            $name       Optionnel, le nom de l'élément.
-     * @param string            $table      Table d'autorité.
+     * @param string $name  optionnel, le nom de l'élément
+     * @param string $table table d'autorité
      */
     final public function __construct(string $name = '', string $table = '')
     {
@@ -44,8 +42,6 @@ final class TopicsInput extends Element
 
     /**
      * Retourne la table d'autorité.
-     *
-     * @return string
      */
     final public function getTable(): string
     {

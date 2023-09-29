@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Docalist\Forms;
 
 use Docalist\Forms\Traits\AttributesTrait;
+use Docalist\Schema\Schema;
 use Docalist\Type\Any;
 use Docalist\Type\Collection;
-use Docalist\Schema\Schema;
 use InvalidArgumentException;
 
 /**
@@ -28,7 +28,7 @@ use InvalidArgumentException;
  * - peut être répétable
  * - contient des données
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 abstract class Element extends Item
 {
@@ -36,36 +36,28 @@ abstract class Element extends Item
 
     /**
      * Nom de l'élément.
-     *
-     * @var string
      */
-    protected $name = '';
+    protected string $name = '';
 
     /**
      * Libellé associé à l'élément.
-     *
-     * @var string
      */
-    protected $label = '';
+    protected string $label = '';
 
     /**
      * Description de l'élément.
-     *
-     * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * Indique si le champ est répétable.
      *
      * @var bool|null
      */
-    protected $repeatable = null;
+    protected $repeatable;
 
     /**
      * Les données de l'élément, initialisées par bind().
-     *
-     * @var mixed
      */
     protected $data;
 
@@ -77,24 +69,26 @@ abstract class Element extends Item
     protected $occurence;
 
     /**
-     * Champ requis / mode d'affichage
-     *
-     * @var string
+     * Champ requis / mode d'affichage.
      */
-    protected $required = '';
+    protected string $required = '';
 
     /**
      * Crée un élément de formulaire.
      *
-     * @param string            $name       Optionnel, le nom de l'élément.
-     * @param array             $attributes Optionnel, les attributs de l'élément.
-     * @param Container|null    $parent     Optionnel, le containeur parent de l'item.
+     * @param string         $name       optionnel, le nom de l'élément
+     * @param array          $attributes optionnel, les attributs de l'élément
+     * @param Container|null $parent     optionnel, le containeur parent de l'item
      */
     public function __construct(string $name = '', array $attributes = [], Container $parent = null)
     {
         parent::__construct($parent);
-        !empty($name) && $this->setName($name);
-        !empty($attributes) && $this->addAttributes($attributes);
+        if ('' !== $name) {
+            $this->setName($name);
+        }
+        if ([] !== $attributes) {
+            $this->addAttributes($attributes);
+        }
     }
 
     /**
@@ -104,12 +98,10 @@ abstract class Element extends Item
      * de layout (exemple : Hidden).
      *
      * Un élément qui n'a pas de layout n'a ni bloc label, ni bloc description (il est affiché "tel quel").
-     *
-     * @return bool
      */
     protected function hasLayout(): bool
     {
-         return true;
+        return true;
     }
 
     /**
@@ -117,8 +109,6 @@ abstract class Element extends Item
      *
      * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer qu'ils ne veulent pas
      * de bloc description (exemple : Button).
-     *
-     * @return bool
      */
     protected function hasLabelBlock(): bool
     {
@@ -130,8 +120,6 @@ abstract class Element extends Item
      *
      * Certains éléments de la hiérarchie surchargent cette méthode pour indiquer qu'ils ne veulent pas
      * de bloc description (exemple : Checkbox).
-     *
-     * @return bool
      */
     protected function hasDescriptionBlock(): bool
     {
@@ -140,12 +128,8 @@ abstract class Element extends Item
 
     /**
      * Modifie le nom du champ.
-     *
-     * @param string $name
-     *
-     * @return self
      */
-    final public function setName(string $name): self
+    final public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -154,8 +138,6 @@ abstract class Element extends Item
 
     /**
      * Retourne le nom du champ.
-     *
-     * @return string
      */
     final public function getName(): string
     {
@@ -172,37 +154,36 @@ abstract class Element extends Item
      * méthode retournera une chaine de la forme : "contact[i][tel][j]".
      *
      * Si l'élément n'a pas de nom, une chaine vide est retournée.
-     *
-     * @return string
      */
     protected function getControlName(): string
     {
         // Si l'élément n'a pas de nom, retourne une chaine vide
-        if (empty($this->name)) {
+        if ('' === $this->name) {
             return '';
         }
 
         // Récupère le nom de notre container parent
-        $base = $this->parent ? $this->parent->getControlName() : '';
+        $base = $this->parent instanceof Container ? $this->parent->getControlName() : '';
 
         // Construit le nom de l'élément
-        $name = $base ? ($base . '[' . $this->name . ']') : $this->name;
+        $name = '' !== $base ? ($base.'['.$this->name.']') : $this->name;
 
         // Ajoute le numéro d'occurence
-        $this->isRepeatable() && $name .= '[' . $this->occurence . ']';
+        if ($this->isRepeatable()) {
+            $name .= '['.$this->occurence.']';
+        }
 
         // Ok
         return $name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     final public function getPath(string $separator = '/'): string
     {
-        $path = $this->parent ? $this->parent->getPath($separator) : '';
-        if (!empty($this->name)) {
-            !empty($path) && $path .= $separator;
+        $path = $this->parent instanceof Container ? $this->parent->getPath($separator) : '';
+        if ('' !== $this->name) {
+            if ('' !== $path) {
+                $path .= $separator;
+            }
             $path .= $this->name;
         }
 
@@ -211,12 +192,8 @@ abstract class Element extends Item
 
     /**
      * Modifie le libellé du champ.
-     *
-     * @param string $label
-     *
-     * @return self
      */
-    final public function setLabel(string $label): self
+    final public function setLabel(string $label): static
     {
         $this->label = $label;
 
@@ -225,8 +202,6 @@ abstract class Element extends Item
 
     /**
      * Retourne le libellé du champ.
-     *
-     * @return string
      */
     final public function getLabel(): string
     {
@@ -235,12 +210,8 @@ abstract class Element extends Item
 
     /**
      * Modifie la description du champ.
-     *
-     * @param string $description
-     *
-     * @return self
      */
-    final public function setDescription(string $description): self
+    final public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -249,8 +220,6 @@ abstract class Element extends Item
 
     /**
      * Retourne la description du champ.
-     *
-     * @return string
      */
     final public function getDescription(): string
     {
@@ -260,30 +229,30 @@ abstract class Element extends Item
     /**
      * Retourne la liste des modes d'affichage disponibles pour un champ requis.
      *
-     * @return string[] Un tableau de la forme code => libellé.
+     * @return string[] un tableau de la forme code => libellé
      */
     final public function requiredModes(): array
     {
         return [
-            'mark-before'       => __('Insérer un astérique rouge avant le libellé', 'docalist-core'),
-            'mark-after'        => __('Ajouter un astérique rouge après le libellé', 'docalist-core'),
+            'mark-before' => __('Insérer un astérique rouge avant le libellé', 'docalist-core'),
+            'mark-after' => __('Ajouter un astérique rouge après le libellé', 'docalist-core'),
             'heavy-mark-before' => __('Insérer un gros astérique rouge avant le libellé', 'docalist-core'),
-            'heavy-mark-after'  => __('Ajouter un gros astérisque rouge après le libellé', 'docalist-core'),
-            'color-label'       => __('Afficher le libellé en rouge', 'docalist-core'),
-            'color-container'   => __('Ajouter un fond rouge au formulaire', 'docalist-core'),
+            'heavy-mark-after' => __('Ajouter un gros astérisque rouge après le libellé', 'docalist-core'),
+            'color-label' => __('Afficher le libellé en rouge', 'docalist-core'),
+            'color-container' => __('Ajouter un fond rouge au formulaire', 'docalist-core'),
         ];
     }
 
     /**
-     * Définit si le champ est requis ou non
+     * Définit si le champ est requis ou non.
      *
      * @param string $mode Un code (cf. requiredModes()) indiquant le mode d'affichage si le champ est requis
-     * ou une chaine vide si le champ est optionnel.
+     *                     ou une chaine vide si le champ est optionnel.
      */
     final public function setRequired(string $mode = 'mark-after'): void
     {
         $modes = $this->requiredModes();
-        if ($mode !== '' && !isset($modes[$mode])) {
+        if ('' !== $mode && !isset($modes[$mode])) {
             $this->invalidArgument('Invalid required mode');
         }
         $this->required = $mode;
@@ -293,7 +262,7 @@ abstract class Element extends Item
      * Indique si le champ est requis ou non.
      *
      * @return string Un code (cf. requiredModes()) indiquant le mode d'affichage si le champ est requis
-     * ou une chaine vide si le champ est optionnel.
+     *                ou une chaine vide si le champ est optionnel.
      */
     final public function getRequired(): string
     {
@@ -302,12 +271,8 @@ abstract class Element extends Item
 
     /**
      * Modifie le flag repeatable du champ.
-     *
-     * @param bool|null $repeatable
-     *
-     * @return self
      */
-    public function setRepeatable(?bool $repeatable = true)
+    public function setRepeatable(?bool $repeatable = true): static
     {
         // pas "final", surchargée dans EntryPicker
         $this->repeatable = $repeatable;
@@ -334,12 +299,10 @@ abstract class Element extends Item
 
     /**
      * Indique si le champ est répétable.
-     *
-     * @return bool
      */
     final public function isRepeatable(): bool
     {
-        return $this->repeatable === true;
+        return true === $this->repeatable;
     }
 
     /**
@@ -350,13 +313,13 @@ abstract class Element extends Item
      * - si le champ est répétable, retourne 1
      * - si le champ est répétable et que son parent est répétable, retoune 2
      * - et ainsi de suite
-     *
-     * @return int
      */
     final protected function getRepeatLevel(): int
     {
-        $level = $this->parent ? $this->parent->getRepeatLevel() : 0;
-        $this->isRepeatable() && ++$level;
+        $level = $this->parent instanceof Container ? $this->parent->getRepeatLevel() : 0;
+        if ($this->isRepeatable()) {
+            ++$level;
+        }
 
         return $level;
     }
@@ -379,8 +342,6 @@ abstract class Element extends Item
      *
      * Remarque : un container est toujours considéré comme multivalué : il contient les valeurs de tous les
      * éléments qu'il contient.
-     *
-     * @return bool
      */
     protected function isMultivalued(): bool
     {
@@ -391,14 +352,12 @@ abstract class Element extends Item
      * Initialise les propriétés repeatable, label et description à partir du schéma passé en paramétre.
      *
      * Chaque propriété n'est initialisée que si elle est à null.
-     *
-     * @param Schema $schema
      */
     protected function bindSchema(Schema $schema): void
     {
         // Initialise la propriété "repeatable"
         if (is_null($this->repeatable)) {
-            if (FALSE && $schema->repeatable()) {
+            if (false && $schema->repeatable()) {
                 if ($this->isMultivalued()) {
                     $this->setRepeatable(is_a($schema->type(), Collection::class, true));
                 } else {
@@ -410,23 +369,25 @@ abstract class Element extends Item
         }
 
         // Initialise le libellé
-        empty($this->label) && $this->setLabel($schema->label() ?? '');
+        if ('' === $this->label) {
+            $this->setLabel($schema->label() ?? '');
+        }
 
         // Initialise la description
-        empty($this->description) && $this->setDescription($schema->description() ?? '');
+        if ('' === $this->description) {
+            $this->setDescription($schema->description() ?? '');
+        }
     }
 
     /**
      * Initialise l'élément à partir des données passées en paramètre.
-     *
-     * @param mixed $data
      */
     protected function bindData($data): void
     {
         // Cas d'un champ monovalué
-        if (! $this->isMultivalued()) { // ni repeatable, ni multiple
+        if (!$this->isMultivalued()) { // ni repeatable, ni multiple
             // Data doit être un scalaire
-            if (!is_scalar($data) && ! is_null($data)) {
+            if (!is_scalar($data) && !is_null($data)) {
                 $this->invalidArgument(
                     'Element %s is monovalued, expected scalar or null, got %s',
                     gettype($data)
@@ -437,16 +398,18 @@ abstract class Element extends Item
         // Cas d'un champ multivalué
         else {
             // On accepte un tableau ou null
-            if (! is_array($data) && ! is_null($data)) {
+            if (!is_array($data) && !is_null($data)) {
                 $data = (array) $data; // 'article' => ['article'], null => []
-//                 return $this->invalidArgument(
-//                     'Element %s is multivalued, expected array or null, got %s',
-//                     gettype($data)
-//                 );
+                //                 return $this->invalidArgument(
+                //                     'Element %s is multivalued, expected array or null, got %s',
+                //                     gettype($data)
+                //                 );
             }
 
             // Si c'est un tableau vide, on stocke null plutôt que array()
-            $data === [] && $data = null;
+            if ([] === $data) {
+                $data = null;
+            }
         }
 
         // Stocke les données
@@ -455,10 +418,8 @@ abstract class Element extends Item
 
     /**
      * Initialise les données de l'élément à partir des données passées en paramétre.
-     *
-     * @param mixed $data
      */
-    final public function bind($data): void
+    final public function bind(mixed $data): void
     {
         // Si c'est un type docalist, initialise le schéma et récupère les données
         if ($data instanceof Any) {
@@ -470,14 +431,16 @@ abstract class Element extends Item
         $this->bindData($data);
 
         // Initialise l'occurence en cours
-        $this->isRepeatable() && $this->occurence = is_null($this->data) ? null : key($this->data);
+        if ($this->isRepeatable()) {
+            $this->occurence = is_null($this->data) ? null : key($this->data);
+        }
     }
 
     /**
      * Retourne les données de l'élément.
      *
      * @return mixed La méthode retourne les données qui ont été stockées lors du dernier appel
-     * à la méthode bind(). Si bind() n'a jamais été appellée, elle retourne null.
+     *               à la méthode bind(). Si bind() n'a jamais été appellée, elle retourne null.
      */
     final public function getData()
     {
@@ -492,7 +455,7 @@ abstract class Element extends Item
      * - pour un champ répétable
      * - après que bind() a été appellé.
      *
-     * @param int|string $occurence Une des clés des données du champ.
+     * @param int|string $occurence une des clés des données du champ
      */
     protected function setOccurence($occurence): void
     {
@@ -500,8 +463,8 @@ abstract class Element extends Item
         // On accepte néanmoins setOccurence(0) pour un champ non répétable car cela
         // permet au vue de simplifier leur code en gérant de la même manière les deux
         // cas en faisant "foreach ( (array) $data )" (cf. base/input.php par exemple).
-        if (! $this->isRepeatable()) {
-            if ($occurence === 0) {
+        if (!$this->isRepeatable()) {
+            if (0 === $occurence) {
                 return;
             }
 
@@ -510,7 +473,7 @@ abstract class Element extends Item
 
         // Vérifie que la clé indiquée existe dans data
         $valid = empty($this->data) ? empty($occurence) : array_key_exists($occurence, $this->data);
-        if (! $valid) {
+        if (!$valid) {
             $this->invalidArgument('Element "%s" do not have data for occurence "%s".', $occurence);
         }
 
@@ -543,8 +506,6 @@ abstract class Element extends Item
 
     /**
      * Génère un nouvel ID pour l'élément.
-     *
-     * @return string
      */
     final protected function generateID(): string
     {
@@ -577,18 +538,17 @@ abstract class Element extends Item
     /**
      * Génère une exception InvalidArgumentException.
      *
-     * @param string $message message style sprintf (%1 = nom/label/type de l'élément).
-     * @param mixed ... paramètres à passer à sprintf.
+     * @param string $message message style sprintf (%1 = nom/label/type de l'élément)
+     * @param mixed  ...$args paramètres à passer à sprintf.
      *
      * @throws InvalidArgumentException
      */
-    protected function invalidArgument($message): void
+    protected function invalidArgument($message, mixed ...$args): void
     {
-        $args = func_get_args();
-
         $name = $this->getName() ?: $this->getLabel();
-        $name = $name ? $this->getType() . '[' . $name . ']' : $this->getType();
-        $args[0] = $name;
+        $name = ('' !== $name) ? $this->getType().'['.$name.']' : $this->getType();
+
+        array_unshift($args, $name);
 
         throw new InvalidArgumentException(vsprintf($message, $args));
     }

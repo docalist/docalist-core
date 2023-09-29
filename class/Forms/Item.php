@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -24,31 +24,31 @@ namespace Docalist\Forms;
  * - dispose d'un type
  * - peut être affiché (render)
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 abstract class Item
 {
     /**
-     * @var Container|null Le containeur parent de l'item.
+     * @var Container|null le containeur parent de l'item
      */
-    protected $parent;
+    protected ?Container $parent = null;
 
     /**
      * Crée un nouvel item.
      *
-     * @param Container|null $parent Optionnel, le containeur parent de l'item.
+     * @param Container|null $parent optionnel, le containeur parent de l'item
      */
     public function __construct(Container $parent = null)
     {
-        !is_null($parent) && $parent->add($this);
+        if (!is_null($parent)) {
+            $parent->add($this);
+        }
     }
 
     /**
      * Constructeur statique.
-     *
-     * @return self
      */
-    public static function create()
+    public static function create(): static
     {
         return new static();
     }
@@ -59,15 +59,13 @@ abstract class Item
      * Le type retourné correspond à la version en minuscules du dernier élément du nom de la classe PHP de l'item.
      *
      * Par exemple, la méthode retournera 'input' pour un élément de type {@link Input Docalist\Forms\Input}.
-     *
-     * @return string
      */
     final public function getType(): string
     {
-        $class = get_class($this);
+        $class = static::class;
         $pos = strrchr($class, '\\');
 
-        return strtolower($pos === false ? $class : substr($pos, 1));
+        return strtolower(false === $pos ? $class : substr($pos, 1));
     }
 
     /**
@@ -79,21 +77,21 @@ abstract class Item
      *
      * Si vous passez null en paramétre, l'item est supprimé de son container parent (s'il en avait un) et
      * devient un item autonome (sans parent).
-     *
-     * @return self
      */
-    final public function setParent(Container $parent = null)
+    final public function setParent(Container $parent = null): static
     {
-        !is_null($this->parent) && $this->parent->remove($this);
-        !is_null($parent) && $parent->add($this);
+        if (!is_null($this->parent)) {
+            $this->parent->remove($this);
+        }
+        if (!is_null($parent)) {
+            $parent->add($this);
+        }
 
         return $this;
     }
 
     /**
      * Retourne le container parent de l'item ou null si l'élément ne figure pas dans un {@link Container}.
-     *
-     * @return Container|null
      */
     final public function getParent(): ?Container
     {
@@ -106,12 +104,10 @@ abstract class Item
      * La méthode retourne le Container de plus haut niveau qui contient l'item.
      *
      * Si l'item ne figure pas dans un {@link Container} (s'il n'a pas de parent), elle retourne l'item lui-même.
-     *
-     * @return Item
      */
     final public function getRoot(): Item
     {
-        return $this->parent ? $this->parent->getRoot() : $this;
+        return $this->parent instanceof Container ? $this->parent->getRoot() : $this;
     }
 
     /**
@@ -119,12 +115,10 @@ abstract class Item
      *
      * La {@link getRoot racine de la hiérarchie} est au niveau 0, les items qu'il contient sont au niveau 1,
      * les items des items sont au niveau 2, et ainsi de suite.
-     *
-     * @return int
      */
     final public function getDepth(): int
     {
-        return $this->parent ? 1 + $this->parent->getDepth() : 0;
+        return $this->parent instanceof Container ? 1 + $this->parent->getDepth() : 0;
     }
 
     /**
@@ -137,22 +131,20 @@ abstract class Item
      *
      * Remarque : le séparateur est ajouté entre les noms, pas au début ni à la fin (par exemple, on
      * obtiendra 'person/name', pas '/person/name' ou 'person/name/').
-     *
-     * @return string
      */
     public function getPath(string $separator = '/'): string
     {
         // pas "final" car surchargée dans Element (qui la rend "final")
-        return $this->parent ? $this->parent->getPath($separator) : '';
+        return $this->parent instanceof Container ? $this->parent->getPath($separator) : '';
     }
 
     /**
      * Génère le code html de l'item et le retourne sous forme de chaine.
      *
      * @param Theme|string|null $theme Optionnel, le thème de formulaire à utiliser. Si vous n'indiquez pas
-     * de thème, le thème par défaut est utilisé.
+     *                                 de thème, le thème par défaut est utilisé.
      *
-     * @return string Le code html de l'item.
+     * @return string le code html de l'item
      */
     final public function render($theme = null): string
     {
@@ -163,10 +155,8 @@ abstract class Item
      * Génère le code html de l'item et l'affiche.
      *
      * @param Theme|string|null $theme
-     *
-     * @return self
      */
-    final public function display($theme = null): self
+    final public function display($theme = null): static
     {
         Theme::get($theme)->display($this);
 
@@ -178,8 +168,6 @@ abstract class Item
      *
      * Par défaut, hasLayout() retourne false pour les items (ils sont affichés tels quels) et true pour les
      * éléments (le container génère un bloc label, un bloc description, etc.)
-     *
-     * @return bool
      */
     protected function hasLayout(): bool
     {
@@ -194,8 +182,6 @@ abstract class Item
      *
      * Certains éléments surchargent cette méthode lorsqu'ils souhaitent gérer eux-mêmes l'affichage de
      * leur libellé (Button par exemple).
-     *
-     * @return bool
      */
     protected function hasLabelBlock(): bool
     {
@@ -210,8 +196,6 @@ abstract class Item
      *
      * Certains éléments surchargent cette méthode lorsqu'ils souhaitent gérer eux-mêmes l'affichage de leur
      * description (Checkbox par exemple).
-     *
-     * @return bool
      */
     protected function hasDescriptionBlock(): bool
     {
@@ -225,8 +209,6 @@ abstract class Item
      * ni un container.
      *
      * cf. https://developer.mozilla.org/fr/docs/Web/HTML/Cat%C3%A9gorie_de_contenu
-     *
-     * @return bool
      */
     protected function isLabelable(): bool
     {

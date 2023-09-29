@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -18,7 +18,7 @@ use InvalidArgumentException;
  * Classe de base pour les champs qui permettent à l'utilisateur de faire un choix parmi une liste de
  * valeurs possibles (select, checklist, radiolist, entrypicker).
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 abstract class Choice extends Element
 {
@@ -27,7 +27,7 @@ abstract class Choice extends Element
      *
      * @var string
      */
-    const CSS_CLASS = 'choice';
+    public const CSS_CLASS = 'choice';
 
     /**
      * La liste des options disponibles.
@@ -61,13 +61,11 @@ abstract class Choice extends Element
      * utiliser le contrôle EntryPicker qui supporte les requêtes ajax et n'injecte pas la totalité des options
      * possibles dans le code de la page.
      *
-     * @param array|callable|string $options La liste des options disponibles.
+     * @param array|callable|string $options la liste des options disponibles
      *
-     * @throws InvalidArgumentException Si les options indiquées ne sont pas valides.
-     *
-     * @return self
+     * @throws InvalidArgumentException si les options indiquées ne sont pas valides
      */
-    final public function setOptions($options): self
+    final public function setOptions($options): static
     {
         if (is_array($options) || is_string($options) || is_callable($options)) {
             $this->options = $options;
@@ -83,7 +81,7 @@ abstract class Choice extends Element
      *
      * @return array|callable|string
      */
-    final public function getOptions()// : mixed
+    final public function getOptions()
     {
         return $this->options;
     }
@@ -96,11 +94,11 @@ abstract class Choice extends Element
      * - Si $options est une chaine (lookup de type table ou thésaurus), la méthode charge les options disponibles.
      *
      * @param string[] $selected Les données actuellement sélectionnées. Ce paramètre n'est utilisé que par la classe
-     * EntryPicker qui n'affiche initialement que les options sélectionnées (les autres options disponibles sont
-     * obtenues via des requêtes ajax). Pour tous les autres types de Choice (RadioList, CheckList et Select), le
-     * paramètre $selected est ignoré.
+     *                           EntryPicker qui n'affiche initialement que les options sélectionnées (les autres options disponibles sont
+     *                           obtenues via des requêtes ajax). Pour tous les autres types de Choice (RadioList, CheckList et Select), le
+     *                           paramètre $selected est ignoré.
      *
-     * @return string[] Un tableau de la forme code => valeur.
+     * @return string[] un tableau de la forme code => valeur
      */
     protected function loadOptions(array $selected = []): array
     {
@@ -117,12 +115,12 @@ abstract class Choice extends Element
         // Si c'est une chaine de lookup, vérifie que c'est une table ou un thesaurus et retourne le contenu
         if (is_string($this->options)) {
             // Détermine le type et la source des lookups
-            list($type, $source) = explode(':', $this->options, 2);
+            [$type, $source] = explode(':', $this->options, 2);
 
             // Pour les Choice de base (radiolist, select...) on ne gère que les lookups de type table ou thesaurus
             // (avec des lookups de type index ou search on chargerait des listes potentiellement énormes dans
             // le code html de la page et en plus le format des entrées n'est plus le même dans ce cas là).
-            if (!($type === 'table' || $type === 'thesaurus')) {
+            if ('table' !== $type && 'thesaurus' !== $type) {
                 $this->invalidArgument('Lookups of type "%s" are not supported, try with EntryPicker');
             }
 
@@ -149,8 +147,8 @@ abstract class Choice extends Element
      * et endOptionGroup() qui génèrent les tags qui seront affichés. Ces trois méthodes doivent être implémentées
      * dans les classes descendantes.
      *
-     * @param Theme     $theme      Thème à utiliser.
-     * @param string[]  $selected   Les données actuelles (i.e. les options qui auront l'attribut "selected").
+     * @param Theme    $theme    thème à utiliser
+     * @param string[] $selected Les données actuelles (i.e. les options qui auront l'attribut "selected").
      */
     protected function displayOptions(Theme $theme, array $selected): void
     {
@@ -176,7 +174,7 @@ abstract class Choice extends Element
             }
 
             // Groupe d'options : value contient le label, et label doit contenur un tableau d'options
-            if (! is_array($label)) {
+            if (!is_array($label)) {
                 $this->invalidArgument('%s: invalid options for optgroup "%s", expected array.', $value);
             }
 
@@ -210,7 +208,7 @@ abstract class Choice extends Element
         // S'il reste encore des données dans selected, ce sont des options invalides
         foreach ($selected as $value) {
             // Evite de signaler les valeurs vides comme invalides
-            if (is_null($value) || $value === '') {
+            if (is_null($value) || '' === $value) {
                 continue;
             }
 
@@ -221,32 +219,32 @@ abstract class Choice extends Element
     /**
      * Affiche une option.
      *
-     * @param Theme     $theme      Thème à utiliser.
-     * @param string    $value      Code de l'option.
-     * @param string    $label      Libellé de l'option.
-     * @param bool      $selected   True si l'option est sélectionnée (i.e. si elle figure dans le champ).
-     * @param bool      $invalid    True si l'option figure dans le champ mais pas dans les options disponibles.
+     * @param Theme  $theme    thème à utiliser
+     * @param string $value    code de l'option
+     * @param string $label    libellé de l'option
+     * @param bool   $selected True si l'option est sélectionnée (i.e. si elle figure dans le champ).
+     * @param bool   $invalid  true si l'option figure dans le champ mais pas dans les options disponibles
      */
     abstract protected function displayOption(
-        Theme   $theme,
-        string  $value,
-        string  $label,
-        bool    $selected,
-        bool    $invalid
+        Theme $theme,
+        string $value,
+        string $label,
+        bool $selected,
+        bool $invalid
     ): void;
 
     /**
      * Affiche le tag de début d'un groupe d'options.
      *
-     * @param string    $label      Libellé du groupe d'options.
-     * @param Theme     $theme      Thème à utiliser.
+     * @param string $label libellé du groupe d'options
+     * @param Theme  $theme thème à utiliser
      */
     abstract protected function startOptionGroup(string $label, Theme $theme): void;
 
     /**
      * Affiche le tag de fin d'un groupe d'options.
      *
-     * @param Theme     $theme      Thème à utiliser.
+     * @param Theme $theme thème à utiliser
      */
     abstract protected function endOptionGroup(Theme $theme): void;
 }

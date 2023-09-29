@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -19,22 +19,22 @@ use Docalist\Lookup\LookupManager;
  *
  * L'implémentation actuelle est basée sur selectize.
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 final class EntryPicker extends Select
 {
     /**
      * {@inheritdoc}
      */
-    const CSS_CLASS = 'entrypicker';
+    public const CSS_CLASS = 'entrypicker';
 
     /**
      * {@inheritdoc}
      */
-    final public function setRepeatable(?bool $repeatable = true)
+    final public function setRepeatable(?bool $repeatable = true): static
     {
         if ($repeatable) {
-            $this->invalidArgument("An EntryPicker can not be repeatable (cloning is not handled)");
+            $this->invalidArgument('An EntryPicker can not be repeatable (cloning is not handled)');
         }
         $this->repeatable = $repeatable;
 
@@ -52,7 +52,7 @@ final class EntryPicker extends Select
         }
 
         // Détermine le type et la source des lookups
-        list($type, $source) = explode(':', $this->options, 2);
+        [$type, $source] = explode(':', $this->options, 2);
 
         // Récupère le service qui gère les lookups de ce type
         $lookupManager = docalist('lookup'); /* @var LookupManager $lookupManager */

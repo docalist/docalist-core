@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -17,9 +17,9 @@ namespace Docalist\Forms;
  * Référence W3C :
  * {@link http://www.w3.org/TR/html5/forms.html#radio-button-state-(type=radio) input type=radio}.
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
-class Radio extends Checkbox
+final class Radio extends Checkbox
 {
     protected $attributes = ['type' => 'radio'];
 }

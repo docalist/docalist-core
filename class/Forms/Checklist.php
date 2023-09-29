@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -14,19 +14,19 @@ namespace Docalist\Forms;
 /**
  * Une liste de cases à cocher.
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 class Checklist extends Radiolist
 {
     /**
      * {@inheritdoc}
      */
-    const INPUT_TYPE = 'checkbox';
+    public const INPUT_TYPE = 'checkbox';
 
     /**
      * {@inheritdoc}
      */
-    const CSS_CLASS = 'checklist';
+    public const CSS_CLASS = 'checklist';
 
     /**
      * {@inheritdoc}
@@ -36,7 +36,7 @@ class Checklist extends Radiolist
      */
     protected function getControlName(): string
     {
-        return parent::getControlName() . '[]';
+        return parent::getControlName().'[]';
     }
 
     /**

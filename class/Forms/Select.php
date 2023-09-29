@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -19,19 +19,19 @@ use InvalidArgumentException;
  * Référence W3C :
  * {@link http://www.w3.org/TR/html5/forms.html#the-select-element The select element}.
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 class Select extends Choice
 {
     /**
      * {@inheritdoc}
      */
-    const CSS_CLASS = 'select';
+    public const CSS_CLASS = 'select';
 
     /**
      * Code et libellé de la première option du select ou false pour désactiver le placeholder.
      *
-     * @var boolean|array
+     * @var bool|array
      */
     protected $firstOption = ['' => '…'];
 
@@ -40,25 +40,23 @@ class Select extends Choice
      *
      * Cette option est utilisée pour les select simples, elle est ignorée pour les select multiples.
      *
-     * @param boolean|string|array $firstOption Optionnel, valeur de l'option.
+     * @param bool|string|array $firstOption optionnel, valeur de l'option
      *
-     * @throws InvalidArgumentException Si $firstOption ets invalide.
-     *
-     * @return self
+     * @throws InvalidArgumentException si $firstOption ets invalide
      */
-    final public function setFirstOption($firstOption = true): self
+    final public function setFirstOption($firstOption = true): static
     {
         switch (true) {
-            case $firstOption === false:
+            case false === $firstOption:
                 break;
-            case $firstOption === true:
+            case true === $firstOption:
                 $firstOption = ['' => '…'];
                 break;
             case is_string($firstOption):
                 $firstOption = ['' => $firstOption];
                 break;
             case is_array($firstOption):
-                if (count($firstOption) !== 1) {
+                if (1 !== count($firstOption)) {
                     $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
                 }
                 break;
@@ -74,7 +72,7 @@ class Select extends Choice
      * Retourne le code et le libellé de la première option du select ou false si la première option est
      * désactivée.
      *
-     * @return boolean|array
+     * @return bool|array
      */
     final public function getFirstOption()// : mixed
     {
@@ -89,7 +87,9 @@ class Select extends Choice
     final protected function getControlName(): string
     {
         $name = parent::getControlName();
-        $this->hasAttribute('multiple') && $name .= '[]';
+        if ($this->hasAttribute('multiple')) {
+            $name .= '[]';
+        }
 
         return $name;
     }
@@ -108,7 +108,7 @@ class Select extends Choice
     final protected function displayOptions(Theme $theme, array $selected): void
     {
         // Affiche l'option vide (firstOption) si elle est activée et que ce n'est pas un select multiple
-        if (! $this->hasAttribute('multiple') && $option = $this->getFirstOption()) {
+        if (!$this->hasAttribute('multiple') && $option = $this->getFirstOption()) {
             $this->displayOption($theme, key($option), current($option), false, false);
         }
 
@@ -128,13 +128,18 @@ class Select extends Choice
     ): void {
         // Détermine les attributs de l'option
         $attributes = ['value' => $value];
-        $selected && $attributes['selected'] = 'selected';
+        if ($selected) {
+            $attributes['selected'] = 'selected';
+        }
         if ($invalid) {
-            $class = static::CSS_CLASS . '-invalid-entry';
-            $this->isRepeatable() && $class .= ' do-not-clone'; // évite de clone les options invalides
+            $class = static::CSS_CLASS.'-invalid-entry';
+            // évite de cloner les options invalides
+            if ($this->isRepeatable()) {
+                $class .= ' do-not-clone';
+            }
             $attributes['class'] = $class;
             $attributes['title'] = __('Option invalide', 'docalist-core');
-            $label = __('Invalide : ', 'docalist-core') . $label;
+            $label = __('Invalide : ', 'docalist-core').$label;
         }
 
         // Génère l'option

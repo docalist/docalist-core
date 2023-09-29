@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -29,20 +29,20 @@ namespace Docalist\Forms;
  * - c'est un item
  * - possède un contenu
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 class HtmlBlock extends Item
 {
     /**
-     * @var string Le contenu du bloc html.
+     * Le contenu du bloc html.
      */
-    protected $content;
+    protected string $content;
 
     /**
      * Crée un nouvel item.
      *
-     * @param string    $content    Optionnel, le contenu du bloc html.
-     * @param Container $parent     Optionnel, le containeur parent de cet item.
+     * @param string         $content optionnel, le contenu du bloc html
+     * @param Container|null $parent  optionnel, le containeur parent de cet item
      */
     public function __construct(string $content = '', Container $parent = null)
     {
@@ -52,10 +52,6 @@ class HtmlBlock extends Item
 
     /**
      * Définit le contenu du bloc html.
-     *
-     * @param string $content
-     *
-     * @return self
      */
     final public function setContent(string $content): void
     {
@@ -64,8 +60,6 @@ class HtmlBlock extends Item
 
     /**
      * Retourne le contenu du bloc html.
-     *
-     * @return string
      */
     final public function getContent(): string
     {

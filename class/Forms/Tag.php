@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -22,24 +22,24 @@ use InvalidArgumentException;
  * - a un nom de tag
  * - possède des attributs
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 final class Tag extends HtmlBlock
 {
     use AttributesTrait;
 
     /**
-     * @var string Le nom du tag.
+     * @var string le nom du tag
      */
-    protected $tag;
+    protected string $tag;
 
     /**
      * Crée un nouveau tag.
      *
-     * @param string    $tag        Optionnel, le tag de l'élément (div par défaut).
-     * @param string    $content    Optionnel, le contenu de l'élément.
-     * @param array     $attributes Optionnel, les attributs de l'élément.
-     * @param Container $parent     Optionnel, le containeur parent de l'item.
+     * @param string         $tag        optionnel, le tag de l'élément (div par défaut)
+     * @param string         $content    optionnel, le contenu de l'élément
+     * @param array          $attributes optionnel, les attributs de l'élément
+     * @param Container|null $parent     optionnel, le containeur parent de l'item
      */
     public function __construct(
         string $tag = 'div',
@@ -49,7 +49,9 @@ final class Tag extends HtmlBlock
     ) {
         parent::__construct($content, $parent);
         $this->setTag($tag);
-        !empty($attributes) && $this->addAttributes($attributes);
+        if ([] !== $attributes) {
+            $this->addAttributes($attributes);
+        }
     }
 
     /**
@@ -92,7 +94,7 @@ final class Tag extends HtmlBlock
             ~ix';
 
         $match = null;
-        if (! preg_match($regexp, $tag, $match)) {
+        if (!preg_match($regexp, $tag, $match)) {
             throw new InvalidArgumentException("Incorrect tag: $tag");
         }
 
@@ -104,8 +106,6 @@ final class Tag extends HtmlBlock
 
     /**
      * Retourne le nom du tag.
-     *
-     * @return string
      */
     final public function getTag(): string
     {

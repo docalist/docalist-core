@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -18,9 +18,9 @@ namespace Docalist\Forms;
  * {@link https://make.wordpress.org/core/2017/10/22/code-editing-improvements-in-wordpress-4-9/}.
  * {@link https://codemirror.net/doc/manual.html}.
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
-class CodeEditor extends Textarea
+final class CodeEditor extends Textarea
 {
     /**
      * Options par défaut de l'éditeur.
@@ -55,8 +55,6 @@ class CodeEditor extends Textarea
 
     /**
      * Retourne les options de l'éditeur de code.
-     *
-     * @return array
      */
     public function getOptions(): array
     {
@@ -66,11 +64,9 @@ class CodeEditor extends Textarea
     /**
      * Modifie les options de l'éditeur de code.
      *
-     * @param array $options Les options qui seront passées à la fonction wp_enqueue_code_editor() de WordPress.
-     *
-     * @return self
+     * @param array $options les options qui seront passées à la fonction wp_enqueue_code_editor() de WordPress
      */
-    public function setOptions(array $options): self
+    public function setOptions(array $options): static
     {
         $this->options = $options;
 

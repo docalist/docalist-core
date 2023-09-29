@@ -2,7 +2,7 @@
 /**
  * This file is part of Docalist Core.
  *
- * Copyright (C) 2012-2019 Daniel Ménard
+ * Copyright (C) 2012-2023 Daniel Ménard
  *
  * For copyright and license information, please view the
  * LICENSE file that was distributed with this source code.
@@ -11,35 +11,35 @@ declare(strict_types=1);
 
 namespace Docalist\Forms;
 
-use Countable;
-use IteratorAggregate;
 use ArrayIterator;
-use Docalist\Forms\Traits\ItemFactoryTrait;
 use Closure;
+use Countable;
+use Docalist\Forms\Traits\ItemFactoryTrait;
 use Docalist\Schema\Schema;
 use InvalidArgumentException;
+use IteratorAggregate;
 use Traversable;
 
 /**
  * Un container est un élément de formulaire qui peut contenir d'autres items.
  *
- * @author Daniel Ménard <daniel.menard@laposte.net>
+ * @author Daniel Ménard <daniel.menard.35@gmail.com>
  */
 class Container extends Element implements Countable, IteratorAggregate
 {
     use ItemFactoryTrait;
 
     /**
-     * @var Item[] Les items présents dans le container.
+     * @var Item[] les items présents dans le container
      */
     protected $items = [];
 
     /**
      * Ajoute un item dans le container.
      *
-     * @param Item $item L'item à ajouter.
+     * @param Item $item L'item à ajouter
      *
-     * @return Item L'item ajouté à la liste.
+     * @return Item L'item ajouté à la liste
      */
     final public function add(Item $item): Item
     {
@@ -72,7 +72,6 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * Vous pouvez soit passer l'objet item à supprimer, soit son nom. Si vous passez un nom, tous les items
      * de la liste ayant ce nom seront supprimé.
-     *
      * @param string|Item $item
      */
     final public function remove($item): void
@@ -102,9 +101,7 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * Teste si l'item indiqué figure dans le container.
      *
-     * @param string|Item $item L'item à tester (soit un objet Item, soit son nom).
-     *
-     * @return bool
+     * @param string|Item $item L'item à tester (soit un objet Item, soit son nom)
      */
     final public function has($item): bool
     {
@@ -112,11 +109,9 @@ class Container extends Element implements Countable, IteratorAggregate
     }
 
     /**
-     * Retourne un item
+     * Retourne un item.
      *
-     * @param string|Item $item L'item à retourner (soit un objet Item, soit son nom).
-     *
-     * @return Item|null
+     * @param string|Item $item L'item à retourner (soit un objet Item, soit son nom)
      */
     final public function get($item): ?Item
     {
@@ -133,12 +128,10 @@ class Container extends Element implements Countable, IteratorAggregate
 
     /**
      * Teste si le container contient des items.
-     *
-     * @return bool
      */
     final public function hasItems(): bool
     {
-        return !empty($this->items);
+        return [] !== $this->items;
     }
 
     /**
@@ -155,10 +148,8 @@ class Container extends Element implements Countable, IteratorAggregate
      * Initialise la liste des items présents dans le container.
      *
      * @param Item[] $items
-     *
-     * @return self
      */
-    final public function setItems(array $items): self
+    final public function setItems(array $items): static
     {
         $this->removeAll();
         $this->addItems($items);
@@ -172,8 +163,8 @@ class Container extends Element implements Countable, IteratorAggregate
     final protected function getControlName(): string
     {
         // Un container sans nom retourne le nom de son container parent
-        if (empty($this->name)) {
-            return $this->parent ? $this->parent->getControlName() : '';
+        if ('' === $this->name) {
+            return $this->parent instanceof Container ? $this->parent->getControlName() : '';
         }
 
         // Sinon, traitement standard
@@ -192,8 +183,6 @@ class Container extends Element implements Countable, IteratorAggregate
      * Retourne le nombre d'items dans le container.
      *
      * (implémentation de l'interface Countable).
-     *
-     * @return int
      */
     final public function count(): int
     {
@@ -216,9 +205,6 @@ class Container extends Element implements Countable, IteratorAggregate
      * Teste si l'item passé en paramètre figure déjà dans la hiérarchie.
      *
      * Cette méthode est utilisée par add() pour détecter les références circulaires.
-     *
-     * @param Container $item
-     * @return bool
      */
     private function inTree(Container $item): bool
     {
@@ -230,24 +216,18 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @param Item|string $item
      *
-     * @return Closure
-     *
      * @throws InvalidArgumentException
      */
     private function getComparator($item): Closure
     {
         // Un item : true si c'est le même objet
         if ($item instanceof Item) {
-            return function (Item $other) use ($item) {
-                return $other === $item;
-            };
+            return fn (Item $other): bool => $other === $item;
         }
 
         // Une chaine : true si c'est le même nom
         if (is_string($item)) {
-            return function (Item $other) use ($item) {
-                return ($other instanceof Element) && $other->getName() === $item;
-            };
+            return fn (Item $other): bool => ($other instanceof Element) && $other->getName() === $item;
         }
 
         throw new InvalidArgumentException('Bad comparator type');
@@ -278,7 +258,7 @@ class Container extends Element implements Countable, IteratorAggregate
 
         // Si le container est répétable, $data doit être un tableau (en général numérique : liste des valeurs)
         if ($this->isMultivalued()) {
-            if (! is_array($data)) {
+            if (!is_array($data)) {
                 $this->invalidArgument(
                     'Container "%s" is repeatable, expected Collection or array, got "%s"',
                     gettype($data)
@@ -291,7 +271,7 @@ class Container extends Element implements Countable, IteratorAggregate
         $this->data = [];
         foreach ($data as $key => $data) {
             // Chaque valeur du container doit être un un tableau associatif (liste des champs)
-            if (! is_array($data)) {
+            if (!is_array($data)) {
                 $this->invalidArgument(
                     'Value for "%s" must be a Composite or an array, got "%s"',
                     gettype($data)
@@ -302,12 +282,13 @@ class Container extends Element implements Countable, IteratorAggregate
             $result = [];
             foreach ($this->items as $item) {
                 // Seuls les éléments peuvent avoir une valeur (i.e. pas les items, les tags, etc.)
-                if (! $item instanceof Element) {
+                if (!$item instanceof Element) {
                     continue;
                 }
 
                 // Si l'élément a un nom, fait le binding sur cet élément
-                if ($name = $item->getName()) {
+                $name = $item->getName();
+                if ('' !== $name) {
                     $item->bindData($data[$name] ?? null);
                     $result[$name] = $item->getData();
                     continue;
@@ -326,7 +307,7 @@ class Container extends Element implements Countable, IteratorAggregate
         }
 
         // Supprime le tableau artificiel créé pour simplifier le code
-        if (! $this->isMultivalued()) {
+        if (!$this->isMultivalued()) {
             $this->data = reset($this->data);
         }
     }
@@ -342,18 +323,21 @@ class Container extends Element implements Countable, IteratorAggregate
             $data = $this->data[$occurence] ?? null;
             foreach ($this->items as $item) {
                 // Seuls les éléments peuvent être avoir une valeur (i.e. pas les items, les tags, etc.)
-                if (! $item instanceof Element) {
+                if (!$item instanceof Element) {
                     continue;
                 }
 
                 // Si l'élément a un nom, fait le binding sur cet élément
-                if ($name = $item->getName()) {
-                    $item->bindData(isset($data[$name]) ? $data[$name] : null);
+                $name = $item->getName();
+                if ('' !== $name) {
+                    $item->bindData($data[$name] ?? null);
                     continue;
                 }
 
                 // Elément sans nom. Si c'est un container, on lui passe toutes les données pour qu'il les transmette
-                ($item instanceof self) && $item->bindData($data);
+                if ($item instanceof Container) {
+                    $item->bindData($data);
+                }
             }
         }
     }
