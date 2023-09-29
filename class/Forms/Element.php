@@ -357,15 +357,7 @@ abstract class Element extends Item
     {
         // Initialise la propriété "repeatable"
         if (is_null($this->repeatable)) {
-            if (false && $schema->repeatable()) {
-                if ($this->isMultivalued()) {
-                    $this->setRepeatable(is_a($schema->type(), Collection::class, true));
-                } else {
-                    $this->setRepeatable(true);
-                }
-            } else {
-                $this->setRepeatable(false);
-            }
+            $this->setRepeatable(false);
         }
 
         // Initialise le libellé
@@ -423,7 +415,7 @@ abstract class Element extends Item
     {
         // Si c'est un type docalist, initialise le schéma et récupère les données
         if ($data instanceof Any) {
-            ($schema = $data->getSchema()) && $this->bindSchema($schema);
+            $this->bindSchema($data->getSchema());
             $data = $data->getPhpValue();
         }
 
