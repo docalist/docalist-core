@@ -34,7 +34,7 @@ final class EntryPicker extends Select
     final public function setRepeatable(?bool $repeatable = true): static
     {
         if ($repeatable) {
-            $this->invalidArgument('An EntryPicker can not be repeatable (cloning is not handled)');
+            throw $this->invalidArgument('An EntryPicker can not be repeatable (cloning is not handled)');
         }
         $this->repeatable = $repeatable;
 

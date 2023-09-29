@@ -57,11 +57,11 @@ class Select extends Choice
                 break;
             case is_array($firstOption):
                 if (1 !== count($firstOption)) {
-                    $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
+                    throw $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
                 }
                 break;
             default:
-                $this->invalidArgument('%s: invalid firstOption, expected true, false, string or array.');
+            throw $this->invalidArgument('%s: invalid firstOption, expected true, false, string or array.');
         }
         $this->firstOption = $firstOption;
 

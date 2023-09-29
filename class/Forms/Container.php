@@ -44,7 +44,7 @@ class Container extends Element implements Countable, IteratorAggregate
     final public function add(Item $item): Item
     {
         if ($item instanceof Container && $this->inTree($item)) {
-            $this->invalidArgument('Circular reference detected in %s');
+            throw $this->invalidArgument('Circular reference detected in %s');
         }
 
         $item->parent = $this;
@@ -259,7 +259,7 @@ class Container extends Element implements Countable, IteratorAggregate
         // Si le container est répétable, $data doit être un tableau (en général numérique : liste des valeurs)
         if ($this->isMultivalued()) {
             if (!is_array($data)) {
-                $this->invalidArgument(
+                throw $this->invalidArgument(
                     'Container "%s" is repeatable, expected Collection or array, got "%s"',
                     gettype($data)
                 );
@@ -272,7 +272,7 @@ class Container extends Element implements Countable, IteratorAggregate
         foreach ($data as $key => $data) {
             // Chaque valeur du container doit être un un tableau associatif (liste des champs)
             if (!is_array($data)) {
-                $this->invalidArgument(
+                throw $this->invalidArgument(
                     'Value for "%s" must be a Composite or an array, got "%s"',
                     gettype($data)
                 );

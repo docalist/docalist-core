@@ -73,7 +73,7 @@ abstract class Choice extends Element
             return $this;
         }
 
-        $this->invalidArgument('%s: invalid options (%s)', gettype($options));
+        throw $this->invalidArgument('%s: invalid options (%s)', gettype($options));
     }
 
     /**
@@ -112,27 +112,25 @@ abstract class Choice extends Element
             return ($this->options)($this);
         }
 
-        // Si c'est une chaine de lookup, vérifie que c'est une table ou un thesaurus et retourne le contenu
-        if (is_string($this->options)) {
-            // Détermine le type et la source des lookups
-            [$type, $source] = explode(':', $this->options, 2);
+        // Obligatoirement une chaine de lookup (cf. setOptions)
+        // Vérifie que c'est une table ou un thesaurus et retourne le contenu
 
-            // Pour les Choice de base (radiolist, select...) on ne gère que les lookups de type table ou thesaurus
-            // (avec des lookups de type index ou search on chargerait des listes potentiellement énormes dans
-            // le code html de la page et en plus le format des entrées n'est plus le même dans ce cas là).
-            if ('table' !== $type && 'thesaurus' !== $type) {
-                $this->invalidArgument('Lookups of type "%s" are not supported, try with EntryPicker');
-            }
+        // Détermine le type et la source des lookups
+        [$type, $source] = explode(':', $this->options, 2);
 
-            // Ouvre la table
-            $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
-            $table = $tableManager->get($source);
-
-            // Charge la totalité des entrées de la table et retourne un tableau de la forme code => valeur
-            return $table->search('code,label');
+        // Pour les Choice de base (radiolist, select...) on ne gère que les lookups de type table ou thesaurus
+        // (avec des lookups de type index ou search on chargerait des listes potentiellement énormes dans
+        // le code html de la page et en plus le format des entrées n'est plus le même dans ce cas là).
+        if ('table' !== $type && 'thesaurus' !== $type) {
+            throw $this->invalidArgument('Lookups of type "%s" are not supported, try with EntryPicker');
         }
 
-        // ça ne peut pas être autre chose (cf. setOptions)
+        // Ouvre la table
+        $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
+        $table = $tableManager->get($source);
+
+        // Charge la totalité des entrées de la table et retourne un tableau de la forme code => valeur
+        return $table->search('code,label');
     }
 
     /**
@@ -175,7 +173,7 @@ abstract class Choice extends Element
 
             // Groupe d'options : value contient le label, et label doit contenur un tableau d'options
             if (!is_array($label)) {
-                $this->invalidArgument('%s: invalid options for optgroup "%s", expected array.', $value);
+                throw $this->invalidArgument('%s: invalid options for optgroup "%s", expected array.', $value);
             }
 
             // Génère le début du groupe
@@ -197,7 +195,7 @@ abstract class Choice extends Element
 
                 // Groupe d'options imbriqué, ce n'est pas autorisé, génère une exception
                 if (is_array($label)) {
-                    $this->invalidArgument('%s: invalid option "%s", options groups cannot be nested.', $value);
+                    throw $this->invalidArgument('%s: invalid option "%s", options groups cannot be nested.', $value);
                 }
             }
 

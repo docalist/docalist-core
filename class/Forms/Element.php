@@ -253,7 +253,7 @@ abstract class Element extends Item
     {
         $modes = $this->requiredModes();
         if ('' !== $mode && !isset($modes[$mode])) {
-            $this->invalidArgument('Invalid required mode');
+            throw $this->invalidArgument('Invalid required mode');
         }
         $this->required = $mode;
     }
@@ -388,7 +388,7 @@ abstract class Element extends Item
         if (!$this->isMultivalued()) { // ni repeatable, ni multiple
             // Data doit être un scalaire
             if (!is_scalar($data) && !is_null($data)) {
-                $this->invalidArgument(
+                throw $this->invalidArgument(
                     'Element %s is monovalued, expected scalar or null, got %s',
                     gettype($data)
                 );
@@ -400,7 +400,7 @@ abstract class Element extends Item
             // On accepte un tableau ou null
             if (!is_array($data) && !is_null($data)) {
                 $data = (array) $data; // 'article' => ['article'], null => []
-                //                 return $this->invalidArgument(
+                //                 throw $this->invalidArgument(
                 //                     'Element %s is multivalued, expected array or null, got %s',
                 //                     gettype($data)
                 //                 );
@@ -468,13 +468,13 @@ abstract class Element extends Item
                 return;
             }
 
-            $this->invalidArgument('Element "%s" is not repeatable, occurence cannot be set.');
+            throw $this->invalidArgument('Element "%s" is not repeatable, occurence cannot be set.');
         }
 
         // Vérifie que la clé indiquée existe dans data
         $valid = empty($this->data) ? empty($occurence) : array_key_exists($occurence, $this->data);
         if (!$valid) {
-            $this->invalidArgument('Element "%s" do not have data for occurence "%s".', $occurence);
+            throw $this->invalidArgument('Element "%s" do not have data for occurence "%s".', $occurence);
         }
 
         // Ok
@@ -536,20 +536,18 @@ abstract class Element extends Item
     }
 
     /**
-     * Génère une exception InvalidArgumentException.
+     * Retounre une exception InvalidArgumentException.
      *
      * @param string $message message style sprintf (%1 = nom/label/type de l'élément)
      * @param mixed  ...$args paramètres à passer à sprintf.
-     *
-     * @throws InvalidArgumentException
      */
-    protected function invalidArgument($message, mixed ...$args): void
+    protected function invalidArgument($message, mixed ...$args): InvalidArgumentException
     {
         $name = $this->getName() ?: $this->getLabel();
         $name = ('' !== $name) ? $this->getType().'['.$name.']' : $this->getType();
 
         array_unshift($args, $name);
 
-        throw new InvalidArgumentException(vsprintf($message, $args));
+        return new InvalidArgumentException(vsprintf($message, $args));
     }
 }
