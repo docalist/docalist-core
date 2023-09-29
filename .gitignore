@@ -2,3 +2,4 @@ vendor
 composer.lock
 .settings
 .buildpath
+.phpstan-cache/
