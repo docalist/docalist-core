@@ -5,3 +5,4 @@ composer.lock
 /phpstan.neon
 .phpstan-cache/
 /.php-cs-fixer.cache
+/.phpunit.cache/
