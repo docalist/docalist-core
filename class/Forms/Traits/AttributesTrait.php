@@ -81,7 +81,7 @@ trait AttributesTrait
      *
      * @param string $name le nom de l'attribut
      *
-     * @return string|int|bool
+     * @return string|int|bool|null
      */
     final public function getAttribute(string $name)
     {

@@ -65,7 +65,7 @@ abstract class Element extends Item
     /**
      * Occurence en cours pour un champ répétable.
      *
-     * @var int|string
+     * @var int|string|null
      */
     protected $occurence;
 
@@ -476,7 +476,7 @@ abstract class Element extends Item
     /**
      * Retourne le numéro d'occurence du champ.
      *
-     * @return int|string
+     * @return int|string|null
      */
     public function getOccurence()
     {
