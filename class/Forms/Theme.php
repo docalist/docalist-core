@@ -93,7 +93,7 @@ class Theme extends Html
      *
      * @throws InvalidArgumentException si le thème demandé n'existe pas
      */
-    final public static function get($name = null): static
+    final public static function get($name = null): Theme
     {
         // Si on nous a passé un thème, on le retourne tel quel
         if ($name instanceof Theme) {
@@ -197,7 +197,9 @@ class Theme extends Html
 
         // Crée la closure qui va exécuter le template (sandbox)
         $args['path'] = $path;
-        $view = function () use ($args): void {
+        // @phpstan-ignore-next-line : Anonymous function has an unused use $theme.
+        $view = function () use ($args, $theme): void {
+            // le use($theme) est requis pour que $theme soit accessible dans le template
             require $args['path'];
         };
 
