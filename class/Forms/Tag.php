@@ -36,10 +36,10 @@ final class Tag extends HtmlBlock
     /**
      * Crée un nouveau tag.
      *
-     * @param string         $tag        optionnel, le tag de l'élément (div par défaut)
-     * @param string         $content    optionnel, le contenu de l'élément
-     * @param array          $attributes optionnel, les attributs de l'élément
-     * @param Container|null $parent     optionnel, le containeur parent de l'item
+     * @param string                        $tag        optionnel, le tag de l'élément (div par défaut)
+     * @param string                        $content    optionnel, le contenu de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
+     * @param Container|null                $parent     optionnel, le containeur parent de l'item
      */
     public function __construct(
         string $tag = 'div',

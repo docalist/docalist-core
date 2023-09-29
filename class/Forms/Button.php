@@ -26,10 +26,10 @@ class Button extends Element
     /**
      * Crée un bouton.
      *
-     * @param string         $label      optionnel, le libellé du bouton
-     * @param string         $name       optionnel, le nom du bouton
-     * @param array          $attributes optionnel, les attributs du bouton
-     * @param Container|null $parent     optionnel, le containeur parent du bouton
+     * @param string                        $label      optionnel, le libellé du bouton
+     * @param string                        $name       optionnel, le nom du bouton
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs du bouton
+     * @param Container|null                $parent     optionnel, le containeur parent du bouton
      */
     public function __construct(string $label = '', string $name = '', array $attributes = [], Container $parent = null)
     {

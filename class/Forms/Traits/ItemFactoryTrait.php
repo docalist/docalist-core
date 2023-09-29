@@ -83,9 +83,9 @@ trait ItemFactoryTrait
     /**
      * Crée un tag et l'ajoute au container.
      *
-     * @param string $tag        optionnel, le tag de l'élément (div par défaut)
-     * @param string $content    optionnel, le contenu de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $tag        optionnel, le tag de l'élément (div par défaut)
+     * @param string                        $content    optionnel, le contenu de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function tag(string $tag = 'div', string $content = '', array $attributes = []): Tag
     {
@@ -95,8 +95,8 @@ trait ItemFactoryTrait
     /**
      * Crée un tag <p> et l'ajoute au container.
      *
-     * @param string $content    optionnel, le contenu de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $content    optionnel, le contenu de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function p(string $content = '', array $attributes = []): Tag
     {
@@ -106,8 +106,8 @@ trait ItemFactoryTrait
     /**
      * Crée un tag <span> et l'ajoute au container.
      *
-     * @param string $content    optionnel, le contenu de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $content    optionnel, le contenu de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function span(string $content = '', array $attributes = []): Tag
     {
@@ -117,8 +117,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Input (type 'text') et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function input(string $name = '', array $attributes = []): Input
     {
@@ -128,8 +128,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Password et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function password(string $name = '', array $attributes = []): Password
     {
@@ -139,8 +139,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Hidden et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function hidden(string $name = '', array $attributes = []): Hidden
     {
@@ -150,8 +150,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Textarea et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function textarea(string $name = '', array $attributes = []): TextArea
     {
@@ -161,8 +161,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Checkbox et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function checkbox(string $name = '', array $attributes = []): Checkbox
     {
@@ -172,8 +172,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Radio et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function radio(string $name = '', array $attributes = []): Radio
     {
@@ -183,9 +183,9 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Button et l'ajoute au container.
      *
-     * @param string $label      optionnel, le libellé du bouton
-     * @param string $name       optionnel, le nom du bouton
-     * @param array  $attributes optionnel, les attributs du bouton
+     * @param string                        $label      optionnel, le libellé du bouton
+     * @param string                        $name       optionnel, le nom du bouton
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs du bouton
      */
     public function button(string $label = '', string $name = '', array $attributes = []): Button
     {
@@ -195,9 +195,9 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Submit et l'ajoute au container.
      *
-     * @param string $label      optionnel, le libellé du bouton
-     * @param string $name       optionnel, le nom du bouton
-     * @param array  $attributes optionnel, les attributs du bouton
+     * @param string                        $label      optionnel, le libellé du bouton
+     * @param string                        $name       optionnel, le nom du bouton
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs du bouton
      */
     public function submit(string $label = '', string $name = '', array $attributes = []): Submit
     {
@@ -207,9 +207,9 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Reset et l'ajoute au container.
      *
-     * @param string $label      optionnel, le libellé du bouton
-     * @param string $name       optionnel, le nom du bouton
-     * @param array  $attributes optionnel, les attributs du bouton
+     * @param string                        $label      optionnel, le libellé du bouton
+     * @param string                        $name       optionnel, le nom du bouton
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs du bouton
      */
     public function reset(string $label = '', string $name = '', array $attributes = []): Reset
     {
@@ -219,8 +219,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Select et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function select(string $name = '', array $attributes = []): Select
     {
@@ -230,8 +230,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Checklist et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function checklist(string $name = '', array $attributes = []): CheckList
     {
@@ -241,8 +241,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Radiolist et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function radiolist(string $name = '', array $attributes = []): Radiolist
     {
@@ -252,8 +252,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Container et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function container(string $name = '', array $attributes = []): Container
     {
@@ -263,8 +263,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément EntryPicker et l'ajoute au container.
      *
-     * @param string $name       le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function entryPicker(string $name = '', array $attributes = []): EntryPicker
     {
@@ -274,8 +274,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Table et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function table(string $name = '', array $attributes = []): Table
     {
@@ -285,8 +285,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Fieldset et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function fieldset(string $name = '', array $attributes = []): FieldSet
     {
@@ -296,8 +296,8 @@ trait ItemFactoryTrait
     /**
      * Crée un élément Div et l'ajoute au container.
      *
-     * @param string $name       optionnel, le nom de l'élément
-     * @param array  $attributes optionnel, les attributs de l'élément
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      */
     public function div(string $name = '', array $attributes = []): Div
     {

@@ -30,7 +30,7 @@ class Theme extends Html
      * le thème est instancié et stocké dans la liste. Si get() est appellée avec un nom de thème qu'on ne
      * connaît pas, un filtre est déclenché et on stocke le thème retourné.
      *
-     * @var array
+     * @var array<string, class-string|Theme>
      */
     private static $themes = [
         'base' => BaseTheme::class,
@@ -149,9 +149,10 @@ class Theme extends Html
     /**
      * Affiche un item de formulaire en utilisant la vue indiquée.
      *
-     * @param Item        $item L'item à afficher
-     * @param string|null $view La vue à utiliser. Si $view est vide, la méthode getType() de l'item
-     *                          est appellée et le résultat est utilisé comme nom de vue.
+     * @param Item                $item L'item à afficher
+     * @param string|null         $view La vue à utiliser. Si $view est vide, la méthode getType() de l'item
+     *                                  est appellée et le résultat est utilisé comme nom de vue.
+     * @param array<string,mixed> $args Arguments à passer à la vue
      *
      * @throws InvalidArgumentException si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents
      */

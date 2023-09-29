@@ -14,7 +14,6 @@ namespace Docalist\Forms;
 use Docalist\Forms\Traits\AttributesTrait;
 use Docalist\Schema\Schema;
 use Docalist\Type\Any;
-use Docalist\Type\Collection;
 use InvalidArgumentException;
 
 /**
@@ -58,6 +57,8 @@ abstract class Element extends Item
 
     /**
      * Les données de l'élément, initialisées par bind().
+     *
+     * @var scalar|array<mixed>|null
      */
     protected $data;
 
@@ -76,9 +77,9 @@ abstract class Element extends Item
     /**
      * Crée un élément de formulaire.
      *
-     * @param string         $name       optionnel, le nom de l'élément
-     * @param array          $attributes optionnel, les attributs de l'élément
-     * @param Container|null $parent     optionnel, le containeur parent de l'item
+     * @param string                        $name       optionnel, le nom de l'élément
+     * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
+     * @param Container|null                $parent     optionnel, le containeur parent de l'item
      */
     public function __construct(string $name = '', array $attributes = [], Container $parent = null)
     {
@@ -373,6 +374,8 @@ abstract class Element extends Item
 
     /**
      * Initialise l'élément à partir des données passées en paramètre.
+     *
+     * @param scalar|array<mixed>|null $data
      */
     protected function bindData($data): void
     {
@@ -380,10 +383,7 @@ abstract class Element extends Item
         if (!$this->isMultivalued()) { // ni repeatable, ni multiple
             // Data doit être un scalaire
             if (!is_scalar($data) && !is_null($data)) {
-                throw $this->invalidArgument(
-                    'Element %s is monovalued, expected scalar or null, got %s',
-                    gettype($data)
-                );
+                throw $this->invalidArgument('Element %s is monovalued, expected scalar or null, got %s', gettype($data));
             }
         }
 
@@ -483,6 +483,9 @@ abstract class Element extends Item
         return $this->occurence;
     }
 
+    /**
+     * @return mixed[]
+     */
     protected function getOccurences()
     {
         if ($this->isRepeatable()) {

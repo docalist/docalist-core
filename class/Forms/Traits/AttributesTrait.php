@@ -26,12 +26,14 @@ use InvalidArgumentException;
 trait AttributesTrait
 {
     /**
-     * @var array attributs de l'élément
+     * @var array<string,string|int|bool> attributs de l'élément
      */
     protected $attributes = [];
 
     /**
      * Retourne la liste des attributs de l'élément.
+     *
+     * @return array<string,string|int|bool>
      */
     final public function getAttributes(): array
     {
@@ -41,7 +43,7 @@ trait AttributesTrait
     /**
      * Initialise les attributs de l'élément.
      *
-     * @param array $attributes un tableau de la forme nom  => valeur
+     * @param array<string,string|int|bool> $attributes un tableau de la forme nom  => valeur
      */
     final public function setAttributes(array $attributes): void
     {
@@ -55,7 +57,7 @@ trait AttributesTrait
      * Si l'un des attributs passés en paramètre existe déjà dans les attributs de l'élément, la valeur
      * existante est écrasée.
      *
-     * @param array $attributes un tableau de la forme nom  => valeur
+     * @param array<string,string|int|bool> $attributes un tableau de la forme nom  => valeur
      */
     final public function addAttributes(array $attributes): void
     {

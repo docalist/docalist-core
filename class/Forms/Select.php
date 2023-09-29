@@ -31,7 +31,7 @@ class Select extends Choice
     /**
      * Code et libellé de la première option du select ou false pour désactiver le placeholder.
      *
-     * @var bool|array
+     * @var array<string,string>|false
      */
     protected $firstOption = ['' => '…'];
 
@@ -40,7 +40,7 @@ class Select extends Choice
      *
      * Cette option est utilisée pour les select simples, elle est ignorée pour les select multiples.
      *
-     * @param bool|string|array $firstOption optionnel, valeur de l'option
+     * @param bool|string|array<string,string> $firstOption optionnel, valeur de l'option
      *
      * @throws InvalidArgumentException si $firstOption ets invalide
      */
@@ -61,7 +61,7 @@ class Select extends Choice
                 }
                 break;
             default:
-            throw $this->invalidArgument('%s: invalid firstOption, expected true, false, string or array.');
+                throw $this->invalidArgument('%s: invalid firstOption, expected true, false, string or array.');
         }
         $this->firstOption = $firstOption;
 
@@ -72,7 +72,7 @@ class Select extends Choice
      * Retourne le code et le libellé de la première option du select ou false si la première option est
      * désactivée.
      *
-     * @return bool|array
+     * @return array<string,string>|false
      */
     final public function getFirstOption()// : mixed
     {
@@ -94,17 +94,11 @@ class Select extends Choice
         return $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final protected function isMultivalued(): bool
     {
         return parent::isMultivalued() || $this->hasAttribute('multiple');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final protected function displayOptions(Theme $theme, array $selected): void
     {
         // Affiche l'option vide (firstOption) si elle est activée et que ce n'est pas un select multiple
@@ -116,9 +110,6 @@ class Select extends Choice
         parent::displayOptions($theme, $selected);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final protected function displayOption(
         Theme $theme,
         string $value,
@@ -146,17 +137,11 @@ class Select extends Choice
         $theme->tag('option', $attributes, $label);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final protected function startOptionGroup(string $label, Theme $theme): void
     {
         $theme->start('optgroup', ['label' => $label]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     final protected function endOptionGroup(Theme $theme): void
     {
         $theme->end('optgroup');

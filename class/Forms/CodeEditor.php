@@ -27,7 +27,7 @@ final class CodeEditor extends Textarea
      *
      * Voir la description du paramètre $arg de la fonction wp_enqueue_code_editor().
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected static $defaultOptions = [
         // Mode par défaut
@@ -49,12 +49,14 @@ final class CodeEditor extends Textarea
     /**
      * Options de l'éditeur.
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $options = [];
 
     /**
      * Retourne les options de l'éditeur de code.
+     *
+     * @return array<string,mixed>
      */
     public function getOptions(): array
     {
@@ -64,7 +66,7 @@ final class CodeEditor extends Textarea
     /**
      * Modifie les options de l'éditeur de code.
      *
-     * @param array $options les options qui seront passées à la fonction wp_enqueue_code_editor() de WordPress
+     * @param array<string,mixed> $options les options qui seront passées à la fonction wp_enqueue_code_editor() de WordPress
      */
     public function setOptions(array $options): static
     {
