@@ -93,7 +93,7 @@ class Theme extends Html
      *
      * @throws InvalidArgumentException si le thème demandé n'existe pas
      */
-    final public static function get($name = null): Theme
+    final public static function get(string|Theme $name = null): Theme
     {
         // Si on nous a passé un thème, on le retourne tel quel
         if ($name instanceof Theme) {
@@ -102,7 +102,7 @@ class Theme extends Html
 
         // Thème par défaut
         if (null === $name || '' === $name || 'default' === $name) {
-            $name = apply_filters('docalist_forms_get_default_theme', 'wordpress');
+            $name = (string) apply_filters('docalist_forms_get_default_theme', 'wordpress');
         }
 
         // Thème qu'on ne connaît pas encore
@@ -123,7 +123,9 @@ class Theme extends Html
         // Thème qu'on connaît mais qui n'a pas encore été instancié
         if (is_string(self::$themes[$name])) {
             $class = self::$themes[$name];
-            self::$themes[$name] = new $class();
+            /** @var Theme */
+            $theme = new $class();
+            self::$themes[$name] = $theme;
         }
 
         // Thème déjà instancié
@@ -235,7 +237,7 @@ class Theme extends Html
         ob_start();
         $this->display($item, $view);
 
-        return ob_get_clean();
+        return (string) ob_get_clean();
     }
 
     /**

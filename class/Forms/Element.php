@@ -424,7 +424,7 @@ abstract class Element extends Item
 
         // Initialise l'occurence en cours
         if ($this->isRepeatable()) {
-            $this->occurence = is_null($this->data) ? null : key($this->data);
+            $this->occurence = is_array($this->data) ? key($this->data) : null;
         }
     }
 
@@ -464,7 +464,7 @@ abstract class Element extends Item
         }
 
         // Vérifie que la clé indiquée existe dans data
-        $valid = empty($this->data) ? empty($occurence) : array_key_exists($occurence, $this->data);
+        $valid = is_array($this->data) ? array_key_exists($occurence, $this->data) : empty($occurence);
         if (!$valid) {
             throw $this->invalidArgument('Element "%s" do not have data for occurence "%s".', $occurence);
         }

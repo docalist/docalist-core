@@ -160,14 +160,14 @@ trait AttributesTrait
     /**
      * Supprime une ou plusieurs classes de l'attribut 'class' de l'élément.
      *
-     * @param string $class La ou les classes à supprimer. Vous pouvez enlever plusieurs classes en séparant
-     *                      leurs noms par un espace.
+     * @param ?string $class La ou les classes à supprimer. Vous pouvez enlever plusieurs classes en séparant
+     *                       leurs noms par un espace.
      *
      * Exemple $input->removeClass('text small');
      *
      * Si removeClass() est appellée sans paramètre, l'attribut 'class' est supprimé.
      */
-    final public function removeClass($class = null): static
+    final public function removeClass(string $class = null): static
     {
         // Si l'attribut class n'existe pas, il n'y a rien à supprimer
         if (!isset($this->attributes['class'])) {
@@ -181,23 +181,26 @@ trait AttributesTrait
             return $this;
         }
 
+        /** @var string */
+        $classes = &$this->attributes['class'];
+
         // Supprime toutes les classes indiquées
         foreach (explode(' ', $class) as $class) {
             if ('' === $class) {
                 continue;
             }
-            $pos = strpos(' '.$this->attributes['class'].' ', " $class ");
+            $pos = strpos(' '.$classes.' ', " $class ");
             if (false === $pos) {
                 continue;
             }
 
             $len = strlen($class);
-            if ($pos > 0 && ' ' === $this->attributes['class'][$pos - 1]) {
+            if ($pos > 0 && ' ' === $classes[$pos - 1]) {
                 --$pos;
                 ++$len;
             }
-            $this->attributes['class'] = trim(substr_replace((string) $this->attributes['class'], '', $pos, $len));
-            if ('' === $this->attributes['class']) {
+            $classes = trim(substr_replace((string) $classes, '', $pos, $len));
+            if ('' === $classes) {
                 unset($this->attributes['class']);
                 break;
             }
