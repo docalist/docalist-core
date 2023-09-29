@@ -9,7 +9,7 @@
  */
 declare(strict_types=1);
 
-namespace Docalist\Tests\Json;
+namespace Docalist\Tests\Pipeline;
 
 use PHPUnit_Framework_TestCase;
 use Docalist\Pipeline\StandardPipeline;
