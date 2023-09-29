@@ -45,7 +45,8 @@
         "classmap-authoritative" : true,
         "allow-plugins": {
             "composer/installers": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "johnpbloch/wordpress-core-installer": true
         }
     },
     "minimum-stability": "stable"
