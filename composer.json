@@ -1,47 +1,52 @@
 {
-	"type" : "wordpress-plugin",
-	"name" : "docalist/docalist-core",
-	"description" : "Docalist : socle de base.",
-	"homepage" : "https://docalist.org/",
-	"license" : "GPL-2.0-or-later",
-	"authors" : [{
-			"name" : "Daniel Ménard",
-			"email" : "daniel.menard@laposte.net",
-			"homepage" : "https://docalist.org/"
-		}
-	],
-	"keywords" : [
-		"docalist"
-	],
-	"support" : {
-		"issues" : "https://github.com/docalist/docalist/issues",
-		"forum" : "https://groups.google.com/forum/#!forum/docalist-discuss"
-	},
-	"require" : {
-		"php": ">=7.2",
-		"composer/installers": "~1.0",
-		"monolog/monolog": "~1.23",
-		"psr/log": "~1.0",
-		"symfony/http-foundation": "^6.2"
-	},
-	"autoload" : {
-		"psr-4" : {
-			"Docalist\\" : "class"
-		}
-	},
-	"autoload-dev" : {
-		"psr-4" : {
-			"Docalist\\Tests\\" : "tests/Docalist"
-		}
-	},
-	"config" : {
-		"sort-packages" : true,
-		"optimize-autoloader" : true,
-		"classmap-authoritative" : true
-	},
-    "extra" : {
-        "branch-alias" : {
-            "dev-master" : "3.4-dev"
+    "type": "wordpress-plugin",
+    "name": "docalist/docalist-core",
+    "description": "Docalist : socle de base.",
+    "homepage" : "https://docalist.org/",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Daniel Ménard",
+            "email": "daniel.menard.35@gmail.com",
+            "homepage" : "https://docalist.org/"
         }
-    }
+    ],
+    "keywords" : [
+        "docalist"
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*",
+        "composer/installers": "^2.2",
+        "monolog/monolog": "^3.4",
+        "symfony/http-foundation": "^6.3"
+    },
+    "require-dev": {
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^10.3",
+        "rector/rector": "^0.18.4",
+        "szepeviktor/phpstan-wordpress": "^1.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Docalist\\": "class/"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Docalist\\Tests\\" : "tests/Docalist"
+        }
+    },
+    "config" : {
+        "sort-packages" : true,
+        "optimize-autoloader" : true,
+        "classmap-authoritative" : true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "minimum-stability": "stable"
 }
