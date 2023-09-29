@@ -9,7 +9,7 @@
  */
 declare(strict_types=1);
 
-namespace Docalist\Tests\Forms;
+namespace Docalist\Tests\Forms\Traits;
 
 use WP_UnitTestCase;
 use Docalist\Forms\Element;
