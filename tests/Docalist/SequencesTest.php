@@ -9,7 +9,7 @@
  */
 declare(strict_types=1);
 
-namespace Docalist\Tests\Cache;
+namespace Docalist\Tests;
 
 use WP_UnitTestCase;
 use Docalist\Sequences;
