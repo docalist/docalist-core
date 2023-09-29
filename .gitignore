@@ -6,3 +6,4 @@ composer.lock
 .phpstan-cache/
 /.php-cs-fixer.cache
 /.phpunit.cache/
+/.phpunit.result.cache
