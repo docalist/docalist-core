@@ -46,14 +46,6 @@ abstract class Item
     }
 
     /**
-     * Constructeur statique.
-     */
-    public static function create(): static
-    {
-        return new static();
-    }
-
-    /**
      * Indique le type de l'item.
      *
      * Le type retourné correspond à la version en minuscules du dernier élément du nom de la classe PHP de l'item.
