@@ -410,6 +410,8 @@ abstract class Element extends Item
 
     /**
      * Initialise les données de l'élément à partir des données passées en paramétre.
+     *
+     * @param scalar|array<mixed>|null $data
      */
     final public function bind(mixed $data): void
     {
@@ -431,7 +433,7 @@ abstract class Element extends Item
     /**
      * Retourne les données de l'élément.
      *
-     * @return mixed La méthode retourne les données qui ont été stockées lors du dernier appel
+     * @return scalar|array<mixed>|null La méthode retourne les données qui ont été stockées lors du dernier appel
      *               à la méthode bind(). Si bind() n'a jamais été appellée, elle retourne null.
      */
     final public function getData()
@@ -534,7 +536,7 @@ abstract class Element extends Item
      * Retounre une exception InvalidArgumentException.
      *
      * @param string $message message style sprintf (%1 = nom/label/type de l'élément)
-     * @param mixed  ...$args paramètres à passer à sprintf.
+     * @param scalar  ...$args paramètres à passer à sprintf.
      */
     protected function invalidArgument($message, mixed ...$args): InvalidArgumentException
     {

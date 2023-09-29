@@ -293,8 +293,10 @@ class Container extends Element implements Countable, IteratorAggregate
                 // Elément sans nom. Si c'est un container, on lui passe toutes les données pour qu'il transmette
                 if ($item instanceof Container) {
                     $item->bindData($data);
-                    foreach ($item->getData() as $name => $value) {
-                        $result[$name] = $value; // tester si existe déjà ?
+                    if (is_array($itemData = $item->getData())) {
+                        foreach ($itemData as $name => $value) {
+                            $result[$name] = $value; // tester si existe déjà ?
+                        }
                     }
                 }
             }
@@ -316,6 +318,7 @@ class Container extends Element implements Countable, IteratorAggregate
         parent::setOccurence($occurence);
 
         if ($this->isRepeatable()) {
+            /** @var scalar|array<mixed>|null */
             $data = $this->data[$occurence] ?? null;
             foreach ($this->items as $item) {
                 // Seuls les éléments peuvent être avoir une valeur (i.e. pas les items, les tags, etc.)
@@ -326,7 +329,9 @@ class Container extends Element implements Countable, IteratorAggregate
                 // Si l'élément a un nom, fait le binding sur cet élément
                 $name = $item->getName();
                 if ('' !== $name) {
-                    $item->bindData($data[$name] ?? null);
+                    /** @var scalar|array<mixed>|null */
+                    $itemData = $data[$name] ?? null;
+                    $item->bindData($itemData);
                     continue;
                 }
 

@@ -173,7 +173,9 @@ class Theme extends Html
         if (!isset($args['theme'])) {
             $args['theme'] = $this;
         }
-        $theme = $args['theme']; /* @var Theme $theme */
+
+        /** @var Theme $theme */
+        $theme = $args['theme'];
 
         // Teste si ce thème contient la vue indiquée
         $path = $this->directory.$view.'.php';

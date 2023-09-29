@@ -32,7 +32,7 @@ abstract class Choice extends Element
     /**
      * La liste des options disponibles.
      *
-     * @var array<mixed>|callable|string
+     * @var array<string,string>|array<int,array<string,string>>|callable|string
      */
     protected $options = [];
 
