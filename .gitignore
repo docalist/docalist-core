@@ -4,3 +4,4 @@ composer.lock
 .buildpath
 /phpstan.neon
 .phpstan-cache/
+/.php-cs-fixer.cache
