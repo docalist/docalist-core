@@ -40,7 +40,7 @@ class Select extends Choice
      *
      * Cette option est utilisée pour les select simples, elle est ignorée pour les select multiples.
      *
-     * @param bool|string|array<string,string> $firstOption optionnel, valeur de l'option
+     * @param bool|string|array<int|string,string> $firstOption optionnel, valeur de l'option
      *
      * @throws InvalidArgumentException si $firstOption ets invalide
      */
@@ -72,7 +72,7 @@ class Select extends Choice
      * Retourne le code et le libellé de la première option du select ou false si la première option est
      * désactivée.
      *
-     * @return array<string,string>|false
+     * @return array<int|string,string>|false
      */
     final public function getFirstOption()// : mixed
     {
