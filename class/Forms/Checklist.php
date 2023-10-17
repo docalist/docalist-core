@@ -36,7 +36,9 @@ class Checklist extends Radiolist
      */
     protected function getControlName(): string
     {
-        return parent::getControlName().'[]';
+        $name = parent::getControlName();
+
+        return ('' === $name) ? '' : $name.'[]';
     }
 
     /**
