@@ -413,7 +413,7 @@ abstract class Element extends Item
      *
      * @param scalar|array<mixed>|null $data
      */
-    final public function bind(mixed $data): void
+    final public function bind(mixed $data): static
     {
         // Si c'est un type docalist, initialise le schéma et récupère les données
         if ($data instanceof Any) {
@@ -428,6 +428,8 @@ abstract class Element extends Item
         if ($this->isRepeatable()) {
             $this->occurence = is_array($this->data) ? key($this->data) : null;
         }
+
+        return $this;
     }
 
     /**
@@ -451,7 +453,7 @@ abstract class Element extends Item
      *
      * @param int|string $occurence une des clés des données du champ
      */
-    protected function setOccurence($occurence): void
+    protected function setOccurence(int|string $occurence): void
     {
         // Si le champ n'est pas répétable, c'est une erreur d'appeller setOccurence
         // On accepte néanmoins setOccurence(0) pour un champ non répétable car cela
@@ -480,7 +482,7 @@ abstract class Element extends Item
      *
      * @return int|string|null
      */
-    public function getOccurence()
+    public function getOccurence():int|string|null
     {
         return $this->occurence;
     }
