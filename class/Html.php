@@ -39,7 +39,7 @@ class Html
     /**
      * Initialise le service.
      *
-     * @param string    $dialect    Dialecte html (xhtml, html4, html5) généré par ce thème (html5 par défaut).
+     * @param string $dialect dialecte html (xhtml, html4, html5) généré par ce thème (html5 par défaut)
      */
     public function __construct(string $dialect = 'html5')
     {
@@ -57,11 +57,9 @@ class Html
      * Alors que le dialecte html5 générera :
      * - <input type=checkbox selected>
      *
-     * @param string $dialect 'xhtml', 'html4' ou 'html5'.
-     *
-     * @return self
+     * @param string $dialect 'xhtml', 'html4' ou 'html5'
      */
-    final public function setDialect(string $dialect): self
+    final public function setDialect(string $dialect): static
     {
         $this->dialect = $dialect;
 
@@ -71,7 +69,7 @@ class Html
     /**
      * Retourne le dialecte html généré par le thème.
      *
-     * @return string $dialect 'xhtml', 'html4' ou 'html5'.
+     * @return string $dialect 'xhtml', 'html4' ou 'html5'
      */
     final public function getDialect(): string
     {
@@ -80,12 +78,8 @@ class Html
 
     /**
      * Active ou désactive l'indentation du code html généré.
-     *
-     * @param bool $indent
-     *
-     * @return self
      */
-    final public function setIndent(bool $indent): self
+    final public function setIndent(bool $indent): static
     {
         $this->indent = $indent ? 0 : false;
 
@@ -94,18 +88,16 @@ class Html
 
     /**
      * Indique si l'indentation du code html généré est active ou non.
-     *
-     * @return bool
      */
     final public function getIndent(): bool
     {
-        return !($this->indent === false); // $indent peut être à 0, on ne peut pas utiliser (bool)$indent
+        return !(false === $this->indent); // $indent peut être à 0, on ne peut pas utiliser (bool)$indent
     }
 
     /**
      * Retourne une chaine contenant l'indentation en cours.
      *
-     * @return string Une suite d'espaces si l'option 'indent' est activée, une chaine vide sinon.
+     * @return string une suite d'espaces si l'option 'indent' est activée, une chaine vide sinon
      */
     private function indent(): string
     {
@@ -114,20 +106,14 @@ class Html
 
     /**
      * Retourne CR/LF si l'indentation est activée, une chaine vide sinon.
-     *
-     * @return string
      */
     private function newline(): string
     {
-        return $this->indent === false ? '' : "\n"; // ↩
+        return false === $this->indent ? '' : "\n"; // ↩
     }
 
     /**
      * Encode les caractères spéciaux dans un bloc de texte.
-     *
-     * @param string $text
-     *
-     * @return string
      */
     protected function escapeText(string $text): string
     {
@@ -147,10 +133,6 @@ class Html
 
     /**
      * Encode les caractères spéciaux dans la valeur d'un attribut.
-     *
-     * @param string $value
-     *
-     * @return string
      */
     protected function escapeAttr(string $value): string
     {
@@ -180,8 +162,6 @@ class Html
      *
      * Pour garantir 3, on remplace '--' par '- -' (i.e. on insère un espace quand on trouve deux tirets
      * consécutifs).
-     *
-     * @param string $comment
      */
     protected function escapeComment(string $comment): string
     {
@@ -191,9 +171,9 @@ class Html
         $count = 0;
         do {
             $comment = str_replace('--', '- -', $comment, $count);
-        } while ($count !== 0);
+        } while (0 !== $count);
 
-        return ' ' . $comment . ' ';
+        return ' '.$comment.' ';
     }
 
     /**
@@ -202,12 +182,8 @@ class Html
      * Le contenu du commentaire est encodé de façon à ne contenir aucune des séquences interdites :
      * - un espace est ajout avant et après le contenu passé en paramètre.
      * - un espace est inséré quand une séquence de deux tirets consécutifs est détectée.
-     *
-     * @param string $comment
-     *
-     * @return self
      */
-    public function comment(string $comment): self
+    public function comment(string $comment): static
     {
         echo $this->indent(), '<!--', $this->escapeComment($comment), '-->', $this->newline();
 
@@ -216,12 +192,8 @@ class Html
 
     /**
      * Génère un bloc de texte en encodant les caractères spéciaux.
-     *
-     * @param string $text
-     *
-     * @return self
      */
-    public function text(string $text): self
+    public function text(string $text): static
     {
         echo $this->indent(), $this->escapeText($text), $this->newline();
 
@@ -230,12 +202,8 @@ class Html
 
     /**
      * Génère un bloc html brut (aucun encodage).
-     *
-     * @param string $html
-     *
-     * @return self
      */
-    public function html(string $html): self
+    public function html(string $html): static
     {
         echo $this->indent(), $html, $this->newline();
 
@@ -245,9 +213,9 @@ class Html
     /**
      * Génère des attributs et retourne le résultat.
      *
-     * @param array $attributes Un tableau de la forme nom=>valeur contenant les attributs à générer.
+     * @param array<string,string|int|bool|null> $attributes un tableau de la forme nom=>valeur contenant les attributs à générer
      *
-     * @return string Une chaine contenant les attributs générés.
+     * @return string une chaine contenant les attributs générés
      */
     protected function attr(array $attributes): string
     {
@@ -260,8 +228,8 @@ class Html
 
             // Gère les attributs booléens : on génère l'attribut s'il est activé, rien sinon
             if ($this->isBooleanAttribute($name)) {
-                if ($value === true || $value === $name) {
-                    $format = ($this->dialect === 'html5') ? ' %s' : ' %s="%s"';
+                if (true === $value || $value === $name) {
+                    $format = ('html5' === $this->dialect) ? ' %s' : ' %s="%s"';
                     $result .= sprintf($format, $name, $name);
                 }
                 continue;
@@ -272,7 +240,7 @@ class Html
             $value = (string) $value;
 
             // En html5, les guillemets sont optionnels si la valeur ne contient pas certains caractères
-            if ($this->dialect === 'html5' && !$this->attributeNeedQuotes($value)) {
+            if ('html5' === $this->dialect && !$this->attributeNeedQuotes($value)) {
                 $result .= sprintf(' %s=%s', $name, $value);
                 continue;
             }
@@ -287,17 +255,15 @@ class Html
     /**
      * Génère un tag.
      *
-     * @param string    $tag        Nom du tag à générer.
-     * @param array     $attributes Attributs du tag.
-     * @param string    $content    Contenu du tag.
-     *
-     * @return self
+     * @param string $tag        nom du tag à générer
+     * @param array<string,string|int|bool|null>  $attributes attributs du tag
+     * @param string $content    contenu du tag
      */
-    public function tag(string $tag, array $attributes = [], string $content = ''): self
+    public function tag(string $tag, array $attributes = [], string $content = ''): static
     {
         if ($this->isEmptyTag($tag)) {
             echo $this->indent(), '<', $tag, $this->attr($attributes);
-            echo ($this->dialect === 'html5') ? '>' : '/>';
+            echo ('html5' === $this->dialect) ? '>' : '/>';
             echo $this->newline();
 
             return $this;
@@ -309,15 +275,13 @@ class Html
     /**
      * Génère un tag ouvrant avec ses attributs.
      *
-     * @param string    $tag        Nom du tag à générer.
-     * @param array     $attributes Attributs du tag.
-     *
-     * @return self
+     * @param string $tag        nom du tag à générer
+     * @param array<string,string|int|bool|null>  $attributes attributs du tag
      */
-    public function start(string $tag, array $attributes = []): self
+    public function start(string $tag, array $attributes = []): static
     {
         echo $this->indent(), '<', $tag, $this->attr($attributes), '>', $this->newline();
-        $this->indent !== false && ++$this->indent;
+        false !== $this->indent && ++$this->indent;
 
         return $this;
     }
@@ -325,14 +289,12 @@ class Html
     /**
      * Génère un tag fermant (ouvert via start).
      *
-     * @param string $tag Nom du tag à générer.
-     *
-     * @return self
+     * @param string $tag nom du tag à générer
      */
-    public function end(string $tag): self
+    public function end(string $tag): static
     {
-        $this->indent !== false && --$this->indent;
-        if ($this->dialect === 'html5' && $this->isOptionalTag($tag)) {
+        false !== $this->indent && --$this->indent;
+        if ('html5' === $this->dialect && $this->isOptionalTag($tag)) {
             return $this;
         }
 
@@ -346,9 +308,7 @@ class Html
      *
      * cf. http://www.w3.org/TR/html5/infrastructure.html#boolean-attribute
      *
-     * @param string $attribute Le nom de l'attribut à tester.
-     *
-     * @return bool
+     * @param string $attribute le nom de l'attribut à tester
      */
     private function isBooleanAttribute(string $attribute): bool
     {
@@ -369,9 +329,7 @@ class Html
     /**
      * Teste si des guillemets sont nécessaires autour de la valeur d'attribut passé en paramètre.
      *
-     * @param string $value La valeur d'attribut à tester.
-     *
-     * @return bool
+     * @param string $value la valeur d'attribut à tester
      */
     private function attributeNeedQuotes(string $value): bool
     {
@@ -379,7 +337,7 @@ class Html
         // - that is not the empty string and
         // - that doesn't contain spaces, tabs, line feeds, form feeds, carriage returns, ", ', `, =, <, or >.
         // Source : http://mathiasbynens.be/notes/unquoted-attribute-values
-        if ($value === '') {
+        if ('' === $value) {
             return true;
         }
 
@@ -389,24 +347,22 @@ class Html
 
         // Make sure trailing slash is not interpreted as HTML self-closing tag
         // Source : http://kangax.github.io/html-minifier/
-        return substr($value, -1) === '/';
+        return '/' === substr($value, -1);
     }
 
     /**
      * Teste si l'attribut passé en paramètre peut être supprimé lorsque sa valeur est vide.
      *
-     * @param string $name      Le nom de l'attribut à tester.
-     * @param string|bool|null  $value La valeur de l'attribut.
-     *
-     * @return bool
+     * @param string           $name  le nom de l'attribut à tester
+     * @param string|bool|int|null $value la valeur de l'attribut
      */
     private function isEmptyAttribute(string $name, $value): bool
     {
-        if ($value === false || is_null($value)) {
+        if (false === $value || is_null($value)) {
             return true;
         }
 
-        if ($value !== '') {
+        if ('' !== $value) {
             return false;
         }
 
@@ -418,8 +374,7 @@ class Html
 
         // En html5, <form action=""> est interdit, il faut enlever action
         // Source : http://stackoverflow.com/a/1132015/1924128
-        $this->dialect === 'html5' && $attrs .= 'action|';
-
+        'html5' === $this->dialect && $attrs .= 'action|';
 
         return false !== stripos($attrs, "|$name|");
     }
@@ -427,9 +382,7 @@ class Html
     /**
      * Indique si le tag passé en paramètre peut avoir un contenu (exemple <p>) ou non (exemple <br />).
      *
-     * @param string $tag Le nom du tag à tester.
-     *
-     * @return bool
+     * @param string $tag le nom du tag à tester
      */
     private function isEmptyTag(string $tag): bool
     {
@@ -445,9 +398,7 @@ class Html
     /**
      * Indique si le tag de fin peut être omis en html5 pour tag dont le nom est passé en paramètre.
      *
-     * @param string $tag Le nom du tag à tester.
-     *
-     * @return bool
+     * @param string $tag le nom du tag à tester
      */
     private function isOptionalTag(string $tag): bool
     {
