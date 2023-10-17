@@ -13,6 +13,7 @@ namespace Docalist\Forms;
 
 use Docalist\Forms\Theme\BaseTheme;
 use Docalist\Forms\Theme\WordPressTheme;
+use Docalist\Forms\Theme\XhtmlTheme;
 use Docalist\Html;
 use InvalidArgumentException;
 
@@ -33,6 +34,7 @@ class Theme extends Html
      * @var array<string, class-string|Theme>
      */
     private static $themes = [
+        'xhtml' => XhtmlTheme::class,
         'base' => BaseTheme::class,
         'wordpress' => WordPressTheme::class,
     ];
