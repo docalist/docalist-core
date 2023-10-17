@@ -237,7 +237,12 @@ class Theme extends Html
     final public function render(Item $item, string $view = null): string
     {
         ob_start();
-        $this->display($item, $view);
+        try {
+            $this->display($item, $view);
+        } catch (\Throwable $th) {
+            ob_end_flush();
+            throw $th;
+        }
 
         return (string) ob_get_clean();
     }
