@@ -32,7 +32,7 @@ abstract class Choice extends Element
     /**
      * La liste des options disponibles.
      *
-     * @var array<string,string>|array<int,array<string,string>>|callable|string
+     * @var array<int|string,string>|array<int,array<int|string,string>>|callable|string
      */
     protected $options = [];
 
@@ -61,7 +61,7 @@ abstract class Choice extends Element
      * utiliser le contrôle EntryPicker qui supporte les requêtes ajax et n'injecte pas la totalité des options
      * possibles dans le code de la page.
      *
-     * @param array<string,string>|array<int,array<string,string>>|callable|string $options la liste des options disponibles
+     * @param array<int|string,string>|array<int,array<int|string,string>>|callable|string $options la liste des options disponibles
      *
      * @throws InvalidArgumentException si les options indiquées ne sont pas valides
      */
@@ -79,7 +79,7 @@ abstract class Choice extends Element
     /**
      * Retourne la liste des options disponibles.
      *
-     * @return array<string,string>|array<int,array<string,string>>|callable|string
+     * @return array<int|string,string>|array<int,array<int|string,string>>|callable|string
      */
     final public function getOptions()
     {
