@@ -44,7 +44,7 @@ class Select extends Choice
      *
      * @throws InvalidArgumentException si $firstOption ets invalide
      */
-    final public function setFirstOption($firstOption = true): static
+    final public function setFirstOption(bool|string|array $firstOption = true): static
     {
         switch (true) {
             case false === $firstOption:
@@ -60,8 +60,8 @@ class Select extends Choice
                     throw $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
                 }
                 break;
-            default:
-                throw $this->invalidArgument('%s: invalid firstOption, expected true, false, string or array.');
+            // default:
+            //     throw $this->invalidArgument('%s: invalid firstOption, expected true, false, string or array.');
         }
         $this->firstOption = $firstOption;
 
@@ -87,7 +87,7 @@ class Select extends Choice
     final protected function getControlName(): string
     {
         $name = parent::getControlName();
-        if ($this->hasAttribute('multiple')) {
+        if ('' !== $name && $this->hasAttribute('multiple')) {
             $name .= '[]';
         }
 
