@@ -65,15 +65,28 @@ abstract class Choice extends Element
      *
      * @throws InvalidArgumentException si les options indiquées ne sont pas valides
      */
-    final public function setOptions($options): static
+    final public function setOptions(array|callable|string $options): static
     {
-        if (is_array($options) || is_string($options) || is_callable($options)) {
-            $this->options = $options;
+        switch (true) {
+            case is_callable($options):
+                break;
 
-            return $this;
+            case is_string($options):
+                if (2 !== count(array_filter(explode(':', $options), 'is_string'))) {
+                    throw $this->invalidArgument('%s: invalid lookup (%s)', gettype($options));
+                }
+                break;
+
+            case is_array($options):
+                if (count($options) > 0 && !is_string(reset($options)) && !is_array(reset($options))) {
+                    throw $this->invalidArgument('%s: invalid options (%s)', gettype($options));
+                }
+                break;
         }
 
-        throw $this->invalidArgument('%s: invalid options (%s)', gettype($options));
+        $this->options = $options;
+
+        return $this;
     }
 
     /**
@@ -81,7 +94,7 @@ abstract class Choice extends Element
      *
      * @return array<int|string,string>|array<int,array<int|string,string>>|callable|string
      */
-    final public function getOptions()
+    final public function getOptions(): array|callable|string
     {
         return $this->options;
     }
