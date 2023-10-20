@@ -11,28 +11,25 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use InvalidArgumentException;
-use WP_UnitTestCase;
-use Docalist\Forms\Item;
+use Docalist\Forms\Container;
 use Docalist\Forms\Element;
 use Docalist\Forms\Input;
-use Docalist\Forms\Container;
+use Docalist\Forms\Item;
 use Docalist\Forms\Select;
-use Docalist\Forms\Textarea;
 use Docalist\Forms\Tag;
+use Docalist\Forms\Textarea;
+use Docalist\Tests\DocalistTestCase;
+use InvalidArgumentException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class ContainerTest extends WP_UnitTestCase
+class ContainerTest extends DocalistTestCase
 {
     /**
      * Crée un container.
-     *
-     * @return Container
      */
-    protected function getContainer()
+    protected function getContainer(): Container
     {
         return new Container();
     }
@@ -40,9 +37,9 @@ class ContainerTest extends WP_UnitTestCase
     /**
      * Retourne un tableau contenant trois items.
      *
-     * @return Item
+     * @return array<Item>
      */
-    protected function getItems()
+    protected function getItems(): array
     {
         return [
             new Input('name'),
@@ -52,7 +49,7 @@ class ContainerTest extends WP_UnitTestCase
         ];
     }
 
-    public function testAdd()
+    public function testAdd(): void
     {
         $items = $this->getItems();
         $container = $this->getContainer();
@@ -71,7 +68,7 @@ class ContainerTest extends WP_UnitTestCase
     /**
      * Teste les références circulaires.
      */
-    public function testAddCircular1()
+    public function testAddCircular1(): void
     {
         $container = $this->getContainer();
 
@@ -84,7 +81,7 @@ class ContainerTest extends WP_UnitTestCase
     /**
      * Teste les références circulaires.
      */
-    public function testAddCircular2()
+    public function testAddCircular2(): void
     {
         $container1 = $this->getContainer();
         $container2 = $this->getContainer();
@@ -99,7 +96,7 @@ class ContainerTest extends WP_UnitTestCase
         $container3->add($container1);
     }
 
-    public function testAddItems()
+    public function testAddItems(): void
     {
         $items = $this->getItems();
         $container = $this->getContainer();
@@ -118,12 +115,13 @@ class ContainerTest extends WP_UnitTestCase
         }
     }
 
-    public function testRemove()
+    public function testRemove(): void
     {
         $items = $this->getItems();
 
         // Suppression par instance
-        $container = $this->getContainer()->addItems($items);
+        $container = $this->getContainer();
+        $container->addItems($items);
         $this->assertSame(count($items), $container->count());
 
         $nb = count($items);
@@ -151,10 +149,11 @@ class ContainerTest extends WP_UnitTestCase
         }
     }
 
-    public function testRemoveAll()
+    public function testRemoveAll(): void
     {
         $items = $this->getItems();
-        $container = $this->getContainer()->addItems($items);
+        $container = $this->getContainer();
+        $container->addItems($items);
         $this->assertSame(count($items), $container->count());
 
         $container->removeAll();
@@ -166,16 +165,24 @@ class ContainerTest extends WP_UnitTestCase
         }
     }
 
-    // testHas : déjà utilisé plusieurs fois dans les autres tests
+    public function testHasItems(): void
+    {
+        $container = $this->getContainer();
+        $this->assertFalse($container->hasItems());
 
-    public function testGetItems()
+        $container->addItems($this->getItems());
+        $this->assertTrue($container->hasItems());
+    }
+
+    public function testGetItems(): void
     {
         $items = $this->getItems();
-        $container = $this->getContainer()->addItems($items);
+        $container = $this->getContainer();
+        $container->addItems($items);
         $this->assertSame($items, $container->getItems());
     }
 
-    public function testSetItems()
+    public function testSetItems(): void
     {
         $items = $this->getItems();
         $container = $this->getContainer();
@@ -194,7 +201,7 @@ class ContainerTest extends WP_UnitTestCase
         }
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $items = $this->getItems();
         $container = $this->getContainer()->setItems($items);
@@ -202,7 +209,7 @@ class ContainerTest extends WP_UnitTestCase
         $this->assertSame(count($items), $container->count());
     }
 
-    public function testIterator()
+    public function testIterator(): void
     {
         $items = $this->getItems();
         $container = $this->getContainer()->setItems($items);
@@ -210,4 +217,11 @@ class ContainerTest extends WP_UnitTestCase
         $this->assertInstanceOf('ArrayIterator', $container->getIterator());
         $this->assertSame($items, iterator_to_array($container->getIterator()));
     }
+
+    public function testIsLabelable(): void
+    {
+        $container = $this->getContainer();
+        $this->assertFalse($this->callNonPublic($container, 'isLabelable'));
+    }
+
 }

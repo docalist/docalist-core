@@ -11,31 +11,37 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use WP_UnitTestCase;
 use Docalist\Forms\Container;
-use Docalist\Type\Text;
-use Docalist\Type\Composite;
-use Docalist\Type\Collection;
+use Docalist\Forms\Element;
 use Docalist\Schema\Schema;
+use Docalist\Tests\DocalistTestCase;
+use Docalist\Type\Collection;
+use Docalist\Type\Composite;
+use Docalist\Type\Text;
 use InvalidArgumentException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class ElementTest extends WP_UnitTestCase
+class ElementTest extends DocalistTestCase
 {
     /**
-     * Crée un élément de formulaire (mock).
-     *
-     * @return ElementMock
+     * Crée un élément.
      */
-    protected function getElement()
+    protected function getElement(string $name = ''): ElementMock
     {
-        return new ElementMock();
-//         return (new ReflectionClass('Docalist\Tests\Forms\ElementMock'))
-//             ->newInstanceArgs(func_get_args());
-//        return $this->getMockForAbstractClass('Docalist\Forms\Element', func_get_args());
+        return new ElementMock($name);
+        // return new class($name) extends Element {
+        //     public function getControlName(): string
+        //     {
+        //         return parent::getControlName();
+        //     }
+
+        //     public function setOccurence(int|string $occurence): void
+        //     {
+        //         parent::setOccurence($occurence);
+        //     }
+        // };
     }
 
     /**
@@ -43,90 +49,48 @@ class ElementTest extends WP_UnitTestCase
      *
      * @return Container
      */
-    protected function getContainer()
+    protected function getContainer(string $name = ''): Container
     {
-        return new Container();
-//        return $this->getMockForAbstractClass('Docalist\Forms\Container', func_get_args());
+        return new Container($name);
     }
 
-    public function testGetSetName()
+    public function testGetSetName(): void
     {
         $element = $this->getElement();
-        $this->assertNull($element->getName());
+        $this->assertSame('', $element->getName());
 
         $element->setName('login');
         $this->assertSame('login', $element->getName());
 
-        $element->setName(null);
-        $this->assertNull($element->getName());
-
         $element->setName('');
-        $this->assertNull($element->getName()); // '' a été changé en null
-
-        $element->setName(false);
-        $this->assertNull($element->getName()); // false a été changé en null
+        $this->assertSame('', $element->getName());
     }
 
-    /**
-     * Teste setName avec un entier.
-     */
-    public function testSetBadName1()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid name');
-
-        $this->getElement()->setName(12);
-    }
-
-    /**
-     * Teste setName avec un tableau.
-     */
-    public function testSetBadName2()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid name');
-
-        $this->getElement()->setName(['login']);
-    }
-
-
-    public function testGetSetLabel()
+    public function testGetSetLabel(): void
     {
         $element = $this->getElement();
-        $this->assertNull($element->getLabel());
+        $this->assertSame('', $element->getLabel());
 
         $element->setLabel('login');
         $this->assertSame('login', $element->getLabel());
 
-        $element->setLabel(null);
-        $this->assertNull($element->getLabel());
-
         $element->setLabel('');
-        $this->assertNull($element->getLabel()); // '' a été changé en null
-
-        $element->setLabel(false);
-        $this->assertNull($element->getLabel()); // false a été changé en null
+        $this->assertSame('', $element->getLabel());
     }
 
-    public function testGetSetDescription()
+    public function testGetSetDescription(): void
     {
         $element = $this->getElement();
-        $this->assertNull($element->getDescription());
+        $this->assertSame('', $element->getDescription());
 
         $element->setDescription('login');
         $this->assertSame('login', $element->getDescription());
 
-        $element->setDescription(null);
-        $this->assertNull($element->getDescription());
-
         $element->setDescription('');
-        $this->assertNull($element->getDescription()); // '' a été changé en null
-
-        $element->setDescription(false);
-        $this->assertNull($element->getDescription()); // false a été changé en null
+        $this->assertSame('', $element->getDescription());
     }
 
-    public function testGetSetIsRepeatable()
+    public function testGetSetIsRepeatable(): void
     {
         $element = $this->getElement();
         $this->assertNull($element->getRepeatable());
@@ -148,27 +112,25 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste le binding d'un champ monovalué avec un type php.
      */
-    public function testBindMonoWithPhpScalar()
+    public function testBindMonoWithPhpScalar(): void
     {
         // Crée un élément
         $element = $this->getElement();
 
-        // Fait le bind et vérifie que ça retourne $this
-        $this->assertSame($element, $element->bind('daniel'));
-
-        // Vérifie que data a été correctement initialisé
+        // Fait le bind et vérifie que data a été correctement initialisé
+        $element->bind('daniel');
         $this->assertSame('daniel', $element->getData());
 
         // Vérifie que les propriétés n'ont pas été modifiées
         $this->assertNull($element->getRepeatable());
-        $this->assertNull($element->getLabel());
-        $this->assertNull($element->getDescription());
+        $this->assertSame('', $element->getLabel());
+        $this->assertSame('', $element->getDescription());
     }
 
     /**
      * Teste le binding d'un champ monovalué avec la valeur null.
      */
-    public function testBindMonoWithNull()
+    public function testBindMonoWithNull(): void
     {
         // Crée un élément
         $element = $this->getElement();
@@ -177,22 +139,20 @@ class ElementTest extends WP_UnitTestCase
         // $form->expects($this->once())->method('clear');
         // ne marche pas ?
 
-        // Fait le bind et vérifie que ça retourne $this
-        $this->assertSame($element, $element->bind(null));
-
-        // Vérifie que data vaut null
+        // Fait le bind et vérifie que data vaut null
+        $element->bind(null);
         $this->assertSame(null, $element->getData());
 
         // Vérifie que les propriétés n'ont pas été modifiées
         $this->assertNull($element->getRepeatable());
-        $this->assertNull($element->getLabel());
-        $this->assertNull($element->getDescription());
+        $this->assertSame('', $element->getLabel());
+        $this->assertSame('', $element->getDescription());
     }
 
     /**
      * Teste le binding d'un champ monovalué avec un tableau.
      */
-    public function testBindMonoWithArray()
+    public function testBindMonoWithArray(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('expected scalar');
@@ -201,35 +161,22 @@ class ElementTest extends WP_UnitTestCase
     }
 
     /**
-     * Teste le binding d'un champ monovalué avec un objet.
-     */
-    public function testBindMonoWithObject()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('expected scalar');
-
-        $this->getElement()->bind((object) []);
-    }
-
-    /**
      * Teste le binding d'un champ répétable avec un type php.
      */
-    public function testBindRepeatWithPhpArray()
+    public function testBindRepeatWithPhpArray(): void
     {
         // Crée un élément répétable
         $element = $this->getElement()->setRepeatable(true);
 
-        // Fait le bind et vérifie que ça retourne $this
+        // Fait le bind et vérifie que data a été correctement initialisé
         $data = ['key' => 'daniel', null, 'ménard', true];
-        $this->assertSame($element, $element->bind($data));
-
-        // Vérifie que data a été correctement initialisé
+        $element->bind($data);
         $this->assertSame($data, $element->getData());
 
         // Vérifie que les propriétés n'ont pas été modifiées
         $this->assertTrue($element->getRepeatable());
-        $this->assertNull($element->getLabel());
-        $this->assertNull($element->getDescription());
+        $this->assertSame('', $element->getLabel());
+        $this->assertSame('', $element->getDescription());
 
         // Vérifie que l'occurence a été définie
         $this->assertSame('key', $element->getOccurence());
@@ -242,7 +189,7 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste le binding d'un champ répétable avec la valeur null.
      */
-    public function testBindRepeatWithNull()
+    public function testBindRepeatWithNull(): void
     {
         // Crée un élément répétable
         $element = $this->getElement()->setRepeatable(true);
@@ -251,50 +198,46 @@ class ElementTest extends WP_UnitTestCase
         // $form->expects($this->once())->method('clear');
         // ne marche pas ?
 
-        // Fait le bind et vérifie que ça retourne $this
-        $this->assertSame($element, $element->bind(null));
-
-        // Vérifie que data vaut null
+        // Fait le bind et vérifie que data vaut null
+        $element->bind(null);
         $this->assertSame(null, $element->getData());
 
         // Vérifie que les propriétés n'ont pas été modifiées
         $this->assertTrue($element->getRepeatable());
-        $this->assertNull($element->getLabel());
-        $this->assertNull($element->getDescription());
+        $this->assertSame('', $element->getLabel());
+        $this->assertSame('', $element->getDescription());
 
         // Vérifie que l'occurence est toujours à null
         $this->assertNull($element->getOccurence());
     }
 
-    /**
-     * Teste le binding d'un champ répétable avec un scalaire.
-     */
-    public function testBindRepeatWithScalar()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('expected array');
+    // /**
+    //  * Teste le binding d'un champ répétable avec un scalaire.
+    //  */
+    // public function testBindRepeatWithScalar(): void
+    // {
+    //     $this->expectException(InvalidArgumentException::class);
+    //     $this->expectExceptionMessage('expected array');
 
-        $this->getElement()->setRepeatable(true)->bind('daniel');
-    }
+    //     $this->getElement()->setRepeatable(true)->bind('daniel');
+    // }
 
     /**
      * Teste le binding d'un champ répétable avec un tableau vide (doit stocker null).
      */
-    public function testBindRepeatWithEmptyArray()
+    public function testBindRepeatWithEmptyArray(): void
     {
         // Crée un élément répétable
         $element = $this->getElement()->setRepeatable(true);
 
-        // Fait le bind et vérifie que ça retourne $this
-        $this->assertSame($element, $element->bind([]));
-
-        // Vérifie que data a été correctement initialisé
-        $this->assertSame(null, $element->getData());
+        // Fait le bind et vérifie que data a été correctement initialisé
+        $element->bind([]);
+        $this->assertNull($element->getData());
 
         // Vérifie que les propriétés n'ont pas été modifiées
         $this->assertTrue($element->getRepeatable());
-        $this->assertNull($element->getLabel());
-        $this->assertNull($element->getDescription());
+        $this->assertSame('', $element->getLabel());
+        $this->assertSame('', $element->getDescription());
 
         // Vérifie que l'occurence est à null
         $this->assertNull($element->getOccurence());
@@ -303,7 +246,7 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste le binding d'un champ monovalué avec un scalaire Docalist sans schéma.
      */
-    public function testBindMonoWithScalar()
+    public function testBindMonoWithScalar(): void
     {
         // Crée un élément
         $element = $this->getElement();
@@ -311,21 +254,20 @@ class ElementTest extends WP_UnitTestCase
         // Crée le type docalist
         $type = new Text('daniel');
 
-        // Fait le bind et vérifie que ça retourne $this
-        $this->assertSame($element, $element->bind($type));
+        // Fait le bind et vérifie que data a été correctement initialisé
+        $element->bind($type);
+        $this->assertSame($type->getPhpValue(), $element->getData());
 
         // Vérifie que les propriétés n'ont pas été modifiées
-        $this->assertNull($element->getLabel());
-        $this->assertNull($element->getDescription());
+        $this->assertSame('', $element->getLabel());
+        $this->assertSame('', $element->getDescription());
 
         // Par contre, repeat est passé à false
         $this->assertFalse($element->getRepeatable());
 
-        // Vérifie que data a été correctement initialisé
-        $this->assertSame($type->getPhpValue(), $element->getData());
-
         // Si les propriétés étaient déjà initialisées, elle ne sont pas modifiées
-        $element = $this->getElement()->setLabel('lbl')->setDescription('dsc')->bind($type);
+        $element = $this->getElement()->setLabel('lbl')->setDescription('dsc');
+        $element->bind($type);
         $this->assertSame('lbl', $element->getLabel());
         $this->assertSame('dsc', $element->getDescription());
         $this->assertFalse($element->getRepeatable());
@@ -334,7 +276,7 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste le binding d'un champ monovalué avec une Collection.
      */
-    public function testBindMonoWithCollection()
+    public function testBindMonoWithCollection(): void
     {
         $data = new Collection();
 
@@ -347,7 +289,7 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste le binding d'un champ monovalué avec un Composite.
      */
-    public function testBindMonoWithComposite()
+    public function testBindMonoWithComposite(): void
     {
         $data = new Composite();
 
@@ -360,7 +302,7 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste le binding d'un champ monovalué avec un scalaire Docalist possédant un schéma.
      */
-    public function testBindMonoWithScalarSchema()
+    public function testBindMonoWithScalarSchema(): void
     {
         // Crée un élément
         $element = $this->getElement();
@@ -369,10 +311,8 @@ class ElementTest extends WP_UnitTestCase
         $schema = new Schema(['label' => 'lbl', 'description' => 'dsc']);
         $type = new Text('daniel', $schema);
 
-        // Fait le bind et vérifie que ça retourne $this
-        $this->assertSame($element, $element->bind($type));
-
-        // Vérifie que data a été correctement initialisé
+        // Fait le bind et vérifie que data a été correctement initialisé
+        $element->bind($type);
         $this->assertSame($type->getPhpValue(), $element->getData());
 
         // Vérifie que les propriétés ont été initialisées à partir du schéma
@@ -384,7 +324,7 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste le binding d'un champ monovalué avec un scalaire Docalist possédant un schéma.
      */
-    public function testBindRepeatWithCollectionSchema()
+    public function testBindRepeatWithCollectionSchema(): void
     {
         // Crée un élément répétable
         $element = $this->getElement()->setRepeatable(true);
@@ -393,10 +333,8 @@ class ElementTest extends WP_UnitTestCase
         $schema = new Schema(['label' => 'lbl', 'description' => 'dsc']);
         $type = new Collection(['daniel', 'ménard'], $schema);
 
-        // Fait le bind et vérifie que ça retourne $this
-        $this->assertSame($element, $element->bind($type));
-
-        // Vérifie que data a été correctement initialisé
+        // Fait le bind et vérifie que data a été correctement initialisé
+        $element->bind($type);
         $this->assertSame($type->getPhpValue(), $element->getData());
 
         // Vérifie que les propriétés ont été initialisées à partir du schéma
@@ -408,14 +346,14 @@ class ElementTest extends WP_UnitTestCase
         $this->assertSame(0, $element->getOccurence());
     }
 
-    public function testGetSetOccurence()
+    public function testGetSetOccurence(): void
     {
         // Crée un élément répétable
         $element = $this->getElement()->setRepeatable(true);
 
-        // Fait le bind et vérifie que ça retourne $this
+        // Fait le bind et vérifie que data a été correctement initialisé
         $data = ['firstname' => 'daniel', 'name' => 'ménard'];
-        $this->assertSame($element, $element->bind($data));
+        $element->bind($data);
 
         // Vérifie que data a été correctement initialisé
         $this->assertSame($data, $element->getData());
@@ -424,18 +362,18 @@ class ElementTest extends WP_UnitTestCase
         $this->assertSame('firstname', $element->getOccurence());
 
         // Modifie l'occurence
-        $this->assertSame($element, $element->setOccurence('name'));
+        $element->setOccurence('name');
         $this->assertSame('name', $element->getOccurence());
 
         // Modifie l'occurence
-        $this->assertSame($element, $element->setOccurence('firstname'));
+        $element->setOccurence('firstname');
         $this->assertSame('firstname', $element->getOccurence());
     }
 
     /**
      * Teste setOccurence sur un élément non répétable.
      */
-    public function testSetOccurenceOnNonRepeat()
+    public function testSetOccurenceOnNonRepeat(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('not repeatable');
@@ -446,7 +384,7 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste setOccurence avec des données à null (bind non appellé par exemple).
      */
-    public function testSetOccurenceOnNullData()
+    public function testSetOccurenceOnNullData(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('do not have data');
@@ -457,7 +395,7 @@ class ElementTest extends WP_UnitTestCase
     /**
      * Teste setOccurence avec une clé inexistante.
      */
-    public function testSetInexistantOccurence()
+    public function testSetInexistantOccurence(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('do not have data');
@@ -465,7 +403,7 @@ class ElementTest extends WP_UnitTestCase
         $this->getElement()->setRepeatable(true)->bind(['a'])->setOccurence(12);
     }
 
-    public function testGetControlName()
+    public function testGetControlName(): void
     {
         // 1. élément sans parent
 
@@ -494,7 +432,6 @@ class ElementTest extends WP_UnitTestCase
         $element->setOccurence('second');
         $this->assertSame('tags[second]', $element->getControlName());
 
-
         // 2. Avec parent sans nom
 
         $element = $this->getElement()->setParent($this->getContainer());
@@ -521,7 +458,6 @@ class ElementTest extends WP_UnitTestCase
         // Avec nom, multivalué, après changement occurence
         $element->setOccurence('second');
         $this->assertSame('tags[second]', $element->getControlName());
-
 
         // 3. Avec parent nommé
 
@@ -551,7 +487,6 @@ class ElementTest extends WP_UnitTestCase
         $element->setOccurence('second');
         $this->assertSame('parent[tags][second]', $element->getControlName());
 
-
         // 4. Avec parent nommé et répétable, sans occurence
 
         $container = $this->getContainer()->setName('parent')->setRepeatable(true);
@@ -580,10 +515,9 @@ class ElementTest extends WP_UnitTestCase
         $element->setOccurence('second');
         $this->assertSame('parent[][tags][second]', $element->getControlName());
 
-
         // 5. Avec parent nommé et répétable, avec occurence
 
-        $container = $this->getContainer()->setName('parent')->setRepeatable(true)->bind(['a' => [], 'b' => []]);
+        $container = $this->getContainer('parent')->setName('parent')->setRepeatable(true)->bind(['a' => [], 'b' => []]);
         $element = $this->getElement()->setParent($container);
 
         // Sans nom, monovalué
@@ -609,4 +543,76 @@ class ElementTest extends WP_UnitTestCase
         $element->setOccurence('second');
         $this->assertSame('parent[a][tags][second]', $element->getControlName());
     }
+
+    public function testTequiredModes(): void
+    {
+        $element = $this->getElement();
+
+        $modes = $element->requiredModes();
+        $this->assertIsArray($modes);
+    }
+
+    public function testGetSetTequired(): void
+    {
+        $element = $this->getElement();
+
+        $this->assertSame('', $element->getRequired());
+
+        $modes = $element->requiredModes();
+        foreach ($modes as $mode => $label) {
+            $element->setRequired($mode);
+            $this->assertSame($mode, $element->getRequired());
+        }
+    }
+
+    public function testSetTequiredBadMode(): void
+    {
+        $element = $this->getElement();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid required mode');
+
+        $element->setRequired('bad mode');
+    }
+
+    public function testGenerateId(): void
+    {
+        $element = $this->getElement('');
+        $this->assertSame('elementmock', $this->callNonPublic($element, 'generateID'));
+
+        $element = $this->getElement('mytest');
+        $this->assertSame('mytest', $this->callNonPublic($element, 'generateID'));
+
+        $element = $this->getElement('mytest');
+        $element->setRepeatable(true);
+        $this->assertSame('mytest', $this->callNonPublic($element, 'generateID'));
+
+        $group1 = $this->getContainer('group1');
+        $group1->add($element);
+        $this->assertSame('group1-mytest', $this->callNonPublic($element, 'generateID'));
+
+        $group2 = $this->getContainer('group2');
+        $group2->add($group1);
+        $this->assertSame('group2-group1-mytest', $this->callNonPublic($element, 'generateID'));
+    }
+
+    public function testGetOccurences(): void
+    {
+        $element = $this->getElement();
+        $this->assertSame([null], $this->callNonPublic($element, 'getOccurences'));
+
+        $element->setRepeatable(true);
+        $this->assertSame([null], $this->callNonPublic($element, 'getOccurences'));
+
+        $element = $this->getElement();
+        $element->bind('coucou');
+        $this->assertSame(['coucou'], $this->callNonPublic($element, 'getOccurences'));
+
+        $element = $this->getElement();
+        $element->setRepeatable(true);
+        $element->bind('coucou');
+        $this->assertSame(['coucou'], $this->callNonPublic($element, 'getOccurences'));
+
+    }
+
 }

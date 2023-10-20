@@ -11,18 +11,23 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Input;
+use Docalist\Forms\Hidden;
 use Docalist\Tests\DocalistTestCase;
 
 /**
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class InputTest extends DocalistTestCase
+class HiddenTest extends DocalistTestCase
 {
-    public function testConstruct(): void
+    public function testHasLayout(): void
     {
-        $input = new Input();
+        $this->assertFalse($this->callNonPublic(new Hidden(), 'hasLayout'));
+    }
 
-        $this->assertSame(['type' => 'text'], $input->getAttributes());
+    public function testGetAttributes(): void
+    {
+        $hidden = new Hidden();
+
+        $this->assertSame(['type' => 'hidden'], $hidden->getAttributes());
     }
 }

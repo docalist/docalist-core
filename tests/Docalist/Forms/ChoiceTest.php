@@ -11,33 +11,69 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use WP_UnitTestCase;
 use Docalist\Forms\Choice;
+use Docalist\Forms\Theme;
+use Docalist\Tests\DocalistTestCase;
+use InvalidArgumentException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class ChoiceTest extends WP_UnitTestCase
+class ChoiceTest extends DocalistTestCase
 {
     /**
      * Crée un élément.
-     *
-     * @return Choice
      */
-    protected function getElement()
+    protected function getChoice(string $name = ''): Choice
     {
-        return $this->getMockForAbstractClass(Choice::class, func_get_args());
+        return new class($name) extends Choice {
+            protected function displayOption(Theme $theme, string $value, string $label, bool $selected, bool $invalid): void
+            {
+            }
+
+            protected function startOptionGroup(string $label, Theme $theme): void
+            {
+            }
+
+            protected function endOptionGroup(Theme $theme): void
+            {
+            }
+        };
     }
 
-    public function testGetSetOptions()
+    public function testGetSetOptions(): void
     {
-        $element = $this->getElement();
-        $this->assertSame([], $element->getOptions());
+        $choice = $this->getChoice();
+
+        $this->assertSame([], $choice->getOptions());
 
         $options = ['a' => 'A', 'B', 'Group' => ['C', 'D']];
+        $choice->setOptions($options);
+        $this->assertSame($options, $choice->getOptions());
 
-        $element->setOptions($options);
-        $this->assertSame($options, $element->getOptions());
+        $options = fn() => ['a' => 'A', 'B', 'Group' => ['C', 'D']];
+        $choice->setOptions($options);
+        $this->assertSame($options, $choice->getOptions());
+
+        $options = 'table:lookup';
+        $choice->setOptions($options);
+        $this->assertSame($options, $choice->getOptions());
+    }
+
+    public function testBadOptions(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid options');
+
+        // @phpstan-ignore-next-line
+        $this->getChoice()->setOptions([$this]);
+    }
+
+    public function testBadLookup(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid lookup');
+
+        $this->getChoice()->setOptions('bad:table:lookup');
     }
 }

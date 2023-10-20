@@ -11,36 +11,36 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use WP_UnitTestCase;
 use Docalist\Forms\Comment;
+use Docalist\Tests\DocalistTestCase;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class CommentTest extends WP_UnitTestCase
+class CommentTest extends DocalistTestCase
 {
-    public function commentsProvider()
+    /** @return  array<int, array<string>> */
+    public static function commentsProvider(): array
     {
         return [
-            ['>'        , '<!-- > -->'], // must not start with a ">"
-            ['->'       , '<!-- -> -->'], // must not start with a "->"
-            ['--'       , '<!-- - - -->'], // must not contain "--"
-            ['-'        , '<!-- - -->'], // must not end with "-".
+            ['>', '<!-- > -->'], // must not start with a ">"
+            ['->', '<!-- -> -->'], // must not start with a "->"
+            ['--', '<!-- - - -->'], // must not contain "--"
+            ['-', '<!-- - -->'], // must not end with "-".
 
-            [''         , '<!-- -->'],
-            ['test'     , '<!-- test -->'],
+            ['', '<!-- -->'],
+            ['test', '<!-- test -->'],
 
-            ['-->'      , '<!-- - -> -->'],
-            ['<!--'     , '<!-- <!- - -->'],
-            ['<!---->'  , '<!-- <!- - - -> -->'],
+            ['-->', '<!-- - -> -->'],
+            ['<!--', '<!-- <!- - -->'],
+            ['<!---->', '<!-- <!- - - -> -->'],
         ];
     }
 
     /**
      * @dataProvider commentsProvider
      */
-    public function testDisplay($comment, $result)
+    public function testDisplay(string $comment, string $result): void
     {
         $comment = new Comment($comment);
         $this->assertSame($result, $comment->render());

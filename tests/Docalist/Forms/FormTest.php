@@ -11,16 +11,15 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use WP_UnitTestCase;
 use Docalist\Forms\Form;
+use Docalist\Tests\DocalistTestCase;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class FormTest extends WP_UnitTestCase
+class FormTest extends DocalistTestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $form = new Form();
         $this->assertSame(['action' => '', 'method' => 'post'], $form->getAttributes());

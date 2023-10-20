@@ -11,18 +11,16 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Input;
+use Docalist\Forms\Submit;
 use Docalist\Tests\DocalistTestCase;
 
 /**
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class InputTest extends DocalistTestCase
+class SubmitTest extends DocalistTestCase
 {
-    public function testConstruct(): void
+    public function testGetType(): void
     {
-        $input = new Input();
-
-        $this->assertSame(['type' => 'text'], $input->getAttributes());
+        $this->assertSame('submit', (new Submit())->getAttribute('type'));
     }
 }

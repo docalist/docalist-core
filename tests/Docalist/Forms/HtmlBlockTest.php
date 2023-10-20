@@ -11,31 +11,28 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use WP_UnitTestCase;
-use Docalist\Forms\HtmlBlock;
 use Docalist\Forms\Container;
+use Docalist\Forms\HtmlBlock;
+use Docalist\Tests\DocalistTestCase;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class HtmlBlockTest extends WP_UnitTestCase
+class HtmlBlockTest extends DocalistTestCase
 {
     /**
      * Crée un containeur (mock).
-     *
-     * @return Container
      */
-    protected function getContainer()
+    protected function getContainer(string $name = ''): Container
     {
-        return $this->getMockForAbstractClass(Container::class, func_get_args());
+        return new Container($name);
     }
 
-    public function testGetSetContent()
+    public function testGetSetContent(): void
     {
         $html = new HtmlBlock();
         $this->assertNull($html->getParent());
-        $this->assertNull($html->getContent());
+        $this->assertSame('', $html->getContent());
 
         $html = new HtmlBlock('test');
         $this->assertNull($html->getParent());
@@ -43,11 +40,11 @@ class HtmlBlockTest extends WP_UnitTestCase
 
         $html = new HtmlBlock('');
         $this->assertNull($html->getParent());
-        $this->assertNull($html->getContent()); // la chaine vide a été transformée en null
+        $this->assertSame('', $html->getContent()); // la chaine vide a été transformée en null
 
-        $html = new HtmlBlock(false);
-        $this->assertNull($html->getParent());
-        $this->assertNull($html->getContent()); // false a été transformée en null
+        // $html = new HtmlBlock(false);
+        // $this->assertNull($html->getParent());
+        // $this->assertNull($html->getContent()); // false a été transformée en null
 
         $parent = $this->getContainer('parent');
         $html = new HtmlBlock('test', $parent);
@@ -55,12 +52,12 @@ class HtmlBlockTest extends WP_UnitTestCase
         $this->assertSame($parent, $html->getParent());
 
         $parent = $this->getContainer('parent');
-        $html = new HtmlBlock(null, $parent);
-        $this->assertNull($html->getContent());
+        $html = new HtmlBlock('', $parent);
+        $this->assertSame('', $html->getContent());
         $this->assertSame($parent, $html->getParent());
     }
 
-    public function testDisplay()
+    public function testDisplay(): void
     {
         $html = new HtmlBlock('<p>Hello!</p>');
         $this->assertSame($html->getContent(), $html->render());

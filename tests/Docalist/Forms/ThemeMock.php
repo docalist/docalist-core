@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Theme;
 use Docalist\Forms\Item;
+use Docalist\Forms\Theme;
 
 /**
  * Classe héritée de Theme pour permettre de tester l'API interne.
@@ -21,16 +21,21 @@ use Docalist\Forms\Item;
  */
 class ThemeMock extends Theme
 {
-    public $lastDisplay;
+    /**
+     * @var mixed[]
+     */
+    public array $lastDisplay;
 
     public function __construct()
     {
         parent::__construct(__DIR__);
     }
 
-    public function display(Item $item, $view = null, array $args = [])
+    public function display(Item $item, $view = null, array $args = []): static
     {
         $this->lastDisplay = func_get_args();
         echo 'AbcXyz';
+
+        return $this;
     }
 }

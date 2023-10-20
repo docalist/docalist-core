@@ -20,17 +20,17 @@ use Docalist\Forms\Element;
  */
 class ElementMock extends Element
 {
-    public function setOccurence($occurence)
+    public function setOccurence(int|string $occurence): void
     {
-        return parent::setOccurence($occurence);
+        parent::setOccurence($occurence);
     }
 
-    public function getOccurence()
-    {
-        return parent::getOccurence();
-    }
+    // public function getOccurence()
+    // {
+    //     return parent::getOccurence();
+    // }
 
-    public function getControlName()
+    public function getControlName(): string
     {
         return parent::getControlName();
     }

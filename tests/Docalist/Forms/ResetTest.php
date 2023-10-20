@@ -11,18 +11,16 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Input;
+use Docalist\Forms\Reset;
 use Docalist\Tests\DocalistTestCase;
 
 /**
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class InputTest extends DocalistTestCase
+class ResetTest extends DocalistTestCase
 {
-    public function testConstruct(): void
+    public function testGetType(): void
     {
-        $input = new Input();
-
-        $this->assertSame(['type' => 'text'], $input->getAttributes());
+        $this->assertSame('reset', (new Reset())->getAttribute('type'));
     }
 }

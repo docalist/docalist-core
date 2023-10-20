@@ -11,18 +11,22 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Input;
+use Docalist\Forms\Checkbox;
+use Docalist\Forms\Fieldset;
 use Docalist\Tests\DocalistTestCase;
 
 /**
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class InputTest extends DocalistTestCase
+class FieldsetTest extends DocalistTestCase
 {
-    public function testConstruct(): void
+    public function testHasLayout(): void
     {
-        $input = new Input();
+        $this->assertFalse($this->callNonPublic(new Fieldset(), 'hasLayout'));
+    }
 
-        $this->assertSame(['type' => 'text'], $input->getAttributes());
+    public function testHasDescriptionBlock(): void
+    {
+        $this->assertFalse($this->callNonPublic(new Fieldset(), 'hasDescriptionBlock'));
     }
 }

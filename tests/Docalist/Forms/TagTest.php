@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
+use Docalist\Tests\DocalistTestCase;
 use WP_UnitTestCase;
 use Docalist\Forms\Tag;
 use InvalidArgumentException;
@@ -20,9 +21,9 @@ use Docalist\Forms\Theme;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class TagTest extends WP_UnitTestCase
+class TagTest extends DocalistTestCase
 {
-    public function testGetSetTag()
+    public function testGetSetTag(): void
     {
         $tag = new Tag('p', 'hello');
         $this->assertSame('p', $tag->getTag());
@@ -56,21 +57,23 @@ class TagTest extends WP_UnitTestCase
         $this->assertSame('required error', $tag->getAttribute('class'));
     }
 
-    public function testSetContent()
+    public function testSetContent(): void
     {
         $tag = new Tag('h1', 'titre');
         $this->assertSame('titre', $tag->getContent());
 
         $tag = new Tag('h1', '');
-        $this->assertNull($tag->getContent());
+        $this->assertSame('', $tag->getContent());
 
-        $tag = new Tag('h1', false);
-        $this->assertNull($tag->getContent());
+        $tag = new Tag('h1');
+        $this->assertSame('', $tag->getContent());
     }
 
-    public function testDisplay()
+    public function testDisplay(): void
     {
-        $theme = Theme::get('base')->setDialect('xhtml')->setIndent(false);
+        $theme = Theme::get('base');
+        $theme->setDialect('xhtml');
+        $theme->setIndent(false);
 
         $tag = new Tag('p');
         $this->assertSame('<p></p>', $tag->render($theme));
@@ -94,7 +97,7 @@ class TagTest extends WP_UnitTestCase
     /**
      * Vérifie qu'une exception est générée avec un nom de tag incorrect.
      */
-    public function testInvalidTagName()
+    public function testInvalidTagName(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Incorrect tag');

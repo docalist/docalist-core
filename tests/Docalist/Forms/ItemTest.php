@@ -11,39 +11,34 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use WP_UnitTestCase;
-use Docalist\Forms\Item;
-use Docalist\Forms\Input;
 use Docalist\Forms\Container;
 use Docalist\Forms\EntryPicker;
+use Docalist\Forms\Input;
+use Docalist\Forms\Item;
+use Docalist\Tests\DocalistTestCase;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class ItemTest extends WP_UnitTestCase
+class ItemTest extends DocalistTestCase
 {
     /**
-     * Crée un item (mock).
-     *
-     * @return Item
+     * Crée un item.
      */
-    protected function getItem()
+    protected function getItem(Container $parent = null): Item
     {
-        return $this->getMockForAbstractClass(Item::class, func_get_args());
+        return new class($parent) extends Item {};
     }
 
     /**
-     * Crée un containeur (mock).
-     *
-     * @return Container
+     * Crée un containeur .
      */
-    protected function getContainer()
+    protected function getContainer(string $name = ''): Container
     {
-        return new Container();
+        return new Container($name);
     }
 
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $item = $this->getItem();
         $this->assertNull($item->getParent());
@@ -53,17 +48,36 @@ class ItemTest extends WP_UnitTestCase
         $this->assertSame($parent, $item->getParent());
     }
 
-    public function testGetType()
+    public function testHasLayout(): void
     {
-        // On ne peut pas utiliser getElement() car ça retourne un mock avec un nom de classe
-        // de la forme Mock_Element_xxx, ce qui fait que getType() ne retourne pas 'element'
+        $this->assertFalse($this->callNonPublic($this->getItem(), 'hasLayout'));
+    }
+
+    public function testHasLabelBlock(): void
+    {
+        $this->assertFalse($this->callNonPublic($this->getItem(), 'hasLabelBlock'));
+    }
+
+    public function testIsLabelable(): void
+    {
+        $this->assertTrue($this->callNonPublic($this->getItem(), 'isLabelable'));
+    }
+
+    public function testHasDescriptionBlock(): void
+    {
+        $this->assertFalse($this->callNonPublic($this->getItem(), 'hasDescriptionBlock'));
+    }
+
+    public function testGetType(): void
+    {
+        // On ne peut pas utiliser getItem()->getType() car ça retourne le nom de la classe anonyme
         // Comme getType() est 'final', on peut tester avec n'importe quel type de champ.
 
         $this->assertSame('input', (new Input('a'))->getType());
         $this->assertSame('entrypicker', (new EntryPicker('a'))->getType());
     }
 
-    public function testSetParent()
+    public function testSetParent(): void
     {
         $item = $this->getItem();
         $group1 = $this->getContainer('group');
@@ -79,7 +93,7 @@ class ItemTest extends WP_UnitTestCase
         $this->assertNull($item->getParent());
     }
 
-    public function testGetParentRootDepth()
+    public function testGetParentRootDepth(): void
     {
         $item = $this->getItem();
         $this->assertNull($item->getParent());
@@ -99,7 +113,7 @@ class ItemTest extends WP_UnitTestCase
         $this->assertSame(2, $item->getDepth());
     }
 
-    public function testRender()
+    public function testRender(): void
     {
         // On veut vérifier que Theme::render() est appellée quand on appelle Item::render()
 
@@ -107,5 +121,34 @@ class ItemTest extends WP_UnitTestCase
         $theme = new ThemeMock();
         $this->assertSame('AbcXyz', $item->render($theme));
         $this->assertSame($theme->lastDisplay, [$item, null]);
+    }
+
+    public function testDisplay(): void
+    {
+        // On veut vérifier que Theme::render() est appellée quand on appelle Item::render()
+
+        $item = $this->getItem();
+        $theme = new ThemeMock();
+        ob_start();
+        $item->display($theme);
+        $output = ob_get_clean();
+        $this->assertSame('AbcXyz', $output);
+        $this->assertSame($theme->lastDisplay, [$item]);
+    }
+
+    public function testGetPath(): void
+    {
+        $item = $this->getItem();
+        $this->assertSame('', $item->getPath());
+
+        $group1 = $this->getContainer('group1');
+        $group1->add($item);
+        $this->assertSame('group1', $item->getPath());
+
+        $group2 = $this->getContainer('group2');
+        $group2->add($group1);
+        $this->assertSame('group2/group1', $item->getPath());
+
+        $this->assertSame('group2»group1', $item->getPath('»'));
     }
 }

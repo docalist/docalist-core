@@ -11,16 +11,14 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms\Traits;
 
-use WP_UnitTestCase;
 use Docalist\Forms\Element;
-use Docalist\Forms\Traits\AttributesTrait;
+use Docalist\Tests\DocalistTestCase;
 use InvalidArgumentException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class AttributesTraitTest extends WP_UnitTestCase
+class AttributesTraitTest extends DocalistTestCase
 {
     /**
      * Crée un item (mock).
@@ -29,10 +27,11 @@ class AttributesTraitTest extends WP_UnitTestCase
      */
     protected function getTrait()
     {
-        return $this->getMockForTrait(AttributesTrait::class, func_get_args());
+        return new class() extends Element {};
+        // si on avait une interface AttributeTrait, on pourrait tester le trait et non pas la class Element
     }
 
-    public function testHasGetSetAttributes()
+    public function testHasGetSetAttributes(): void
     {
         $attr = ['class' => 'required', 'id' => '',  'checked' => true, 'selected' => false];
         $stored = ['class' => 'required', 'id' => '', 'checked' => true];
@@ -42,7 +41,8 @@ class AttributesTraitTest extends WP_UnitTestCase
         $this->assertSame([], $element->getAttributes());
 
         // Définit des attributs
-        $element = $this->getTrait()->setAttributes($attr);
+        $element = $this->getTrait();
+        $element->setAttributes($attr);
         $this->assertSame($stored, $element->getAttributes());
 
         // hasAttribute
@@ -88,9 +88,9 @@ class AttributesTraitTest extends WP_UnitTestCase
         $this->assertTrue($element->hasAttribute('readonly'));
         $this->assertSame('readonly', $element->getAttribute('readonly'));
 
-//         $element->setAttribute('readonly', 'any other value'); // off, méthode 4
-//         $this->assertFalse($element->hasAttribute('readonly'));
-//         $this->assertNull($element->getAttribute('readonly'));
+        //         $element->setAttribute('readonly', 'any other value'); // off, méthode 4
+        //         $this->assertFalse($element->hasAttribute('readonly'));
+        //         $this->assertNull($element->getAttribute('readonly'));
         $element->removeAttribute('readonly');
 
         $element->setAttribute('name', 'test');  // set, méthode 1
@@ -131,8 +131,7 @@ class AttributesTraitTest extends WP_UnitTestCase
         $this->assertSame([], $element->getAttributes());
     }
 
-
-    public function testGetSetHasToggleClass()
+    public function testGetSetHasToggleClass(): void
     {
         $element = $this->getTrait();
         $this->assertFalse($element->hasAttribute('class'));
@@ -190,11 +189,12 @@ class AttributesTraitTest extends WP_UnitTestCase
     /**
      * Vérifie qu'une exception est générée si la valeur de l'attribut n'est pas un scalaire.
      */
-    public function testInvalidAttributeName()
+    public function testInvalidAttributeName(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value');
 
+        // @phpstan-ignore-next-line
         $this->getTrait()->setAttribute('class', []);
     }
 }

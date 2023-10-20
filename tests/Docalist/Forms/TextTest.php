@@ -11,16 +11,16 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use WP_UnitTestCase;
 use Docalist\Forms\Text;
+use Docalist\Tests\DocalistTestCase;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class TextTest extends WP_UnitTestCase
+class TextTest extends DocalistTestCase
 {
-    public function textProvider()
+    /** @return array<array<string>> */
+    public static function textProvider(): array
     {
         return [
             ['a', 'a'],
@@ -35,7 +35,7 @@ class TextTest extends WP_UnitTestCase
     /**
      * @dataProvider textProvider
      */
-    public function testDisplay($text, $result)
+    public function testDisplay(string $text, string $result): void
     {
         $text = new Text($text);
         $this->assertSame($result, $text->render());
