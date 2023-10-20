@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
+use Docalist\Cache\ObjectCache;
 use Docalist\Type\Interfaces\Stringable;
 use Docalist\Type\Interfaces\Configurable;
 use Docalist\Type\Interfaces\Formattable;
@@ -90,8 +91,15 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     {
         $key = get_called_class();
 
+        try {
+            /** @var ?ObjectCache */
+            $cache = docalist('cache');
+        } catch (\Throwable $th) {
+            $cache = null;
+        }
+
         // Si le schéma est déjà en cache, terminé
-        if ($schema = docalist('cache')->get($key)) {
+        if (!is_null($cache) && !is_null($schema = $cache->get($key))) {
             return $schema;
         }
 
@@ -107,7 +115,9 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         $schema = new Schema($data);
 
         // Stocke le schéma en cache
-        docalist('cache')->set($key, $schema);
+        if (!is_null($cache)) {
+            $cache->set($key, $schema);
+        }
 
         // Ok
         return $schema;
