@@ -44,7 +44,7 @@ class HtmlBlock extends Item
      * @param string         $content optionnel, le contenu du bloc html
      * @param Container|null $parent  optionnel, le containeur parent de cet item
      */
-    public function __construct(string $content = '', Container $parent = null)
+    public function __construct(string $content = '', ?Container $parent = null)
     {
         parent::__construct($parent);
         $this->setContent($content);
