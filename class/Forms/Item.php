@@ -38,7 +38,7 @@ abstract class Item
      *
      * @param Container|null $parent optionnel, le containeur parent de l'item
      */
-    public function __construct(Container $parent = null)
+    public function __construct(?Container $parent = null)
     {
         if (!is_null($parent)) {
             $parent->add($this);
@@ -138,9 +138,9 @@ abstract class Item
      *
      * @return string le code html de l'item
      */
-    final public function render($theme = null): string
+    final public function render($theme = ''): string
     {
-        return Theme::get($theme)->render($this);
+        return Themes::get($theme)->render($this);
     }
 
     /**
@@ -150,7 +150,7 @@ abstract class Item
      */
     final public function display($theme = null): static
     {
-        Theme::get($theme)->display($this);
+        Themes::get($theme)->display($this);
 
         return $this;
     }
