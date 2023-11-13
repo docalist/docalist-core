@@ -20,8 +20,8 @@ use Docalist\Forms\Theme;
  */
 class BaseTheme extends Theme
 {
-    protected $styles = [];
-    protected $scripts = ['docalist-forms'];
+    protected array $styles = [];
+    protected array $scripts = ['docalist-forms'];
 
     public function __construct()
     {
