@@ -21,7 +21,7 @@ namespace Docalist\Forms;
  */
 final class Hidden extends Input
 {
-    protected $attributes = ['type' => 'hidden'];
+    protected array $attributes = ['type' => 'hidden'];
 
     /**
      * {@inheritDoc}

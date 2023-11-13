@@ -21,7 +21,7 @@ namespace Docalist\Forms;
  */
 class Submit extends Button
 {
-    protected $attributes = ['type' => 'submit'];
+    protected array $attributes = ['type' => 'submit'];
 
     // Pour un élément Button, la valeur par défaut de type est "submit", donc en théorie, inutile d'avoir
     // l'attribut type="submit". Sauf que sous IE, ça ne marche pas, donc on le génère systématiquement.

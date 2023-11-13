@@ -23,10 +23,8 @@ final class WPEditor extends Textarea
 {
     /**
      * Version simplifiée ou complète de l'éditeur.
-     *
-     * @var bool
      */
-    protected $teeny = false;
+    protected bool $teeny = false;
 
     /**
      * Indique si on utilise la version simplifiée de l'éditeur.

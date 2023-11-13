@@ -21,7 +21,7 @@ namespace Docalist\Forms;
  */
 class Button extends Element
 {
-    protected $attributes = ['type' => 'button'];
+    protected array $attributes = ['type' => 'button'];
 
     /**
      * Crée un bouton.

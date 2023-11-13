@@ -21,5 +21,5 @@ namespace Docalist\Forms;
  */
 final class Password extends Input
 {
-    protected $attributes = ['type' => 'password'];
+    protected array $attributes = ['type' => 'password'];
 }

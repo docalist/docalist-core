@@ -21,5 +21,5 @@ namespace Docalist\Forms;
  */
 class Textarea extends Element
 {
-    protected $attributes = ['rows' => 10, 'cols' => 50];
+    protected array $attributes = ['rows' => 10, 'cols' => 50];
 }

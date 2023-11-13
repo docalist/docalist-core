@@ -21,5 +21,5 @@ namespace Docalist\Forms;
  */
 class Reset extends Button
 {
-    protected $attributes = ['type' => 'reset'];
+    protected array $attributes = ['type' => 'reset'];
 }

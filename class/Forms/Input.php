@@ -21,5 +21,5 @@ namespace Docalist\Forms;
  */
 class Input extends Element
 {
-    protected $attributes = ['type' => 'text'];
+    protected array $attributes = ['type' => 'text'];
 }

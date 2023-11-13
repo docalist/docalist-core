@@ -21,5 +21,5 @@ namespace Docalist\Forms;
  */
 final class Radio extends Checkbox
 {
-    protected $attributes = ['type' => 'radio'];
+    protected array $attributes = ['type' => 'radio'];
 }

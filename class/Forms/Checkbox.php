@@ -21,7 +21,7 @@ namespace Docalist\Forms;
  */
 class Checkbox extends Input
 {
-    protected $attributes = ['type' => 'checkbox', 'value' => 1];
+    protected array $attributes = ['type' => 'checkbox', 'value' => 1];
 
     /**
      * Indique au containeur qu'il ne doit pas générer de bloc description.
