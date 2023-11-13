@@ -28,7 +28,7 @@ trait AttributesTrait
     /**
      * @var array<string,string|int|bool> attributs de l'élément
      */
-    protected $attributes = [];
+    private array $attributes = [];
 
     /**
      * Retourne la liste des attributs de l'élément.
@@ -45,10 +45,11 @@ trait AttributesTrait
      *
      * @param array<string,string|int|bool> $attributes un tableau de la forme nom  => valeur
      */
-    final public function setAttributes(array $attributes): void
+    final public function setAttributes(array $attributes): static
     {
         $this->attributes = [];
-        $this->addAttributes($attributes);
+
+        return $this->addAttributes($attributes);
     }
 
     /**
@@ -59,11 +60,13 @@ trait AttributesTrait
      *
      * @param array<string,string|int|bool> $attributes un tableau de la forme nom  => valeur
      */
-    final public function addAttributes(array $attributes): void
+    final public function addAttributes(array $attributes): static
     {
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
         }
+
+        return $this;
     }
 
     /**
@@ -83,7 +86,7 @@ trait AttributesTrait
      *
      * @return string|int|bool|null
      */
-    final public function getAttribute(string $name)
+    final public function getAttribute(string $name): mixed
     {
         return $this->attributes[$name] ?? null;
     }
