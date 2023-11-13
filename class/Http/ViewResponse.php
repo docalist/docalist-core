@@ -18,10 +18,23 @@ namespace Docalist\Http;
  */
 class ViewResponse extends HtmlResponse
 {
-    protected $view;
-    protected $data;
+    /**
+     * Nom de la vue à exécuter.
+     */
+    protected string $view;
 
-    public function __construct($view, array $data = [], $status = 200, $headers = [])
+    /**
+     * @var array<string,mixed> Données à transmettre à la vue.
+     */
+    protected array $data;
+
+    /**
+     * @param string              $view Le nom de la vue à exécuter
+     * @param array<string,mixed> $data les données à transmettre à la vue
+     * @param int                 $status
+     * @param array<string,mixed> $headers
+     */
+    public function __construct(string $view, array $data = [], int $status = 200, array $headers = [])
     {
         parent::__construct(null, $status, $headers);
 

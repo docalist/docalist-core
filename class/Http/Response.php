@@ -14,6 +14,8 @@ namespace Docalist\Http;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
+use function Docalist\deprecated;
+
 /**
  * La classe Response représente le résultat de l'exécution d'une requête http.
  *
@@ -33,12 +35,13 @@ class Response extends SymfonyResponse
     /**
      * Si la réponse est affichée depuis le back-office, indique s'il faut ou
      * non générer les entêtes et les menus de wordpress.
-     *
-     * @var bool
      */
-    protected $adminPage = false;
+    protected bool $isAdminPage = false;
 
-    public function __construct($content = '', $status = 200, $headers = [])
+    /**
+     * @param array<string,mixed> $headers
+     */
+    public function __construct(?string $content = '', int $status = 200, array $headers = [])
     {
         !empty($this->defaultHeaders) && $headers += $this->defaultHeaders;
 
@@ -50,14 +53,26 @@ class Response extends SymfonyResponse
     //     return parent::prepare($request ?: Request::createFromGlobals());
     // }
 
-    public function adminPage($adminPage = null)
+    public function adminPage(?bool $adminPage = null): self|bool
     {
+        deprecated(static::class . '::adminPage()', 'getIsAdminPage() or setIsAdminPage()', '2023-05-12');
+
         if (is_null($adminPage)) {
-            return $this->adminPage;
+            return $this->getIsAdminPage();
         }
 
-        $this->adminPage = (bool) $adminPage;
+        $this->setIsAdminPage($adminPage);
 
         return $this;
+    }
+
+    public function setIsAdminPage(bool $isAdminPage): void
+    {
+        $this->isAdminPage = (bool) $isAdminPage;
+    }
+
+    public function getIsAdminPage(): bool
+    {
+        return $this->isAdminPage;
     }
 }

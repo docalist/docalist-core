@@ -20,7 +20,7 @@ use Exception;
  */
 class RedirectResponse extends HtmlResponse
 {
-    public function __construct($url, $status = 302, $headers = [])
+    public function __construct(string $url, int $status = 302, array $headers = [])
     {
         $headers['Location'] = $url;
         parent::__construct(null, $status, $headers);
@@ -29,7 +29,7 @@ class RedirectResponse extends HtmlResponse
     public function setContent(?string $content): static
     {
         if (empty($content)) {
-            $url = htmlspecialchars($this->headers->get('Location'), ENT_QUOTES, 'UTF-8');
+            $url = htmlspecialchars((string) $this->headers->get('Location'), ENT_QUOTES, 'UTF-8');
 
             $content = "<!DOCTYPE html>
                 <html>
@@ -46,14 +46,5 @@ class RedirectResponse extends HtmlResponse
         }
 
         return parent::setContent($content);
-    }
-
-    public function adminPage($adminPage = null)
-    {
-        if (is_null($adminPage)) {
-            return $this->adminPage;
-        }
-
-        throw new Exception('RedirectResponse::adminPage is read-only');
     }
 }

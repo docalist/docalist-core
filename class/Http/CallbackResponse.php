@@ -22,9 +22,12 @@ class CallbackResponse extends Response
         'Content-Type' => 'text/html; charset=UTF-8',
     ];
 
+    /**
+     * @var callable
+     */
     protected $callback;
 
-    public function __construct($callback = null, $status = 200, $headers = [])
+    public function __construct(callable $callback, int $status = 200, array $headers = [])
     {
         parent::__construct(null, $status, $headers);
 

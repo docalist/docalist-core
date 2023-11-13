@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Docalist\Http;
 
 use Exception;
+use InvalidArgumentException;
 
 /**
  * Une réponse qui génère un contenu de type JSON.
@@ -31,6 +32,9 @@ class JsonResponse extends Response
      */
     protected $pretty = false;
 
+    /**
+     * @param array<string,mixed> $headers
+     */
     public function __construct(mixed $data = null, $status = 200, array $headers = [], bool $pretty = false)
     {
         parent::__construct('', $status, $headers);
@@ -62,18 +66,18 @@ class JsonResponse extends Response
         $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
         $this->pretty && $options |= JSON_PRETTY_PRINT;
 
-        $this->content = json_encode($data, $options);
-        $this->headers->set('Content-Length', (string) strlen($this->content));
+        $json = json_encode($data, $options);
+        if (false === $json) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Unable to json_encode $content: %s',
+                    json_last_error_msg()
+                )
+            );
+        }
+        $this->content = $json;
+        $this->headers->set('Content-Length', (string) strlen($json));
 
         return $this;
-    }
-
-    public function adminPage($adminPage = null)
-    {
-        if (is_null($adminPage)) {
-            return $this->adminPage;
-        }
-
-        throw new Exception('JsonResponse::adminPage is read-only');
     }
 }
