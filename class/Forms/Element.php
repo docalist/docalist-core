@@ -50,8 +50,6 @@ abstract class Element extends Item
 
     /**
      * Indique si le champ est répétable.
-     *
-     * @var bool|null
      */
     protected $repeatable;
 
@@ -81,7 +79,7 @@ abstract class Element extends Item
      * @param array<string,string|int|bool> $attributes optionnel, les attributs de l'élément
      * @param Container|null                $parent     optionnel, le containeur parent de l'item
      */
-    public function __construct(string $name = '', array $attributes = [], Container $parent = null)
+    public function __construct(string $name = '', array $attributes = [], ?Container $parent = null)
     {
         parent::__construct($parent);
         if ('' !== $name) {
@@ -528,7 +526,7 @@ abstract class Element extends Item
         $id = strtr($id, ['--' => '-']);
 
         // Stocke l'ID généré
-        $this->attributes['id'] = $id;
+        $this->setAttribute('id', $id);
 
         // Retourne l'ID
         return $id;
