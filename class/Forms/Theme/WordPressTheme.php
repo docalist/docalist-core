@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Docalist\Forms\Theme;
 
 use Docalist\Forms\Theme;
+use Docalist\Forms\Themes;
 
 /**
  * Thème WordPress pour les formulaires.
@@ -25,6 +26,6 @@ class WordPressTheme extends Theme
 
     public function __construct()
     {
-        parent::__construct(__DIR__. '/../../../views/forms/wordpress', self::get('base'));
+        parent::__construct(__DIR__. '/../../../views/forms/wordpress', Themes::get('base'));
     }
 }
