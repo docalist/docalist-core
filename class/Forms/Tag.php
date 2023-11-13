@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Docalist\Forms;
 
 use Docalist\Forms\Traits\AttributesTrait;
+use InvalidArgumentException;
 
 /**
  * Un tag html.
