@@ -16,6 +16,7 @@ use WP_UnitTestCase;
 use Docalist\Forms\Tag;
 use InvalidArgumentException;
 use Docalist\Forms\Theme;
+use Docalist\Forms\Themes;
 
 /**
  *
@@ -71,7 +72,7 @@ class TagTest extends DocalistTestCase
 
     public function testDisplay(): void
     {
-        $theme = Theme::get('base');
+        $theme = Themes::get('base');
         $theme->setDialect('xhtml');
         $theme->setIndent(false);
 
