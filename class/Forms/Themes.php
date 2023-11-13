@@ -13,6 +13,7 @@ namespace Docalist\Forms;
 
 use Docalist\Forms\Theme\BaseTheme;
 use Docalist\Forms\Theme\WordPressTheme;
+use Docalist\Forms\Theme\XhtmlTheme;
 
 /**
  * Liste des thèmes de formulaire.
