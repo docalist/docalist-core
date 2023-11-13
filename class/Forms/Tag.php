@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Docalist\Forms;
 
 use Docalist\Forms\Traits\AttributesTrait;
-use InvalidArgumentException;
 
 /**
  * Un tag html.
@@ -45,7 +44,7 @@ final class Tag extends HtmlBlock
         string $tag = 'div',
         string $content = '',
         array $attributes = [],
-        Container $parent = null
+        ?Container $parent = null
     ) {
         parent::__construct($content, $parent);
         $this->setTag($tag);
