@@ -34,7 +34,7 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * @var Item[] les items présents dans le container
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * Ajoute un item dans le container.
@@ -76,7 +76,7 @@ class Container extends Element implements Countable, IteratorAggregate
      * de la liste ayant ce nom seront supprimé.
      * @param string|Item $item
      */
-    final public function remove($item): void
+    final public function remove(string|Item $item): void
     {
         $isSame = $this->getComparator($item);
 
@@ -105,7 +105,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @param string|Item $item L'item à tester (soit un objet Item, soit son nom)
      */
-    final public function has($item): bool
+    final public function has(string|Item $item): bool
     {
         return !is_null($this->get($item));
     }
@@ -115,7 +115,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @param string|Item $item L'item à retourner (soit un objet Item, soit son nom)
      */
-    final public function get($item): ?Item
+    final public function get(string|Item $item): ?Item
     {
         $isSame = $this->getComparator($item);
 
@@ -220,7 +220,7 @@ class Container extends Element implements Countable, IteratorAggregate
      *
      * @throws InvalidArgumentException
      */
-    private function getComparator($item): Closure
+    private function getComparator(string|Item $item): Closure
     {
         // Un item : true si c'est le même objet
         if ($item instanceof Item) {
