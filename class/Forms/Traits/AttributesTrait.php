@@ -28,7 +28,7 @@ trait AttributesTrait
     /**
      * @var array<string,string|int|bool> attributs de l'élément
      */
-    private array $attributes = [];
+    protected array $attributes = [];
 
     /**
      * Retourne la liste des attributs de l'élément.
