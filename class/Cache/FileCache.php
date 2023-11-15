@@ -18,7 +18,7 @@ use function Docalist\deprecated;
 
 /**
  * Un cache permettant de stocker des fichiers générés sur disque (template compilé, version SQLite d'une
- * table d'autorité, etc.)
+ * table d'autorité, etc.).
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -59,8 +59,8 @@ class FileCache
      * Important : FileCache ne vérifie pas que vous passez des path corrects, c'est à vous de vérifier que vous
      * utilisez des paths corrects, non relatifs.
      *
-     * @param string $root      Path racine des fichiers qui pourront être stockés dans ce cache.
-     * @param string $directory Path du répertoire qui contiendra les fichiers mis en cache.
+     * @param string $root      path racine des fichiers qui pourront être stockés dans ce cache
+     * @param string $directory path du répertoire qui contiendra les fichiers mis en cache
      */
     public function __construct(string $root, string $directory)
     {
@@ -129,23 +129,20 @@ class FileCache
      * On ne teste pas si le fichier existe : on se contente de déterminer le path qu'aurait le fichier
      * s'il était mis en cache.
      *
-     * @param string $filePath Path absolu du fichier à tester.
+     * @param string $filePath path absolu du fichier à tester
      *
-     * @return string Path dans le cache de ce fichier.
+     * @return string path dans le cache de ce fichier
      *
-     * @throws InvalidArgumentException Si le fichier indiqué ne peut pas figurer dans le cache.
+     * @throws InvalidArgumentException si le fichier indiqué ne peut pas figurer dans le cache
      */
     public function getPath(string $filePath): string
     {
         $path = strtr($filePath, '/\\', DIRECTORY_SEPARATOR);
         if (0 !== strncasecmp($this->root, $path, strlen($this->root))) {
-            throw new InvalidArgumentException(sprintf(
-                'Unable to cache file "%s", path does not match cache root',
-                $filePath
-            ));
+            throw new InvalidArgumentException(sprintf('Unable to cache file "%s", path does not match cache root', $filePath));
         }
 
-        return $this->directory . substr($path, strlen($this->root));
+        return $this->directory.substr($path, strlen($this->root));
     }
 
     /**
@@ -161,29 +158,29 @@ class FileCache
     /**
      * Indique si un fichier figure dans le cache et s'il est à jour.
      *
-     * @param string    $file le path du fichier à tester.
-     * @param int       $time date/heure minimale du fichier en cache pour qu'il soit considéré comme à jour.
+     * @param string $file le path du fichier à tester
+     * @param int    $time date/heure minimale du fichier en cache pour qu'il soit considéré comme à jour
      *
-     * @return bool true si le fichier est dans le cache et est à jour, false sinon.
+     * @return bool true si le fichier est dans le cache et est à jour, false sinon
      */
     public function has(string $file, int $time = 0): bool
     {
         $path = $this->getPath($file);
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             return false;
         }
 
-        return ($time === 0) || (filemtime($path) >= $time);
+        return (0 === $time) || (filemtime($path) >= $time);
     }
 
     /**
      * Stocke un fichier dans le cache.
      *
-     * @param string $file Path du fichier à stocker.
-     * @param string $data Contenu du fichier.
+     * @param string $file path du fichier à stocker
+     * @param string $data contenu du fichier
      *
-     * @throws InvalidArgumentException Si le fichier indiqué ne peut pas figurer dans le cache.
-     * @throws RuntimeException         Si le répertoire du fichier ne peut pas être créé.
+     * @throws InvalidArgumentException si le fichier indiqué ne peut pas figurer dans le cache
+     * @throws RuntimeException         si le répertoire du fichier ne peut pas être créé
      */
     public function put(string $file, string $data): self
     {
@@ -192,7 +189,7 @@ class FileCache
 
         // Crée le répertoire destination si nécessaire
         $directory = dirname($path);
-        if (! is_dir($directory) && ! @mkdir($directory, self::DIR_MASK, true)) {
+        if (!is_dir($directory) && !@mkdir($directory, self::DIR_MASK, true)) {
             throw new RuntimeException(sprintf('FileCache: unable to create directory "%s"', $directory));
         }
 
@@ -207,17 +204,17 @@ class FileCache
     /**
      * Retourne le contenu d'un fichier en cache.
      *
-     * @param string $file Le path du fichier à charger.
+     * @param string $file le path du fichier à charger
      *
-     * @return string|null Le contenu du fichier ou null si le fichier ne figure pas dans le cache.
+     * @return string|null le contenu du fichier ou null si le fichier ne figure pas dans le cache
      *
-     * @throws InvalidArgumentException Si le fichier indiqué ne peut pas figurer dans le cache.
+     * @throws InvalidArgumentException si le fichier indiqué ne peut pas figurer dans le cache
      */
     public function get(string $file): ?string
     {
         $path = $this->getPath($file);
 
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             return null;
         }
 
@@ -233,7 +230,7 @@ class FileCache
      *
      * La fonction essaie également de supprimer les répertoires vides.
      *
-     * @param string $file Le path du fichier ou du répertoire à supprimer (vide = tout le cache).
+     * @param string $file le path du fichier ou du répertoire à supprimer (vide = tout le cache)
      *
      * @return bool True si le fichier ou le répertoire indiqué a été supprimé
      */
@@ -248,14 +245,14 @@ class FileCache
         }
 
         // Suppression d'un fichier
-        if (! @unlink($path)) {
+        if (!@unlink($path)) {
             return false;
         }
 
         // Le répertoire est peut-être vide, maintenant, essaie de le supprimer
         $path = dirname($path);
         while (strlen($path) > strlen($this->directory)) {
-            if (! @rmdir($path)) {
+            if (!@rmdir($path)) {
                 return true; // on ne peut pas supprimer le dir, mais le fichier l'a été lui, donc true
             }
             $path = dirname($path);
@@ -270,21 +267,19 @@ class FileCache
      *
      * - standardise le séparateur (slash ou antislash selon le système)
      * - garantit qu'on a un séparateur à la fin.
-     *
-     * @param string $filePath
      */
     protected function normalizePath(string $filePath): string
     {
         return rtrim(
             strtr($filePath, '/\\', DIRECTORY_SEPARATOR),
             DIRECTORY_SEPARATOR
-        ) . DIRECTORY_SEPARATOR;
+        ).DIRECTORY_SEPARATOR;
     }
 
     /**
      * Supprime un répertoire et son contenu.
      *
-     * @return bool True si le répertoire a été supprimé, false en cas de problème.
+     * @return bool true si le répertoire a été supprimé, false en cas de problème
      */
     protected function rmTree(string $directory): bool
     {
@@ -294,13 +289,13 @@ class FileCache
         }
         $files = array_diff($files, ['.', '..']);
         foreach ($files as $file) {
-            $path = $directory . DIRECTORY_SEPARATOR . $file;
+            $path = $directory.DIRECTORY_SEPARATOR.$file;
             if (is_dir($path)) {
-                if (! $this->rmTree($path)) {
+                if (!$this->rmTree($path)) {
                     return false;
                 }
             } else {
-                if (! unlink($path)) {
+                if (!unlink($path)) {
                     return false;
                 }
             }
