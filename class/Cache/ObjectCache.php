@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Cache;
 
-use stdClass;
 use WP_Admin_Bar;
 
 /**
@@ -44,31 +43,29 @@ class ObjectCache
 {
     /**
      * Indique si on utilise le cache wordpress ou non.
-     *
-     * @var bool
      */
-    protected $wp;
+    protected bool $wp;
 
     /**
      * Les entrées du cache lorsqu'on n'utilise pas le cache WordPress.
      *
-     * @var array
+     * @var array<string,array<string,object>>
      */
     protected $cache;
 
     /**
      * Stats sur le cache.
      *
-     * @var integer[] Un tableau avec les entrées 'hits' et 'misses'.
+     * @var int[] un tableau avec les entrées 'hits' et 'misses'
      */
-    protected $stats;
+    protected array $stats;
 
     /**
      * Initialise le cache.
      *
-     * @param bool $useWordPressCache Indique si on utilise le cache d'objet de WordPress ou le cache interne.
+     * @param bool $useWordPressCache indique si on utilise le cache d'objet de WordPress ou le cache interne
      */
-    public function __construct($useWordPressCache = false)
+    public function __construct(bool $useWordPressCache = false)
     {
         $this->wp = (bool) $useWordPressCache;
         !$useWordPressCache && $this->cache = [];
@@ -78,10 +75,8 @@ class ObjectCache
 
     /**
      * Indique si on utilise le cache d'objet de WordPress ou le cache interne.
-     *
-     * @return bool
      */
-    public function useWordPressCache()
+    public function useWordPressCache(): bool
     {
         return $this->wp;
     }
@@ -89,17 +84,20 @@ class ObjectCache
     /**
      * Récupère un objet en cache.
      *
-     * @param string $key   La clé indiquée pour l'objet lorsqu'il a été mis en cache.
-     * @param string $group Le group indiqué pour l'objet lorsqu'il a été mis en cache.
+     * @param string $key   la clé indiquée pour l'objet lorsqu'il a été mis en cache
+     * @param string $group le group indiqué pour l'objet lorsqu'il a été mis en cache
      *
-     * @return stdClass L'objet en cache ou false si l'objet n'est pas/plus dans le cache.
+     * @return object|false L'objet en cache ou false si l'objet n'est pas/plus dans le cache
      */
-    public function get($key, $group = 'docalist')
+    public function get(string $key, string $group = 'docalist'): object|false
     {
         if ($this->wp) {
             $object = wp_cache_get($key, $group);
+            if (!is_object($object)) {
+                $object = false;
+            }
         } else {
-            $object = isset($this->cache[$group][$key]) ? $this->cache[$group][$key] : false;
+            $object = $this->cache[$group][$key] ?? false;
         }
 
         ++$this->stats[$object ? 'hits' : 'misses'];
@@ -110,14 +108,11 @@ class ObjectCache
     /**
      * Stocke un objet dans le cache.
      *
-     * @param string $key   Une clé unique qui sera utilisée pour stocker l'objet dans le cache.
-     * @param string $group Un identifiant permettant de regrouper ensemble les objets similaires.
-     *
-     * @param Object $object
-     *
-     * @return self
+     * @param string $key    une clé unique qui sera utilisée pour stocker l'objet dans le cache
+     * @param object $object L'onjet à stocker
+     * @param string $group  un identifiant permettant de regrouper ensemble les objets similaires
      */
-    public function set($key, $object, $group = 'docalist')
+    public function set(string $key, object $object, string $group = 'docalist'): static
     {
         if ($this->wp) {
             wp_cache_set($key, $object, $group);
@@ -131,16 +126,16 @@ class ObjectCache
     /**
      * Retourne des statistiques sur l'utilisation du cache.
      *
-     * @return integer[] Un tableau contenant les entrées 'hits' et 'misses'.
+     * @return int[] un tableau contenant les entrées 'hits' et 'misses'
      */
-    public function getStats()
+    public function getStats(): array
     {
         return $this->stats;
     }
 
-    private function debugBar()
+    private function debugBar(): void
     {
-        add_action('admin_bar_menu', function (WP_Admin_Bar $adminBar) {
+        add_action('admin_bar_menu', function (WP_Admin_Bar $adminBar): void {
             $hits = $this->stats['hits'];
             $misses = $this->stats['misses'];
             $total = $hits + $misses;
