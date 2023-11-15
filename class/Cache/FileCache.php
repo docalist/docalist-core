@@ -25,24 +25,24 @@ use function Docalist\deprecated;
 class FileCache
 {
     /**
-     * @var int Permissions des fichiers ajoutés au cache.
+     * Permissions des fichiers ajoutés au cache.
      */
-    const FILE_MASK = 0660;
+    final public const FILE_MASK = 0660;
 
     /**
-     * @var int Permissions des répertoires qui sont créés.
+     * Permissions des répertoires qui sont créés.
      */
-    const DIR_MASK = 0770;
+    final public const DIR_MASK = 0770;
 
     /**
-     * @var string Path racine des fichiers ajoutés au cache.
+     * Path racine des fichiers ajoutés au cache.
      */
-    protected $root;
+    protected string $root;
 
     /**
-     * @var string Path absolu du répertoire contenant les fichiers du cache.
+     * Path absolu du répertoire contenant les fichiers du cache.
      */
-    protected $directory;
+    protected string $directory;
 
     /**
      * Crée un nouveau cache.
@@ -62,37 +62,33 @@ class FileCache
      * @param string $root      Path racine des fichiers qui pourront être stockés dans ce cache.
      * @param string $directory Path du répertoire qui contiendra les fichiers mis en cache.
      */
-    public function __construct($root, $directory)
+    public function __construct(string $root, string $directory)
     {
         $this->setRoot($root)->setDirectory($directory);
     }
 
     /**
      * Retourne le path racine des fichiers qui peuvent être stockés dans le cache.
-     *
-     * @return string
      */
-    public function getRoot()
+    public function getRoot(): string
     {
         return $this->root;
     }
 
     /**
      * Modifie le path racine des fichiers qui peuvent être stockés dans le cache.
-     *
-     * @param string $root
-     *
-     * @return self
      */
-    public function setRoot($root)
+    public function setRoot(string $root): self
     {
         $this->root = $this->normalizePath($root);
 
         return $this;
     }
 
-    /** @deprecated */
-    public function root()
+    /**
+     * @deprecated
+     */
+    public function root(): string
     {
         deprecated('FileCache::root()', 'getRoot()', '2017-03-14');
 
@@ -101,30 +97,26 @@ class FileCache
 
     /**
      * Retourne le path du répertoire contenant les fichiers mis en cache.
-     *
-     * @return string
      */
-    public function getDirectory()
+    public function getDirectory(): string
     {
         return $this->directory;
     }
 
     /**
      * Modifie le path du répertoire contenant les fichiers mis en cache.
-     *
-     * @param string $directory
-     *
-     * @return self
      */
-    public function setDirectory($directory)
+    public function setDirectory(string $directory): self
     {
         $this->directory = $this->normalizePath($directory);
 
         return $this;
     }
 
-    /** @deprecated */
-    public function directory()
+    /**
+     * @deprecated
+     */
+    public function directory(): string
     {
         deprecated('FileCache::directory()', 'getDirectory()', '2017-03-14');
 
@@ -143,7 +135,7 @@ class FileCache
      *
      * @throws InvalidArgumentException Si le fichier indiqué ne peut pas figurer dans le cache.
      */
-    public function getPath($filePath)
+    public function getPath(string $filePath): string
     {
         $path = strtr($filePath, '/\\', DIRECTORY_SEPARATOR);
         if (0 !== strncasecmp($this->root, $path, strlen($this->root))) {
@@ -156,8 +148,10 @@ class FileCache
         return $this->directory . substr($path, strlen($this->root));
     }
 
-    /** @deprecated */
-    public function path($file)
+    /**
+     * @deprecated
+     */
+    public function path(string $file): string
     {
         deprecated('FileCache::path()', 'getPath()', '2017-03-14');
 
@@ -172,7 +166,7 @@ class FileCache
      *
      * @return bool true si le fichier est dans le cache et est à jour, false sinon.
      */
-    public function has($file, $time = 0)
+    public function has(string $file, int $time = 0): bool
     {
         $path = $this->getPath($file);
         if (! file_exists($path)) {
@@ -188,12 +182,10 @@ class FileCache
      * @param string $file Path du fichier à stocker.
      * @param string $data Contenu du fichier.
      *
-     * @return self
-     *
      * @throws InvalidArgumentException Si le fichier indiqué ne peut pas figurer dans le cache.
      * @throws RuntimeException         Si le répertoire du fichier ne peut pas être créé.
      */
-    public function put($file, $data)
+    public function put(string $file, string $data): self
     {
         // Détermine le path du fichier en cache
         $path = $this->getPath($file);
@@ -221,11 +213,17 @@ class FileCache
      *
      * @throws InvalidArgumentException Si le fichier indiqué ne peut pas figurer dans le cache.
      */
-    public function get($file)
+    public function get(string $file): ?string
     {
         $path = $this->getPath($file);
 
-        return file_exists($path) ? file_get_contents($path) : null;
+        if (! file_exists($path)) {
+            return null;
+        }
+
+        $content = file_get_contents($path);
+
+        return (false === $content) ? null : $content;
     }
 
     /**
@@ -239,7 +237,7 @@ class FileCache
      *
      * @return bool True si le fichier ou le répertoire indiqué a été supprimé
      */
-    public function clear($file = '')
+    public function clear(string $file = ''): bool
     {
         // Détermine ce qu'il faut supprimer
         $path = $file ? $this->getPath($file) : $this->directory;
@@ -274,10 +272,8 @@ class FileCache
      * - garantit qu'on a un séparateur à la fin.
      *
      * @param string $filePath
-     *
-     * @return string
      */
-    protected function normalizePath($filePath)
+    protected function normalizePath(string $filePath): string
     {
         return rtrim(
             strtr($filePath, '/\\', DIRECTORY_SEPARATOR),
@@ -288,13 +284,15 @@ class FileCache
     /**
      * Supprime un répertoire et son contenu.
      *
-     * @param string $directory
-     *
      * @return bool True si le répertoire a été supprimé, false en cas de problème.
      */
-    protected function rmTree($directory)
+    protected function rmTree(string $directory): bool
     {
-        $files = array_diff(scandir($directory), ['.', '..']);
+        $files = scandir($directory);
+        if (!is_array($files)) {
+            return false;
+        }
+        $files = array_diff($files, ['.', '..']);
         foreach ($files as $file) {
             $path = $directory . DIRECTORY_SEPARATOR . $file;
             if (is_dir($path)) {
