@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Docalist\Type\Interfaces;
 
+use Docalist\Type\Any;
 use Docalist\Type\Collection;
 
 /**
@@ -35,15 +36,13 @@ interface Filterable
      * - la classe MultiFieldCollection filtre sur le type des éléments MultiField,
      * - etc.
      *
-     * @param array $include    Liste des éléments à inclure (liste blanche) : si le tableau n'est pas vide, seuls
-     *                          les éléments indiqués sont retournés.
+     * @param array<string> $include liste des éléments à inclure (liste blanche) : si le tableau n'est pas vide, seuls
+     *                               les éléments indiqués sont retournés
+     * @param array<string> $exclude liste des éléments à exclure (liste noire) : si le tableau n'est pas vide, les
+     *                               éléments indiqués seront supprimés de la collection retournée
+     * @param int           $limit   nombre maximum d'éléments à retourner (0 = pas de limite)
      *
-     * @param array $exclude    Liste des éléments à exclure (liste noire) : si le tableau n'est pas vide, les
-     *                          éléments indiqués seront supprimés de la collection retournée.
-     *
-     * @param int   $limit      Nombre maximum d'éléments à retourner (0 = pas de limite).
-     *
-     * @return Collection
+     * @return Collection<Any>
      */
     public function filter(array $include = [], array $exclude = [], int $limit = 0): Collection;
 }

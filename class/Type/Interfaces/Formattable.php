@@ -42,7 +42,7 @@ interface Formattable
     /**
      * Retourne la liste des formats d'affichage disponibles.
      *
-     * @return array Un tableau de la forme "nom du format" => "libellé".
+     * @return array<string,string> Un tableau de la forme "nom du format" => "libellé".
      *
      * Remarque : le tableau retourné peut être vide si le champ n'a qu'un seul format d'affichage.
      */
@@ -54,7 +54,7 @@ interface Formattable
      * Par défaut, il s'agit du nom du premier format retourné par la méthode {@link getAvailableFormats()},
      * ou null si celle-ci retourne un tableau vide.
      *
-     * @return string|null Retourne le nom du format par défaut.
+     * @return string Retourne le nom du format par défaut.
      */
     public function getDefaultFormat(): string;
 
@@ -75,22 +75,22 @@ interface Formattable
      * Par défaut, la méthode ne fait rien (elle retourne les paramètres inchangés) mais les classes descendantes
      * peuvent surcharger cette méthode pour faire les vérifications nécessaires.
      *
-     * @param array $settings Les paramétres à valider.
+     * @param array<mixed> $settings Les paramétres à valider.
      *
-     * @return array Les paramètres validés.
+     * @return array<mixed> Les paramètres validés.
      */
     public function validateFormatSettings(array $settings): array;
 
     /**
      * Formatte le type.
      *
-     * @param array|Schema $options Options de formattage.
+     * @param array<mixed>|Schema $options Options de formattage.
      *
-     * @return string|array Par défaut, la méthode retourne une chaine contenant la valeur formattée selon les
+     * @return string|array<mixed> Par défaut, la méthode retourne une chaine contenant la valeur formattée selon les
      * options indiquées.
      *
      * Si l'option 'vue éclatée' (option 'explode' du type {@link Collection}) est activée, la méthode retourne
      * un tableau contenant un ou plusieurs éléments de la forme "catégorie" => "éléments de cette catégorie".
      */
-    public function getFormattedValue($options = null);
+    public function getFormattedValue($options = null): string|array;
 }

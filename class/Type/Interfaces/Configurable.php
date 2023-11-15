@@ -46,9 +46,9 @@ interface Configurable
      * Par défaut, la méthode ne fait rien (elle retourne les paramètres inchangés) mais les classes descendantes
      * peuvent surcharger cette méthode pour faire les vérifications nécessaires.
      *
-     * @param array $settings Les paramétres à valider.
+     * @param array<mixed> $settings Les paramétres à valider.
      *
-     * @return array Les paramètres validés.
+     * @return array<mixed> Les paramètres validés.
      */
     public function validateSettings(array $settings): array;
 }

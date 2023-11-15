@@ -41,7 +41,7 @@ interface Editable
     /**
      * Retourne la liste des éditeurs disponibles pour ce type.
      *
-     * @return array Un tableau de la forme "nom éditeur" => "libellé".
+     * @return array<string,string> Un tableau de la forme "nom éditeur" => "libellé".
      *
      * Remarque : le tableau retourné peut être vide si le champ n'a qu'un seul format d'édition.
      */
@@ -53,7 +53,7 @@ interface Editable
      * Par défaut, il s'agit du nom du premier éditeur retourné par la méthode {@link getAvailableEditors()},
      * ou null si celle-ci retourne un tableau vide.
      *
-     * @return string|null Retourne le nom de l'éditeur par défaut.
+     * @return string Retourne le nom de l'éditeur par défaut.
      */
     public function getDefaultEditor(): string;
 
@@ -76,16 +76,16 @@ interface Editable
      * Par défaut, la méthode ne fait rien (elle retourne les paramètres inchangés) mais les classes descendantes
      * peuvent surcharger cette méthode pour faire les vérifications nécessaires.
      *
-     * @param array $settings Les paramétres à valider.
+     * @param array<mixed> $settings Les paramétres à valider.
      *
-     * @return array Les paramétres validés.
+     * @return array<mixed> Les paramétres validés.
      */
     public function validateEditorSettings(array $settings): array;
 
     /**
      * Retourne un élément de formulaire permettant de saisir ce champ.
      *
-     * @param array|Schema $options Options à appliquer à l'éditeur.
+     * @param array<mixed>|Schema $options Options à appliquer à l'éditeur.
      *
      * @return Element Un élément de formulaire.
      */
