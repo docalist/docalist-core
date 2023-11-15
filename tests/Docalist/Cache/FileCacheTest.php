@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Docalist\Tests\Cache;
@@ -17,23 +18,23 @@ class FileCacheTest extends DocalistTestCase
         parent::setup();
 
         $this->root = __DIR__;
-        $this->dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'docalist-cache-tests';
+        $this->dir = sys_get_temp_dir().DIRECTORY_SEPARATOR.'docalist-cache-tests';
 
         $this->cache = new FileCache($this->root, $this->dir);
     }
 
     public function testCache(): void
     {
-        $this->assertSame($this->cache->getRoot(), $this->root . DIRECTORY_SEPARATOR);
-        $this->assertSame($this->cache->getDirectory(), $this->dir . DIRECTORY_SEPARATOR);
+        $this->assertSame($this->cache->getRoot(), $this->root.DIRECTORY_SEPARATOR);
+        $this->assertSame($this->cache->getDirectory(), $this->dir.DIRECTORY_SEPARATOR);
     }
 
     public function testInexistent(): void
     {
-        $file = DIRECTORY_SEPARATOR . 'dir' . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'inexistent.txt';
+        $file = DIRECTORY_SEPARATOR.'dir'.DIRECTORY_SEPARATOR.'subdir'.DIRECTORY_SEPARATOR.'inexistent.txt';
 
-        $path = $this->root . $file;
-        $cachePath = $this->dir . $file;
+        $path = $this->root.$file;
+        $cachePath = $this->dir.$file;
 
         $this->assertSame($this->cache->getPath($path), $cachePath);
 
@@ -43,8 +44,8 @@ class FileCacheTest extends DocalistTestCase
 
     public function testExistent(): void
     {
-        $file = DIRECTORY_SEPARATOR . 'dir' . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'toto.txt';
-        $path = $this->root . $file;
+        $file = DIRECTORY_SEPARATOR.'dir'.DIRECTORY_SEPARATOR.'subdir'.DIRECTORY_SEPARATOR.'toto.txt';
+        $path = $this->root.$file;
 
         $this->cache->put($path, 'abcd');
 
@@ -59,14 +60,14 @@ class FileCacheTest extends DocalistTestCase
 
     public function testClear(): void
     {
-        $file = DIRECTORY_SEPARATOR . 'dir' . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'toto.txt';
-        $path1 = $this->root . $file;
-        $path2 = $this->root . $file . '.bis';
+        $file = DIRECTORY_SEPARATOR.'dir'.DIRECTORY_SEPARATOR.'subdir'.DIRECTORY_SEPARATOR.'toto.txt';
+        $path1 = $this->root.$file;
+        $path2 = $this->root.$file.'.bis';
 
         $this->cache->put($path1, 'abcd');
         $this->cache->put($path2, 'efgh');
 
-        $dir = $this->dir . DIRECTORY_SEPARATOR . 'dir';
+        $dir = $this->dir.DIRECTORY_SEPARATOR.'dir';
 
         $this->assertTrue(file_exists($dir));
 
