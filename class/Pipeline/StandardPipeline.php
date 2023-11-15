@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Pipeline;
 
-use Docalist\Pipeline\Pipeline;
 use Generator;
 use InvalidArgumentException;
 
@@ -30,7 +29,7 @@ class StandardPipeline implements Pipeline
      */
     protected $operations = [];
 
-    public function appendOperation(callable $operation, $key = null): void
+    public function appendOperation(callable $operation, int|string $key = null): void
     {
         if (is_null($key)) {
             $this->operations[] = $operation;
@@ -39,13 +38,13 @@ class StandardPipeline implements Pipeline
         }
 
         if (isset($this->operations[$key])) {
-            throw new InvalidArgumentException('An operation with key "' . $key . '" already exists');
+            throw new InvalidArgumentException('An operation with key "'.$key.'" already exists');
         }
 
         $this->operations[$key] = $operation;
     }
 
-    public function prependOperation(callable $operation, $key = null): void
+    public function prependOperation(callable $operation, int|string $key = null): void
     {
         $this->operations = array_reverse($this->operations, true);
         try {
@@ -57,15 +56,15 @@ class StandardPipeline implements Pipeline
         $this->operations = array_reverse($this->operations, true);
     }
 
-    public function hasOperation($key): bool
+    public function hasOperation(int|string $key): bool
     {
         return isset($this->operations[$key]);
     }
 
-    public function getOperation($key): callable
+    public function getOperation(int|string $key): callable
     {
-        if (! isset($this->operations[$key])) {
-            throw new InvalidArgumentException('Operation "' . $key . '" not found');
+        if (!isset($this->operations[$key])) {
+            throw new InvalidArgumentException('Operation "'.$key.'" not found');
         }
 
         return $this->operations[$key];
@@ -76,19 +75,19 @@ class StandardPipeline implements Pipeline
         return $this->operations;
     }
 
-    public function process(Iterable $items): Iterable
+    public function process(iterable $items): iterable
     {
-        return array_reduce($this->operations, function (Iterable $items, callable $stage) {
+        return array_reduce($this->operations, function (iterable $items, callable $stage) {
             foreach ($items as $item) {
                 $result = $stage($item);
-                if (! is_null($result)) {
+                if (!is_null($result)) {
                     ($result instanceof Generator) ? yield from $result : yield $result;
                 }
             }
         }, $items);
     }
 
-    public function __invoke($item): Iterable // send / envoie UN item
+    public function __invoke(mixed $item): ?iterable // send / envoie UN item
     {
         return $this->process([$item]);
     }

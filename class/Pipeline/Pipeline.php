@@ -77,44 +77,42 @@ interface Pipeline
     /**
      * Ajoute une opération à la fin du pipeline.
      *
-     * @param callable          $operation  L'opération à ajouter.
-     * @param int|string|null   $key        Optionnel, une clé (entier ou chaine) utilisée pour identifier l'opération.
-     *                                      Par défaut (null), un numéro unique est affecté à l'opération.
+     * @param callable        $operation L'opération à ajouter
+     * @param int|string|null $key       Optionnel, une clé (entier ou chaine) utilisée pour identifier l'opération.
+     *                                   Par défaut (null), un numéro unique est affecté à l'opération.
      *
-     * @throws InvalidArgumentException Si une clé a été indiquée et qu'il existe déjà une opération avec cette clé.
+     * @throws InvalidArgumentException si une clé a été indiquée et qu'il existe déjà une opération avec cette clé
      */
-    public function appendOperation(callable $operation, $key = null): void;
+    public function appendOperation(callable $operation, int|string|null $key = null): void;
 
     /**
      * Ajoute une opération au début du pipeline.
      *
-     * @param callable          $operation  L'opération à ajouter.
-     * @param int|string|null   $key        Optionnel, une clé (entier ou chaine) utilisée pour identifier l'opération.
-     *                                      Par défaut (null), un numéro unique est affecté à l'opération.
+     * @param callable        $operation L'opération à ajouter
+     * @param int|string|null $key       Optionnel, une clé (entier ou chaine) utilisée pour identifier l'opération.
+     *                                   Par défaut (null), un numéro unique est affecté à l'opération.
      *
-     * @throws InvalidArgumentException Si une clé a été indiquée et qu'il existe déjà une opération avec cette clé.
+     * @throws InvalidArgumentException si une clé a été indiquée et qu'il existe déjà une opération avec cette clé
      */
-    public function prependOperation(callable $operation, $key = null): void;
+    public function prependOperation(callable $operation, int|string|null $key = null): void;
 
     /**
      * Teste si le pipeline contient une opération ayant la clé indiquée.
      *
-     * @param int|string $key Clé à tester.
+     * @param int|string $key clé à tester
      *
-     * @return bool Retourne true s'il existe une opération avec la clé indiquée, false sinon.
+     * @return bool retourne true s'il existe une opération avec la clé indiquée, false sinon
      */
-    public function hasOperation($key): bool;
+    public function hasOperation(int|string $key): bool;
 
     /**
      * Retourne une opération.
      *
-     * @param int|string $key Clé de l'opération à retourner.
+     * @param int|string $key clé de l'opération à retourner
      *
-     * @throws InvalidArgumentException Si le pipeline ne contient aucune opération ayant la clé indiquée.
-     *
-     * @return callable
+     * @throws InvalidArgumentException si le pipeline ne contient aucune opération ayant la clé indiquée
      */
-    public function getOperation($key): callable;
+    public function getOperation(int|string$key): callable;
 
     /**
      * Retourne la liste des opérations qui composent le pipeline.
@@ -126,20 +124,18 @@ interface Pipeline
     /**
      * Traite les items passés en paramètre.
      *
-     * @param Iterable $items Un itérable contenant les items à traiter.
+     * @param iterable<mixed> $items un itérable contenant les items à traiter
      *
-     * @return Iterable Un itérable contenant les items traités.
+     * @return iterable<mixed> un itérable contenant les items traités
      */
-    public function process(Iterable $items): Iterable;
+    public function process(iterable $items): iterable;
 
     /**
      * Traite un item.
      *
      * Permet à un pipeline d'être ajouté à un autre pipeline.
      *
-     * @param mixed $item
-     *
-     * @return Iterable|null Le résultat du traitement.
+     * @return iterable<mixed>|null le résultat du traitement
      */
-    public function __invoke($item): Iterable;
+    public function __invoke(mixed $item): ?iterable;
 }
