@@ -29,9 +29,9 @@ class FuzzyDate extends Text
      *
      * @var array<string,array<int,string>> Le tableau a la structure suivante :
      *                                      "Format choisi par l'utilisateur" => [
-     *                                          "format à utiliser si on n'a que l'année",
-     *                                          "format à utiliser si on a l'année et le mois",
-     *                                          "format à utiliser si on une date complète"
+     *                                      "format à utiliser si on n'a que l'année",
+     *                                      "format à utiliser si on a l'année et le mois",
+     *                                      "format à utiliser si on une date complète"
      *                                      ]
      */
     protected static $map = [
