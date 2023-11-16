@@ -20,6 +20,8 @@ use Docalist\Forms\Container;
 use Docalist\Forms\EntryPicker;
 use InvalidArgumentException;
 use Docalist\Forms\Select;
+use Docalist\Table\TableInterface;
+use stdClass;
 
 /**
  * Un champ texte contenant un code provenant d'un table d'autorité associée au champ.
@@ -42,19 +44,25 @@ class TableEntry extends ListEntry
         }
     }
 
+    private function getTable(): TableInterface
+    {
+        // Le nom de la table est de la forme "type:nom", on ne veut que le nom
+        $table = explode(':', $this->getSchema()->table())[1];
+
+        // Ouvre la table
+        /** @var TableManager */
+        $tableManager = docalist('table-manager');
+        return $tableManager->get($table);
+
+    }
+
     public function getEntries(): array
     {
         // Cette méthode n'est pas utilisée directement par TableEntry, mais elle peut être appellée par notre
         // classe parent (ListEntry), par exemple lorsque l'éditeur est paramétré sur 'select'.
 
-        // Le nom de la table est de la forme "type:nom", on ne veut que le nom
-        $table = explode(':', $this->schema->table())[1];
-
-        // Ouvre la table
-        $table = docalist('table-manager')->get($table);
-
         // Recherche le code et le label de toutes les entrées, triées par label en ignorant la casse
-        return $table->search('code,label', '', '_label');
+        return $this->getTable()->search('code,label', '', '_label');
     }
 
     /**
@@ -66,11 +74,7 @@ class TableEntry extends ListEntry
      */
     public function getEntry($returns = '*')
     {
-        // Le nom de la table est de la forme "type:nom", on ne veut que le nom
-        $table = explode(':', $this->schema->table())[1];
-
-        // Ouvre la table
-        $table = docalist('table-manager')->get($table);
+        $table = $this->getTable();
 
         // Recherche le code et retourne l'entrée correspondante
         return $table->find($returns, 'code=' . $table->quote($this->phpValue));
@@ -78,7 +82,11 @@ class TableEntry extends ListEntry
 
     public function getEntryLabel(): string
     {
-        return $this->getEntry('label') ?: $this->phpValue;
+        if (is_string($entry = $this->getEntry('label'))) { // pas false
+            return $entry;
+        }
+
+        return $this->getPhpValue();
     }
 
     public function getSettingsForm(): Container
@@ -112,7 +120,7 @@ class TableEntry extends ListEntry
 
     public function getEditorForm($options = null): Element
     {
-        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'lookup':
                 $form = new EntryPicker();
@@ -126,7 +134,7 @@ class TableEntry extends ListEntry
                 return parent::getEditorForm($options);
         }
 
-        $form->setOptions($this->schema->table());
+        $form->setOptions($this->getSchema()->table());
 
         return $this->configureEditorForm($form, $options);
     }
@@ -138,12 +146,13 @@ class TableEntry extends ListEntry
         ];
     }
 
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
 
         switch ($format) {
             case 'label+description':
+                /** @var stdClass|false */
                 $entry = $this->getEntry();
                 if ($entry === false) {
                     return $this->phpValue;
@@ -165,21 +174,22 @@ class TableEntry extends ListEntry
      * La méthode recherche toutes les tables dont le type correspond au type de table indiqué dans le schéma
      * du champ. Les tables de conversion sont ignorées.
      *
-     * @return array Un tableau de la forme code => libellé contenant les tables compatibles.
+     * @return array<string,string> Un tableau de la forme code => libellé contenant les tables compatibles.
      */
     private function getPossibleTables(): array
     {
         // Le nom de la table est de la forme "type:nom", on ne veut que le nom
-        $table = explode(':', $this->schema->table())[1];
+        $table = explode(':', $this->getSchema()->table())[1];
 
         // Détermine son type
-        $tableManager = docalist('table-manager'); /* @var TableManager $tableManager */
+        /** @var TableManager $tableManager */
+        $tableManager = docalist('table-manager');
         $type = $tableManager->table($table)->type->getPhpValue();
 
         // Récupère toutes les tables qui ont le même type, sauf les tables de conversion
         $tables = [];
-        foreach ($tableManager->tables($type) as $table) { /* @var TableInfo $tableInfo */
-            if ($table->format() !== 'conversion') {
+        foreach ($tableManager->tables($type) as $table) {
+            if ($table->format->getPhpValue() !== 'conversion') {
                 $key = $table->format->getPhpValue() . ':' . $table->name->getPhpValue();
                 $tables[$key] = sprintf('%s (%s)', $table->label->getPhpValue(), $table->name->getPhpValue());
             }

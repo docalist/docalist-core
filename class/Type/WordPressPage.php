@@ -48,22 +48,24 @@ class WordPressPage extends ListEntry
             }
         }
 
-        $this->phpValue = $value;
+        $this->phpValue = (string) $value; // était stocké comme int avant, cast to string car on hérite de text
     }
 
     /**
      * Retourne la liste hiérarchique des pages sous la forme d'un tableau
      * utilisable dans un select.
      *
-     * @return array Un tableau de la forme PageID => PageTitle
+     * @return array<int,string> Un tableau de la forme PageID => PageTitle
      */
     protected function getEntries(): array
     {
-        $pages = ['…'];
-        foreach (get_pages() as $page) { /* @var WP_Post $page */
-            $pages[$page->ID] = str_repeat('   ', count($page->ancestors)) . $page->post_title;
+        $entries = ['…'];
+        $pages = get_pages();
+        if (is_array($pages)) {
+            foreach ($pages as $page) { /* @var WP_Post $page */
+                $entries[$page->ID] = str_repeat('   ', count($page->ancestors)) . $page->post_title;
+            }
         }
-
-        return $pages;
+        return $entries;
     }
 }

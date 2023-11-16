@@ -42,7 +42,7 @@ interface Filterable
      *                               éléments indiqués seront supprimés de la collection retournée
      * @param int           $limit   nombre maximum d'éléments à retourner (0 = pas de limite)
      *
-     * @return Collection<Any>
+     * @return Collection<Any<mixed>>
      */
     public function filter(array $include = [], array $exclude = [], int $limit = 0): Collection;
 }

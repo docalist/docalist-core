@@ -14,6 +14,7 @@ namespace Docalist\Type;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
+use Docalist\Schema\Schema;
 use IteratorAggregate;
 use Closure;
 use Docalist\Forms\Element;
@@ -29,21 +30,41 @@ use Traversable;
 /**
  * Une collection de types.
  *
+ * @template Item of Any<mixed>
+ *
+ * @extends Any<array<Item>>
+ * @implements ArrayAccess<int,Item>
+ * @implements IteratorAggregate<int,Item>
+ *
+ * @property array $phpValue
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate, Filterable
 {
-    public static function getClassDefault()
+    final public function __construct($value = null, Schema $schema = null)
+    {
+        // on rend le constructeur final pour que l'usage de "new static()" dans les méthodes
+        // filter() et merge() soit "safe" (sinon phpstan signale une erreur)
+        parent::__construct($value, $schema);
+    }
+
+    /**
+     * @return array<Item>
+     */
+    public static function getClassDefault(): array
     {
         return [];
     }
 
-    /*
+    /**
      * On doit surcharger l'implémentation par défaut car ça retourne la valeur par défaut du schéma.
      * Comme le schéma d'une collection, c'est le schéma de ses éléments, ça crée systématiquement un
      * élément vide (par exemple on se retrouve avec une base vide dans biblio).
+     *
+     * @return array<Item>
      */
-    public function getDefaultValue()
+    public function getDefaultValue(): array
     {
         return [];
     }
@@ -61,7 +82,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         }
     }
 
-    public function getPhpValue()
+    /**
+     * @return array<mixed>
+     */
+    public function getPhpValue(): array
     {
         $result = [];
         foreach ($this->phpValue as $item) { // faut-il conserver la clé ?
@@ -87,12 +111,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * Retourne l'élément qui figure à la position indiquée (implémentation de l'interface ArrayAccess).
      *
      * @param int $offset
-     *
-     * @return Any
+     * @return Item
      *
      * @throws InvalidArgumentException Si la position indiquée n'est pas valide.
      */
-    public function offsetGet(mixed $offset): mixed
+    public function offsetGet(mixed $offset): Any
     {
         if (isset($this->phpValue[$offset])) {
             return $this->phpValue[$offset];
@@ -105,7 +128,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Stocke un élément à la position indiquée (implémentation de l'interface ArrayAccess).
      *
-     * @param int $offset Position à laquelle sera inséré l'élément, ou null pour ajouter l'élément à la fin de
+     * @param ?int $offset Position à laquelle sera inséré l'élément, ou null pour ajouter l'élément à la fin de
      * la collection. Le paramètre offset est ignoré si une clé a été définie dans le schéma de la collection. Dans
      * ce cas, c'est la clé de l'élément qui est utilisée comme position.
      *
@@ -114,16 +137,17 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     public function offsetSet($offset, $value): void
     {
         // Détermine le type des éléments de cette collection
-        $type = $this->schema->type() ?: Any::class;
+        /** @var class-string<Item> */
+        $type = $this->getSchema()->type() ?: Any::class;
 
         // Si value n'est pas du bon type, on l'instancie
         if (! $value instanceof $type) {
-            $value = new $type($value, $this->schema); /* @var Any $value */
+            $value = new $type($value, $this->getSchema()); /* @var Any $value */
         }
 
         // Si c'est une collection indexée, ignore offset et indexe les éléments de la collection
         // $key contient soit le nom d'un sous-champ (composite) soit true pour indexer les valeurs
-        if ($key = $this->schema->key()) {
+        if ($key = $this->getSchema()->key()) {
             $key = ($key === true) ? $value->getPhpValue() : $value->$key();
             $this->phpValue[$key] = $value;
         }
@@ -169,7 +193,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Retourne le premier élément de la collection et positionne l'itérateur interne au début.
      *
-     * @return Any|null Le premier élément ou null si la collection est vide.
+     * @return ?Item Le premier élément ou null si la collection est vide.
      */
     public function first(): ?Any
     {
@@ -179,7 +203,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Retourne le dernier élément de la collection et positionne l'itérateur interne à la fin.
      *
-     * @return Any|null Le dernier élément ou null si la collection est vide.
+     * @return ?Item Le dernier élément ou null si la collection est vide.
      */
     public function last(): ?Any
     {
@@ -199,7 +223,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Retourne l'élément en cours.
      *
-     * @return Any|null L'élément ou null si la collection est vide.
+     * @return ?Item L'élément ou null si la collection est vide.
      */
     public function current(): ?Any
     {
@@ -209,7 +233,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Avance l'itérateur interne à l'élément suivant.
      *
-     * @return Any|null L'élément suivant ou null s'il n'y a plus d'éléments.
+     * @return ?Item L'élément suivant ou null s'il n'y a plus d'éléments.
      */
     public function next(): ?Any
     {
@@ -236,7 +260,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     public function refreshKeys(): void
     {
         // Cas d'une collection à clé
-        if ($this->schema && $key = $this->schema->key()) {
+        if ($key = $this->getSchema()->key()) {
             $result = [];
             foreach ($this->phpValue as $item) {
                 $offset = ($key === true) ? $item->getPhpValue() : $item->$key->getPhpValue();
@@ -269,15 +293,15 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         return $this->createTemporaryItem()->getSettingsForm();
     }
 
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string|array
     {
         // Paramètres d'affichage
-        $prefix = (string) $this->getOption('prefix', $options, '');
-        $suffix = (string) $this->getOption('suffix', $options, '');
-        $sep = (string) $this->getOption('sep', $options, ', ');
-        $limit = (int) $this->getOption('limit', $options, 0);
-        $explode = (bool) $this->getOption('explode', $options, false);
-        $ellipsis = (string) $this->getOption('ellipsis', $options, '');
+        $prefix = $this->getOption('prefix', $options, '');
+        $suffix = $this->getOption('suffix', $options, '');
+        $sep = $this->getOption('sep', $options, ', ');
+        $limit = $this->getOption('limit', $options, 0);
+        $explode = $this->getOption('explode', $options, false);
+        $ellipsis = $this->getOption('ellipsis', $options, '');
 
         // Les items à formatter
         // $items = $this->phpValue;
@@ -287,8 +311,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $result = [];
 
         // Sanity check / debug
-        if ($explode && ! is_a($this->schema->type(), Categorizable::class, true)) {
-            echo $this->schema->name(), " : 'vue éclatée' activée mais le champ ne gère pas 'Categorizable'<br />";
+        if ($explode && ! is_a($this->getSchema()->type(), Categorizable::class, true)) {
+            echo $this->getSchema()->name(), " : 'vue éclatée' activée mais le champ ne gère pas 'Categorizable'<br />";
             $explode = false;
         }
 
@@ -343,7 +367,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Tronque le tableau passé en paramètre.
      *
-     * @param array $items Le tableau à tronquer.
+     * @param array<Item> $items Le tableau à tronquer.
      *
      * @param int   $limit Le nombre d'éléments à conserver :
      *
@@ -381,7 +405,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         // Crée un item pour récupérer son formulaire
         $item = $this->createTemporaryItem();
         $form = $item->getFormatSettingsForm();
-        $name = $this->schema->name();
+        $name = $this->getSchema()->name();
 
         // Propose l'option "vue éclatée" si le champ est catégorisable
         if ($item instanceof Categorizable) { /* @var Categorizable $item */
@@ -462,26 +486,29 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * Cette méthode est utilisée par getSettingsForm, getEditorForm, etc. pour récupérer le formulaire généré
      * par l'item.
      *
-     * @return Any
+     * @return Item
      */
     public function createTemporaryItem(): Any // public car utilisée par IndexableCollectionTrait
     {
+        $schema = $this->getSchema();
+
         // Récupère le type des items de la collection
-        $type = $this->schema->type();
+        /** @var class-string<Item> */
+        $type = $schema->type();
 
         // Pour une collection, default est un tableau de valeur
         // On est obligé de l'enlever du schéma car sinon item génère une exception 'bad type'
         $default = null;
-        if (isset($this->schema->value['default'])) {
-            $default = $this->schema->value['default'];
-            unset($this->schema->value['default']);
+        if (isset($schema->value['default'])) {
+            $default = $schema->value['default'];
+            unset($schema->value['default']);
         }
 
         // Crée l'item
-        $item = new $type($type::getClassDefault(), $this->schema);
+        $item = new $type($type::getClassDefault(), $schema);
 
         // Restaure la valeur par défaut du schéma
-        ! is_null($default) && $this->schema->value['default'] = $default;
+        ! is_null($default) && $schema->value['default'] = $default;
 
         // Ok
         return $item;
@@ -493,7 +520,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @param Closure $transformer
      *
-     * @return array
+     * @return array<mixed>
      */
     public function map(Closure $transformer): array
     {
@@ -501,13 +528,13 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     }
 
     /**
-     * {@inheritDoc}
+     * @return Collection<Item>
      */
     final public function filter(array $include = [], array $exclude = [], int $limit = 0): Collection
     {
         // Détermine la liste des éléments à retourner
         $items = [];
-        foreach ($this->phpValue as $key => $item) { /** @var Any $item */
+        foreach ($this->phpValue as $key => $item) {
             // Filtre l'elément
             if (is_null($item = $this->filterItem($item, $include, $exclude))) {
                 continue;
@@ -533,11 +560,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Détermine si l'élément passé en paramètre doit être retourné ou non par les méthodes filter() et similaires.
      *
-     * @param Any   $item       L'item à filtrer.
-     * @param array $include    Liste des valeurs à inclure.
-     * @param array $exclude    Liste des valeurs à exclure.
+     * @param Item   $item       L'item à filtrer.
+     * @param array<string> $include    Liste des valeurs à inclure.
+     * @param array<string> $exclude    Liste des valeurs à exclure.
      *
-     * @return Any|null Retourne l'item à insérer dans la collection retournée par filter() ou null pour filtrer
+     * @return ?Item Retourne l'item à insérer dans la collection retournée par filter() ou null pour filtrer
      * l'élément.
      *
      * Remarque : l'item retourné peut être différent de l'item passé en paramètre (par exemple la classe
@@ -568,9 +595,9 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * Les items des deux collections sont fusionnés avec array_merge. Si les collections sont indexées par clés et
      * qu'elles ont des clés en commun, ce sont les items de la collection passée en paramètre qui sont retournés.
      *
-     * @param Collection $collection
+     * @param Collection<Item> $collection
      *
-     * @return Collection Retourne une nouvelle collection (les collections d'origine ne sont pas modifiées).
+     * @return Collection<Item> Retourne une nouvelle collection (les collections d'origine ne sont pas modifiées).
      */
     public function merge(Collection $collection): Collection
     {

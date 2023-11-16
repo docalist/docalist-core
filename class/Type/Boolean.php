@@ -18,11 +18,13 @@ use Docalist\Forms\Element;
 /**
  * Type booléen.
  *
+ * @extends Scalar<bool>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Boolean extends Scalar
 {
-    public static function getClassDefault()
+    public static function getClassDefault(): bool
     {
         return true;
     }
@@ -40,8 +42,17 @@ class Boolean extends Scalar
         $this->phpValue = $value;
     }
 
+    public function getFormattedValue($options = null): string
+    {
+        return $this->phpValue ? 'TRUE' : 'FALSE';
+        // old code de scalar : return (string) $this->phpValue;
+    }
+
     public function getEditorForm($options = null): Element
     {
-        return parent::getEditorForm($options)->setAttribute('type', 'checkbox');
+        $form = parent::getEditorForm($options);
+        $form->setAttribute('type', 'checkbox');
+
+        return $form;
     }
 }

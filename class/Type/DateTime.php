@@ -35,7 +35,7 @@ class DateTime extends Text
 
     public function getEditorForm($options = null): Element
     {
-        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'datetime':
             case 'datetime-local':
@@ -70,6 +70,8 @@ class DateTime extends Text
 
         // Au lieu d'afficher un libellé, on affiche des exemples (année en cours avec un jour et un mois < 10)
         $date = PhpDateTime::createFromFormat('d/m', '4/7'); // 4 juillet de l'année en cours
+        assert(false !== $date, "createFromFormat() ne peut pas retourner false comme on lui passe une date valide");
+
         $examples = [];
         foreach ($formats as $format) {
             $examples[$format] = date_i18n($format, $date->getTimestamp());
@@ -79,7 +81,7 @@ class DateTime extends Text
         return $examples;
     }
 
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
         // à gérer : si format nommé (raw, text...)

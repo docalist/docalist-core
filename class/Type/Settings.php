@@ -57,23 +57,29 @@ class Settings extends Entity
      *
      * @param Repository $repository Le dépôt dans lequel sont stockés les
      * paramètres.
-     * @param scalar $id L'identifiant du settings
+     * @param ?string $id L'identifiant du settings
      */
-    public function __construct(Repository $repository, $id = null)
+    public function __construct(Repository $repository, string $id = null)
     {
         // Stocke le dépôt associé
         $this->repository = $repository;
 
         // Détermine l'id des settings
         if (! is_null($id)) {           // ID transmis en paramètre
-            $this->setID($id);          // Exception si la classe descendante a déjà fixé l'id
-        } elseif (is_null($this->getID())) { // ID auto
-            $this->id = strtolower(strtr(get_class($this), '\\', '-'));
-        }                               // ID fixé en dur et non transmis
+            $this->setID($id);
+        } else {                        // ID auto
+            $id = $this->getID();
+            if (is_null($id)) {
+                $id = strtolower(strtr(get_class($this), '\\', '-'));
+                $this->setID($id);
+            }
+        }
+
+            // ID fixé en dur et non transmis
 
         // Si les settings ont été enregistrés dans le dépôt, on les charge
-        if ($repository->has($this->getID())) {
-            parent::__construct($repository->loadRaw($this->getID()));
+        if ($repository->has($id)) {
+            parent::__construct($repository->loadRaw($id));
         }
 
         // Sinon on initialise avec la valeur par défaut
@@ -95,7 +101,7 @@ class Settings extends Entity
     /**
      * Enregistre les settings.
      */
-    public function save()
+    public function save(): void
     {
         $this->repository->save($this);
     }
@@ -121,6 +127,7 @@ class Settings extends Entity
     public function delete()
     {
         $id = $this->getID();
+        assert(! is_null($id), "ID ne peut pas être null, il a été définit dans le constructeur");
         if ($this->repository->has($id)) {
             $this->repository->delete($id);
         }

@@ -36,7 +36,7 @@ class ListEntry extends Text
     /**
      * Retourne la liste des entrées autorisées.
      *
-     * @return array Un tableau de la forme 'code => label', par exemple : ['fr' => 'french', 'en' => english].
+     * @return array<int|string,string> Un tableau de la forme 'code => label', par exemple : ['fr' => 'french', 'en' => english].
      */
     protected function getEntries(): array
     {
@@ -72,7 +72,7 @@ class ListEntry extends Text
 
     public function getEditorForm($options = null): Element
     {
-        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         $css = '';
         switch ($editor) {
             case 'select':
@@ -117,13 +117,13 @@ class ListEntry extends Text
         return 'label';
     }
 
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
 
         switch ($format) {
             case 'code':
-                return $this->phpValue;
+                return $this->getPhpValue();
 
             case 'label':
                 return $this->getEntryLabel();

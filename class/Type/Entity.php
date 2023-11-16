@@ -25,19 +25,17 @@ class Entity extends Composite
 {
     /**
      * Identifiant de l'entité.
-     *
-     * @var scalar|null
      */
-    protected $id;
+    protected int|string|null $id =null;
 
     /**
      * Construit une nouvelle entité.
      *
-     * @param array|null     $value  Un tableau contenant les données initiales de l'entité.
+     * @param array<mixed>|null     $value  Un tableau contenant les données initiales de l'entité.
      * @param Schema|null    $schema Optionnel, le schéma de l'entité.
-     * @param scalar|null    $id     Optionnel, l'ID de l'entité.
+     * @param int|string|null    $id     Optionnel, l'ID de l'entité.
      */
-    public function __construct(array $value = null, Schema $schema = null, $id = null)
+    public function __construct(array $value = null, Schema $schema = null, int|string|null $id = null)
     {
         parent::__construct($value, $schema);
         ! is_null($id) && $this->setID($id);
@@ -46,9 +44,9 @@ class Entity extends Composite
     /**
      * Retourne l'identifiant unique de l'entité (ID).
      *
-     * @return scalar|null Retourne l'ID de l'entité ou null si l'entité n'a pas encore d'ID.
+     * @return int|string|null Retourne l'ID de l'entité ou null si l'entité n'a pas encore d'ID.
      */
-    public function getID()
+    public function getID(): int|string|null
     {
         return $this->id;
     }
@@ -56,9 +54,9 @@ class Entity extends Composite
     /**
      * Définit l'identifiant unique de l'entité (ID).
      *
-     * @param scalar $id L'identifiant de l'entité
+     * @param int|string|null $id L'identifiant de l'entité
      */
-    public function setID($id): void
+    public function setID(int|string|null $id): void
     {
         $this->id = $id;
     }

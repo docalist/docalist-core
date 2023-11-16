@@ -14,9 +14,12 @@ namespace Docalist\Type\Collection;
 use Docalist\Type\Collection;
 use Docalist\Type\DateTimeInterval;
 use DateTime;
+use DateTimeInterface;
 
 /**
  * Une collection d'objets DateTimeInterval.
+ *
+ * @extends Collection<DateTimeInterval>
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -25,9 +28,9 @@ class DateTimeIntervalCollection extends Collection
     /**
      * Retourne la plus petite des dates de début des intervalles de dates présents dans la collection.
      *
-     * @return DateTime|null
+     * @return DateTimeInterface|null
      */
-    public function getStartDate(): ?DateTime
+    public function getStartDate(): ?DateTimeInterface
     {
         $start = null;
         foreach ($this->phpValue as $interval) { /** @var DateTimeInterval $interval */
@@ -46,9 +49,9 @@ class DateTimeIntervalCollection extends Collection
     /**
      * Retourne la plus petite des dates de fin des intervalles de dates présents dans la collection.
      *
-     * @return DateTime|null
+     * @return DateTimeInterface|null
      */
-    public function getEndDate(): ?DateTime
+    public function getEndDate(): ?DateTimeInterface
     {
         $end = null;
         foreach ($this->phpValue as $interval) { /** @var DateTimeInterval $interval */

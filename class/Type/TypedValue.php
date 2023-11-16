@@ -15,12 +15,13 @@ use Docalist\Type\MultiField;
 use Docalist\Type\TableEntry;
 use Docalist\Type\Any;
 use Docalist\Type\Collection\TypedValueCollection;
+use LogicException;
 
 /**
  * Valeur typée : un type composite associant un champ TableEntry à une valeur.
  *
  * @property TableEntry $type   Type    Type.
- * @property Any        $value  Value   Valeur.
+ * @property Any<mixed>        $value  Value   Valeur.
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -74,12 +75,21 @@ class TypedValue extends MultiField
         return 't: v';
     }
 
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string|array
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
 
         $type = $this->formatField('type', $options);
+        // Type est obligatoirement un Scalar dont il ne peut pas avoir de vue éclatée, donc formatField() retourne une chaine
+        assert(is_string($type));
+
         $value = $this->formatField('value', $options);
+
+        // à étudier : est-ce que le champ value d'un TypedValue peut avoir l'option "vue éclatée" ?
+        // dans ce cas, formatField() nous retourne un array et les formats ci-dessous n'ont pas de sens
+        if (!is_string($value)) {
+            throw new LogicException('TypedValue with exploded value is not supported');
+        }
 
         switch ($format) {
             case 'v':

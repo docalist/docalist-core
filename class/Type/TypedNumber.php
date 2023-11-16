@@ -59,20 +59,28 @@ class TypedNumber extends TypedText
         return 'format';
     }
 
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string|array
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
+        assert(is_string($format), "Le format est obligatoirement une chaine");
 
         switch ($format) {
             case 'format':
                 // Récupère le format indiqué dans la table
-                $format = $this->type->getEntry('format') ?: $this->type->getPhpValue() . ' %s';
+                $format = $this->type->getEntry('format');
+                // peut retourner false (entrée non trouvée) ou une chaine (qui peut être vide)
 
                 // Si on n'a pas de format, on en construit un avec le libellé qui figure dans la table
-                empty($format) && $format = $this->type->getEntryLabel() . ' %s';
+                if (!is_string($format) || '' === $format) {
+                    $format = $this->type->getEntryLabel() . ' %s';
+                }
+
+                // Formatte la valeur
+                $value = $this->formatField('value', $options);
+                assert(is_string($value));
 
                 // Formatte le résultat
-                return trim(sprintf($format, $this->formatField('value', $options)));
+                return trim(sprintf($format, $value));
         }
 
         // Laisse la classe parent gérer les autres formats d'affichage disponibles

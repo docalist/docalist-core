@@ -109,13 +109,8 @@ abstract class MultiField extends Composite implements Categorizable
      */
     public function getCategoryName(): string
     {
-        if ($schema = $this->getCategoryField()->getSchema()) {
-            $name = $schema->label();
-            if ($name) {
-                return lcfirst($name);
-            }
-        }
+        $name = $this->getCategoryField()->getSchema()->label();
 
-        return __('catégorie', 'docalist-core');
+        return empty($name) ? __('catégorie', 'docalist-core') : lcfirst($name);
     }
 }

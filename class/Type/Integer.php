@@ -17,6 +17,8 @@ use Docalist\Forms\Element;
 /**
  * Type entier.
  *
+ * @extends Number<int>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Integer extends Number

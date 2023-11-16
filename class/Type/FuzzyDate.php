@@ -27,7 +27,7 @@ class FuzzyDate extends Text
     /**
      * Indique le format à utiliser en fonction de la longueur de la date.
      *
-     * @var array Le tableau a la structure suivante :
+     * @var array<string,array<int,string>> Le tableau a la structure suivante :
      * "Format choisi par l'utilisateur" => [
      *     "format à utiliser si on n'a que l'année",
      *     "format à utiliser si on a l'année et le mois",
@@ -82,7 +82,7 @@ class FuzzyDate extends Text
     /**
      * Retourne les différentes parties (année, mois, jour) qui composent la date.
      *
-     * @return array Retourne un tableau de 1, 2 ou 3 éléments.
+     * @return array<int,string> Retourne un tableau de 1, 2 ou 3 éléments.
      */
     protected function parse(): array
     {
@@ -107,7 +107,7 @@ class FuzzyDate extends Text
     /**
      * {@inheritDoc}
      */
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string
     {
         // Retourne une chaine vide si la date est vide
         if (empty($this->phpValue)) {

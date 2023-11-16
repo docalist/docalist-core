@@ -16,6 +16,7 @@ use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Element;
 use Docalist\Forms\Container;
 use Docalist\Forms\Table;
+use Docalist\Schema\Schema;
 use InvalidArgumentException;
 
 /**
@@ -45,11 +46,16 @@ use InvalidArgumentException;
  * classe, soit une version personnalisée du schéma transmise en paramètre au
  * constructeur.
  *
+ * @extends Any<array<string,Any<mixed>>>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Composite extends Any
+abstract class Composite extends Any
 {
-    public static function getClassDefault()
+    /**
+     * @return array<string,mixed>
+     */
+    public static function getClassDefault(): array
     {
         return [];
     }
@@ -67,13 +73,16 @@ class Composite extends Any
         }
     }
 
-    public function getPhpValue()
+    /**
+     * @return array<string,mixed>
+     */
+    public function getPhpValue(): array
     {
         // Le tableau qui sera retourné
         $result = [];
 
         // On se base sur le schéma pour retourner les champs toujours dans le même ordre
-        foreach ($this->schema->getFieldNames() as $name) {
+        foreach ($this->getSchema()->getFieldNames() as $name) {
             // Si le champ n'a pas été créé, continue
             if (!isset($this->phpValue[$name])) {
                 continue;
@@ -82,7 +91,7 @@ class Composite extends Any
             // Récupère la valeur du champ
             $value = $this->phpValue[$name]->getPhpValue();
 
-            // Si la valeur est vide (cas d'une collection snas éléments, par exemple), continue
+            // Si la valeur est vide (cas d'une collection sans éléments, par exemple), continue
             if ($value === []) {
                 continue;
             }
@@ -102,7 +111,7 @@ class Composite extends Any
      * getFields() retourne un tableau de types docalist. Cela permet, par exemple,
      * d'itérer sur tous les champs d'un objet.
      *
-     * @return Any[]
+     * @return array<string,Any<mixed>>
      */
     public function getFields(): array
     {
@@ -124,13 +133,15 @@ class Composite extends Any
             return;
         }
 
+        $schema = $this->getSchema();
+
         // Vérifie que le champ existe et récupère son schéma
-        if (!$this->schema->hasField($name)) {
+        if (!$schema->hasField($name)) {
             throw new InvalidArgumentException('Field "' . $name . '" does not exist');
         }
 
         // Récupère le schéma du champ
-        $field = $this->schema->getField($name);
+        $field = $schema->getField($name);
 
         // Détermine le type du champ
         $type = $field->collection() ?: $field->type();
@@ -166,7 +177,7 @@ class Composite extends Any
      *
      * @param string $name
      *
-     * @return Any
+     * @return Any<mixed>
      *
      * @throws InvalidArgumentException Si la propriété n'existe pas dans le schéma.
      */
@@ -201,11 +212,11 @@ class Composite extends Any
      * </code>
      *
      * @param string $name Nom de la propriété.
-     * @param array $arguments Valeur éventuel. Si aucun argument n'est indiqué,
+     * @param array<mixed> $arguments Valeur éventuel. Si aucun argument n'est indiqué,
      * la propriété sera accédée via son getter sinon, c'est le setter qui est
      * utilisé.
      *
-     * @return Any La méthode retourne soit la propriété demandée (utilisation
+     * @return mixed|$this La méthode retourne soit la propriété demandée (utilisation
      * comme getter), soit l'objet en cours (utilisation comme setter) pour
      * permettre le chainage de méthodes.
      */
@@ -226,7 +237,7 @@ class Composite extends Any
         }
 
         // Le champ n'existe pas encore, retourne la valeur par défaut
-        $field = $this->schema->getField($name);
+        $field = $this->getSchema()->getField($name);
         $class = $field->collection() ?: $field->type();
 
         return $class::getClassDefault();
@@ -234,7 +245,7 @@ class Composite extends Any
 
     public function filterEmpty(bool $strict = true): bool
     {
-        foreach ($this->phpValue as $key => $item) { /* @var Any $item */
+        foreach ($this->getFields() as $key => $item) {
             if ($item->filterEmpty($strict)) {
                 unset($this->phpValue[$key]);
             }
@@ -250,7 +261,7 @@ class Composite extends Any
      * @param string $name      Nom de la propriété à filtrer
      * @param bool   $strict    Mode de comparaison.
      */
-    protected function filterEmptyProperty(string $name, bool $strict = true)
+    protected function filterEmptyProperty(string $name, bool $strict = true): bool
     {
         return ! isset($this->phpValue[$name]) || $this->phpValue[$name]->filterEmpty($strict);
     }
@@ -269,7 +280,7 @@ class Composite extends Any
         // TEMP : pour le moment on peut nous passer une grille ou un schéma, à terme, on ne passera que des array
         $options && is_object($options) && $options = $options->value();
 
-        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'container':
                 $form = $wrapper = new Container();
@@ -289,12 +300,15 @@ class Composite extends Any
         }
 
         // Récupère la liste des champs à afficher
-        $fields = array_keys(isset($options['fields']) ? $options['fields'] : $this->schema->getFields());
+        $schema = $this->getSchema();
+        //$fields = array_keys(isset($options['fields']) ? $options['fields'] : $this->schema->getFields());
+        /** @var string[] */
+        $fields = isset($options['fields']) ? array_keys($options['fields']) : $schema->getFieldNames();
 
         // Génère le formulaire de chaque sous-champ
         foreach ($fields as $name) {
             // Si le champ est marqué "unused" dans le schéma, on l'ignore
-            if ($this->schema->getField($name)->unused()) {
+            if ($schema->getField($name)->unused()) {
                 continue;
             }
 
@@ -315,11 +329,11 @@ class Composite extends Any
      * gèrent (cf. TypedText::getFormattedValue par exemple).
      *
      * @param string $name    Nom du champ à formatter.
-     * @param array  $options Options d'affichage passées à la méthode getFormattedValue() du Composite.
+     * @param array<mixed>|Schema $options Options d'affichage passées à la méthode getFormattedValue() du Composite.
      *
-     * @return string Le champ formatté.
+     * @return string|array<mixed> Le champ formatté.
      */
-    protected function formatField(string $name, $options = null)
+    protected function formatField(string $name, $options = null): array|string
     {
         // Si le champ est vide, terminé
         if (empty($this->phpValue[$name])) {
@@ -327,7 +341,7 @@ class Composite extends Any
         }
 
         // Récupère le champ
-        $field = $this->phpValue[$name]; /* @var Any $field */
+        $field = $this->phpValue[$name];
 
         // Si aucune option n'a été indiquée pour le champ, utilise le formattage par défaut
         if (empty($options['fields'][$name])) {

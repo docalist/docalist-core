@@ -18,16 +18,18 @@ use Docalist\Type\Any;
 /**
  * Une collection d'objets MultiField.
  *
+ * @template Item of MultiField
+ *
+ * @extends Collection<Item>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class MultiFieldCollection extends Collection
 {
     /**
      * Indique si le filtre sur les éléments "internal*" est activé ou non (true par défaut).
-     *
-     * @var bool
      */
-    private static $internalFilter = true;
+    private static bool $internalFilter = true;
 
     /**
      * Indique si le filtre sur les éléments "internal*" est activé ou non.
@@ -66,8 +68,6 @@ class MultiFieldCollection extends Collection
      */
     protected function filterItem(Any $item, array $include = [], array $exclude = []): ?Any
     {
-        /** @var MultiField $item */
-
         // On filtre par catégorie
         $value = $item->getCategoryCode();
 

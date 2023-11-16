@@ -32,6 +32,8 @@ use InvalidArgumentException;
  * $rennes = new GeoPoint([-1.6810943,48.1114428]); // ordre inverse, cf. GeoJSON.
  * </code>
  *
+ * @extends Any<array<string,float>>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class GeoPoint extends Any
@@ -127,7 +129,7 @@ class GeoPoint extends Any
     /**
      * Initialise la valeur du point géographique.
      *
-     * @param string|array $value Les coordonnées du point peuvent être indiquées :
+     * @param string|array<float>|Any<array<float>> $value Les coordonnées du point peuvent être indiquées :
      * - sous la forme d'une chaine de caractères de la forme : "latitude,longitude"
      * - sous la forme d'un tableau associatif de la forme : ['lat' => latitude, 'lon' => longitude]
      * - sous la forme d'un tableau numérique de la forme : [0 => longitude, 1 => latitude].
@@ -136,8 +138,6 @@ class GeoPoint extends Any
      * afin de respecter le standard GeoJSON (http://geojson.org/).
      *
      * @throws InvalidArgumentException Si les coordonnées sont incorrectes.
-     *
-     * @return self $this
      */
     public function assign($value): void
     {
@@ -172,7 +172,7 @@ class GeoPoint extends Any
     /**
      * Initialise les coordonnées du point à partir d'un tableau.
      *
-     * @param array $value Les coordonnées du point :
+     * @param array<float> $value Les coordonnées du point :
      * - sous la forme d'un tableau associatif de la forme ['lat' => latitude, 'lon' => longitude]
      * - sous la forme d'un tableau numérique de la forme [0 => longitude, 1 => latitude].
      *
@@ -211,7 +211,7 @@ class GeoPoint extends Any
      */
     protected function assignString($value)
     {
-        return $this->assignArray(array_reverse(array_map('trim', explode(',', $value))));
+        return $this->assignArray(array_reverse(array_map('floatval', explode(',', $value))));
     }
 
     public function getAvailableEditors(): array
@@ -224,7 +224,7 @@ class GeoPoint extends Any
 
     public function getEditorForm($options = null): Element
     {
-        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {
             case 'inputs':
                 $form = new Table();

@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
+use Docalist\Forms\CodeEditor;
+use Docalist\Forms\Container;
 use Docalist\Forms\Element;
 use Docalist\Forms\Textarea;
 use Docalist\Forms\WPEditor;
-use Docalist\Forms\CodeEditor;
-use Docalist\Forms\Container;
 use WP_Embed;
 
 /**
@@ -44,7 +44,7 @@ class LargeText extends Text
      */
     public function getEditorForm($options = null): Element
     {
-        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         $css = '';
         switch ($editor) {
             case 'textarea':
@@ -70,10 +70,10 @@ class LargeText extends Text
             case 'htmleditor':
                 $form = new CodeEditor();
                 $form->setOptions([
-                    'type' => 'text/html',
+                    'type'       => 'text/html',
                     'codemirror' => [
                         'matchTags' => false,
-                    ]
+                    ],
                 ]);
                 $css = 'autosize large-text'; // comme textarea si l'utilisateur a désactivé codemirror
                 break;
@@ -97,16 +97,16 @@ class LargeText extends Text
         $form->checklist('filters')
             ->setLabel(__('Filtres WordPress', 'docalist-core'))
             ->setDescription(__(
-                "Par défaut, le contenu du champ est affiché tel quel. Vous pouvez activer les options
-                proposées si vous voulez que votre champ se comporte comme un article WordPress standard.",
+                'Par défaut, le contenu du champ est affiché tel quel. Vous pouvez activer les options
+                proposées si vous voulez que votre champ se comporte comme un article WordPress standard.',
                 'docalist-core'
             ))
             ->setOptions([
-                'autop' => 'Paragraphes auto (crée des paragraphes html quand on a deux retours à la ligne)',
-                'texturize' => 'Texturize (version typographique des apostrophes, guillemets, tirets, ellipses...)',
-                'smilies' => 'Smileys (convertit les émoticônes comme :-) en smileys)',
-                'autoembed' => 'Auto-embed (intègre les médias liés dans le contenu)',
-                'shortcodes' => 'Shortcodes (exécute les shortcodes présents dans le contenu)',
+                'autop'             => 'Paragraphes auto (crée des paragraphes html quand on a deux retours à la ligne)',
+                'texturize'         => 'Texturize (version typographique des apostrophes, guillemets, tirets, ellipses...)',
+                'smilies'           => 'Smileys (convertit les émoticônes comme :-) en smileys)',
+                'autoembed'         => 'Auto-embed (intègre les médias liés dans le contenu)',
+                'shortcodes'        => 'Shortcodes (exécute les shortcodes présents dans le contenu)',
                 'responsive-images' => 'Formats multiples pour les images (pour les rendre responsive)',
             ]);
 
@@ -115,8 +115,6 @@ class LargeText extends Text
 
     /**
      * Retourne l'objet WP_Embed de WordPress (pour éviter de coder des "global" partout).
-     *
-     * @return WP_Embed
      */
     private function wpEmbed(): WP_Embed
     {
@@ -126,10 +124,10 @@ class LargeText extends Text
     /**
      * {@inheritDoc}
      */
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string
     {
         $value = $this->getPhpValue();
-        if (trim($value) === '') {
+        if ('' === trim($value)) {
             return $value;
         }
 

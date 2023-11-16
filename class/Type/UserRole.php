@@ -30,7 +30,7 @@ class UserRole extends ListEntry
     /**
      * Retourne la liste des rôles WordPress disponibles.
      *
-     * @return array Un tableau de la forme [Nom du rôle => Libellé du rôle]
+     * @return array<string,string> Un tableau de la forme [Nom du rôle => Libellé du rôle]
      */
     protected function getEntries(): array
     {

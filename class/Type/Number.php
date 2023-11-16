@@ -18,11 +18,15 @@ use Docalist\Forms\Element;
 /**
  * Un nombre.
  *
+ * @template TPhpValue of int|float
+ *
+ * @extends Scalar<int|float>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Number extends Scalar
 {
-    public static function getClassDefault()
+    public static function getClassDefault(): int|float
     {
         return 0;
     }
@@ -35,8 +39,10 @@ class Number extends Scalar
                 throw new InvalidTypeException('number');
             }
         }
+        $int = (int) $value;
+        $float = (float) $value;
 
-        $this->phpValue = $value;
+        $this->phpValue = ($int == $float) ? $int : $float;
     }
 
     public function getEditorForm($options = null): Element

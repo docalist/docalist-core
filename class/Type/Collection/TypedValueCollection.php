@@ -19,6 +19,8 @@ use Docalist\Type\Any;
 /**
  * Une collection d'objets TypedValue.
  *
+ * @extends MultiFieldCollection<TypedValue>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class TypedValueCollection extends MultiFieldCollection
@@ -26,15 +28,13 @@ class TypedValueCollection extends MultiFieldCollection
     /**
      * Filtre les éléments de la collection sur le champ type des éléments et retourne les champ value.
      *
-     * @param array $include    Liste des éléments à inclure (liste blanche) : si le tableau n'est pas vide, seuls les
-     *                          éléments indiqués seront retournés.
+     * @param array<string> $include liste des éléments à inclure (liste blanche) : si le tableau n'est pas vide, seuls
+     *                               les éléments indiqués sont retournés
+     * @param array<string> $exclude liste des éléments à exclure (liste noire) : si le tableau n'est pas vide, les
+     *                               éléments indiqués seront supprimés de la collection retournée
+     * @param int           $limit   nombre maximum d'éléments à retourner (0 = pas de limite)
      *
-     * @param array $exclude    Liste des éléments à exclure (liste noire) : si le tableau n'est pas vide, les
-     *                          éléments indiqués seront supprimés de la collection retournée.
-     *
-     * @param int   $limit      Nombre maximum d'éléments à retourner (0 = pas de limite).
-     *
-     * @return Collection
+     * @return Collection<Any<mixed>>
      */
     final public function filterValues(array $include = [], array $exclude = [], int $limit = 0): Collection
     {
@@ -42,9 +42,11 @@ class TypedValueCollection extends MultiFieldCollection
         $items = [];
         foreach ($this->phpValue as $item) {
             // Filtre les eléments
-            if (is_null($item = $this->filterItem($item, $include, $exclude))) { /** @var TypedValue $item */
+            if (is_null($item = $this->filterItem($item, $include, $exclude))) {
                 continue;
             }
+
+            /** @var TypedValue $item */
 
             // Ajoute la valeur de l'élément à la liste
             $items[] = $item->value;

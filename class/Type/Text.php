@@ -11,24 +11,30 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\Scalar;
 use Docalist\Forms\Element;
 use Docalist\Forms\Input;
 use Docalist\Type\Exception\InvalidTypeException;
-use InvalidArgumentException;
+use Docalist\Type\Scalar as ScalarType;
 
 /**
  * Type chaine de caractères.
  *
+ * @extends ScalarType<string>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class Text extends Scalar
+class Text extends ScalarType
 {
+    public static function getClassDefault(): string
+    {
+        return '';
+    }
+
     public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
-        if (! is_string($value)) {
-            if (! is_scalar($value)) {
+        if (!is_string($value)) {
+            if (!is_scalar($value)) {
                 throw new InvalidTypeException('string');
             }
             $value = (string) $value;
@@ -37,24 +43,34 @@ class Text extends Scalar
         $this->phpValue = $value;
     }
 
+    public function getPhpValue(): string
+    {
+        return $this->phpValue;
+    }
+
+    public function getFormattedValue($options = null): string
+    {
+        return $this->phpValue;
+    }
+
     public function filterEmpty(bool $strict = true): bool
     {
-        return ($this->phpValue === '');
+        return '' === $this->phpValue;
     }
 
     public function getAvailableEditors(): array
     {
         return [
-            'input'         => __('Zone de texte sur une seule ligne (par défaut)', 'docalist-core'),
-            'input-small'   => __('Zone de texte sur une seule ligne (petite)', 'docalist-core'),
+            'input' => __('Zone de texte sur une seule ligne (par défaut)', 'docalist-core'),
+            'input-small' => __('Zone de texte sur une seule ligne (petite)', 'docalist-core'),
             'input-regular' => __('Zone de texte sur une seule ligne (moyenne)', 'docalist-core'),
-            'input-large'   => __('Zone de texte sur une seule ligne (pleine largeur)', 'docalist-core'),
+            'input-large' => __('Zone de texte sur une seule ligne (pleine largeur)', 'docalist-core'),
         ];
     }
 
     public function getEditorForm($options = null): Element
     {
-        $editor = (string) $this->getOption('editor', $options, $this->getDefaultEditor());
+        $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         $css = '';
         switch ($editor) {
             case 'input':

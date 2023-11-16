@@ -38,10 +38,10 @@ class Url extends Text
         return $form;
     }
 
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string
     {
         $url = $this->phpValue;
-        if ($this->getOption('add-protocol', $options, $this->getDefaultFormat())) {
+        if ($this->getOption('add-protocol', $options, true)) {
             $url = $this->addProtocol($url);
         }
 

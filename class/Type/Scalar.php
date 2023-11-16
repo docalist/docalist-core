@@ -16,11 +16,15 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Classe de base pour les types scalaires.
  *
+ * @template TPhpValue of int|float|string|bool
+ *
+ * @extends Any<TPhpValue>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Scalar extends Any
 {
-    public static function getClassDefault()
+    public static function getClassDefault(): int|float|string|bool
     {
         return '';
     }
@@ -32,10 +36,11 @@ class Scalar extends Any
             throw new InvalidTypeException('scalar');
         }
 
+        // @phpstan-ignore-next-line TPhpValue of bool|float|int|string does not accept bool|float|int|string.
         $this->phpValue = $value;
     }
 
-    public function getFormattedValue($options = null)
+    public function getFormattedValue($options = null): string
     {
         return (string) $this->phpValue;
     }

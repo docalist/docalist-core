@@ -17,6 +17,8 @@ use Docalist\Type\Exception\InvalidTypeException;
 /**
  * Type nombre décimal.
  *
+ * @extends Number<float>
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Decimal extends Number
