@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\Scalar;
-use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Element;
+use Docalist\Type\Exception\InvalidTypeException;
 
 /**
  * Type booléen.
@@ -32,7 +31,7 @@ class Boolean extends Scalar
     public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
-        if (! is_bool($value)) {
+        if (!is_bool($value)) {
             $value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
             if (is_null($value)) {
                 throw new InvalidTypeException('boolean');

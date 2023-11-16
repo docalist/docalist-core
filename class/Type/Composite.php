@@ -11,12 +11,11 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\Any;
-use Docalist\Type\Exception\InvalidTypeException;
-use Docalist\Forms\Element;
 use Docalist\Forms\Container;
+use Docalist\Forms\Element;
 use Docalist\Forms\Table;
 use Docalist\Schema\Schema;
+use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
 
 /**
@@ -63,7 +62,7 @@ abstract class Composite extends Any
     public function assign($value): void
     {
         $array = ($value instanceof Any) ? $value->getPhpValue() : $value;
-        if (! is_array($array)) {
+        if (!is_array($array)) {
             throw new InvalidTypeException('array');
         }
 
@@ -120,11 +119,8 @@ abstract class Composite extends Any
 
     /**
      * Modifie une propriété de l'objet.
-     *
-     * @param string $name
-     * @param mixed $value
      */
-    public function __set(string $name, $value): void
+    public function __set(string $name, mixed $value): void
     {
         // Si le champ a déjà été créé, on change simplement sa valeur
         if (isset($this->phpValue[$name])) {
@@ -137,7 +133,7 @@ abstract class Composite extends Any
 
         // Vérifie que le champ existe et récupère son schéma
         if (!$schema->hasField($name)) {
-            throw new InvalidArgumentException('Field "' . $name . '" does not exist');
+            throw new InvalidArgumentException('Field "'.$name.'" does not exist');
         }
 
         // Récupère le schéma du champ
@@ -152,10 +148,6 @@ abstract class Composite extends Any
 
     /**
      * Indique si une propriété existe.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
     public function __isset(string $name): bool
     {
@@ -164,8 +156,6 @@ abstract class Composite extends Any
 
     /**
      * Supprime une propriété.
-     *
-     * @param string $name
      */
     public function __unset(string $name): void
     {
@@ -175,8 +165,6 @@ abstract class Composite extends Any
     /**
      * Retourne une propriété de l'objet.
      *
-     * @param string $name
-     *
      * @return Any<mixed>
      *
      * @throws InvalidArgumentException Si la propriété n'existe pas dans le schéma.
@@ -184,7 +172,7 @@ abstract class Composite extends Any
     public function __get(string $name): Any
     {
         // Initialise le champ s'il n'existe pas encore
-        ! isset($this->phpValue[$name]) && $this->__set($name, null);
+        !isset($this->phpValue[$name]) && $this->__set($name, null);
 
         // Retourne l'objet Type
         return $this->phpValue[$name];
@@ -211,14 +199,14 @@ abstract class Composite extends Any
      *    $book->title('titre)->author('aut')->tags(['roman', 'histoire'];
      * </code>
      *
-     * @param string $name Nom de la propriété.
+     * @param string       $name      Nom de la propriété.
      * @param array<mixed> $arguments Valeur éventuel. Si aucun argument n'est indiqué,
-     * la propriété sera accédée via son getter sinon, c'est le setter qui est
-     * utilisé.
+     *                                la propriété sera accédée via son getter sinon, c'est le setter qui est
+     *                                utilisé.
      *
      * @return mixed|$this La méthode retourne soit la propriété demandée (utilisation
-     * comme getter), soit l'objet en cours (utilisation comme setter) pour
-     * permettre le chainage de méthodes.
+     *                     comme getter), soit l'objet en cours (utilisation comme setter) pour
+     *                     permettre le chainage de méthodes.
      */
     public function __call(string $name, array $arguments)
     {
@@ -226,7 +214,7 @@ abstract class Composite extends Any
         if (!empty($arguments)) {
             $this->__set($name, $arguments[0]);
 
-             return $this;
+            return $this;
         }
 
         // Appel de la forme : $composite->property()
@@ -258,19 +246,19 @@ abstract class Composite extends Any
      * Similaire à filterEmpty() mais filtre uniquement la propriété dont le nom
      * est passé en paramètre.
      *
-     * @param string $name      Nom de la propriété à filtrer
-     * @param bool   $strict    Mode de comparaison.
+     * @param string $name   Nom de la propriété à filtrer
+     * @param bool   $strict Mode de comparaison.
      */
     protected function filterEmptyProperty(string $name, bool $strict = true): bool
     {
-        return ! isset($this->phpValue[$name]) || $this->phpValue[$name]->filterEmpty($strict);
+        return !isset($this->phpValue[$name]) || $this->phpValue[$name]->filterEmpty($strict);
     }
 
     public function getAvailableEditors(): array
     {
         return [
-            'container' => __('Container', 'docalist-core'),
-            'table' => __('Table', 'docalist-core'),
+            'container'  => __('Container', 'docalist-core'),
+            'table'      => __('Table', 'docalist-core'),
             'integrated' => __('Intégré (tous les champs ensemble)', 'docalist-core'),
         ];
     }
@@ -301,7 +289,7 @@ abstract class Composite extends Any
 
         // Récupère la liste des champs à afficher
         $schema = $this->getSchema();
-        //$fields = array_keys(isset($options['fields']) ? $options['fields'] : $this->schema->getFields());
+
         /** @var string[] */
         $fields = isset($options['fields']) ? array_keys($options['fields']) : $schema->getFieldNames();
 
@@ -328,7 +316,7 @@ abstract class Composite extends Any
      * Cette méthode utilitaire permet aux classes descendantes de formatter les différents sous-champs qu'elles
      * gèrent (cf. TypedText::getFormattedValue par exemple).
      *
-     * @param string $name    Nom du champ à formatter.
+     * @param string              $name    Nom du champ à formatter.
      * @param array<mixed>|Schema $options Options d'affichage passées à la méthode getFormattedValue() du Composite.
      *
      * @return string|array<mixed> Le champ formatté.

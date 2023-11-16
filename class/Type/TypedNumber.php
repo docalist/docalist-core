@@ -11,9 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\TypedText;
-use Docalist\Type\Text;
-
 /**
  * TypedNumber : un TypedValue dont la valeur contient des numéros.
  *
@@ -33,14 +30,14 @@ class TypedNumber extends TypedText
     public static function loadSchema(): array
     {
         return [
-            'label' => __('Numéro', 'docalist-core'),
+            'label'       => __('Numéro', 'docalist-core'),
             'description' => __('Numéro et type de numéro.', 'docalist-core'),
-            'fields' => [
-                'type' => [
+            'fields'      => [
+                'type'  => [
                     'description' => __('Type de numéro', 'docalist-core'),
                 ],
                 'value' => [
-                    'label' => __('Numéro', 'docalist-core'),
+                    'label'       => __('Numéro', 'docalist-core'),
                     'description' => __('Numéro dans le format indiqué par le type.', 'docalist-core'),
                 ],
             ],
@@ -62,7 +59,7 @@ class TypedNumber extends TypedText
     public function getFormattedValue($options = null): string|array
     {
         $format = $this->getOption('format', $options, $this->getDefaultFormat());
-        assert(is_string($format), "Le format est obligatoirement une chaine");
+        assert(is_string($format), 'Le format est obligatoirement une chaine');
 
         switch ($format) {
             case 'format':
@@ -72,7 +69,7 @@ class TypedNumber extends TypedText
 
                 // Si on n'a pas de format, on en construit un avec le libellé qui figure dans la table
                 if (!is_string($format) || '' === $format) {
-                    $format = $this->type->getEntryLabel() . ' %s';
+                    $format = $this->type->getEntryLabel().' %s';
                 }
 
                 // Formatte la valeur

@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\Any;
 use Docalist\Forms\Div;
-use Docalist\Forms\Table;
 use Docalist\Forms\Element;
+use Docalist\Forms\Table;
 use InvalidArgumentException;
 
 /**
@@ -55,7 +54,7 @@ class GeoPoint extends Any
     public static function loadSchema(): array
     {
         return [
-            'label' => __('Coordonnées', 'docalist-core'),
+            'label'       => __('Coordonnées', 'docalist-core'),
             'description' => __('Latitude et longitude en degrés décimaux.', 'docalist-core'),
         ];
     }
@@ -130,9 +129,9 @@ class GeoPoint extends Any
      * Initialise la valeur du point géographique.
      *
      * @param string|array<float>|Any<array<float>> $value Les coordonnées du point peuvent être indiquées :
-     * - sous la forme d'une chaine de caractères de la forme : "latitude,longitude"
-     * - sous la forme d'un tableau associatif de la forme : ['lat' => latitude, 'lon' => longitude]
-     * - sous la forme d'un tableau numérique de la forme : [0 => longitude, 1 => latitude].
+     *                                                     - sous la forme d'une chaine de caractères de la forme : "latitude,longitude"
+     *                                                     - sous la forme d'un tableau associatif de la forme : ['lat' => latitude, 'lon' => longitude]
+     *                                                     - sous la forme d'un tableau numérique de la forme : [0 => longitude, 1 => latitude].
      *
      * Remarque : attention, dans le cas d'un tableau numérique, l'ordre usuel est inversé (longitude,latitude)
      * afin de respecter le standard GeoJSON (http://geojson.org/).
@@ -153,7 +152,6 @@ class GeoPoint extends Any
             return;
         }
 
-
         if (is_array($value)) {
             $this->assignArray($value);
 
@@ -166,19 +164,19 @@ class GeoPoint extends Any
             return;
         }
 
-        throw new InvalidArgumentException("Invalid GeoPoint value, expected string or array");
+        throw new InvalidArgumentException('Invalid GeoPoint value, expected string or array');
     }
 
     /**
      * Initialise les coordonnées du point à partir d'un tableau.
      *
      * @param array<float> $value Les coordonnées du point :
-     * - sous la forme d'un tableau associatif de la forme ['lat' => latitude, 'lon' => longitude]
-     * - sous la forme d'un tableau numérique de la forme [0 => longitude, 1 => latitude].
-     *
-     * @throws InvalidArgumentException Si les coordonnées sont incorrectes.
+     *                            - sous la forme d'un tableau associatif de la forme ['lat' => latitude, 'lon' => longitude]
+     *                            - sous la forme d'un tableau numérique de la forme [0 => longitude, 1 => latitude].
      *
      * @return self $this
+     *
+     * @throws InvalidArgumentException Si les coordonnées sont incorrectes.
      */
     protected function assignArray(array $value)
     {
@@ -203,11 +201,11 @@ class GeoPoint extends Any
      * Initialise les coordonnées du point à partir d'une chaine de caractère.
      *
      * @param string $value Les coordonnées du point, sous la forme d'une chaine contenant deux réels séparés
-     * par une virgule (les espaces éventuels sont ignorés).
-     *
-     * @throws InvalidArgumentException Si les coordonnées sont incorrectes.
+     *                      par une virgule (les espaces éventuels sont ignorés).
      *
      * @return self $this
+     *
+     * @throws InvalidArgumentException Si les coordonnées sont incorrectes.
      */
     protected function assignString($value)
     {
@@ -217,8 +215,8 @@ class GeoPoint extends Any
     public function getAvailableEditors(): array
     {
         return [
-            'inputs'    => __('Champs texte distincts pour la latitude et la longitude', 'docalist-core'),
-            'hiddens'   => __('Champs cachés distincts pour la latitude et la longitude (cachés)', 'docalist-core'),
+            'inputs'  => __('Champs texte distincts pour la latitude et la longitude', 'docalist-core'),
+            'hiddens' => __('Champs cachés distincts pour la latitude et la longitude (cachés)', 'docalist-core'),
         ];
     }
 
@@ -239,7 +237,7 @@ class GeoPoint extends Any
                 break;
 
             default:
-                throw new InvalidArgumentException('Invalid GeoPoint editor "' . $editor . '"');
+                throw new InvalidArgumentException('Invalid GeoPoint editor "'.$editor.'"');
         }
 
         return $this->configureEditorForm($form, $options);

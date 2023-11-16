@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\Interfaces\Categorizable;
 use Docalist\Type\Collection\MultiFieldCollection;
-use Docalist\Type\TableEntry;
+use Docalist\Type\Interfaces\Categorizable;
 
 /**
  * Un MultiField est un composite qui permet de regrouper plusieurs champs
@@ -63,8 +62,6 @@ abstract class MultiField extends Composite implements Categorizable
 {
     /**
      * Retourne le sous-champ utilisé pour classer les occurences du champ.
-     *
-     * @return TableEntry
      */
     abstract protected function getCategoryField(): TableEntry;
 

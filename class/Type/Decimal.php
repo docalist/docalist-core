@@ -26,7 +26,7 @@ class Decimal extends Number
     public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
-        if (! is_float($value)) {
+        if (!is_float($value)) {
             if ($value === '') {
                 $value = 0.;
             } elseif (false === $value = filter_var($value, FILTER_VALIDATE_FLOAT)) {

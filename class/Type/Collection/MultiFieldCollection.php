@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace Docalist\Type\Collection;
 
+use Docalist\Type\Any;
 use Docalist\Type\Collection;
 use Docalist\Type\MultiField;
-use Docalist\Type\Any;
 
 /**
  * Une collection d'objets MultiField.
@@ -33,8 +33,6 @@ class MultiFieldCollection extends Collection
 
     /**
      * Indique si le filtre sur les éléments "internal*" est activé ou non.
-     *
-     * @return bool
      */
     public function internalFilterIsEnabled(): bool
     {

@@ -35,7 +35,7 @@ interface Categorizable
      * Retourne le code de la catégorie à laquelle appartient cette valeur.
      *
      * @return string Retourne un code interne identifiant la catégorie (par exemple pour un auteur, c'est le
-     * code de l'étiquette de rôle qui sera retourné).
+     *                code de l'étiquette de rôle qui sera retourné).
      */
     public function getCategoryCode(): string;
 
@@ -43,7 +43,7 @@ interface Categorizable
      * Retourne le libellé de la catégorie à laquelle appartient cette valeur.
      *
      * @return string Retourne le libellé de la catégorie retournée par {@link getCategoryCode()}. Par exemple
-     * pour un auteur, c'est le libellé de l'étiquette de rôle qui sera retourné.
+     *                pour un auteur, c'est le libellé de l'étiquette de rôle qui sera retourné.
      */
     public function getCategoryLabel(): string;
 

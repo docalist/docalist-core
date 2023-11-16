@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace Docalist\Type\Collection;
 
-use Docalist\Type\Collection\MultiFieldCollection;
+use Docalist\Type\Any;
 use Docalist\Type\Collection;
 use Docalist\Type\TypedValue;
-use Docalist\Type\Any;
 
 /**
  * Une collection d'objets TypedValue.

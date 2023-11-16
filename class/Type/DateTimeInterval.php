@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\DateTime;
 use Docalist\Type\Collection\DateTimeIntervalCollection;
 
 /**
@@ -19,8 +18,8 @@ use Docalist\Type\Collection\DateTimeIntervalCollection;
  *
  * Exemple : "2016-01-19 09:00","2016-01-20 17:00"
  *
- * @property DateTime $start    Date/heure de début
- * @property DateTime $end      Date/heure de fin
+ * @property DateTime $start Date/heure de début
+ * @property DateTime $end   Date/heure de fin
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -34,14 +33,14 @@ class DateTimeInterval extends Composite
         return [
             'fields' => [
                 'start' => [
-                    'type' => DateTime::class,
-                    'label' => __('Début', 'docalist-core'),
-                    'description' => __("Date / heure de début", 'docalist-core'),
+                    'type'        => DateTime::class,
+                    'label'       => __('Début', 'docalist-core'),
+                    'description' => __('Date / heure de début', 'docalist-core'),
                 ],
-                'end' => [
-                    'type' => DateTime::class,
-                    'label' => __('Fin', 'docalist-core'),
-                    'description' => __("Date / heure de fin", 'docalist-core'),
+                'end'   => [
+                    'type'        => DateTime::class,
+                    'label'       => __('Fin', 'docalist-core'),
+                    'description' => __('Date / heure de fin', 'docalist-core'),
                 ],
             ],
         ];

@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
+use Docalist\Forms\Checklist;
 use Docalist\Forms\Element;
-use Docalist\Forms\Select;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Radiolist;
-use Docalist\Forms\Checklist;
+use Docalist\Forms\Select;
 
 /**
  * Classe de base abstraite représentant un champ texte permettant à l'utilisateur de choisir une entrée dans une
@@ -28,7 +28,7 @@ class ListEntry extends Text
     public static function loadSchema(): array
     {
         return [
-            'label' => __('Entrée', 'docalist-core'),
+            'label'       => __('Entrée', 'docalist-core'),
             'description' => __('Choisissez dans la liste.', 'docalist-core'),
         ];
     }
@@ -58,10 +58,10 @@ class ListEntry extends Text
     public function getAvailableEditors(): array
     {
         return [
-            'select'        => __('Menu déroulant (select)', 'docalist-core'),
-            'entry-picker'  => __('Menu déroulant dynamique (entrypicker)', 'docalist-core'),
-            'list'          => __('Liste verticale (list)', 'docalist-core'),
-            'list-inline'   => __("Liste horizontale (list inline)", 'docalist-core'),
+            'select'       => __('Menu déroulant (select)', 'docalist-core'),
+            'entry-picker' => __('Menu déroulant dynamique (entrypicker)', 'docalist-core'),
+            'list'         => __('Liste verticale (list)', 'docalist-core'),
+            'list-inline'  => __('Liste horizontale (list inline)', 'docalist-core'),
         ];
     }
 
@@ -89,6 +89,7 @@ class ListEntry extends Text
                 $css = 'inline';
                 // Pas de break
 
+                // no break
             case 'list':
             case 'radio': // ancien nom
                 $form = $this->getSchema()->collection() ? new CheckList() : new Radiolist();

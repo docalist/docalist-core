@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace Docalist\Type\Interfaces;
 
+use Docalist\Forms\Container;
 use Docalist\Forms\Element;
 use Docalist\Schema\Schema;
-use Docalist\Forms\Container;
 
 /**
  * API permettant de saisir et modifier un type de données docalist.

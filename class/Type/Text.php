@@ -61,10 +61,10 @@ class Text extends ScalarType
     public function getAvailableEditors(): array
     {
         return [
-            'input' => __('Zone de texte sur une seule ligne (par défaut)', 'docalist-core'),
-            'input-small' => __('Zone de texte sur une seule ligne (petite)', 'docalist-core'),
+            'input'         => __('Zone de texte sur une seule ligne (par défaut)', 'docalist-core'),
+            'input-small'   => __('Zone de texte sur une seule ligne (petite)', 'docalist-core'),
             'input-regular' => __('Zone de texte sur une seule ligne (moyenne)', 'docalist-core'),
-            'input-large' => __('Zone de texte sur une seule ligne (pleine largeur)', 'docalist-core'),
+            'input-large'   => __('Zone de texte sur une seule ligne (pleine largeur)', 'docalist-core'),
         ];
     }
 

@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Schema\Schema;
 use Docalist\Repository\Repository;
+use Docalist\Schema\Schema;
 
 /**
  * Classe de base pour les entités.
@@ -26,19 +26,19 @@ class Entity extends Composite
     /**
      * Identifiant de l'entité.
      */
-    protected int|string|null $id =null;
+    protected int|string|null $id = null;
 
     /**
      * Construit une nouvelle entité.
      *
-     * @param array<mixed>|null     $value  Un tableau contenant les données initiales de l'entité.
-     * @param Schema|null    $schema Optionnel, le schéma de l'entité.
-     * @param int|string|null    $id     Optionnel, l'ID de l'entité.
+     * @param array<mixed>|null $value  Un tableau contenant les données initiales de l'entité.
+     * @param Schema|null       $schema Optionnel, le schéma de l'entité.
+     * @param int|string|null   $id     Optionnel, l'ID de l'entité.
      */
-    public function __construct(array $value = null, Schema $schema = null, int|string|null $id = null)
+    public function __construct(array $value = null, Schema $schema = null, int|string $id = null)
     {
         parent::__construct($value, $schema);
-        ! is_null($id) && $this->setID($id);
+        !is_null($id) && $this->setID($id);
     }
 
     /**

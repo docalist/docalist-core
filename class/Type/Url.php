@@ -60,13 +60,13 @@ class Url extends Text
     {
         // Adresse e-mail
         if (strpos($url, '@') !== false) {
-            substr($url, 0, 7) !== 'mailto:' && $url = 'mailto:' . $url;
+            substr($url, 0, 7) !== 'mailto:' && $url = 'mailto:'.$url;
 
             return $url;
         }
 
         // Url
-        !preg_match('~^(?:f|ht)tps?://~i', $url) && $url = 'http://' . $url;
+        !preg_match('~^(?:f|ht)tps?://~i', $url) && $url = 'http://'.$url;
 
         return $url;
     }

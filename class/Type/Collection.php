@@ -13,18 +13,17 @@ namespace Docalist\Type;
 
 use ArrayAccess;
 use ArrayIterator;
-use Countable;
-use Docalist\Schema\Schema;
-use IteratorAggregate;
 use Closure;
-use Docalist\Forms\Element;
-use Docalist\Forms\Container;
+use Countable;
 use Docalist\Forms\Choice;
-use Docalist\Type\Any;
+use Docalist\Forms\Container;
+use Docalist\Forms\Element;
+use Docalist\Schema\Schema;
+use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Type\Interfaces\Categorizable;
 use Docalist\Type\Interfaces\Filterable;
-use Docalist\Type\Exception\InvalidTypeException;
 use InvalidArgumentException;
+use IteratorAggregate;
 use Traversable;
 
 /**
@@ -33,6 +32,7 @@ use Traversable;
  * @template Item of Any<mixed>
  *
  * @extends Any<array<Item>>
+ *
  * @implements ArrayAccess<int,Item>
  * @implements IteratorAggregate<int,Item>
  *
@@ -72,7 +72,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
-        if (! is_array($value)) {
+        if (!is_array($value)) {
             throw new InvalidTypeException('array');
         }
 
@@ -99,8 +99,6 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * Indique si un élément existe à la position indiquée (implémentation de l'interface ArrayAccess).
      *
      * @param int $offset
-     *
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -111,6 +109,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * Retourne l'élément qui figure à la position indiquée (implémentation de l'interface ArrayAccess).
      *
      * @param int $offset
+     *
      * @return Item
      *
      * @throws InvalidArgumentException Si la position indiquée n'est pas valide.
@@ -128,11 +127,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Stocke un élément à la position indiquée (implémentation de l'interface ArrayAccess).
      *
-     * @param ?int $offset Position à laquelle sera inséré l'élément, ou null pour ajouter l'élément à la fin de
-     * la collection. Le paramètre offset est ignoré si une clé a été définie dans le schéma de la collection. Dans
-     * ce cas, c'est la clé de l'élément qui est utilisée comme position.
-     *
-     * @param mixed $value Les données de l'élément.
+     * @param ?int  $offset Position à laquelle sera inséré l'élément, ou null pour ajouter l'élément à la fin de
+     *                      la collection. Le paramètre offset est ignoré si une clé a été définie dans le schéma de la collection. Dans
+     *                      ce cas, c'est la clé de l'élément qui est utilisée comme position.
+     * @param mixed $value  Les données de l'élément.
      */
     public function offsetSet($offset, $value): void
     {
@@ -141,7 +139,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $type = $this->getSchema()->type() ?: Any::class;
 
         // Si value n'est pas du bon type, on l'instancie
-        if (! $value instanceof $type) {
+        if (!$value instanceof $type) {
             $value = new $type($value, $this->getSchema()); /* @var Any $value */
         }
 
@@ -174,8 +172,6 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
     /**
      * Retourne le nombre d'éléments dans la collection (implémentation de l'interface Countable).
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -311,7 +307,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $result = [];
 
         // Sanity check / debug
-        if ($explode && ! is_a($this->getSchema()->type(), Categorizable::class, true)) {
+        if ($explode && !is_a($this->getSchema()->type(), Categorizable::class, true)) {
             echo $this->getSchema()->name(), " : 'vue éclatée' activée mais le champ ne gère pas 'Categorizable'<br />";
             $explode = false;
         }
@@ -325,7 +321,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
                 empty($category) && $category = $this->getOption('label', $options, '');
 
                 /* @var Any $item */
-                $result[$category][] = $prefix . $item->getFormattedValue($options) . $suffix;
+                $result[$category][] = $prefix.$item->getFormattedValue($options).$suffix;
             }
 
             // Formatte les items dans chacune des catégories
@@ -351,7 +347,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Formatte chaque item
         foreach ($items as $item) { /* @var Any $item */
-            $result[] = $prefix . $item->getFormattedValue($options) . $suffix;
+            $result[] = $prefix.$item->getFormattedValue($options).$suffix;
         }
 
         // Concatène les éléments avec le séparateur indiqué
@@ -368,8 +364,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      * Tronque le tableau passé en paramètre.
      *
      * @param array<Item> $items Le tableau à tronquer.
-     *
-     * @param int   $limit Le nombre d'éléments à conserver :
+     * @param int         $limit Le nombre d'éléments à conserver :
      *
      * - 0 : pas de limite,
      * - > 0 : ne conserve que les $limit premiers éléments,
@@ -377,13 +372,13 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @return bool true si le tableau a été tronqué, false sinon.
      */
-    private function truncate(array & $items, int $limit): bool
+    private function truncate(array &$items, int $limit): bool
     {
         // Détermine s'il faut tronquer la liste
         $truncate = $limit && (abs($limit) < count($items));
 
         // Pas de limite (0) ou limite non atteinte, terminé
-        if (! $truncate) {
+        if (!$truncate) {
             return false;
         }
 
@@ -418,37 +413,37 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         }
 
         $form->input('prefix')
-            ->setAttribute('id', $name . '-prefix')
+            ->setAttribute('id', $name.'-prefix')
             ->addClass('prefix regular-text')
             ->setLabel(__('Avant les items', 'docalist-core'))
             ->setDescription(__('Texte ou code html à insérer avant chaque item.', 'docalist-core'));
 
         $form->input('sep')
-            ->setAttribute('id', $name . '-sep')
+            ->setAttribute('id', $name.'-sep')
             ->addClass('sep small-text')
             ->setLabel(__('Entre les items', 'docalist-core'))
             ->setDescription(__('Séparateur ou code html à insérer entre les items.', 'docalist-core'));
 
         $form->input('suffix')
-            ->setAttribute('id', $name . '-suffix')
+            ->setAttribute('id', $name.'-suffix')
             ->addClass('suffix regular-text')
             ->setLabel(__('Après les items', 'docalist-core'))
             ->setDescription(__('Texte ou code html à insérer après chaque item.', 'docalist-core'));
 
         $form->input('limit')
             ->setAttribute('type', 'number')
-            ->setAttribute('id', $name . '-limit')
+            ->setAttribute('id', $name.'-limit')
             ->addClass('limit small-text')
             ->setLabel(__('Limite', 'docalist-core'))
             ->setDescription(
-                __("Permet de limiter le nombre d'items affichés.", 'docalist-core') .
-                ' ' .
+                __("Permet de limiter le nombre d'items affichés.", 'docalist-core').
+                ' '.
                 __('Exemples : 3 = les trois premiers, -3 = les trois derniers, 0 (ou vide) = tout.', 'docalist-core')
             )
             ->setAttribute('placeholder', 'tout');
 
         $form->input('ellipsis')
-            ->setAttribute('id', $name . '-limit')
+            ->setAttribute('id', $name.'-limit')
             ->addClass('limit regular-text')
             ->setLabel(__('Ellipse', 'docalist-core'))
             ->setDescription(
@@ -508,7 +503,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $item = new $type($type::getClassDefault(), $schema);
 
         // Restaure la valeur par défaut du schéma
-        ! is_null($default) && $schema->value['default'] = $default;
+        !is_null($default) && $schema->value['default'] = $default;
 
         // Ok
         return $item;
@@ -517,8 +512,6 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Applique la fonction passée en paramètre à chacun des éléments présents dans la collection et retourne
      * un tableau contenant les valeurs retournées par la fonction.
-     *
-     * @param Closure $transformer
      *
      * @return array<mixed>
      */
@@ -560,12 +553,12 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Détermine si l'élément passé en paramètre doit être retourné ou non par les méthodes filter() et similaires.
      *
-     * @param Item   $item       L'item à filtrer.
-     * @param array<string> $include    Liste des valeurs à inclure.
-     * @param array<string> $exclude    Liste des valeurs à exclure.
+     * @param Item          $item    L'item à filtrer.
+     * @param array<string> $include Liste des valeurs à inclure.
+     * @param array<string> $exclude Liste des valeurs à exclure.
      *
      * @return ?Item Retourne l'item à insérer dans la collection retournée par filter() ou null pour filtrer
-     * l'élément.
+     *               l'élément.
      *
      * Remarque : l'item retourné peut être différent de l'item passé en paramètre (par exemple la classe
      * MultiFieldCollection filtre sur le champ type et retourne le champ value).

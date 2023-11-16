@@ -87,7 +87,7 @@ interface Formattable
      * @param array<mixed>|Schema $options Options de formattage.
      *
      * @return string|array<mixed> Par défaut, la méthode retourne une chaine contenant la valeur formattée selon les
-     * options indiquées.
+     *                             options indiquées.
      *
      * Si l'option 'vue éclatée' (option 'explode' du type {@link Collection}) est activée, la méthode retourne
      * un tableau contenant un ou plusieurs éléments de la forme "catégorie" => "éléments de cette catégorie".

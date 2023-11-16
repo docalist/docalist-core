@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\ListEntry;
-
 /**
  * Un champ texte permettant de sélectionner un rôle WordPress : administrator, editor, subscriber...
  *

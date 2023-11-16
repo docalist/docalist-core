@@ -55,9 +55,8 @@ class Settings extends Entity
     /**
      * Construit un nouvel objet Settings.
      *
-     * @param Repository $repository Le dépôt dans lequel sont stockés les
-     * paramètres.
-     * @param ?string $id L'identifiant du settings
+     * @param Repository $repository Le dépôt dans lequel sont stockés les paramètres.
+     * @param ?string    $id         L'identifiant du settings
      */
     public function __construct(Repository $repository, string $id = null)
     {
@@ -65,7 +64,7 @@ class Settings extends Entity
         $this->repository = $repository;
 
         // Détermine l'id des settings
-        if (! is_null($id)) {           // ID transmis en paramètre
+        if (!is_null($id)) {            // ID transmis en paramètre
             $this->setID($id);
         } else {                        // ID auto
             $id = $this->getID();
@@ -74,8 +73,6 @@ class Settings extends Entity
                 $this->setID($id);
             }
         }
-
-            // ID fixé en dur et non transmis
 
         // Si les settings ont été enregistrés dans le dépôt, on les charge
         if ($repository->has($id)) {
@@ -127,7 +124,7 @@ class Settings extends Entity
     public function delete()
     {
         $id = $this->getID();
-        assert(! is_null($id), "ID ne peut pas être null, il a été définit dans le constructeur");
+        assert(!is_null($id), 'ID ne peut pas être null, il a été définit dans le constructeur');
         if ($this->repository->has($id)) {
             $this->repository->delete($id);
         }

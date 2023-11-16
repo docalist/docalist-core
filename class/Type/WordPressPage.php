@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\ListEntry;
-use WP_Post;
 use Docalist\Type\Exception\InvalidTypeException;
+use WP_Post;
 
 /**
  * Un champ de type ListEntry permettant de sélectionner une page WordPress existante.
@@ -40,7 +39,7 @@ class WordPressPage extends ListEntry
     public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
-        if (! is_int($value)) {
+        if (!is_int($value)) {
             if ($value === '') {
                 $value = 0;
             } elseif (false === $value = filter_var($value, FILTER_VALIDATE_INT)) {
@@ -62,10 +61,11 @@ class WordPressPage extends ListEntry
         $entries = ['…'];
         $pages = get_pages();
         if (is_array($pages)) {
-            foreach ($pages as $page) { /* @var WP_Post $page */
-                $entries[$page->ID] = str_repeat('   ', count($page->ancestors)) . $page->post_title;
+            foreach ($pages as $page) { /** @var WP_Post $page */
+                $entries[$page->ID] = str_repeat('   ', count($page->ancestors)).$page->post_title;
             }
         }
+
         return $entries;
     }
 }

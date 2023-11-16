@@ -11,17 +11,14 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\MultiField;
-use Docalist\Type\TableEntry;
-use Docalist\Type\Any;
 use Docalist\Type\Collection\TypedValueCollection;
 use LogicException;
 
 /**
  * Valeur typée : un type composite associant un champ TableEntry à une valeur.
  *
- * @property TableEntry $type   Type    Type.
- * @property Any<mixed>        $value  Value   Valeur.
+ * @property TableEntry $type  Type    Type.
+ * @property Any<mixed> $value Value   Valeur.
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -30,16 +27,16 @@ class TypedValue extends MultiField
     public static function loadSchema(): array
     {
         return [
-            'label' => __('Valeur typée', 'docalist-core'),
+            'label'       => __('Valeur typée', 'docalist-core'),
             'description' => __('Type et valeur.', 'docalist-core'),
-            'fields' => [
-                'type' => [
-                    'type' => TableEntry::class,
+            'fields'      => [
+                'type'  => [
+                    'type'  => TableEntry::class,
                     'label' => __('Type', 'docalist-core'),
                     'table' => '',  // la table utilisée doit être indiquée par les classes descendantes
                 ],
                 'value' => [
-                    'type' => Any::class,
+                    'type'  => Any::class,
                     'label' => __('Valeur', 'docalist-core'),
                 ],
             ],
@@ -96,16 +93,16 @@ class TypedValue extends MultiField
                 return $value;
 
             case 'v (t)': // Espace insécable avant la parenthèse ouvrante
-                return empty($type) ? $value : $value . ' ('  . $type . ')';
+                return empty($type) ? $value : $value.' ('.$type.')';
 
             case 't : v': // Espace insécable avant le ':'
-                return empty($type) ? $value : $type . ' : ' . $value;
+                return empty($type) ? $value : $type.' : '.$value;
 
             case 't: v':
-                return empty($type) ? $value : $type . ': ' . $value;
+                return empty($type) ? $value : $type.': '.$value;
 
             case 't v':
-                return empty($type) ? $value : $type . ' ' . $value; // espace insécable
+                return empty($type) ? $value : $type.' '.$value; // espace insécable
         }
 
         return parent::getFormattedValue($options);

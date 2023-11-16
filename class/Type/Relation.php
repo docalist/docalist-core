@@ -11,10 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\Integer;
-
 /**
- * CETTE CLASSE N'EST PLUS UTILISEE
+ * CETTE CLASSE N'EST PLUS UTILISEE.
  *
  * A SUPPRIMER UNE FOIS QUE LE SITE AURA ETE CONVERTIT
  *

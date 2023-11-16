@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\Exception\InvalidTypeException;
 use Docalist\Forms\Element;
+use Docalist\Type\Exception\InvalidTypeException;
 
 /**
  * Type entier.
@@ -26,7 +26,7 @@ class Integer extends Number
     public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
-        if (! is_int($value)) {
+        if (!is_int($value)) {
             if ($value === '') {
                 $value = 0;
             } elseif (false === $value = filter_var($value, FILTER_VALIDATE_INT)) {

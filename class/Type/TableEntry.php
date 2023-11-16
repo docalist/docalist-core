@@ -11,16 +11,14 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\ListEntry;
-use Docalist\Schema\Schema;
-use Docalist\Table\TableInfo;
-use Docalist\Table\TableManager;
-use Docalist\Forms\Element;
 use Docalist\Forms\Container;
+use Docalist\Forms\Element;
 use Docalist\Forms\EntryPicker;
-use InvalidArgumentException;
 use Docalist\Forms\Select;
+use Docalist\Schema\Schema;
 use Docalist\Table\TableInterface;
+use Docalist\Table\TableManager;
+use InvalidArgumentException;
 use stdClass;
 
 /**
@@ -52,8 +50,8 @@ class TableEntry extends ListEntry
         // Ouvre la table
         /** @var TableManager */
         $tableManager = docalist('table-manager');
-        return $tableManager->get($table);
 
+        return $tableManager->get($table);
     }
 
     public function getEntries(): array
@@ -69,15 +67,13 @@ class TableEntry extends ListEntry
      * Retourne l'entrée de la table correspondant à la valeur actuelle du champ.
      *
      * @param string $returns Champ(s) à retourner, '*' par défaut.
-     *
-     * @return mixed
      */
-    public function getEntry($returns = '*')
+    public function getEntry($returns = '*'): mixed
     {
         $table = $this->getTable();
 
         // Recherche le code et retourne l'entrée correspondante
-        return $table->find($returns, 'code=' . $table->quote($this->phpValue));
+        return $table->find($returns, 'code='.$table->quote($this->phpValue));
     }
 
     public function getEntryLabel(): string
@@ -126,8 +122,9 @@ class TableEntry extends ListEntry
                 $form = new EntryPicker();
                 break;
 
-            case 'select': // Par défaut ListEntry mets firstEntry à false, pour les tables on le veut à true
+            case 'select': // Par défaut ListEntry met firstEntry à false, pour les tables on le veut à true
                 $select = parent::getEditorForm($options); /** @var Select $select */
+
                 return $select->setFirstOption(true);
 
             default:
@@ -190,7 +187,7 @@ class TableEntry extends ListEntry
         $tables = [];
         foreach ($tableManager->tables($type) as $table) {
             if ($table->format->getPhpValue() !== 'conversion') {
-                $key = $table->format->getPhpValue() . ':' . $table->name->getPhpValue();
+                $key = $table->format->getPhpValue().':'.$table->name->getPhpValue();
                 $tables[$key] = sprintf('%s (%s)', $table->label->getPhpValue(), $table->name->getPhpValue());
             }
         }
@@ -204,8 +201,6 @@ class TableEntry extends ListEntry
      * Par défaut, la méthode retourne "table d'autorité" mais les classes descendantes
      * peuvent la surcharger pour retourner un libellé plus spécifique: table des pays,
      * table des rôles, etc.
-     *
-     * @return string
      */
     protected function getTableLabel(): string
     {

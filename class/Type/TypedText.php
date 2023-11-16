@@ -11,9 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\TypedValue;
-use Docalist\Type\Text;
-
 /**
  * Texte typé : un TypedValue qui a une valeur de type Text.
  *
@@ -26,11 +23,11 @@ class TypedText extends TypedValue
     public static function loadSchema(): array
     {
         return [
-            'label' => __('Texte', 'docalist-core'),
+            'label'       => __('Texte', 'docalist-core'),
             'description' => __('Texte et type de texte.', 'docalist-core'),
-            'fields' => [
+            'fields'      => [
                 'value' => [
-                    'type' => Text::class,
+                    'type'  => Text::class,
                     'label' => __('Texte', 'docalist-core'),
                 ],
             ],

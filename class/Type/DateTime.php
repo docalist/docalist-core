@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Forms\Input;
-use Docalist\Forms\Element;
 use DateTime as PhpDateTime;
+use Docalist\Forms\Element;
+use Docalist\Forms\Input;
 use Exception;
 
 /**
@@ -27,9 +27,9 @@ class DateTime extends Text
 {
     public function getAvailableEditors(): array
     {
-        return  parent::getAvailableEditors() + [
+        return parent::getAvailableEditors() + [
             'datetime-local' => __('Champ date/heure', 'docalist-core'),
-            'datetime' => __('Champ date/heure + fuseau horaire', 'docalist-core'),
+            'datetime'       => __('Champ date/heure + fuseau horaire', 'docalist-core'),
         ];
     }
 
@@ -70,7 +70,7 @@ class DateTime extends Text
 
         // Au lieu d'afficher un libellé, on affiche des exemples (année en cours avec un jour et un mois < 10)
         $date = PhpDateTime::createFromFormat('d/m', '4/7'); // 4 juillet de l'année en cours
-        assert(false !== $date, "createFromFormat() ne peut pas retourner false comme on lui passe une date valide");
+        assert(false !== $date, 'createFromFormat() ne peut pas retourner false comme on lui passe une date valide');
 
         $examples = [];
         foreach ($formats as $format) {

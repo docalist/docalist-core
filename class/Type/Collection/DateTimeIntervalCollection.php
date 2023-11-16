@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Docalist\Type\Collection;
 
-use Docalist\Type\Collection;
-use Docalist\Type\DateTimeInterval;
 use DateTime;
 use DateTimeInterface;
+use Docalist\Type\Collection;
+use Docalist\Type\DateTimeInterval;
 
 /**
  * Une collection d'objets DateTimeInterval.
@@ -27,8 +27,6 @@ class DateTimeIntervalCollection extends Collection
 {
     /**
      * Retourne la plus petite des dates de début des intervalles de dates présents dans la collection.
-     *
-     * @return DateTimeInterface|null
      */
     public function getStartDate(): ?DateTimeInterface
     {
@@ -48,8 +46,6 @@ class DateTimeIntervalCollection extends Collection
 
     /**
      * Retourne la plus petite des dates de fin des intervalles de dates présents dans la collection.
-     *
-     * @return DateTimeInterface|null
      */
     public function getEndDate(): ?DateTimeInterface
     {

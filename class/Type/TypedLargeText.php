@@ -11,9 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\TypedText;
-use Docalist\Type\LargeText;
-
 /**
  * TypedLargeText : un TypedText qui a une valeur de type LargeText.
  *
@@ -28,7 +25,7 @@ class TypedLargeText extends TypedText
         return [
             'fields' => [
                 'value' => [
-                    'type' => LargeText::class,
+                    'type'  => LargeText::class,
                     'label' => __('Texte', 'docalist-core'),
                 ],
             ],

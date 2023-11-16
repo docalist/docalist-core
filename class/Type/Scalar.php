@@ -32,7 +32,7 @@ class Scalar extends Any
     public function assign($value): void
     {
         ($value instanceof Any) && $value = $value->getPhpValue();
-        if (! is_scalar($value)) {
+        if (!is_scalar($value)) {
             throw new InvalidTypeException('scalar');
         }
 

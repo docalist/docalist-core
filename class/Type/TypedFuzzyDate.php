@@ -11,9 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Type;
 
-use Docalist\Type\TypedValue;
-use Docalist\Type\FuzzyDate;
-
 /**
  * TypedFuzzyDate : un TypedValue qui a une valeur de type FuzzyDate.
  *
@@ -26,15 +23,15 @@ class TypedFuzzyDate extends TypedValue
     public static function loadSchema(): array
     {
         return [
-            'label' => __('Date', 'docalist-core'),
+            'label'       => __('Date', 'docalist-core'),
             'description' => __('Date et type de date.', 'docalist-core'),
-            'fields' => [
+            'fields'      => [
                 'value' => [
-                    'type' => FuzzyDate::class,
-                    'label' => __('Date', 'docalist-core'),
+                    'type'        => FuzzyDate::class,
+                    'label'       => __('Date', 'docalist-core'),
                     'description' => __('Date au format AAAAMMJJ', 'docalist-core'),
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }
