@@ -3,6 +3,10 @@
 return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
+        'phpdoc_to_comment' => false,
+        'single_line_throw' => false,
+        'phpdoc_annotation_without_dot' => false,
+        'yoda_style' => false,
         'global_namespace_import' => [
             'import_classes' => true,
             'import_constants' => true,
