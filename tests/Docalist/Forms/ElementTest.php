@@ -291,7 +291,7 @@ class ElementTest extends DocalistTestCase
      */
     public function testBindMonoWithComposite(): void
     {
-        $data = new Composite();
+        $data = new class() extends Composite {};
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('expected scalar');
