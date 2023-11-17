@@ -46,8 +46,6 @@ class ElementTest extends DocalistTestCase
 
     /**
      * Crée un containeur (mock).
-     *
-     * @return Container
      */
     protected function getContainer(string $name = ''): Container
     {
@@ -612,7 +610,5 @@ class ElementTest extends DocalistTestCase
         $element->setRepeatable(true);
         $element->bind('coucou');
         $this->assertSame(['coucou'], $this->callNonPublic($element, 'getOccurences'));
-
     }
-
 }

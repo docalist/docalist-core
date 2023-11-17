@@ -11,15 +11,12 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Tests\DocalistTestCase;
-use WP_UnitTestCase;
 use Docalist\Forms\Tag;
-use InvalidArgumentException;
-use Docalist\Forms\Theme;
 use Docalist\Forms\Themes;
+use Docalist\Tests\DocalistTestCase;
+use InvalidArgumentException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class TagTest extends DocalistTestCase

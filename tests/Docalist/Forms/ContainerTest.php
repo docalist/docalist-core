@@ -223,5 +223,4 @@ class ContainerTest extends DocalistTestCase
         $container = $this->getContainer();
         $this->assertFalse($this->callNonPublic($container, 'isLabelable'));
     }
-
 }

@@ -11,10 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Choice;
 use Docalist\Forms\Form;
 use Docalist\Forms\Radiolist;
-use Docalist\Forms\Theme;
 use Docalist\Tests\DocalistTestCase;
 
 /**
@@ -53,7 +51,7 @@ class RadiolistTest extends DocalistTestCase
         $radiolist = new Radiolist();
         $radiolist->setOptions([
             'one' => 'One',
-            2 => 'Two',
+            2     => 'Two',
         ]);
         $form = new Form();
         $form->add($radiolist);
@@ -72,7 +70,6 @@ class RadiolistTest extends DocalistTestCase
             '</table>'.
         '</form>';
 
-
         $this->assertSame($expected, $form->render('xhtml'));
     }
 
@@ -80,9 +77,9 @@ class RadiolistTest extends DocalistTestCase
     {
         $radiolist = new Radiolist();
         $radiolist->setOptions([
-            'one' => 'One',
-            2 => 'Two',
-            'group' => ['a' => 'A', 'b' => 'B']
+            'one'   => 'One',
+            2       => 'Two',
+            'group' => ['a' => 'A', 'b' => 'B'],
         ]);
         $form = new Form();
         $form->add($radiolist);
@@ -108,7 +105,6 @@ class RadiolistTest extends DocalistTestCase
             '</table>'.
         '</form>';
 
-
         $this->assertSame($expected, $form->render('xhtml'));
     }
 
@@ -117,7 +113,7 @@ class RadiolistTest extends DocalistTestCase
         $radiolist = new Radiolist();
         $radiolist->setOptions([
             'one' => 'One',
-            2 => 'Two',
+            2     => 'Two',
         ]);
         $radiolist->bind('three');
         $form = new Form();
@@ -138,7 +134,6 @@ class RadiolistTest extends DocalistTestCase
             '</table>'.
         '</form>';
 
-
         $this->assertSame($expected, $form->render('xhtml'));
     }
 
@@ -147,7 +142,7 @@ class RadiolistTest extends DocalistTestCase
         $radiolist = new Radiolist();
         $radiolist->setOptions([
             'one' => 'One',
-            2 => 'Two',
+            2     => 'Two',
         ]);
         $radiolist->setRepeatable(true);
         $radiolist->bind(['three']);
@@ -168,7 +163,6 @@ class RadiolistTest extends DocalistTestCase
                 '</tr>'.
             '</table>'.
         '</form>';
-
 
         $this->assertSame($expected, $form->render('xhtml'));
     }

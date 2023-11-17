@@ -30,6 +30,7 @@ class ButtonTest extends DocalistTestCase
     {
         $this->assertSame('button', (new Button())->getAttribute('type'));
     }
+
     public function testHasLabelBlock(): void
     {
         $this->assertFalse($this->callNonPublic(new Button(), 'hasLabelBlock'));

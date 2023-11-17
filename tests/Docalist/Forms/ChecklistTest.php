@@ -11,10 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Choice;
-use Docalist\Forms\Form;
 use Docalist\Forms\Checklist;
-use Docalist\Forms\Theme;
+use Docalist\Forms\Form;
 use Docalist\Tests\DocalistTestCase;
 
 /**
@@ -58,7 +56,7 @@ class ChecklistTest extends DocalistTestCase
         $checklist = new Checklist('list');
         $checklist->setOptions([
             'one' => 'One',
-            2 => 'Two',
+            2     => 'Two',
         ]);
         $form = new Form();
         $form->add($checklist);
@@ -77,7 +75,6 @@ class ChecklistTest extends DocalistTestCase
             '</table>'.
         '</form>';
 
-
         $this->assertSame($expected, $form->render('xhtml'));
     }
 
@@ -85,9 +82,9 @@ class ChecklistTest extends DocalistTestCase
     {
         $checklist = new Checklist('list');
         $checklist->setOptions([
-            'one' => 'One',
-            2 => 'Two',
-            'group' => ['a' => 'A', 'b' => 'B']
+            'one'   => 'One',
+            2       => 'Two',
+            'group' => ['a' => 'A', 'b' => 'B'],
         ]);
         $form = new Form();
         $form->add($checklist);
@@ -113,7 +110,6 @@ class ChecklistTest extends DocalistTestCase
             '</table>'.
         '</form>';
 
-
         $this->assertSame($expected, $form->render('xhtml'));
     }
 
@@ -122,7 +118,7 @@ class ChecklistTest extends DocalistTestCase
         $checklist = new Checklist('list');
         $checklist->setOptions([
             'one' => 'One',
-            2 => 'Two',
+            2     => 'Two',
         ]);
         $checklist->bind('three');
         $form = new Form();
@@ -143,7 +139,6 @@ class ChecklistTest extends DocalistTestCase
             '</table>'.
         '</form>';
 
-
         $this->assertSame($expected, $form->render('xhtml'));
     }
 
@@ -152,7 +147,7 @@ class ChecklistTest extends DocalistTestCase
         $checklist = new Checklist('list');
         $checklist->setOptions([
             'one' => 'One',
-            2 => 'Two',
+            2     => 'Two',
         ]);
         $checklist->setRepeatable(true);
         $checklist->bind(['three']);
@@ -175,19 +170,18 @@ class ChecklistTest extends DocalistTestCase
             '</table>'.
         '</form>';
 
-
         $this->assertSame($expected, $form->render('xhtml'));
     }
 
     /**
-     * Bug 16/10/2023 : si le contrôle n'a pas de nom, on se retrouve avec des attributs name="[]" comme le champ a isMultivalued() à true
+     * Bug 16/10/2023 : si le contrôle n'a pas de nom, on se retrouve avec des attributs name="[]" comme le champ a isMultivalued() à true.
      */
     public function testBugNoName(): void
     {
         $checklist = new Checklist();
         $checklist->setOptions([
             'one' => 'One',
-            2 => 'Two',
+            2     => 'Two',
         ]);
         $form = new Form();
         $form->add($checklist);
@@ -205,7 +199,6 @@ class ChecklistTest extends DocalistTestCase
                 '</tr>'.
             '</table>'.
         '</form>';
-
 
         $this->assertSame($expected, $form->render('xhtml'));
     }

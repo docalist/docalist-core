@@ -165,7 +165,7 @@ class SelectTest extends DocalistTestCase
             '</select>';
         $this->assertSame($expected, $select->render('xhtml'));
 
-        $select->bind([2,3]);
+        $select->bind([2, 3]);
         $expected =
             '<select name="s[]" class="select" multiple="multiple">'.
                 '<option value="1">a</option>'.
@@ -178,7 +178,7 @@ class SelectTest extends DocalistTestCase
         $select->removeAttribute('multiple');
         $select->setFirstOption(false);
 
-        $select->bind([[2,3]]);
+        $select->bind([[2, 3]]);
         $expected =
             '<select name="s[0]" class="select">'.
                 '<option value="1">a</option>'.
@@ -194,14 +194,14 @@ class SelectTest extends DocalistTestCase
         $select = new Select('s');
         $select->setFirstOption(false);
         $select->setOptions([
-            'odd' => [
+            'odd'  => [
                 1 => 'one',
                 3 => 'three',
             ],
             'even' => [
                 2 => 'two',
                 4 => 'four',
-            ]
+            ],
         ]);
         $expected =
             '<select name="s" class="select">'.

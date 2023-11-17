@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Checkbox;
 use Docalist\Forms\Div;
 use Docalist\Tests\DocalistTestCase;
 

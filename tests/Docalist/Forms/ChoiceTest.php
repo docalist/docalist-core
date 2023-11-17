@@ -51,7 +51,7 @@ class ChoiceTest extends DocalistTestCase
         $choice->setOptions($options);
         $this->assertSame($options, $choice->getOptions());
 
-        $options = fn() => ['a' => 'A', 'B', 'Group' => ['C', 'D']];
+        $options = fn () => ['a' => 'A', 'B', 'Group' => ['C', 'D']];
         $choice->setOptions($options);
         $this->assertSame($options, $choice->getOptions());
 

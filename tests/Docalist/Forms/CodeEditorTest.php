@@ -11,9 +11,7 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Forms;
 
-use Docalist\Forms\Checkbox;
 use Docalist\Forms\CodeEditor;
-use Docalist\Forms\Div;
 use Docalist\Tests\DocalistTestCase;
 
 /**
@@ -41,5 +39,4 @@ class CodeEditorTest extends DocalistTestCase
 
         $this->assertArrayHasKey('test', $codemirrorOptions);
     }
-
 }
