@@ -162,7 +162,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      */
     public static function getClassDefault(): mixed
     {
-        return '';
+        return null;
     }
 
     /**
