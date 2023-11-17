@@ -33,8 +33,8 @@ use Traversable;
  *
  * @extends Any<array<Item>>
  *
- * @implements ArrayAccess<int,Item>
- * @implements IteratorAggregate<int,Item>
+ * @implements ArrayAccess<int|string,Item>
+ * @implements IteratorAggregate<int|string,Item>
  *
  * @property array $phpValue
  *
@@ -140,7 +140,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Si value n'est pas du bon type, on l'instancie
         if (!$value instanceof $type) {
-            $value = new $type($value, $this->getSchema()); /* @var Any $value */
+            $value = new $type($value, $this->getSchema());
         }
 
         // Si c'est une collection indexée, ignore offset et indexe les éléments de la collection
@@ -180,6 +180,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
     /**
      * Retourne un itérateur permettant de parcourir la collection (implémentation de l'interface IteratorAggregate).
+     *
+     * @return Traversable<int|string,Item>
      */
     public function getIterator(): Traversable
     {
