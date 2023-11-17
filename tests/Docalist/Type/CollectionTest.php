@@ -11,16 +11,14 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
-use Docalist\Type\Exception\InvalidTypeException;
-use InvalidArgumentException;
-use WP_UnitTestCase;
+use Docalist\Tests\DocalistTestCase;
+use Docalist\Tests\Type\Fixtures\Client;
 use Docalist\Type\Any;
 use Docalist\Type\Collection;
-use Docalist\Tests\Type\Fixtures\Client;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Type\Exception\InvalidTypeException;
+use InvalidArgumentException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class CollectionTest extends DocalistTestCase
@@ -201,7 +199,7 @@ class CollectionTest extends DocalistTestCase
     public function testKeyedCollection(): void
     {
         $client = new Client([
-            'name' => 'Dupont',
+            'name'     => 'Dupont',
             'factures' => [
                 ['code' => 'f1', 'label' => 'facture 1', 'total' => 12],
                 ['code' => 'f2', 'label' => 'facture 2', 'total' => 24],
@@ -221,7 +219,6 @@ class CollectionTest extends DocalistTestCase
         $this->assertFalse(isset($client->factures['f2']));
         $this->assertSame(['f1', 'f3', 'f4'], $client->factures->keys());
 
-        //$client->factures['f4']->code = 'f999'; // la collection ne sait pas que le code change
         $client->factures['f4']->code->assign('f999'); // la collection ne sait pas que le code change
         $this->assertTrue(isset($client->factures['f4']));
         $this->assertFalse(isset($client->factures['f999']));

@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
-use Docalist\Type\Exception\InvalidTypeException;
-use WP_UnitTestCase;
-use Docalist\Type\Boolean;
 use Docalist\Tests\DocalistTestCase;
+use Docalist\Type\Boolean;
+use Docalist\Type\Exception\InvalidTypeException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class BooleanTest extends DocalistTestCase

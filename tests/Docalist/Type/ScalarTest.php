@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
-use Docalist\Type\Exception\InvalidTypeException;
-use WP_UnitTestCase;
-use Docalist\Type\Scalar;
 use Docalist\Tests\DocalistTestCase;
+use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Type\Scalar;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class ScalarTest extends DocalistTestCase

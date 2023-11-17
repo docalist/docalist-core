@@ -12,14 +12,13 @@ declare(strict_types=1);
 namespace Docalist\Tests\Type\Fixtures;
 
 use Docalist\Type\Composite;
+use Docalist\Type\Integer as DocalistInteger;
 use Docalist\Type\Text;
-use Docalist\Type\Integer;
 
 /**
- *
- * @property Text $code
- * @property Text $label
- * @property Integer $total
+ * @property Text            $code
+ * @property Text            $label
+ * @property DocalistInteger $total
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -29,10 +28,10 @@ class Facture extends Composite
     {
         return [
             'fields' => [
-                'code' => Text::class,
+                'code'  => Text::class,
                 'label' => Text::class,
-                'total'  => Integer::class,
-            ]
+                'total' => Integer::class,
+            ],
         ];
     }
 }

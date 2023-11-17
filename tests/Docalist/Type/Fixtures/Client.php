@@ -11,14 +11,12 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type\Fixtures;
 
+use Docalist\Type\Collection;
 use Docalist\Type\Entity;
 use Docalist\Type\Text;
-use Docalist\Tests\Type\Fixtures\Facture;
-use Docalist\Type\Collection;
 
 /**
- *
- * @property Text $name Client
+ * @property Text                $name     Client
  * @property Collection<Facture> $factures Factures
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
@@ -29,16 +27,16 @@ class Client extends Entity
     {
         return [
             'fields' => [
-                'name' => [
-                    'type' => Text::class,
-                    'default' => 'noname'
+                'name'     => [
+                    'type'    => Text::class,
+                    'default' => 'noname',
                 ],
                 'factures' => [
-                    'type' => Facture::class,
+                    'type'       => Facture::class,
                     'repeatable' => true,
-                    'key' => 'code'
-                ]
-            ]
+                    'key'        => 'code',
+                ],
+            ],
         ];
     }
 }

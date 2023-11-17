@@ -11,17 +11,15 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
-use Docalist\Type\Exception\InvalidTypeException;
-use InvalidArgumentException;
-use WP_UnitTestCase;
-use Docalist\Type\Composite;
-use Docalist\Tests\Type\Fixtures\Money;
-use Docalist\Type\Decimal;
-use Docalist\Type\Text;
 use Docalist\Tests\DocalistTestCase;
+use Docalist\Tests\Type\Fixtures\Money;
+use Docalist\Type\Composite;
+use Docalist\Type\Decimal;
+use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Type\Text;
+use InvalidArgumentException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class CompositeTest extends DocalistTestCase

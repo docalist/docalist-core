@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
-use WP_UnitTestCase;
-use Docalist\Type\Any;
 use Docalist\Schema\Schema;
 use Docalist\Tests\DocalistTestCase;
+use Docalist\Type\Any;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class AnyTest extends DocalistTestCase

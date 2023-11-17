@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
-use Docalist\Type\Exception\InvalidTypeException;
-use WP_UnitTestCase;
-use Docalist\Type\Integer;
 use Docalist\Tests\DocalistTestCase;
+use Docalist\Type\Exception\InvalidTypeException;
+use Docalist\Type\Integer;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class IntegerTest extends DocalistTestCase

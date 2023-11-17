@@ -26,7 +26,7 @@ class MySettings extends Settings
         return [
             'fields' => [
                 'a' => [
-                    'type' => Text::class,
+                    'type'    => Text::class,
                     'default' => 'default',
                 ],
             ],

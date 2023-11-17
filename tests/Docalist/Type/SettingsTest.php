@@ -11,15 +11,13 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
-use WP_UnitTestCase;
+use Docalist\Repository\DirectoryRepository;
 use Docalist\Repository\Repository;
 use Docalist\Repository\SettingsRepository;
-use Docalist\Repository\DirectoryRepository;
-use Docalist\Tests\Type\Fixtures\MySettings;
 use Docalist\Tests\DocalistTestCase;
+use Docalist\Tests\Type\Fixtures\MySettings;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class SettingsTest extends DocalistTestCase
@@ -29,14 +27,14 @@ class SettingsTest extends DocalistTestCase
      */
     public static function repositoryProvider(): array
     {
-        //delete_option('docalist-tests-type-fixtures-mysettings');
+        // delete_option('docalist-tests-type-fixtures-mysettings');
 
-        $dir = sys_get_temp_dir() . '/DirectoryTest';
-        $file = $dir . '/docalist-tests-type-fixtures-mysettings.json';
+        $dir = sys_get_temp_dir().'/DirectoryTest';
+        $file = $dir.'/docalist-tests-type-fixtures-mysettings.json';
         file_exists($file) && unlink($file);
 
         return [
-            //[new SettingsRepository()],
+            // [new SettingsRepository()],
             [new DirectoryRepository($dir)],
         ];
     }

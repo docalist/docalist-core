@@ -15,7 +15,6 @@ use Docalist\Type\Collection;
 use Docalist\Type\Text;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class TextCollection extends Collection

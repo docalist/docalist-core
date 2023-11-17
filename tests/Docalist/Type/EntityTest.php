@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
-use LogicException;
-use WP_UnitTestCase;
-use Docalist\Type\Entity;
 use Docalist\Tests\DocalistTestCase;
+use Docalist\Type\Entity;
+use LogicException;
 
 /**
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class EntityTest extends DocalistTestCase
