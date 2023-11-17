@@ -188,7 +188,7 @@ trait AttributesTrait
         $classes = &$this->attributes['class'];
 
         // Supprime toutes les classes indiquées
-        foreach (explode(' ', $class) as $class) {
+        foreach (explode(' ', (string) $class) as $class) {
             if ('' === $class) {
                 continue;
             }

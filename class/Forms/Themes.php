@@ -55,7 +55,7 @@ final class Themes
         }
 
         // Thème par défaut
-        if (empty($name) || 'default' === $name) {
+        if ($name === '' || 'default' === $name) {
             $name = apply_filters('docalist_forms_get_default_theme', 'wordpress');
         }
 

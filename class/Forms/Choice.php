@@ -78,7 +78,7 @@ abstract class Choice extends Element
                 break;
 
             case is_array($options):
-                if (count($options) > 0 && !is_string(reset($options)) && !is_array(reset($options))) {
+                if ($options !== [] && !is_string(reset($options)) && !is_array(reset($options))) {
                     throw $this->invalidArgument('%s: invalid options (%s)', gettype($options));
                 }
                 break;

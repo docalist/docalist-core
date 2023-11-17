@@ -313,7 +313,7 @@ class Container extends Element implements Countable, IteratorAggregate
     /**
      * {@inheritDoc}
      */
-    protected function setOccurence($occurence): void
+    protected function setOccurence(int|string $occurence): void
     {
         parent::setOccurence($occurence);
 

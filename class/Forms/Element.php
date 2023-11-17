@@ -51,7 +51,7 @@ abstract class Element extends Item
     /**
      * Indique si le champ est répétable.
      */
-    protected $repeatable;
+    protected ?bool $repeatable = null;
 
     /**
      * Les données de l'élément, initialisées par bind().
@@ -62,10 +62,8 @@ abstract class Element extends Item
 
     /**
      * Occurence en cours pour un champ répétable.
-     *
-     * @var int|string|null
      */
-    protected $occurence;
+    protected int|string|null $occurence = null;
 
     /**
      * Champ requis / mode d'affichage.
