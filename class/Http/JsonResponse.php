@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Docalist\Http;
 
-use Exception;
 use InvalidArgumentException;
 
 /**
@@ -27,15 +26,13 @@ class JsonResponse extends Response
 
     /**
      * Indique s'il faut générer du json "pretty print".
-     *
-     * @var bool
      */
-    protected $pretty = false;
+    protected bool $pretty = false;
 
     /**
      * @param array<string,mixed> $headers
      */
-    public function __construct(mixed $data = null, $status = 200, array $headers = [], bool $pretty = false)
+    public function __construct(mixed $data = null, int $status = 200, array $headers = [], bool $pretty = false)
     {
         parent::__construct('', $status, $headers);
 
@@ -64,7 +61,9 @@ class JsonResponse extends Response
     public function setData(mixed $data = null): static
     {
         $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-        $this->pretty && $options |= JSON_PRETTY_PRINT;
+        if ($this->pretty) {
+            $options |= JSON_PRETTY_PRINT;
+        }
 
         $json = json_encode($data, $options);
         if (false === $json) {

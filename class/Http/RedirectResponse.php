@@ -28,7 +28,7 @@ class RedirectResponse extends HtmlResponse
 
     public function setContent(?string $content): static
     {
-        if (empty($content)) {
+        if ($content === null || $content === '') {
             $url = htmlspecialchars((string) $this->headers->get('Location'), ENT_QUOTES, 'UTF-8');
 
             $content = "<!DOCTYPE html>

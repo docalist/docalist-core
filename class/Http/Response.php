@@ -43,7 +43,9 @@ class Response extends SymfonyResponse
      */
     public function __construct(?string $content = '', int $status = 200, array $headers = [])
     {
-        !empty($this->defaultHeaders) && $headers += $this->defaultHeaders;
+        if (!empty($this->defaultHeaders)) {
+            $headers += $this->defaultHeaders;
+        }
 
         parent::__construct($content, $status, $headers);
     }
