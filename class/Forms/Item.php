@@ -133,12 +133,12 @@ abstract class Item
     /**
      * Génère le code html de l'item et le retourne sous forme de chaine.
      *
-     * @param Theme|string|null $theme Optionnel, le thème de formulaire à utiliser. Si vous n'indiquez pas
+     * @param Theme|string $theme Optionnel, le thème de formulaire à utiliser. Si vous n'indiquez pas
      *                                 de thème, le thème par défaut est utilisé.
      *
      * @return string le code html de l'item
      */
-    final public function render($theme = ''): string
+    final public function render(Theme|string $theme = ''): string
     {
         return Themes::get($theme)->render($this);
     }
@@ -146,9 +146,9 @@ abstract class Item
     /**
      * Génère le code html de l'item et l'affiche.
      *
-     * @param Theme|string|null $theme
+     * @param Theme|string $theme
      */
-    final public function display($theme = null): static
+    final public function display(Theme|string $theme = ''): static
     {
         Themes::get($theme)->display($this);
 
