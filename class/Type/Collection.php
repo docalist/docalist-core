@@ -98,7 +98,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Indique si un élément existe à la position indiquée (implémentation de l'interface ArrayAccess).
      *
-     * @param int $offset
+     * @param int|string $offset
      */
     public function offsetExists($offset): bool
     {
@@ -108,7 +108,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Retourne l'élément qui figure à la position indiquée (implémentation de l'interface ArrayAccess).
      *
-     * @param int $offset
+     * @param int|string $offset
      *
      * @return Item
      *
@@ -127,10 +127,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Stocke un élément à la position indiquée (implémentation de l'interface ArrayAccess).
      *
-     * @param ?int  $offset Position à laquelle sera inséré l'élément, ou null pour ajouter l'élément à la fin de
-     *                      la collection. Le paramètre offset est ignoré si une clé a été définie dans le schéma de la collection. Dans
-     *                      ce cas, c'est la clé de l'élément qui est utilisée comme position.
-     * @param mixed $value  Les données de l'élément.
+     * @param int|string|null $offset Position à laquelle sera inséré l'élément, ou null pour ajouter l'élément à la fin de
+     *                                la collection. Le paramètre offset est ignoré si une clé a été définie dans le schéma de la collection. Dans
+     *                                ce cas, c'est la clé de l'élément qui est utilisée comme position.
+     * @param mixed           $value  Les données de l'élément.
      */
     public function offsetSet($offset, $value): void
     {
@@ -163,7 +163,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Supprime un élément à une position donnée (implémentation de l'interface ArrayAccess).
      *
-     * @param int $offset
+     * @param int|string $offset
      */
     public function offsetUnset($offset): void
     {
