@@ -11,21 +11,29 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
+use Docalist\Type\Exception\InvalidTypeException;
+use InvalidArgumentException;
 use WP_UnitTestCase;
 use Docalist\Type\Composite;
 use Docalist\Tests\Type\Fixtures\Money;
 use Docalist\Type\Decimal;
 use Docalist\Type\Text;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class CompositeTest extends WP_UnitTestCase
+class CompositeTest extends DocalistTestCase
 {
-    public function testNew()
+    private function newComposite(): Composite
     {
-        $a = new Composite();
+        return new class() extends Composite {};
+    }
+
+    public function testNew(): void
+    {
+        $a = $this->newComposite();
         $this->assertSame([], $a->getPhpValue());
 
         // valeurs par défaut (amount : 0, currency : EUR)
@@ -41,27 +49,27 @@ class CompositeTest extends WP_UnitTestCase
         $this->assertSame(['amount' => 12., 'currency' => 'USD'], $euro->getPhpValue());
     }
 
-    /**
-     * @expectedException Docalist\Type\Exception\InvalidTypeException
-     */
-    public function testInvalidType()
+    public function testInvalidType(): void
     {
-        (new Composite())->assign('true');
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('expected array');
+
+        $this->newComposite()->assign('true');
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         $a = new Money();
 
-        $a->amount = 12.0;
+        $a->amount->assign(12.0);
         $this->assertSame(['amount' => 12., 'currency' => 'EUR'], $a->getPhpValue());
 
-        $a->amount = 16; // conversion int -> float
-        $a->currency = '$'; // modifie champ déjà initialisé
+        $a->amount->assign(16); // conversion int -> float
+        $a->currency->assign('$'); // modifie champ déjà initialisé
         $this->assertSame(['amount' => 16., 'currency' => '$'], $a->getPhpValue());
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $a = new Money(['amount' => 16., 'currency' => '$']);
 
@@ -72,14 +80,18 @@ class CompositeTest extends WP_UnitTestCase
         $this->assertSame('$', $a->currency->getPhpValue());
     }
 
-    /** @expectedException InvalidArgumentException */
-    public function testGetInexistant()
+    public function testGetInexistant(): void
     {
         $a = new Money();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Field "abcdef" does not exist');
+
+        // @phpstan-ignore-next-line
         $a->abcdef;
     }
 
-    public function testIssetUnset()
+    public function testIssetUnset(): void
     {
         $a = new Money();
 
@@ -90,7 +102,7 @@ class CompositeTest extends WP_UnitTestCase
         $this->assertFalse(isset($a->amount));
     }
 
-    public function testCall()
+    public function testCall(): void
     {
         $a = new Money(['amount' => 16., 'currency' => '$']);
 
@@ -99,15 +111,18 @@ class CompositeTest extends WP_UnitTestCase
 
         $a = new Money();
 
-        $a->amount(17)->currency('€');
-
+        $return = $a->amount(17);
+        $this->assertSame($a, $return);
         $this->assertSame(17., $a->amount());
+
+        $return = $a->currency('€');
+        $this->assertSame($a, $return);
         $this->assertSame('€', $a->currency());
     }
 
-    public function testToString()
+    public function testToString(): void
     {
-        $a = new Composite();
+        $a = $this->newComposite();
         $b = new Money();
 
         $this->assertSame('[]', $a->__toString());

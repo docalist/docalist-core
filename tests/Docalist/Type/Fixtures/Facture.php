@@ -17,6 +17,10 @@ use Docalist\Type\Integer;
 
 /**
  *
+ * @property Text $code
+ * @property Text $label
+ * @property Integer $total
+ *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Facture extends Composite

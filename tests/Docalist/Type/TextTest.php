@@ -11,24 +11,28 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
+use Docalist\Type\Exception\InvalidTypeException;
 use WP_UnitTestCase;
 use Docalist\Type\Text;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class TextTest extends WP_UnitTestCase
+class TextTest extends DocalistTestCase
 {
-    public function testNew()
+    public function testNew(): void
     {
         $a = new Text();
         $this->assertSame('', $a->getPhpValue());
     }
 
-    /** @expectedException Docalist\Type\Exception\InvalidTypeException */
-    public function testInvalidType()
+    public function testInvalidType(): void
     {
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('expected string');
+
         new Text([]);
     }
 }

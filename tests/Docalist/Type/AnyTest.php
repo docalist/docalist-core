@@ -14,14 +14,15 @@ namespace Docalist\Tests\Type;
 use WP_UnitTestCase;
 use Docalist\Type\Any;
 use Docalist\Schema\Schema;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class AnyTest extends WP_UnitTestCase
+class AnyTest extends DocalistTestCase
 {
-    public function testValue()
+    public function testValue(): void
     {
         $type = new Any();
         $this->assertNull($type->getPhpValue());
@@ -30,7 +31,7 @@ class AnyTest extends WP_UnitTestCase
         $this->assertSame(12, $type->getPhpValue());
     }
 
-    public function testSchema()
+    public function testSchema(): void
     {
         $type = new Any();
         $this->assertSame($type->getSchema()->value(), Any::getDefaultSchema()->value());
@@ -40,7 +41,7 @@ class AnyTest extends WP_UnitTestCase
         $this->assertSame($type->getSchema(), $schema);
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $a = new Any(12);
         $b = new Any([]);
@@ -49,14 +50,14 @@ class AnyTest extends WP_UnitTestCase
         $this->assertSame('[]', $b->__toString());
     }
 
-    public function testSerialize()
+    public function testSerialize(): void
     {
         $a = new Any([1, false, 0.12, 'fd']);
 
         $this->assertSame($a->serialize(), serialize([$a->getPhpValue(), $a->getSchema()]));
     }
 
-    public function testUnserialize()
+    public function testUnserialize(): void
     {
         $a = new Any([1, false, 0.12, 'fd']);
 
@@ -64,7 +65,7 @@ class AnyTest extends WP_UnitTestCase
         $this->assertTrue($a == $b);
     }
 
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $a = new Any([1, false, 0.12, 'fd']);
 

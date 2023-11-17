@@ -16,6 +16,11 @@ use Docalist\Type\Decimal;
 use Docalist\Type\Text;
 
 /**
+ * @property Decimal $amount
+ * @property Text    $currency
+ *
+ * @method float  amount(float $amount = null)
+ * @method string currency(string $currency = null)
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -24,17 +29,17 @@ class Money extends Composite
     public static function loadSchema(): array
     {
         return [
-            'label' => 'prix',
+            'label'  => 'prix',
             'fields' => [
-                'amount' => [
-                    'type' => Decimal::class,
-                    'default' => 0
+                'amount'   => [
+                    'type'    => Decimal::class,
+                    'default' => 0,
                 ],
                 'currency' => [
-                    'type' => Text::class,
-                    'default' => 'EUR'
+                    'type'    => Text::class,
+                    'default' => 'EUR',
                 ],
-            ]
+            ],
         ];
     }
 }

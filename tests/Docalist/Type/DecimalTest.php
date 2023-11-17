@@ -11,16 +11,18 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
+use Docalist\Type\Exception\InvalidTypeException;
 use WP_UnitTestCase;
 use Docalist\Type\Decimal;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class DecimalTest extends WP_UnitTestCase
+class DecimalTest extends DocalistTestCase
 {
-    public function testNew()
+    public function testNew(): void
     {
         $a = new Decimal();
         $this->assertSame(0.0, $a->getPhpValue());
@@ -29,9 +31,11 @@ class DecimalTest extends WP_UnitTestCase
         $this->assertSame(12., $a->getPhpValue());
     }
 
-    /** @expectedException Docalist\Type\Exception\InvalidTypeException */
-    public function testInvalidType()
+    public function testInvalidType(): void
     {
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('expected float');
+
         new Decimal('zzz');
     }
 }

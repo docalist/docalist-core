@@ -11,18 +11,21 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
+use Docalist\Type\Exception\InvalidTypeException;
+use InvalidArgumentException;
 use WP_UnitTestCase;
 use Docalist\Type\Any;
 use Docalist\Type\Collection;
 use Docalist\Tests\Type\Fixtures\Client;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class CollectionTest extends WP_UnitTestCase
+class CollectionTest extends DocalistTestCase
 {
-    public function testNew()
+    public function testNew(): void
     {
         $c = new Collection();
         $this->assertSame([], $c->getPhpValue());
@@ -31,13 +34,15 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertSame(['a', true, 5, 3.14], $c->getPhpValue());
     }
 
-    /** @expectedException Docalist\Type\Exception\InvalidTypeException */
-    public function testInvalidType()
+    public function testInvalidType(): void
     {
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('expected array');
+
         new Collection('12');
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         $c = new Collection();
         $c[12] = 12;
@@ -52,7 +57,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertSame([12, 13, 'aa'], $c->getPhpValue());
     }
 
-    public function testIsset()
+    public function testIsset(): void
     {
         $c = new Collection();
         $this->assertFalse(isset($c[0]));
@@ -72,7 +77,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertTrue($c == $init);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $t = ['a', true, 5, 3.14];
         $c = new Collection($t);
@@ -83,14 +88,16 @@ class CollectionTest extends WP_UnitTestCase
         }
     }
 
-    /** @expectedException InvalidArgumentException */
-    public function testGetInexistant()
+    public function testGetInexistant(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Offset 0 does not exist');
+
         $a = new Collection();
         echo $a[0];
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $c = new Collection();
         $this->assertSame(0, $c->count());
@@ -102,7 +109,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertSame(3, $c->count());
     }
 
-    public function testGetIterator()
+    public function testGetIterator(): void
     {
         $c = new Collection();
         $this->assertInstanceOf('Iterator', $c->getIterator());
@@ -114,7 +121,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertFalse($gotit);
 
         $c = new Collection(['a', true, 5, 3.14]);
-        $this->assertInstanceOf('Iterator', $c->getIterator());
+        $this->assertInstanceOf('Traversable', $c->getIterator());
 
         $t = [];
         foreach ($c->getIterator() as $i => $v) {
@@ -123,7 +130,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertSame(['a', true, 5, 3.14], $t);
     }
 
-    public function testFirst()
+    public function testFirst(): void
     {
         $c = new Collection();
         $this->assertNull($c->first());
@@ -138,7 +145,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertSame(0, $c->key());
     }
 
-    public function testLast()
+    public function testLast(): void
     {
         $c = new Collection();
         $this->assertNull($c->last());
@@ -153,7 +160,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertSame(3, $c->key());
     }
 
-    public function testNext()
+    public function testNext(): void
     {
         $c = new Collection();
         $this->assertNull($c->next());
@@ -172,7 +179,7 @@ class CollectionTest extends WP_UnitTestCase
 
     // key() et current() déjà testés avec first, last, next
 
-    public function testKeys()
+    public function testKeys(): void
     {
         $c = new Collection();
         $this->assertSame([], $c->keys());
@@ -191,7 +198,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertSame([0, 1, 2], $c->keys());
     }
 
-    public function testKeyedCollection()
+    public function testKeyedCollection(): void
     {
         $client = new Client([
             'name' => 'Dupont',
@@ -214,7 +221,8 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertFalse(isset($client->factures['f2']));
         $this->assertSame(['f1', 'f3', 'f4'], $client->factures->keys());
 
-        $client->factures['f4']->code = 'f999'; // la collection ne sait pas que le code change
+        //$client->factures['f4']->code = 'f999'; // la collection ne sait pas que le code change
+        $client->factures['f4']->code->assign('f999'); // la collection ne sait pas que le code change
         $this->assertTrue(isset($client->factures['f4']));
         $this->assertFalse(isset($client->factures['f999']));
         $this->assertSame(['f1', 'f3', 'f4'], $client->factures->keys());
@@ -225,7 +233,7 @@ class CollectionTest extends WP_UnitTestCase
         $this->assertSame(['f1', 'f3', 'f999'], $client->factures->keys());
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $a = new Collection();
         $b = new Collection(['a', 'b']);

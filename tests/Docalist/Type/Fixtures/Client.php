@@ -14,8 +14,12 @@ namespace Docalist\Tests\Type\Fixtures;
 use Docalist\Type\Entity;
 use Docalist\Type\Text;
 use Docalist\Tests\Type\Fixtures\Facture;
+use Docalist\Type\Collection;
 
 /**
+ *
+ * @property Text $name Client
+ * @property Collection<Facture> $factures Factures
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */

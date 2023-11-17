@@ -11,16 +11,18 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
+use LogicException;
 use WP_UnitTestCase;
 use Docalist\Type\Entity;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class EntityTest extends WP_UnitTestCase
+class EntityTest extends DocalistTestCase
 {
-    public function testAll()
+    public function testAll(): void
     {
         $a = new Entity();
         $this->assertSame(null, $a->getID());
@@ -32,10 +34,13 @@ class EntityTest extends WP_UnitTestCase
         $this->assertSame('abc12', $a->getID());
     }
 
-    /** @expectedException LogicException */
-    public function testIDAlreadyDefined()
-    {
-        $a = new Entity([], null, 'abc12');
-        $a->setID('def13');
-    }
+    // Désactivé, setId() ne génère plus d'exception
+    // public function testIDAlreadyDefined(): void
+    // {
+    //     $this->expectException(LogicException::class);
+    //     $this->expectExceptionMessage('expected float');
+
+    //     $a = new Entity([], null, 'abc12');
+    //     $a->setID('def13');
+    // }
 }

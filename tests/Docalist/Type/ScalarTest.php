@@ -11,28 +11,33 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
+use Docalist\Type\Exception\InvalidTypeException;
 use WP_UnitTestCase;
 use Docalist\Type\Scalar;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class ScalarTest extends WP_UnitTestCase
+class ScalarTest extends DocalistTestCase
 {
-    public function testNew()
+    public function testNew(): void
     {
         $a = new Scalar();
         $this->assertSame('', $a->getPhpValue());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
-    public function testInvalidType()
+    public function testInvalidType(): void
     {
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('expected scalar');
+
         new Scalar([]);
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $this->assertSame('true', (new Scalar(true))->__toString());
         $this->assertSame('false', (new Scalar(false))->__toString());

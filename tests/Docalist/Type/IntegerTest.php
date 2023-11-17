@@ -11,24 +11,28 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
+use Docalist\Type\Exception\InvalidTypeException;
 use WP_UnitTestCase;
 use Docalist\Type\Integer;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class IntegerTest extends WP_UnitTestCase
+class IntegerTest extends DocalistTestCase
 {
-    public function testNew()
+    public function testNew(): void
     {
         $a = new Integer();
         $this->assertSame(0, $a->getPhpValue());
     }
 
-    /** @expectedException Docalist\Type\Exception\InvalidTypeException */
-    public function testInvalidType()
+    public function testInvalidType(): void
     {
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('expected int');
+
         new Integer('zzz');
     }
 }

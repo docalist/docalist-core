@@ -11,28 +11,33 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Type;
 
+use Docalist\Type\Exception\InvalidTypeException;
 use WP_UnitTestCase;
 use Docalist\Type\Boolean;
+use Docalist\Tests\DocalistTestCase;
 
 /**
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class BooleanTest extends WP_UnitTestCase
+class BooleanTest extends DocalistTestCase
 {
-    public function testNew()
+    public function testNew(): void
     {
         $a = new Boolean();
         $this->assertSame(true, $a->getPhpValue());
     }
 
     /** @expectedException Docalist\Type\Exception\InvalidTypeException */
-    public function testInvalidType()
+    public function testInvalidType(): void
     {
+        $this->expectException(InvalidTypeException::class);
+        $this->expectExceptionMessage('expected boolean');
+
         new Boolean('ttt');
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $t = new Boolean(true);
         $f = new Boolean(false);
