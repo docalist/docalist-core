@@ -55,6 +55,9 @@ class Response extends SymfonyResponse
     //     return parent::prepare($request ?: Request::createFromGlobals());
     // }
 
+    /**
+     * @deprecated 2023-05-12
+     */
     public function adminPage(?bool $adminPage = null): self|bool
     {
         deprecated(static::class . '::adminPage()', 'getIsAdminPage() or setIsAdminPage()', '2023-05-12');
