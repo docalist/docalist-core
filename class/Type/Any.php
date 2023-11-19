@@ -175,7 +175,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      */
     public function getDefaultValue()
     {
-        $default = $this->schema->getDefaultValue();
+        $default = $this->getSchema()->getDefaultValue();
 
         return is_null($default) ? $this->getClassDefault() : $default;
     }
@@ -261,7 +261,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /** @return array<mixed> */
     final public function __serialize(): array
     {
-        return [$this->phpValue, $this->schema];
+        return [$this->phpValue, $this->getSchema()];
     }
 
     /**
@@ -330,7 +330,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getSettingsForm(): Container
     {
-        $name = $this->schema->name();
+        $name = $this->getSchema()->name();
         $form = new Container($name);
 
         $form->input('label')
@@ -380,13 +380,14 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getFormatSettingsForm(): Container
     {
-        $name = $this->schema->name();
+        $schema = $this->getSchema();
+        $name = $schema->name();
         $form = new Container($name);
 
         $form->input('label')
             ->setAttribute('id', $name.'-label')
             ->addClass('label regular-text')
-            ->setAttribute('placeholder', $this->schema->label())
+            ->setAttribute('placeholder', $schema->label())
             ->setLabel(__('Libellé', 'docalist-core'))
             ->setDescription(
                 __('Libellé qui sera affiché devant le champ.', 'docalist-core').
@@ -397,7 +398,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         $form->input('capability')
             ->setAttribute('id', $name.'-capability')
             ->addClass('capability regular-text')
-            ->setAttribute('placeholder', $this->schema->capability())
+            ->setAttribute('placeholder', $schema->capability())
             ->setLabel(__('Droit requis', 'docalist-core'))
             ->setDescription(
                 __('Capacité WordPress requise pour que ce champ soit affiché.', 'docalist-core').
@@ -468,13 +469,14 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
 
     public function getEditorSettingsForm(): Container
     {
-        $name = $this->schema->name();
+        $schema = $this->getSchema();
+        $name = $schema->name();
         $form = new Container($name);
 
         $form->input('label')
             ->setAttribute('id', $name.'-label')
             ->addClass('label regular-text')
-            ->setAttribute('placeholder', $this->schema->label())
+            ->setAttribute('placeholder', $schema->label())
             ->setLabel(__('Libellé en saisie', 'docalist-core'))
             ->setDescription(
                 __('Libellé qui sera affiché pour saisir ce champ.', 'docalist-core').
@@ -486,7 +488,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
             ->setAttribute('id', $name.'-description')
             ->addClass('description large-text autosize')
             ->setAttribute('rows', 1)
-            ->setAttribute('placeholder', $this->schema->description())
+            ->setAttribute('placeholder', $schema->description())
             ->setLabel(__('Aide à la saisie', 'docalist-core'))
             ->setDescription(
                 __("Texte qui sera affiché pour indiquer à l'utilisateur comment saisir le champ.", 'docalist-core').
@@ -497,7 +499,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         $form->input('capability')
             ->setAttribute('id', $name.'-capability')
             ->addClass('capability regular-text')
-            ->setAttribute('placeholder', $this->schema->capability())
+            ->setAttribute('placeholder', $schema->capability())
             ->setLabel(__('Droit requis', 'docalist-core'))
             ->setDescription(
                 __('Capacité WordPress requise pour que ce champ apparaisse dans le formulaire.', 'docalist-core').
@@ -564,7 +566,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         $css = '';
 
         // Ajoute une classe contenant le nom du champ
-        !empty($name = $this->schema->name()) && $css .= 'field-'.$name;
+        !empty($name = $this->getSchema()->name()) && $css .= 'field-'.$name;
 
         // Convertit le nom de classe Php en classe CSS (Docalist\Type\DateTimeInterval -> 'date-time-interval')
         $class = get_class($this);
@@ -613,7 +615,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     protected function configureEditorForm(Element $form, $options): Element
     {
         // Nom du champ
-        $name = $this->schema->name();
+        $name = $this->getSchema()->name();
         !empty($name) && $form->setName($name);
 
         // Libellé
@@ -682,7 +684,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         }
 
         // Si l'option existe dans notre schéma, terminé
-        if (!is_null($value = $this->schema->__call($name))) {
+        if (!is_null($value = $this->getSchema()->__call($name))) {
             return $value;
         }
 
