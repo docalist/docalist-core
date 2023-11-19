@@ -302,7 +302,8 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $prefix = $this->getOption('prefix', $options, '');
         $suffix = $this->getOption('suffix', $options, '');
         $sep = $this->getOption('sep', $options, ', ');
-        $limit = $this->getOption('limit', $options, 0);
+        $limit = (int) $this->getOption('limit', $options, 0);
+
         $explode = $this->getOption('explode', $options, false);
         $ellipsis = $this->getOption('ellipsis', $options, '');
 
