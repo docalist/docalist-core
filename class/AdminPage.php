@@ -77,7 +77,7 @@ abstract class AdminPage extends Controller
          * pas d'avoir un titre statique qui sera le même pour toutes les
          * actions.
          * A la place, nous générons dynamiquement le titre (quand la réponse
-         * retournée est une adminPage) en récupérant le premier <h1>
+         * retournée est une page d'admin) en récupérant le premier <h1>
          * généré par l'action (cf. plus bas add_filter 'admin_title').
          * Si jamais la page n'a pas généré de h1, il faut quand même avoir un
          * titre. Dans ce cas, c'est le libellé utilisé pour le menu qui sera
@@ -105,7 +105,7 @@ abstract class AdminPage extends Controller
             la réponse générée par l'action.
 
             Cas 1. Si la réponse est une page d'admin (i.e. une réponse qui a
-            adminPage === true), on se contente d'envoyer les entêtes http et
+            getIsAdminPage() === true), on se contente d'envoyer les entêtes http et
             on exécute la vue en bufferisant la sortie générée ($body).
             La vue peut ainsi faire des appels à wp_enqueue_*, génèrer des
             écrans d'aide, etc.
@@ -161,7 +161,7 @@ abstract class AdminPage extends Controller
             }
 
             // L'action a généré une réponse de type "page d'admin"
-            elseif ($response instanceof TextResponse && $response->adminPage()) {
+            elseif ($response instanceof TextResponse && $response->getIsAdminPage()) {
                 // Envoie les entêtes de la réponse
                 // wp ne pourra pas envoyer les siens (cf. admin-header.php)
                 $response->sendHeaders();
@@ -200,7 +200,7 @@ abstract class AdminPage extends Controller
                 });
 
                 // Laisse wp générer le footer
-            } elseif ($response instanceof CallbackResponse && $response->adminPage()) {
+            } elseif ($response instanceof CallbackResponse && $response->getIsAdminPage()) {
                 // contrairement au cas précédent, pas de bufferisation (exemple réindexation)
                 // on ne peut pas faire des enqueue (il faut le faire avant de retourner l'objet Response)
                 // et on ne peut pas mettre le titre exact dans la balise <title>
@@ -223,7 +223,10 @@ abstract class AdminPage extends Controller
 
     protected function view($view, array $viewArgs = [], $status = 200, $headers = [])
     {
-        return parent::view($view, $viewArgs, $status, $headers)->adminPage(true);
+        $response = parent::view($view, $viewArgs, $status, $headers);
+        $response ->setIsAdminPage(true);
+
+        return $response;
     }
 
     /**
