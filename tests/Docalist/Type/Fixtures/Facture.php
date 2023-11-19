@@ -30,7 +30,7 @@ class Facture extends Composite
             'fields' => [
                 'code'  => Text::class,
                 'label' => Text::class,
-                'total' => Integer::class,
+                'total' => DocalistInteger::class,
             ],
         ];
     }
