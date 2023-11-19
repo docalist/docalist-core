@@ -114,8 +114,13 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
      *
      * @throws InvalidArgumentException Si la position indiquée n'est pas valide.
      */
-    public function offsetGet(mixed $offset): Any
+    public function offsetGet(mixed $offset): mixed //: Any
     {
+        // todo : le type de retour de offsetGet devrai être Any mais ça pose problème dans
+        // docalist-database car TypeSettings->grids retourne des types Grid et non pas de types Any
+        // Il faut revoir complètement le système de grilles et remettre le bon type de retour une
+        // fois que ce sera fait.
+
         if (isset($this->phpValue[$offset])) {
             return $this->phpValue[$offset];
         }
