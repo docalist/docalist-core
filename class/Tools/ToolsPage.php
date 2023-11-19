@@ -243,7 +243,7 @@ class ToolsPage extends AdminPage
         });
 
         // Indique que la réponse doit s'afficher dans le back-office wp
-        $response->adminPage(true);
+        $response->setIsAdminPage(true);
 
         // Ok
         return $response;
