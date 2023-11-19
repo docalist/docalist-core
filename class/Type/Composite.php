@@ -49,7 +49,7 @@ use InvalidArgumentException;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-abstract class Composite extends Any
+class Composite extends Any
 {
     /**
      * @return array<string,mixed>

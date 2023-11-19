@@ -24,14 +24,9 @@ use InvalidArgumentException;
  */
 class CompositeTest extends DocalistTestCase
 {
-    private function newComposite(): Composite
-    {
-        return new class() extends Composite {};
-    }
-
     public function testNew(): void
     {
-        $a = $this->newComposite();
+        $a = new Composite();
         $this->assertSame([], $a->getPhpValue());
 
         // valeurs par défaut (amount : 0, currency : EUR)
@@ -52,7 +47,7 @@ class CompositeTest extends DocalistTestCase
         $this->expectException(InvalidTypeException::class);
         $this->expectExceptionMessage('expected array');
 
-        $this->newComposite()->assign('true');
+        (new Composite())->assign('true');
     }
 
     public function testSet(): void
@@ -120,7 +115,7 @@ class CompositeTest extends DocalistTestCase
 
     public function testToString(): void
     {
-        $a = $this->newComposite();
+        $a = new Composite();
         $b = new Money();
 
         $this->assertSame('[]', $a->__toString());
