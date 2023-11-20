@@ -63,7 +63,7 @@ class AdminNotices
      * @param string        $content    Le contenu de la notice.
      * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function add(string $type, string $content, string $title = null)
+    public function add(string $type, string $content, string $title = null): void
     {
         // Inutile de tester si on a un user, add_user_meta vérifie que l'id passé n'est pas vide
         add_user_meta(get_current_user_id(), self::META, [$type, $content, $title], false);
@@ -75,7 +75,7 @@ class AdminNotices
      * @param string        $content    Le contenu de la notice.
      * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function info(string $content, string $title = null)
+    public function info(string $content, string $title = null): void
     {
         $this->add('info', $content, $title);
     }
@@ -86,7 +86,7 @@ class AdminNotices
      * @param string        $content    Le contenu de la notice.
      * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function success(string $content, string $title = null)
+    public function success(string $content, string $title = null): void
     {
         $this->add('success', $content, $title);
     }
@@ -97,7 +97,7 @@ class AdminNotices
      * @param string        $content    Le contenu de la notice.
      * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function warning(string $content, string $title = null)
+    public function warning(string $content, string $title = null): void
     {
         $this->add('warning', $content, $title);
     }
@@ -108,7 +108,7 @@ class AdminNotices
      * @param string        $content    Le contenu de la notice.
      * @param string|null   $title      Optionnel, le titre de la notice.
      */
-    public function error(string $content, string $title = null)
+    public function error(string $content, string $title = null): void
     {
         $this->add('error', $content, $title);
     }
@@ -116,7 +116,7 @@ class AdminNotices
     /**
      * Affiche les notices qui ont été enregistrées.
      */
-    protected function render()
+    protected function render(): void
     {
         // Si on n'a pas de user en cours, on ne peut rien faire
         if (0 === $user = get_current_user_id()) {
@@ -128,6 +128,7 @@ class AdminNotices
         if (empty($notices)) {
             return;
         }
+        /** @var array<array<int,string>> $notices */
 
         // Affiche les notices dans l'ordre où elles ont été ajoutées
         foreach ($notices as $notice) {
