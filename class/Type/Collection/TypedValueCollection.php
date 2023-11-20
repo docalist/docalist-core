@@ -18,7 +18,9 @@ use Docalist\Type\TypedValue;
 /**
  * Une collection d'objets TypedValue.
  *
- * @extends MultiFieldCollection<TypedValue>
+ * @template Item of TypedValue
+ *
+ * @extends MultiFieldCollection<Item>
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
@@ -41,7 +43,8 @@ class TypedValueCollection extends MultiFieldCollection
         $items = [];
         foreach ($this->phpValue as $item) {
             // Filtre les eléments
-            if (is_null($item = $this->filterItem($item, $include, $exclude))) {
+            $item = $this->filterItem($item, $include, $exclude);
+            if (is_null($item)) {
                 continue;
             }
 
