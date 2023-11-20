@@ -85,7 +85,7 @@ interface Editable
     /**
      * Retourne un élément de formulaire permettant de saisir ce champ.
      *
-     * @param array<mixed>|Schema $options Options à appliquer à l'éditeur.
+     * @param array<mixed>|Schema|null $options Options à appliquer à l'éditeur.
      *
      * @return Element Un élément de formulaire.
      */
