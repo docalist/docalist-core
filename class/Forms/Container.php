@@ -228,11 +228,7 @@ class Container extends Element implements Countable, IteratorAggregate
         }
 
         // Une chaine : true si c'est le même nom
-        if (is_string($item)) {
-            return fn (Item $other): bool => ($other instanceof Element) && $other->getName() === $item;
-        }
-
-        throw new InvalidArgumentException('Bad comparator type');
+        return fn (Item $other): bool => ($other instanceof Element) && $other->getName() === $item;
     }
 
     /**
