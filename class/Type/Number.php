@@ -19,7 +19,7 @@ use Docalist\Type\Exception\InvalidTypeException;
  *
  * @template TPhpValue of int|float
  *
- * @extends Scalar<int|float>
+ * @extends Scalar<TPhpValue>
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
