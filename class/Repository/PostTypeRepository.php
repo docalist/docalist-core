@@ -41,7 +41,7 @@ class PostTypeRepository extends Repository
      * Les classes descendantes doivent surcharger la propriété en fonction
      * des champs définis dans l'entité.
      *
-     * @var array Un tableau de la forme "champ wordpress" => "champ entité".
+     * @var array<string,string> Un tableau de la forme "champ wordpress" => "champ entité".
      */
     protected static $fieldMap = [
      // 'post_author'           => '',
@@ -111,7 +111,7 @@ class PostTypeRepository extends Repository
         return $this->postType;
     }
 
-    protected function checkId($id)
+    protected function checkId($id): int
     {
         // On n'accepte que des entiers positifs non nuls
         if (is_int($id) && $id > 0) {
@@ -129,7 +129,7 @@ class PostTypeRepository extends Repository
         throw new BadIdException($id, 'int > 0');
     }
 
-    public function has($id)
+    public function has($id): bool
     {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
@@ -389,9 +389,9 @@ class PostTypeRepository extends Repository
     /**
      * Convertit les données d'une entité en post WordPress.
      *
-     * @param array $data Les données de l'entité à convertir.
+     * @param array<string,int|string> $data Les données de l'entité à convertir.
      *
-     * @return array Un post wordpress sous la forme d'un tableau.
+     * @return array<string,int|string> Un post wordpress sous la forme d'un tableau.
      */
     protected function encode(array $data)
     {
@@ -415,10 +415,10 @@ class PostTypeRepository extends Repository
     /**
      * Convertit un post WordPress en données d'entité.
      *
-     * @param array Les données du post WordPress.
-     * @param int $id L'ID du post
+     * @param array<string,int|string|null> $post Les données du post WordPress.
+     * @param int|null $id L'ID du post
      *
-     * @return array Les données de l'entité.
+     * @return array<string,int|string> Les données de l'entité.
      */
     protected function decode($post, $id)
     {
