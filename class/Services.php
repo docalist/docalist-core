@@ -24,9 +24,9 @@ class Services
     /**
      * Liste des services déclarés.
      *
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $services;
+    protected array $services;
 
     /**
      * Initialise les services.
@@ -57,7 +57,7 @@ class Services
      * Vous pouvez ajouter un service unique en appellant la méthode avec deux paramètres ou un ensemble de service
      * en passant un tableau.
      *
-     * @param string|array $id Identifiant unique du service à ajouter, ou tableau de la forme identifiant => service.
+     * @param string|array<string,mixed> $id Identifiant unique du service à ajouter, ou tableau de la forme identifiant => service.
      *
      * @param mixed $service Le service à ajouter. Cela peut être un scalaire (un paramètre de configuration, par
      * exemple), un objet (par exemple un plugin) ou une closure qui sera invoquée lors du premier appel pour créer
@@ -69,7 +69,7 @@ class Services
      *
      * @return self
      */
-    public function add($id, $service = null)
+    public function add(string|array $id, mixed $service = null)
     {
         foreach (is_array($id) ? $id : [$id => $service] as $id => $service) {
             if (array_key_exists($id, $this->services)) {
