@@ -36,8 +36,6 @@ use Traversable;
  * @implements ArrayAccess<int|string,Item>
  * @implements IteratorAggregate<int|string,Item>
  *
- * @property array $phpValue
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate, Filterable
@@ -324,7 +322,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         if ($explode) {
             // Formatte tous les items en les classant par catégorie (libellé)
             foreach ($items as $item) {
-                /* @var Categorizable $item */
+                /** @var Any<mixed>&Categorizable $item */
                 $category = $item->getCategoryLabel();
                 empty($category) && $category = $this->getOption('label', $options, '');
 
