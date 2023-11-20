@@ -31,10 +31,7 @@ abstract class AdminPage extends Controller
      */
     protected $controllerParameter = 'page';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $menuTitle;
+    protected string $menuTitle;
 
     /**
      * @param string $id Identifiant unique de la page.

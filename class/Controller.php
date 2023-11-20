@@ -133,7 +133,7 @@ abstract class Controller
      *
      * Elle sert également de capacité par défaut pour les actions qui ne figurent pas dans le tableau.
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $capability = [];
 
@@ -153,7 +153,7 @@ abstract class Controller
     /**
      * Enregistre le contrôleur dans Wordpress.
      */
-    protected function register()
+    protected function register(): void
     {
         if ($this->canRun()) {
             add_action('admin_action_' . $this->getID(), function () {
@@ -332,21 +332,24 @@ abstract class Controller
         }
 
         // Appelle la méthode avec la liste d'arguments obtenue
-        return $method->invokeArgs($this, $parameters);
+        /** @var Response */
+        $response = $method->invokeArgs($this, $parameters);
+
+        return $response;
     }
 
     /**
      * Retourne un tableau contenant les paramètres nécessaires pour exécuter la méthode indiquée.
      *
      * @param ReflectionMethod $method Méthode à appeler.
-     * @param array $args Paramètres fournis.
+     * @param array<string,mixed> $args Paramètres fournis.
      *
-     * @return array Un tableau contenant les paramètres fournis et les paramètres par défaut de la méthode.
+     * @return array<string,mixed> Un tableau contenant les paramètres fournis et les paramètres par défaut de la méthode.
      *
      * @throws Exception Si un paramètre obligatoire manque (paramètre non fourni pour lequel la méthode ne
      * propose pas de valeur par défaut).
      */
-    private function runParameters(ReflectionMethod $method, array $args)
+    private function runParameters(ReflectionMethod $method, array $args): array
     {
         $result = [];
         foreach ($method->getParameters() as $parameter) {
@@ -359,7 +362,7 @@ abstract class Controller
                 $value = $args[$name];
 
                 // Si la méthode attend un tableau, caste en array
-                // $parameter->isArray() && !is_array($value) && $value = [$value];
+                // @phpstan-ignore-next-line phpstan ne connait pas getType()->getName()
                 $parameter->getType() && $parameter->getType()->getName() === 'array' && !is_array($value) && $value = [$value];
 
                 // Tout est ok
@@ -377,22 +380,6 @@ abstract class Controller
         }
 
         return $result;
-    }
-
-    /**
-     * Retourne l'url à utiliser pour appeller une action de ce contrôleur.
-     *
-     * @return string
-     *
-     * @throws Exception
-     *
-     * @deprecated Remplacée par getUrl().
-     */
-    protected function url()
-    {
-        deprecated(get_class($this) . '::url()', 'getUrl()', '2018-02-19');
-
-        return call_user_func_array([$this, 'getUrl'], func_get_args());
     }
 
     /**
@@ -462,7 +449,12 @@ abstract class Controller
         return add_query_arg($args, admin_url($this->getParentPage()));
     }
 
-    protected function urlParameters(ReflectionMethod $method, array $args)
+    /**
+     * @param array<int,mixed> $args
+     *
+     * @return array<string,mixed>
+     */
+    protected function urlParameters(ReflectionMethod $method, array $args): array
     {
         $result = [];
         $params = $method->getParameters();
@@ -479,7 +471,7 @@ abstract class Controller
                 $value = $args[$key];
 
                 // Si la méthode attend un tableau, caste en array
-                //$param->isArray() && !is_array($value) && $value = [$value];
+                // @phpstan-ignore-next-line phpstan ne connait pas getType()->getName()
                 $param->getType() && $param->getType()->getName() === 'array' && !is_array($value) && $value = [$value];
 
 
@@ -554,13 +546,13 @@ abstract class Controller
      * Retourne une réponse de type ViewResponse.
      *
      * @param string    $view
-     * @param array     $viewArgs
+     * @param array<string,mixed> $viewArgs les données à transmettre à la vue
      * @param int       $status
-     * @param array     $headers
+     * @param array<string,mixed> $headers
      *
      * @return ViewResponse
      */
-    protected function view($view, array $viewArgs = [], $status = 200, $headers = [])
+    protected function view(string $view, array $viewArgs = [], int $status = 200, array $headers = []): ViewResponse
     {
         !isset($viewArgs['this']) && $viewArgs['this'] = $this;
 
@@ -572,11 +564,11 @@ abstract class Controller
      *
      * @param string    $url
      * @param int       $status
-     * @param array     $headers
+     * @param array<string,mixed> $headers
      *
      * @return RedirectResponse
      */
-    protected function redirect($url, $status = 302, $headers = [])
+    protected function redirect(string $url, int $status = 302, array $headers = []): RedirectResponse
     {
         return new RedirectResponse($url, $status, $headers);
     }
@@ -586,11 +578,11 @@ abstract class Controller
      *
      * @param mixed $content
      * @param int   $status
-     * @param array $headers
+     * @param array<string,mixed> $headers
      *
      * @return JsonResponse
      */
-    protected function json($content = '', $status = 200, $headers = [])
+    protected function json(mixed $content = '', int $status = 200, array $headers = []): JsonResponse
     {
         return new JsonResponse($content, $status, $headers);
     }
