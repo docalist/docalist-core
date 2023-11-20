@@ -16,6 +16,7 @@ use Docalist\Table\TableManager;
 use Docalist\Table\TableInterface;
 use Docalist\Tokenizer;
 use InvalidArgumentException;
+use stdClass;
 
 /**
  * Lookup sur une table d'autorité.
@@ -124,10 +125,10 @@ class TableLookup implements LookupInterface
     /**
      * Traite les résultats obtenus via la requête sql et les transforme dans le format correct.
      *
-     * @param array $result Les résultats obtenus
+     * @param array<string,stdClass> $result Les résultats obtenus
      * @param TableInterface $table Table d'où proviennent les résultats.
      *
-     * @return array Les résultats transformés.
+     * @return array<stdClass> Les résultats transformés.
      */
     protected function processResults($result, TableInterface $table)
     {

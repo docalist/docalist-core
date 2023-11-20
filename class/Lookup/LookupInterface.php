@@ -42,7 +42,7 @@ interface LookupInterface
      *
      * @param string $source Source des données (pour un service multi-sources uniquement).
      *
-     * @return array[] Retourne un tableau contenant les suggestions obtenues ou un tableau vide si aucune entrée
+     * @return array<mixed> Retourne un tableau contenant les suggestions obtenues ou un tableau vide si aucune entrée
      * n'est disponible. La structure des éléments du tableau dépend du service de lookup utilisé.
      */
     public function getDefaultSuggestions(string $source = ''): array;
@@ -58,7 +58,7 @@ interface LookupInterface
      *
      * Pour les services de lookups mono-source, ce paramètre n'est pas utilisé.
      *
-     * @return array[] Retourne un tableau contenant les suggestions obtenues ou un tableau vide si aucune entrée
+     * @return array<mixed> Retourne un tableau contenant les suggestions obtenues ou un tableau vide si aucune entrée
      * n'a été trouvée pour les termes de recherche indiqués. La structure des éléments du tableau dépend du service
      * de lookup utilisé.
      */
@@ -72,10 +72,10 @@ interface LookupInterface
      * Typiquement, les données à convertir sont des codes (par exemple issus d'une table) et la conversion va
      * consister à indiquer le libellé de chacun des codes.
      *
-     * @param array  $data   Un tableau contenant les données à convertir (par exemple ['FR', 'DE']).
+     * @param array<int,string>  $data   Un tableau contenant les données à convertir (par exemple ['FR', 'DE']).
      * @param string $source La source à utiliser (pour un service multi-sources uniquement).
      *
-     * @return array Les données converties (par exemple ['FR' => 'France', 'DE' => 'Allemagne']).
+     * @return array<string,string> Les données converties (par exemple ['FR' => 'France', 'DE' => 'Allemagne']).
      */
     public function convertCodes(array $data, string $source = ''): array;
 }

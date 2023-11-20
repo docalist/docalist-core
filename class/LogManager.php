@@ -25,16 +25,9 @@ use Monolog\Formatter\LineFormatter;
 class LogManager
 {
     /**
-     * Liste des loggers créés.
-     */
-    protected $logs = [];
-
-    /**
      * Handler par défaut.
-     *
-     * @var HandlerInterface
      */
-    protected $defaultHandler;
+    protected ?HandlerInterface $defaultHandler;
 
     /**
      * Retourne un logger pour le canal indiqué.

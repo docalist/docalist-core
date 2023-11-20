@@ -13,6 +13,7 @@ namespace Docalist\Lookup;
 
 use Docalist\Lookup\LookupInterface;
 use Docalist\Http\JsonResponse;
+use Docalist\Services;
 use InvalidArgumentException;
 use Exception;
 use Docalist\Http\HtmlResponse;
@@ -48,7 +49,9 @@ class LookupManager
         $name = $type . '-lookup';
 
         // Récupère le service (génère une exception s'il n'existe pas)
-        $service = docalist('services')->get($name);
+        /** @var Services */
+        $services = docalist('services');
+        $service = $services->get($name);
 
         // (debug) Vérifie que c'est bien un service de lookups
         if (! $service instanceof LookupInterface) {
@@ -68,14 +71,14 @@ class LookupManager
      *
      * @param string $source Pour les lookups multi-sources, source à utiliser (nom de table, nom de champ, etc.)
      *
-     * @return array La méthode retourne toujours un tableau. Si aucune suggestion n'a été trouvée, elle retourne
+     * @return array<mixed> La méthode retourne toujours un tableau. Si aucune suggestion n'a été trouvée, elle retourne
      * un tableau vide.
      *
      * Chaque entrée du tableau est un objet. Les champs retournés dépendent du type de lookup exécuté.
      *
      * @throws InvalidArgumentException Si aucun service ne gère le type de lookup indiqué ou si une erreur survient.
      */
-    public function lookup($type, $search, $source = '')
+    public function lookup(string $type, string $search, string $source = ''): array
     {
         // Récupère le service qui gère les lookups du type indiqué
         $lookup = $this->getLookupService($type);
@@ -95,7 +98,7 @@ class LookupManager
      * - source : source de données à utiliser
      * - search : chaine recherchée.
      */
-    public function ajaxLookup()
+    public function ajaxLookup(): void
     {
         // Si une erreur survient pendant le traitement de la requête, cela génère une erreur 500 sur le serveur
         // Pour éviter ça, on exécute tout dans un bloc try/catch et on affiche simplement un message.
@@ -111,7 +114,7 @@ class LookupManager
      *
      * @throws InvalidArgumentException
      */
-    protected function doAjaxLookup()
+    protected function doAjaxLookup(): void
     {
         // Récupère le type de lookup à exécuter
         if (empty($_GET['type'])) {
@@ -134,7 +137,7 @@ class LookupManager
         $json = new JsonResponse($result, 200, [], isset($_GET['pretty'])); // Pour le debug, ajouter "&pretty" dans l'url
 
         // Détermine la durée de mise en cache des résultats
-        $maxAge = docalist("{$type}-lookup")->getCacheMaxAge();
+        $maxAge = $this->getLookupService($type)->getCacheMaxAge();
 
         // Par défaut, WordPress désactive la mise en cache et ajoute des entêtes "no-cache" (cf. admin_ajax.php)
         // Donc si le service nous a retourné 0 (pas de cache), on n'a rien à faire.

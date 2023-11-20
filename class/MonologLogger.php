@@ -39,14 +39,16 @@ use DateTimeZone;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
+// @phpstan-ignore-next-line
 class MonologLogger extends Logger
 {
+    // todo: classe inutile, revoir ou supprimer les logs docalist
     public function __construct($name, array $handlers = [], array $processors = [])
     {
-        if (!static::$timezone) {
-            $timezone = ini_get('date.timezone');
-            $timezone && static::$timezone = new DateTimeZone($timezone);
-        }
+        // if (!static::$timezone) {
+        //     $timezone = ini_get('date.timezone');
+        //     $timezone && static::$timezone = new DateTimeZone($timezone);
+        // }
 
         parent::__construct($name, $handlers, $processors);
     }

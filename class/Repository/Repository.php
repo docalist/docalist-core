@@ -26,18 +26,18 @@ abstract class Repository
     /**
      * Le type par défaut des entités de ce dépôt.
      *
-     * @var string
+     * @var class-string<Entity>
      */
-    protected $type;
+    protected string $type;
 
     /**
      * Construit un nouveau dépôt.
      *
-     * @param string $type Optionnel, le nom de classe complet des entités de
+     * @param class-string<Entity> $type Optionnel, le nom de classe complet des entités de
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      */
-    public function __construct($type = Entity::class)
+    public function __construct(string $type = Entity::class)
     {
         $this->type = $type;
     }
@@ -45,9 +45,9 @@ abstract class Repository
     /**
      * Retourne le type par défaut des entités de ce dépôt.
      *
-     * @return string Le nom de classe complet des entités.
+     * @return class-string<Entity> Le nom de classe complet des entités.
      */
-    final public function type()
+    final public function type(): string
     {
         return $this->type;
     }
@@ -66,7 +66,7 @@ abstract class Repository
      *
      * @throws BadIdException Si l'identifiant est invalide.
      */
-    protected function checkId($id)
+    protected function checkId(mixed $id): int|string
     {
         // L'implémentation par défaut accepte les entiers et les chaines
         if (is_int($id) || is_string($id)) {
@@ -84,7 +84,7 @@ abstract class Repository
      *
      * @eturn bool
      */
-    abstract public function has($id);
+    abstract public function has(int|string $id): bool;
 
     /**
      * Charge une entité depuis le dépôt.
@@ -100,18 +100,18 @@ abstract class Repository
      *
      * @throws RepositoryException Si une erreur survient durant le chargement.
      */
-    public function load($id)
+    public function load(int|string $id): Entity
     {
         $type = $this->type;
         return new $type($this->loadRaw($id), null, $id);
     }
 
     /**
-     * Retourne les données brutes d'un entité stockée dans le dépôt.
+     * Retourne les données brutes d'une entité stockée dans le dépôt.
      *
      * @param int|string $id L'identifiant de l'entité à charger.
      *
-     * @return array
+     * @return array<string,int|string>  Les données l'entité.
      *
      * @throws BadIdException Si l'identifiant indiqué est invalide (ID manquant
      * ou ayant un format invalide).
@@ -120,7 +120,7 @@ abstract class Repository
      *
      * @throws RepositoryException Si une erreur survient durant le chargement.
      */
-    final public function loadRaw($id)
+    final public function loadRaw(int|string $id): array
     {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
@@ -134,9 +134,9 @@ abstract class Repository
      *
      * @param int|string $id L'identifiant de l'identité à charger (déjà validé).
      *
-     * @return array Les données brutes, non décodées, de l'entité.
+     * @return mixed Les données brutes, non décodées, de l'entité.
      */
-    abstract protected function loadData($id);
+    abstract protected function loadData(int|string $id): mixed;
 
     /**
      * Enregistre une entité dans le dépôt.
@@ -147,15 +147,13 @@ abstract class Repository
      *
      * @param Entity $entity L'entité à enregistrer.
      *
-     * @return self $this
-     *
      * @throws BadIdException Si l'identifiant de l'entité n'est pas valide (ID
      * ayant un format incorrect).
      *
      * @throws RepositoryException Si une erreur survient durant
      * l'enregistrement.
      */
-    final public function save(Entity $entity)
+    final public function save(Entity $entity): static
     {
         // Vérifie que l'ID de l'entité est correct
         ! is_null($id = $entity->getID()) && $id = $this->checkId($id);
@@ -179,7 +177,7 @@ abstract class Repository
     /**
      * Enregistre les données brutes d'une entité.
      *
-     * @param int|string $id L'identifiant de l'identité (déjà validé).
+     * @param int|string|null $id L'identifiant de l'identité (déjà validé).
      *
      * @param mixed $data Les données brutes, déjà encodées, de l'entité.
      *
@@ -187,7 +185,7 @@ abstract class Repository
      * avait déjà un identifiant, soit l'id alloué si l'entité n'existait pas
      * déjà).
      */
-    abstract protected function saveData($id, $data);
+    abstract protected function saveData(int|string|null $id, mixed $data): int|string;
 
     /**
      * Supprime une entité du dépôt.
@@ -217,21 +215,18 @@ abstract class Repository
 
     /**
      * Supprime les données d'une entité.
-     *
-     * @param int|string $id
      */
-    abstract protected function deleteData($id);
+    abstract protected function deleteData(int|string $id): void;
 
     /**
      * Encode les données d'une entité.
      *
      * L'implémentation par défaut encode les données en JSON.
      *
-     * @param array $data
-     *
+     * @param array<string,mixed> $data
      * @return mixed
      */
-    protected function encode(array $data)
+    protected function encode(array $data): mixed
     {
         // Essaie d'encoder les données
         $result = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
@@ -266,14 +261,11 @@ abstract class Repository
      *
      * L'implémentation par défaut attend des données encodées en JSON.
      *
-     * @param mixed $data
-     * @param int|string|null $id
-     *
      * @return array<string,int|string>  Les données décodées de l'entité.
      *
      * @throws RepositoryException Si les données ne peuvent pas être décodées.
      */
-    protected function decode($data, $id)
+    protected function decode(mixed $data, int|string|null$id): array
     {
         if (! is_string($data)) {
             $msg = __('Invalid JSON data in entity %s (%s)', 'docalist-core');
@@ -295,12 +287,12 @@ abstract class Repository
      *
      * @return int
      */
-    abstract public function count();
+    abstract public function count(): int;
 
     /**
      * Supprime toutes les entités stockées dans le dépôt.
      *
      * Le dépôt lui-même n'est pas supprimé.
      */
-    abstract public function deleteAll();
+    abstract public function deleteAll(): void;
 }

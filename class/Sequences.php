@@ -82,6 +82,7 @@ class Sequences
      */
     public function get($group, $sequence)
     {
+        /** @var \wpdb */
         $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
@@ -109,6 +110,7 @@ class Sequences
      */
     public function set($group, $sequence, $value)
     {
+        /** @var \wpdb */
         $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
@@ -142,6 +144,7 @@ class Sequences
      */
     public function increment($group, $sequence)
     {
+        /** @var \wpdb */
         $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
@@ -193,6 +196,7 @@ class Sequences
      */
     public function clear($group, $sequence = null)
     {
+        /** @var \wpdb */
         $wpdb = docalist('wordpress-database');
 
         if (!empty($sequence)) {
@@ -205,7 +209,7 @@ class Sequences
 
         $sql = "DELETE FROM `$wpdb->options` WHERE `option_name` $op '$value'";
 
-        return $wpdb->query($sql);
+        return (int) $wpdb->query($sql);
     }
 
     /**
@@ -233,6 +237,7 @@ class Sequences
      */
     public function setIfGreater($group, $sequence, $value)
     {
+        /** @var \wpdb */
         $wpdb = docalist('wordpress-database');
 
         // Nom de l'option dans la table wp_options
@@ -249,6 +254,6 @@ class Sequences
              . '`option_value`=GREATEST(CAST(`option_value` AS SIGNED), VALUES(`option_value`))';
 
         // Exécute la requête (pas de prepare car on contrôle les paramètres)
-        return $wpdb->query($sql);
+        return (int) $wpdb->query($sql);
     }
 }

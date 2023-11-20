@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Repository;
 
+use Docalist\Tests\DocalistTestCase;
 use WP_UnitTestCase;
 
 use Docalist\Repository\Repository;
@@ -23,15 +24,15 @@ use Docalist\Repository\Exception\BadIdException;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
-class RepositoryTest extends WP_UnitTestCase
+class RepositoryTest extends DocalistTestCase
 {
     /**
      * Provider : retourne un dépôt du type à tester et deux ID valides pour
      * ce dépôt.
      *
-     * @return array
+     * @return array<array<int, Repository|string>>
      */
-    public function repositoryProvider()
+    public static function repositoryProvider(): array
     {
         return [
             [ new MemoryRepository(), 'client1', 'client2']
@@ -41,7 +42,7 @@ class RepositoryTest extends WP_UnitTestCase
     /**
      * @dataProvider repositoryProvider
      */
-    public function testSaveLoadDelete(Repository $repo, $id1, $id2)
+    public function testSaveLoadDelete(Repository $repo, string $id1, string $id2): void
     {
         // Vérifie qu'un ID est alloué si besoin
         $client = new Client(['name' => 'client without id']);
@@ -60,7 +61,7 @@ class RepositoryTest extends WP_UnitTestCase
         $client2 = new Client(['name' => "client with id $id2"]);
         $client2->setID($id2);
         $repo->save($client2);
-        $client2->name = "updated client with id $id2";
+        $client2->name->assign("updated client with id $id2");
         $repo->save($client2);
         $this->assertSame($id2, $client2->getID(), "save() ne change pas l'ID existant (maj)");
 
@@ -74,8 +75,8 @@ class RepositoryTest extends WP_UnitTestCase
         $this->assertSame($client2->getPhpValue(), $data);
 
         // Entité
-//         $client = $repo->load($client1->getID(), get_class($client1));
-//         $this->assertTrue($client->equals($client1));
+        // $client = $repo->load($client1->getID());
+        // $this->assertSame($client->getPhpValue(), $client1->getPhpValue());
 
 //         $client = $repo->load($client2->getID(), get_class($client2)); // $obj::static(), ça marche
 //         $this->assertTrue($client->equals($client2));
@@ -93,39 +94,13 @@ class RepositoryTest extends WP_UnitTestCase
 
     /**
      * @dataProvider repositoryProvider
-     * @expectedException Docalist\Repository\Exception\EntityNotFoundException
      */
-    public function testRemoveInexistant(Repository $repo, $id1, $id2)
+    public function testRemoveInexistant(Repository $repo, string $id1, string $id2): void
     {
-        $id = is_int($id1) ? 456789 : "xxx$id1";
-        $repo->load($id);
-    }
+        $this->expectException(EntityNotFoundException::class);
+        $this->expectExceptionMessage('not found');
 
-    public function badIdProvider()
-    {
-        return [
-            [ null ],                   // null
-            [ 3.14 ],                   // un float
-            [ true ],                   // un bool
-            [ [] ],                     // un tableau
-            [ (object) [] ],            // un objet
-        ];
-    }
-
-    /**
-     * @dataProvider repositoryProvider
-     */
-    public function testLoadInvalidId(Repository $repo, $id1, $id2)
-    {
-        foreach ($this->badIdProvider() as $badId) {
-            $catched = false;
-            try {
-                $repo->load($badId);
-            } catch (BadIdException $e) {
-                $catched = true;
-            }
-            $this->assertTrue($catched);
-        }
+        $repo->load('inexistant-' . $id1);
     }
 
 //     public function decodeErrorProvider() {

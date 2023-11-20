@@ -194,8 +194,8 @@ class AdminTables extends AdminPage
                 break;
             }
         }
-        $tableInfo->name = $name;
-        $tableInfo->label = sprintf(__('Copie de %s', 'docalist-core'), $tableInfo->label());
+        $tableInfo->name->assign($name);
+        $tableInfo->label->assign(sprintf(__('Copie de %s', 'docalist-core'), $tableInfo->label()));
 
         return $this->view('docalist-core:table/copy', [
             'tableName' => $tableName,

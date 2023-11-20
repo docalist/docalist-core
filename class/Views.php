@@ -64,14 +64,14 @@ class Views
      *
      * Les path des répertoires sont normalisés (cf. normalizePath) et contient toujours un (anti)slash à la fin.
      *
-     * @var string[]|array[] Un tableau de la forme 'group' => répertoire(s).
+     * @var array<string,string|array<int,string>> Un tableau de la forme 'group' => répertoire(s).
      */
     protected $groups;
 
     /**
      * Initialise le gestionnaire de vues.
      *
-     * @param string[]|array[] $groups La liste initiale des groupes (cf. setGroups).
+     * @param array<string,string|array<int,string>> $groups La liste initiale des groupes (cf. setGroups).
      * Des groupes et des répertoires supplémentaires peuvent être ajoutés en appellant addDirectory().
      */
     public function __construct($groups = [])
@@ -82,7 +82,7 @@ class Views
     /**
      * Modifie la liste des groupes.
      *
-     * @param string[]|array[] $groups Un tableau dont les entrées sont de la forme :
+     * @param array<string,string|array<int,string>> $groups Un tableau dont les entrées sont de la forme :
      *
      * - 'group1' => 'répertoire' ou
      * - 'group2' => ['répertoire1', 'répertoire2', etc.]
@@ -92,10 +92,8 @@ class Views
      * - Le path de chaque répertoire indiqué est normalisé (ajout d'un slash/antislash de fin et uniformisation
      *   du séparateur) mais aucun test n'est fait pour vérifier que le répertoire indiqué existe.
      * - Lorsqu'un groupe contient plusieurs répertoire, ceux-ci sont testés dans l'ordre indiqué.
-     *
-     * @return self
      */
-    public function setGroups(array $groups)
+    public function setGroups(array $groups): static
     {
         $this->groups = [];
         foreach ($groups as $group => $directories) {
@@ -110,9 +108,9 @@ class Views
     /**
      * Retourne la liste des groupes définis.
      *
-     * @return string[]|array[] Un tableau de la forme 'group' => répertoire(s).
+     * @return array<string,string|array<int,string>> Un tableau de la forme 'group' => répertoire(s).
      */
-    public function getGroups()
+    public function getGroups(): array
     {
         return $this->groups;
     }
@@ -125,10 +123,8 @@ class Views
      *
      * @param string $group     Nom du groupe à créer ou modifier.
      * @param string $directory Path absolu du répertoire à ajouter au groupe.
-     *
-     * @return self
      */
-    public function addDirectory($group, $directory)
+    public function addDirectory(string $group, string $directory): static
     {
         $path = $this->normalizePath($directory);
         if (!isset($this->groups[$group])) {
@@ -137,7 +133,10 @@ class Views
             return $this;
         }
 
-        is_string($this->groups[$group]) && $this->groups[$group] = array($this->groups[$group]);
+        if (is_string($this->groups[$group])) {
+            $this->groups[$group] = array($this->groups[$group]);
+        }
+
         array_unshift($this->groups[$group], $path);
 
         return $this;
@@ -236,7 +235,7 @@ class Views
         ob_start();
         $this->display($view, $data);
 
-        return ob_get_clean();
+        return (string) ob_get_clean();
     }
 
     /**

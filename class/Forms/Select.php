@@ -40,7 +40,7 @@ class Select extends Choice
      *
      * Cette option est utilisée pour les select simples, elle est ignorée pour les select multiples.
      *
-     * @param bool|string|array<int|string,string> $firstOption optionnel, valeur de l'option
+     * @param bool|string|array<string,string> $firstOption optionnel, valeur de l'option
      *
      * @throws InvalidArgumentException si $firstOption ets invalide
      */
@@ -48,24 +48,22 @@ class Select extends Choice
     {
         switch (true) {
             case false === $firstOption:
-                break;
+                $this->firstOption = false;
+                return $this;
             case true === $firstOption:
-                $firstOption = ['' => '…'];
-                break;
+                $this->firstOption = ['' => '…'];
+                return $this;
             case is_string($firstOption):
-                $firstOption = ['' => $firstOption];
-                break;
+                $this->firstOption = ['' => $firstOption];
+                return $this;
             case is_array($firstOption):
-                if (1 !== count($firstOption)) {
-                    throw $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
+                if (1 === count($firstOption)) {
+                    $this->firstOption = $firstOption;
+                    return $this;
                 }
-                break;
-            // default:
-            //     throw $this->invalidArgument('%s: invalid firstOption, expected true, false, string or array.');
         }
-        $this->firstOption = $firstOption;
 
-        return $this;
+        throw $this->invalidArgument('%s: invalid firstOption, array must contain one item.');
     }
 
     /**
@@ -103,7 +101,7 @@ class Select extends Choice
     {
         // Affiche l'option vide (firstOption) si elle est activée et que ce n'est pas un select multiple
         if (!$this->hasAttribute('multiple') && $option = $this->getFirstOption()) {
-            $this->displayOption($theme, key($option), current($option), false, false);
+            $this->displayOption($theme, (string)key($option), current($option), false, false);
         }
 
         // Affiche les options disponibles

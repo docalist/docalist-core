@@ -23,18 +23,19 @@ class MemoryRepository extends Repository
 {
     // Les données sont publiques pour permettrent aux tests de vérifier
     // les données stockées.
-    public $data = [
+    /** @var array<int|string,mixed> */
+    public array $data = [
         'notjson' => 1,
         'badjson' => '[',
         'notarray' => '1',
     ];
 
-    public function has($id)
+    public function has(int|string $id): bool
     {
         return isset($this->data[$this->checkId($id)]);
     }
 
-    protected function loadData($id)
+    protected function loadData(int|string $id): mixed
     {
         if (! isset($this->data[$id])) {
             throw new EntityNotFoundException($id);
@@ -42,14 +43,17 @@ class MemoryRepository extends Repository
         return $this->data[$id];
     }
 
-    protected function saveData($id, $data)
+    protected function saveData(int|string|null $id, mixed $data): int|string
     {
-        is_null($id) && $id = uniqid();
+        if (is_null($id)) {
+            $id = uniqid();
+        }
+
         $this->data[$id] = $data;
         return $id;
     }
 
-    protected function deleteData($id)
+    protected function deleteData(int|string $id): void
     {
         if (! isset($this->data[$id])) {
             throw new EntityNotFoundException($id);
@@ -57,12 +61,12 @@ class MemoryRepository extends Repository
         unset($this->data[$id]);
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }
 
-    public function deleteAll()
+    public function deleteAll(): void
     {
         $this->data = [];
     }

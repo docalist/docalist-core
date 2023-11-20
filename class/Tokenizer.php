@@ -23,7 +23,7 @@ class Tokenizer
     /**
      * Table de conversion des caractères pour le tokenizer.
      *
-     * @var array
+     * @var array<string,string>
      */
     protected static $tokenizer = [
         // U0000 - Latin de base (http://fr.wikipedia.org/wiki/Table_des_caractères_Unicode/U0000)
@@ -89,7 +89,7 @@ class Tokenizer
     /**
      * Table de conversion des caractères pour uppercaseNoAccents().
      *
-     * @var array
+     * @var array<string,string>
      */
     protected static $uppercaseNoAccents = [
         // U0000 - Latin de base (http://fr.wikipedia.org/wiki/Table_des_caractères_Unicode/U0000)
@@ -147,7 +147,10 @@ class Tokenizer
         // autres symboles monétaires : Livre : 00A3 £, dollar 0024 $, etc.
     ];
 
-    public static function tokenize($text)
+    /**
+     * @return array <int,string>
+     */
+    public static function tokenize(string $text): array
     {
         $text = strtr($text, self::$tokenizer);
         $text = str_word_count($text, 1, '0123456789@_');
@@ -161,11 +164,8 @@ class Tokenizer
      *
      * Remarque : remplace également les ligatures par les lettres
      * correspondantes.
-     *
-     * @param string $text
-     * @return string
      */
-    public static function uppercaseNoAccents($text)
+    public static function uppercaseNoAccents(string $text): string
     {
         return strtr($text, self::$uppercaseNoAccents);
     }
