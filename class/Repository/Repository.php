@@ -267,9 +267,9 @@ abstract class Repository
      * L'implémentation par défaut attend des données encodées en JSON.
      *
      * @param mixed $data
-     * @param int|string $id
+     * @param int|string|null $id
      *
-     * @return array Les données décodées de l'entité.
+     * @return array<string,int|string>  Les données décodées de l'entité.
      *
      * @throws RepositoryException Si les données ne peuvent pas être décodées.
      */
