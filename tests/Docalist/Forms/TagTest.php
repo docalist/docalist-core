@@ -13,7 +13,7 @@ namespace Docalist\Tests\Forms;
 
 use Docalist\Forms\Tag;
 use Docalist\Forms\Themes;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use InvalidArgumentException;
 
 /**

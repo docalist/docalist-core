@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Docalist\Tests\Repository;
 
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use WP_UnitTestCase;
 
 use Docalist\Repository\Repository;

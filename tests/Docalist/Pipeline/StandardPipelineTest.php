@@ -13,7 +13,7 @@ namespace Docalist\Tests\Pipeline;
 
 use ArrayIterator;
 use Docalist\Pipeline\StandardPipeline;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use Generator;
 use InvalidArgumentException;
 use TypeError;

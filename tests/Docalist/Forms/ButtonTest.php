@@ -13,7 +13,7 @@ namespace Docalist\Tests\Forms;
 
 use Docalist\Forms\Button;
 use Docalist\Forms\Form;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 
 /**
  * @author Daniel Ménard <daniel.menard@laposte.net>

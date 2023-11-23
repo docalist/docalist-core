@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Docalist\Tests\Type;
 
 use Docalist\Schema\Schema;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use Docalist\Type\Any;
 
 /**

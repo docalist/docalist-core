@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Docalist\Tests\Forms;
 
 use Docalist\Forms\Reset;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 
 /**
  * @author Daniel Ménard <daniel.menard@laposte.net>

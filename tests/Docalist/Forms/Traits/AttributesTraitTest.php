@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Docalist\Tests\Forms\Traits;
 
 use Docalist\Forms\Element;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use InvalidArgumentException;
 
 /**

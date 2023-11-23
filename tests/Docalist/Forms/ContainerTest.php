@@ -18,7 +18,7 @@ use Docalist\Forms\Item;
 use Docalist\Forms\Select;
 use Docalist\Forms\Tag;
 use Docalist\Forms\Textarea;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use InvalidArgumentException;
 
 /**

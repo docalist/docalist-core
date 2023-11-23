@@ -9,7 +9,7 @@
  */
 declare(strict_types=1);
 
-namespace Docalist\Tests;
+namespace Docalist\Test;
 
 use Brain\Monkey;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;

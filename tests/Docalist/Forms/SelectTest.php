@@ -13,7 +13,7 @@ namespace Docalist\Tests\Forms;
 
 use Docalist\Forms\Div;
 use Docalist\Forms\Select;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use InvalidArgumentException;
 
 /**

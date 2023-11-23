@@ -14,7 +14,7 @@ namespace Docalist\Tests\Forms;
 use Docalist\Forms\Container;
 use Docalist\Forms\Element;
 use Docalist\Schema\Schema;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use Docalist\Type\Collection;
 use Docalist\Type\Composite;
 use Docalist\Type\Text;

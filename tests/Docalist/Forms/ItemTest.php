@@ -15,7 +15,7 @@ use Docalist\Forms\Container;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Input;
 use Docalist\Forms\Item;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 
 /**
  * @author Daniel Ménard <daniel.menard@laposte.net>

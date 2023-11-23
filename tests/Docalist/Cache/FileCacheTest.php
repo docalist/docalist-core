@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Docalist\Tests\Cache;
 
 use Docalist\Cache\FileCache;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 
 class FileCacheTest extends DocalistTestCase
 {

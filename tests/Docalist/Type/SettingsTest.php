@@ -14,7 +14,7 @@ namespace Docalist\Tests\Type;
 use Docalist\Repository\DirectoryRepository;
 use Docalist\Repository\Repository;
 use Docalist\Repository\SettingsRepository;
-use Docalist\Tests\DocalistTestCase;
+use Docalist\Test\DocalistTestCase;
 use Docalist\Tests\Type\Fixtures\MySettings;
 
 /**
