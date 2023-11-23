@@ -161,7 +161,7 @@ class XmlReader
      *
      * @var InternalXmlReader
      */
-    protected $xmlReader = null;
+    protected InternalXmlReader $xmlReader;
 
     /**
      * Indique si le prochain appelle à next() doit avancer ou non sur le noeud suivant.
@@ -169,7 +169,7 @@ class XmlReader
      * Quand on appelle enter() ou leave(), le flag passe à false (i.e. "noeud pas encore consommé").
      * Quand on appelle next(), il passe à true (i.e. "noeud déjà vu").
      *
-     * @var string
+     * @var bool
      */
     protected $nextMustRead = true;
 
@@ -258,7 +258,7 @@ class XmlReader
      *
      * @return self
      */
-    protected function __construct(InternalXmlReader $internalXmlReader)
+    final protected function __construct(InternalXmlReader $internalXmlReader)
     {
         // Stocke le reader interne
         $this->xmlReader = $internalXmlReader;
@@ -373,6 +373,7 @@ class XmlReader
     {
         $this->nextMustRead && $this->xmlReader->next();
 
+        // @phpstan-ignore-next-line "return missing" (phpstan ne détecte pas la loop sans fin)
         for (;;) {
             switch ($this->xmlReader->nodeType) {
                 case self::EOF:         // Fin de fichier, on ne peut pas aller plus loin, retourne false
@@ -448,6 +449,7 @@ class XmlReader
         }
 
         // Recherche le prochain tag de fermeture
+        // @phpstan-ignore-next-line
         for (;;) {
             // Si on en trouve un et qu'il a le bon nom, c'est ok, sinon exception "tag mismatch"
             if ($this->xmlReader->nodeType === self::CLOSE_TAG) {
@@ -481,8 +483,6 @@ class XmlReader
 
     /**
      * Retourne le contenu textuel du noeud en cours (i.e. innerText).
-     *
-     * @param string $name Nom du tag attendu.
      *
      * @return string Une chaine contenant les contenu des noeuds de type texte présents dans le noeud en cours,
      * concaténés ensemble. Par exemple pour le noeud '<p>this<b>is <i>a</i> text</b></p>', la méthode retourne
@@ -531,7 +531,9 @@ class XmlReader
             throw new LogicException('Call to getNode() at EOF');
         }
 
-        return $this->xmlReader->expand();
+        $node = $this->xmlReader->expand();
+        assert($node !== false);
+        return $node;
     }
 
     /**
@@ -547,6 +549,6 @@ class XmlReader
 
         $node = $this->xmlReader->expand();
 
-        return $node ? $node->getLineNo() : 'N/A';
+        return $node ? $node->getLineNo() : 0;
     }
 }
