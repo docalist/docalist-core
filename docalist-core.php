@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace Docalist\Core;
 
+use Docalist\Services;
+
 /**
  * Version du plugin.
  */
@@ -41,12 +43,22 @@ define('DOCALIST_CORE_VERSION', '3.4.0'); // Garder synchro avec la version indi
 /**
  * Path absolu du fichier principal du plugin.
  */
-define('DOCALIST_CORE', DOCALIST_CORE_DIR . DIRECTORY_SEPARATOR . basename(__FILE__));
+define('DOCALIST_CORE', DOCALIST_CORE_DIR.DIRECTORY_SEPARATOR.basename(__FILE__));
 
 /**
  * Url de base du plugin.
  */
-define('DOCALIST_CORE_URL', plugins_url('', DOCALIST_CORE));
+!defined('DOCALIST_CORE_URL') && define('DOCALIST_CORE_URL', (string) plugins_url('', DOCALIST_CORE));
+
+/**
+ * Indique si le services ObjectCache de Docalist utilise le cache WordPress ou non.
+ */
+!defined('DOCALIST_USE_WP_CACHE') && define('DOCALIST_USE_WP_CACHE', false);
+
+/**
+ * Path du cache pour le service FileCache de docalist (vide ou non définit = auto).
+ */
+!defined('DOCALIST_CACHE_DIR') && define('DOCALIST_CACHE_DIR', '');
 
 /**
  * Définit la fonction principale de docalist.
@@ -58,18 +70,21 @@ define('DOCALIST_CORE_URL', plugins_url('', DOCALIST_CORE));
  * fonction plugin_sandbox_scrape qui fait des include du fichier plugin et
  * donc peut réinclure un fichier déjà inclus.
  */
-require_once __DIR__ . '/docalist.php';
+require_once __DIR__.'/docalist.php';
 
 /**
  * Fonctions docalist.
  */
-require_once __DIR__ . '/docalist-functions.php';
+require_once __DIR__.'/docalist-functions.php';
 
 /*
  * Charge le plugin docalist-core en premier (priorité -PHP_INT_MAX).
  */
 add_action('plugins_loaded', function () {
-    docalist('services')->add('docalist-core', new Plugin());
+    /** @var Services $services */
+    $services = docalist('services');
+
+    $services->add('docalist-core', new Plugin($services));
 }, -PHP_INT_MAX);
 
 /*

@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Docalist\Table;
 
 use Docalist\Cache\FileCache;
-use Psr\Log\LoggerInterface;
 use Exception;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Gestionnaire de tables d'autorité.
@@ -24,41 +24,47 @@ use InvalidArgumentException;
 class TableManager
 {
     /**
-     * Le logger utilisé.
-     *
-     * @var LoggerInterface
+     * Répertoire des tables.
      */
-    protected $log;
+    protected string $tablesDirectory;
+
+    /**
+     * Cache.
+     */
+    protected FileCache $fileCache;
+
+    /**
+     * Le logger utilisé.
+     */
+    protected LoggerInterface $log;
 
     /**
      * Master table (table des tables).
-     *
-     * @var MasterTable
      */
-    protected $master = null;
-
+    protected ?MasterTable $master = null;
 
     /**
      * Liste des tables déclarées.
      *
-     * @var TableInfo[] Un tableau d'objets TableInfo indexé par nom.
+     * @var array<string,TableInfo> Un tableau d'objets TableInfo indexé par nom.
      */
-    protected $tables;
+    protected array $tables;
 
     /**
      * Liste des tables ouvertes.
      *
-     * @var TableInterface[] Un tableau d'objets TableInterface indexé par nom.
+     * @var array<string,TableInterface> Un tableau d'objets TableInterface indexé par nom.
      */
-    protected $opened;
+    protected array $opened;
 
     /**
      * Initialise le gestionnaire de tables.
      */
-    public function __construct()
+    public function __construct(string $tablesDirectory, FileCache $fileCache, LoggerInterface $log)
     {
-        // Initialise notre log
-        $this->log = docalist('logs')->get('tables');
+        $this->tablesDirectory = $tablesDirectory;
+        $this->fileCache = $fileCache;
+        $this->log = $log;
     }
 
     /**
@@ -67,10 +73,8 @@ class TableManager
      * @param TableInfo $table Propriétés de la table.
      *
      * @throws InvalidArgumentException Si la table est déjà déclarée.
-     *
-     * @return self
      */
-    public function register(TableInfo $table)
+    public function register(TableInfo $table): static
     {
         $this->master()->register($table);
 
@@ -86,10 +90,8 @@ class TableManager
      * @param string $name
      *
      * @throws InvalidArgumentException Si la table n'est pas déclarée.
-     *
-     * @return self
      */
-    public function unregister($name)
+    public function unregister($name): static
     {
         $this->master()->unregister($name);
 
@@ -101,11 +103,9 @@ class TableManager
      *
      * @param string $name Nom de la table à retourner.
      *
-     * @return TableInterface
-     *
      * @throws Exception Si la table indiquée n'a pas été enregistrée.
      */
-    public function get($name)
+    public function get(string $name): TableInterface
     {
         if ($name === 'master') {
             return $this->master();
@@ -120,7 +120,7 @@ class TableManager
         $table = $this->table($name);
 
         // Ouvre la table
-        $path = $table->path();
+        $path = $table->path->getPhpValue();
         $extension = pathinfo($path, PATHINFO_EXTENSION);
         switch ($extension) {
             case 'sqlite':
@@ -142,24 +142,21 @@ class TableManager
     /**
      * Crée une nouvelle table personnalisée en recopiant une table existante.
      *
-     * @param string $name Nom de la table à recopier.
+     * @param string $name    Nom de la table à recopier.
      * @param string $newName Nom de la table à créer.
-     * @param string $label Libellé de la nouvelle table.
-     * @param bool $nodata true : recopier uniquement la structure de la table,
-     * false : recopier la structure et les données.
-     *
-     * @return self
+     * @param string $label   Libellé de la nouvelle table.
+     * @param bool   $nodata  true : recopier uniquement la structure de la table,
+     *                        false : recopier la structure et les données.
      *
      * @throws Exception
-     * - si la table $name n'existe pas
-     * - si le nom de la nouvelle table n'est pas correct ou n'est pas unique
-     * - s'il existe déjà une table $newName
-     * - si le répertoire des tables utilisateurs (wp-content/upload/tables)
-     *   ne peut pas être créé
-     * - si un fichier $newName.txt existe déjà dans ce répertoire
-     * - si une erreur survient durant la copie
+     *                   - si la table $name n'existe pas
+     *                   - si le nom de la nouvelle table n'est pas correct ou n'est pas unique
+     *                   - s'il existe déjà une table $newName
+     *                   - si le répertoire des tables utilisateurs (wp-content/upload/tables) ne peut pas être créé
+     *                   - si un fichier $newName.txt existe déjà dans ce répertoire
+     *                   - si une erreur survient durant la copie
      */
-    public function copy($name, $newName, $label, $nodata)
+    public function copy(string $name, string $newName, string $label, bool $nodata): static
     {
         // Vérifie que la table source existe
         $table = $this->table($name);
@@ -168,8 +165,8 @@ class TableManager
         $this->master()->checkName($newName);
 
         // Détermine le path de la nouvelle table
-        $fileName = $newName . '.txt';
-        $path = docalist('tables-dir') . DIRECTORY_SEPARATOR . $fileName;
+        $fileName = $newName.'.txt';
+        $path = $this->tablesDirectory.DIRECTORY_SEPARATOR.$fileName;
 
         // Vérifie qu'il n'existe pas déjà un fichier avec ce path
         if (file_exists($path)) {
@@ -183,9 +180,13 @@ class TableManager
 
         // Génère le fichier CSV de la nouvelle table
         $file = fopen($path, 'w');
+        if ($file === false) {
+            throw new Exception(sprintf('Unable to write table "%s"', $fileName));
+        }
+
         fputcsv($file, $fields, ';', '"');
-        if (! $nodata) {
-            $data = $source->search('ROWID,' . implode(',', $fields));
+        if (!$nodata) {
+            $data = $source->search('ROWID,'.implode(',', $fields));
             foreach ($data as $entry) {
                 fputcsv($file, (array) $entry, ';', '"');
             }
@@ -194,11 +195,11 @@ class TableManager
 
         // Crée la structure TableInfo de la nouvelle table
         $table = new TableInfo([
-            'name' => $newName,
-            'path' => $path,
-            'label' => $label,
-            'format' => $table->format(),
-            'type' => $table->type(),
+            'name'     => $newName,
+            'path'     => $path,
+            'label'    => $label,
+            'format'   => $table->format->getPhpValue(),
+            'type'     => $table->type->getPhpValue(),
             'readonly' => false,
         ]);
 
@@ -212,33 +213,28 @@ class TableManager
     /**
      * Met à jour les propriétés et/ou le contenu d'une table personnalisée.
      *
-     * @param string $name
-     * @param string $newName
-     * @param string $label
-     * @param array $data
-     *
-     * @return self
+     * @param array<array<int,int|string>> $data
      *
      * @throws Exception
-     * - si la table $name n'existe pas.
-     * - si la table $name n'est pas une table personnalisée.
-     * - s'il existe déjà une table $newName.txt dans le répertoire des table.
-     * - si la table ne peut pas être renommée
+     *                   - si la table $name n'existe pas.
+     *                   - si la table $name n'est pas une table personnalisée.
+     *                   - s'il existe déjà une table $newName.txt dans le répertoire des table.
+     *                   - si la table ne peut pas être renommée
      */
-    public function update($name, $newName = null, $label = null, array $data = null)
+    public function update(string $name, string $newName = null, string $label = null, array $data = null): static
     {
         // Vérifie que la table à modifier existe
         $table = $this->table($name);
 
         // Vérifie qu'il s'agit d'une table personnalisée
-        if ($table->readonly()) {
+        if ($table->readonly->getPhpValue()) {
             $msg = __('La table "%s" est une table prédéfinie, elle ne peut pas être modifiée.', 'docalist-core');
             throw new Exception(sprintf($msg, $name));
         }
 
-        $path = $table->path();
+        $path = $table->path->getPhpValue();
         ($newName === $name) && $newName = null;
-        ($label === $table->label()) && $label = null;
+        ($label === $table->label->getPhpValue()) && $label = null;
 
         // Vérifie que le nouveau nom est correct et unique
         $newName && $this->master()->checkName($newName);
@@ -253,6 +249,10 @@ class TableManager
 
             // Génère le fichier CSV de la nouvelle table
             $file = fopen($path, 'wb');
+            if ($file === false) {
+                throw new Exception(sprintf('Unable to write table "%s"', $name));
+            }
+
             fputcsv($file, $fields, ';', '"');
             foreach ($data as $entry) {
                 fputcsv($file, (array) $entry, ';', '"');
@@ -264,7 +264,9 @@ class TableManager
         if ($newName) {
             // Détermine le nouveau path
             $p = pathinfo($path);
-            $newPath = $p['dirname'] . DIRECTORY_SEPARATOR . $newName . '.' . $p['extension'];
+            assert(isset($p['dirname']));
+            assert(isset($p['extension']));
+            $newPath = $p['dirname'].DIRECTORY_SEPARATOR.$newName.'.'.$p['extension'];
 
             // Vérifie qu'il n'existe pas déjà un fichier avec ce nom
             if (file_exists($newPath)) {
@@ -273,25 +275,28 @@ class TableManager
             }
 
             // Renomme le fichier
-            if (! @rename($path, $newPath)) {
+            if (!@rename($path, $newPath)) {
                 $msg = __('Impossible de renommer la table "%s" en "%s".', 'docalist-core');
                 throw new Exception(sprintf($msg, $name, $newName));
             }
 
             // Supprime l'ancienne table du cache
-            $cache = docalist('file-cache'); /* @var FileCache $cache */
-            $cache->has($path) && $cache->clear($path);
+            $this->fileCache->has($path) && $this->fileCache->clear($path);
 
             // Met à jour le path de la table
-            $table->path = $newPath;
+            $table->path->assign($newPath);
         }
 
         // Met à jour les propriétés de la table (lastupdate notamment)
         if ($data || $newName || $label) {
-            $newName && $table->name = $newName;
-            $label && $table->label = $label;
+            $newName && $table->name->assign($newName);
+            $label && $table->label->assign($label);
 
-            $this->master()->update($this->rowid($name), $table);
+            $rowid = $this->rowid($name);
+            if ($rowid === false) {
+                throw new Exception(sprintf('Internal error rowid of table "%s" not found', $name));
+            }
+            $this->master()->update($rowid, $table);
         }
 
         // Ok
@@ -303,20 +308,18 @@ class TableManager
      *
      * @param string $name Nom de la table à supprimer.
      *
-     * @return self
-     *
      * @throws Exception
-     * - si la table $name n'existe pas.
-     * - si la table $name n'est pas une table personnalisée.
-     * - si la suppression échoue
+     *                   - si la table $name n'existe pas.
+     *                   - si la table $name n'est pas une table personnalisée.
+     *                   - si la suppression échoue
      */
-    public function delete($name)
+    public function delete(string $name): static
     {
         // Vérifie que la table à modifier existe
         $table = $this->table($name);
 
         // Vérifie qu'il s'agit d'une table personnalisée
-        if ($table->readonly()) {
+        if ($table->readonly->getPhpValue()) {
             $msg = __('La table "%s" est une table prédéfinie, elle ne peut pas être modifiée.', 'docalist-core');
             throw new Exception(sprintf($msg, $name));
         }
@@ -325,17 +328,16 @@ class TableManager
         unset($this->opened[$name]);
 
         // Supprime le fichier CSV
-        $path = $table->path();
+        $path = $table->path->getPhpValue();
         if (file_exists($path)) {
-            if (! @unlink($path)) {
+            if (!@unlink($path)) {
                 $msg = __('Impossible de supprimer la table "%s".', 'docalist-core');
                 throw new Exception(sprintf($msg, $name));
             }
         }
 
         // Supprime l'ancienne table du cache
-        $cache = docalist('file-cache'); /* @var FileCache $cache */
-        $cache->has($path) && $cache->clear($path);
+        $this->fileCache->has($path) && $this->fileCache->clear($path);
 
         // Supprime la table de la master table
         $this->unregister($name);
@@ -346,13 +348,11 @@ class TableManager
 
     /**
      * Retourne la master table.
-     *
-     * @return MasterTable
      */
-    protected function master()
+    protected function master(): MasterTable
     {
         if (!isset($this->master)) {
-            $path = docalist('tables-dir') . DIRECTORY_SEPARATOR . 'master.txt';
+            $path = $this->tablesDirectory.DIRECTORY_SEPARATOR.'master.txt';
             $this->master = new MasterTable($path);
         }
 
@@ -362,23 +362,17 @@ class TableManager
     /**
      * Retourne l'ID interne (rowid) de la table passée en paramètre.
      *
-     * @param string $name
-     *
      * @return int|false L'ID de la table ou false si elle n'existe pas.
      */
-    public function rowid($name)
+    public function rowid(string $name): int|false
     {
         return $this->master()->rowid($name);
     }
 
     /**
      * Teste si la table indiquée est déclarée.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
-    public function has($name)
+    public function has(string $name): bool
     {
         return $this->master()->has($name);
     }
@@ -390,10 +384,9 @@ class TableManager
      *
      * @return TableInfo Les propriétés de la table.
      *
-     * @throws InvalidArgumentException Si la table indiquée n'existe pas dans
-     * la master table.
+     * @throws InvalidArgumentException Si la table indiquée n'existe pas dans la master table.
      */
-    public function table($name)
+    public function table(string $name): TableInfo
     {
         return $this->master()->table($name);
     }
@@ -406,16 +399,14 @@ class TableManager
      * indiquez à la fois un type et un format, les deux critères sont combinés
      * en "ET").
      *
-     * @param string $type Optionnel, ne retourne que les tables du type indiqué.
-     * @param string $format Optionnel, ne retourne que les tables du format
-     * indiqué.
-     * @param bool $readonly Optionnel, ne retourne que les tables du type
-     * indiqué.
-     * @param string $sort Optionnel, ordre de tri (par défaut : _label).
+     * @param ?string $type     Optionnel, ne retourne que les tables du type indiqué.
+     * @param ?string $format   Optionnel, ne retourne que les tables du format indiqué.
+     * @param ?bool   $readonly Optionnel, ne retourne que les tables du type indiqué.
+     * @param string  $sort     Optionnel, ordre de tri (par défaut : _label).
      *
-     * @return TableInfo[]
+     * @return array<int,TableInfo>
      */
-    public function tables($type = null, $format = null, $readonly = null, $sort = '_label')
+    public function tables(string $type = null, string $format = null, bool $readonly = null, string $sort = '_label'): array
     {
         return $this->master()->tables($type, $format, $readonly, $sort);
     }
@@ -423,14 +414,14 @@ class TableManager
     /**
      * Retourne la liste des types de tables existants.
      *
-     * @param string $format Ne retourne que les types du format indiqué.
+     * @param ?string $format Ne retourne que les types du format indiqué.
      *
      * @return string[]
      */
-    public function types($format = null)
+    public function types(string $format = null): array
     {
         $where = "type != 'master'";
-        $format && $where .= ' AND format=' . $this->master()->quote($format);
+        $format && $where .= ' AND format='.$this->master()->quote($format);
 
         return $this->master()->search('DISTINCT type', $where, '_type');
     }
@@ -438,14 +429,14 @@ class TableManager
     /**
      * Retourne la liste des formats de tables existants.
      *
-     * @param string $type Ne retourne que les formats du type indiqué.
+     * @param ?string $type Ne retourne que les formats du type indiqué.
      *
      * @return string[]
      */
-    public function formats($type = null)
+    public function formats(string $type = null): array
     {
         $where = "format != 'master'";
-        $type && $where .= ' AND type=' . $this->master()->quote($type);
+        $type && $where .= ' AND type='.$this->master()->quote($type);
 
         return $this->master()->search('DISTINCT format', $where, '_format');
     }

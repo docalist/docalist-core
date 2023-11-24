@@ -11,17 +11,16 @@ declare(strict_types=1);
 
 namespace Docalist\Lookup;
 
-use Docalist\Lookup\LookupInterface;
+use Docalist\Http\HtmlResponse;
 use Docalist\Http\JsonResponse;
 use Docalist\Services;
-use InvalidArgumentException;
 use Exception;
-use Docalist\Http\HtmlResponse;
+use InvalidArgumentException;
 
 /**
  * Gestionnaire de lookups.
  *
- * Le gestionnaire de lookups est un service qui permet de faire une recherche sur un jeu de donénes (une table, un
+ * Le gestionnaire de lookups est un service qui permet de faire une recherche sur un jeu de données (une table, un
  * index, la liste des utilisateurs WordPress, la liste des pages existantes, etc.) et de retourner une liste de
  * suggestions.
  *
@@ -35,6 +34,27 @@ use Docalist\Http\HtmlResponse;
 class LookupManager
 {
     /**
+     * Services de lookup disponibles.
+     *
+     * @var array<string,LookupInterface>
+     */
+    private array $lookupServices;
+
+    /**
+     * Définit le service de lookup qui gère les lookups du type indiqué.
+     *
+     * @param string          $type          Type de lookup (table, thesaurus, index, search, etc.)
+     * @param LookupInterface $lookupService Le service lookup correspondant.
+     */
+    public function setLookupService(string $type, LookupInterface $lookupService): void
+    {
+        if (isset($this->lookupServices[$type])) {
+            throw new InvalidArgumentException(sprintf('Lookup service "%s" is already registered', $type));
+        }
+        $this->lookupServices[$type] = $lookupService;
+    }
+
+    /**
      * Retourne le service de lookup qui gère les lookups du type indiqué.
      *
      * @param string $type Type de lookup (table, thesaurus, index, search, etc.)
@@ -43,36 +63,24 @@ class LookupManager
      *
      * @throws InvalidArgumentException Si aucun service n'a été trouvé.
      */
-    public function getLookupService($type)
+    public function getLookupService(string $type): LookupInterface
     {
-        // Détermine le nom du service ('{$type}-lookup' par convention)
-        $name = $type . '-lookup';
-
-        // Récupère le service (génère une exception s'il n'existe pas)
-        /** @var Services */
-        $services = docalist('services');
-        $service = $services->get($name);
-
-        // (debug) Vérifie que c'est bien un service de lookups
-        if (! $service instanceof LookupInterface) {
-            throw new InvalidArgumentException("Service $name is not a lookup service");
+        if (!isset($this->lookupServices[$type])) {
+            throw new InvalidArgumentException(sprintf('Lookup service "%s" do not exists', $type));
         }
 
-        // Ok
-        return $service;
+        return $this->lookupServices[$type];
     }
 
     /**
      * Effectue un lookup et retourne les suggestions obtenues.
      *
-     * @param string $type Type de lookup à exécuter (table, thesaurus, index, search, etc.)
-     *
+     * @param string $type   Type de lookup à exécuter (table, thesaurus, index, search, etc.)
      * @param string $search Termes à rechercher.
-     *
      * @param string $source Pour les lookups multi-sources, source à utiliser (nom de table, nom de champ, etc.)
      *
      * @return array<mixed> La méthode retourne toujours un tableau. Si aucune suggestion n'a été trouvée, elle retourne
-     * un tableau vide.
+     *                      un tableau vide.
      *
      * Chaque entrée du tableau est un objet. Les champs retournés dépendent du type de lookup exécuté.
      *
@@ -123,10 +131,10 @@ class LookupManager
         $type = $_GET['type'];
 
         // Récupère la source de données (optionnel)
-        $source = isset($_GET['source']) ? $_GET['source'] : '';
+        $source = $_GET['source'] ?? '';
 
         // Récupère la chaine recherchée (optionnel)
-        $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $search = $_GET['search'] ?? '';
 
         // Exécute le lookup
         ob_start();
@@ -145,7 +153,7 @@ class LookupManager
         if (!empty($garbage)) {
             $maxAge = 0; // pas de cache
             $response = new HtmlResponse();
-            $response->setContent($garbage . '<pre>' . $json->getContent() . '</pre>');
+            $response->setContent($garbage.'<pre>'.$json->getContent().'</pre>');
             $json = $response;
         }
 

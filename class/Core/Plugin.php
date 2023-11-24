@@ -38,19 +38,19 @@ class Plugin
     /**
      * Initialise le plugin.
      */
-    public function __construct()
+    public function __construct(Services $services)
     {
         // Charge les fichiers de traduction du plugin
         load_plugin_textdomain('docalist-core', false, 'docalist-core/languages');
 
         // Définit le path des répertoires docalist (tables, logs, etc.)
-        $this->setupPaths();
+        $this->setupPaths($services);
 
         // Enregistre les services docalist de base
-        $this->setupServices();
+        $this->setupServices($services);
 
         // Définit les actions et les filtres par défaut
-        $this->setupHooks();
+        $this->setupHooks($services);
 
         // Debug - permet de réinstaller les tables par défaut
         if (isset($_GET['docalist-core-reinstall-tables']) && $_GET['docalist-core-reinstall-tables'] === '1') {
@@ -72,9 +72,9 @@ class Plugin
      *
      * @return self
      */
-    protected function setupPaths()
+    protected function setupPaths(Services $services)
     {
-        docalist('services')->add([
+        $services->add([
             // Répertoire racine du site (/)
             'root-dir' => function () {
                 return $this->rootDirectory();
@@ -115,10 +115,10 @@ class Plugin
      *
      * @return self
      */
-    protected function setupServices()
+    protected function setupServices(Services $services)
     {
         // Enregistre les services docalist par défaut
-        docalist('services')->add([
+        $services->add([
 
             // Variable globales de wordpress
             // On les déclare comme services pour éviter d'avoir des "global $xxx" dans le code
@@ -155,36 +155,70 @@ class Plugin
             },
 
             // Gestion du cache
-            'file-cache' => function () {
-                return new FileCache(docalist('root-dir'), docalist('cache-dir'));
+            'file-cache' => function (Services $services) {
+                /** @var string */
+                $rootDirectory = $services->get('root-dir');
+
+                /** @var string */
+                $cacheDirectory = $services->get('cache-dir');
+
+                return new FileCache($rootDirectory, $cacheDirectory);
             },
 
             // Cache des schémas
             'cache' => function () {
-                return new ObjectCache(defined('DOCALIST_USE_WP_CACHE') ? DOCALIST_USE_WP_CACHE : false);
+                return new ObjectCache(DOCALIST_USE_WP_CACHE);
             },
 
             // Gestion des tables
-            'table-manager' => function () {
-                return new TableManager();
+            'table-manager' => function (Services $services) {
+                /** @var string */
+                $tablesDirectory = $services->get('tables-dir');
+
+                /** @var FileCache */
+                $fileCache = $services->get('file-cache');
+
+                /** @var LogManager */
+                $logManager = $services->get('logs');
+
+                return new TableManager($tablesDirectory, $fileCache, $logManager->get('tables'));
             },
 
             // Gestion des séquences
-            'sequences' => function () {
-                return new Sequences();
+            'sequences' => function (Services $services) {
+                /** @var \wpdb */
+                $wpdb = $services->get('wordpress-database');
+
+                return new Sequences($wpdb);
             },
 
             // Gestion des lookups
-            'lookup' => function () {
-                return new LookupManager();
+            'lookup' => function (Services $services) {
+                $lookupManager = new LookupManager();
+
+                /** @var TableLookup */
+                $tableLookupService = $services->get('table-lookup');
+                $lookupManager->setLookupService('table', $tableLookupService);
+
+                /** @var ThesaurusLookup */
+                $thesaurusLookupService = $services->get('thesaurus-lookup');
+                $lookupManager->setLookupService('thesaurus', $thesaurusLookupService);
+
+                return $lookupManager;
             },
 
             'table-lookup' => function (Services $services) {
-                return new TableLookup($services->get('table-manager'));
+                /** @var TableManager */
+                $tableManager = $services->get('table-manager');
+
+                return new TableLookup($tableManager);
             },
 
             'thesaurus-lookup' => function (Services $services) {
-                return new ThesaurusLookup($services->get('table-manager'));
+                /** @var TableManager */
+                $tableManager = $services->get('table-manager');
+
+                return new ThesaurusLookup($tableManager);
             },
 
             // Admin Notices
@@ -204,12 +238,16 @@ class Plugin
      *
      * @return self
      */
-    protected function setupHooks()
+    protected function setupHooks(Services $services)
     {
         // Crée l'action ajax "docalist-lookup"
-        add_action('wp_ajax_docalist-lookup', $ajaxLookup = function () {
-            docalist('lookup')->ajaxLookup();
-        });
+        $ajaxLookup = function () use ($services) {
+            /** @var LookupManager */
+            $lookupManager = $services->get('lookup');
+            $lookupManager->ajaxLookup();
+        };
+
+        add_action('wp_ajax_docalist-lookup', $ajaxLookup);
         add_action('wp_ajax_nopriv_docalist-lookup', $ajaxLookup);
 
         // Déclare les JS et les CSS inclus dans docalist-core
@@ -318,7 +356,7 @@ class Plugin
     protected function cacheDirectory()
     {
         // Par défaut on prend le path indiqué dans wp-config
-        if (defined('DOCALIST_CACHE_DIR')) {
+        if (defined('DOCALIST_CACHE_DIR') && !empty(constant('DOCALIST_CACHE_DIR'))) {
             $directory = DOCALIST_CACHE_DIR;
         }
 
