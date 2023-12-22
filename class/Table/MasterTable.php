@@ -374,7 +374,7 @@ class MasterTable extends CsvTable
             throw new InvalidArgumentException("Table $name does not exist");
         }
 
-        $table->path = docalist('root-dir') . $table->path;
+        $table->path = docalist('public-dir') . $table->path;
 
         return new TableInfo((array) $table);
     }
