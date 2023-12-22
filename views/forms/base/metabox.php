@@ -31,21 +31,36 @@ foreach (array_keys($this->getOccurences()) as $key) {
         $attributes['class'] = ' postbox';
     }
     $theme->start('div', $attributes);
+        $theme->start('div', ['class' => 'postbox-header']);
 
-    $theme->start('button', ['type' => 'button', 'class' => 'handlediv button-link', 'aria-expanded' => 'true']);
-        $theme->tag('span', ['class' => 'toggle-indicator']);
-    $theme->end('button');
+            $theme->start('h2', ['class' => 'hndle']);
+                $theme->tag('span', [], $this->getLabel() ?: $this->getName());
+            $theme->end('h2');
+/*
 
-    $theme->start('h2', ['class' => 'hndle']);
-        $theme->tag('span', [], $this->getLabel() ?: $this->getName());
-    $theme->end('h2');
+            $theme->start('button', ['type' => 'button', 'class' => 'handle-order-higher']);
+                $theme->tag('span', ['class' => 'order-higher-indicator']);
+            $theme->end('button');
 
-    $theme->start('div', ['class' => 'inside']);
-    if ($description = $this->getDescription()) {
-        $theme->tag('p', ['class' => 'description'], $description);
-    }
-    $theme->display($this, 'container-items');
-    $theme->end('div'); // div.inside
+            $theme->start('button', ['type' => 'button', 'class' => 'handle-order-lower']);
+                $theme->tag('span', ['class' => 'order-lower-indicator']);
+            $theme->end('button');
+*/
+            $theme->start('div', ['class' => 'handle-actions hide-if-no-js']);
+                $theme->start('button', ['type' => 'button', 'class' => 'handlediv button-link', 'aria-expanded' => 'true']);
+                    $theme->tag('span', ['class' => 'toggle-indicator']);
+                $theme->end('button');
+            $theme->end('div'); // div.handle-actions
+
+        $theme->end('div'); // div.postbox-header
+
+        $theme->start('div', ['class' => 'inside']);
+            if ($description = $this->getDescription()) {
+                $theme->tag('p', ['class' => 'description'], $description);
+            }
+            $theme->display($this, 'container-items');
+        $theme->end('div'); // div.inside
+
 
     $theme->end('div'); // div.postbox
 }
