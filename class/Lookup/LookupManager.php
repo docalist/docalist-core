@@ -13,7 +13,6 @@ namespace Docalist\Lookup;
 
 use Docalist\Http\HtmlResponse;
 use Docalist\Http\JsonResponse;
-use Docalist\Services;
 use Exception;
 use InvalidArgumentException;
 
