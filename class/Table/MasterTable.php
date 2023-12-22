@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Docalist\Table;
 
+use Docalist\LogManager;
 use Docalist\Tokenizer;
 use Psr\Log\LoggerInterface;
 use InvalidArgumentException;
@@ -32,7 +33,7 @@ class MasterTable extends CsvTable
     public function __construct($path)
     {
         // Initialise notre log
-        $this->log = docalist('logs')->get('tables');
+        $this->log = docalist(LogManager::class)->get('tables');
 
         // Crée la master table si elle n'existe pas déjà
         $init = !file_exists($path);
