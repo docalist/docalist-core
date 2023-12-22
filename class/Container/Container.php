@@ -44,7 +44,7 @@ class Container implements ContainerInterface
         $this->isLoaded[ContainerInterface::class] = true;
         $this->aliases['container'] = ContainerInterface::class;
         $this->aliases[Services::class] = ContainerInterface::class;
-        // $this->deprecated[Services::class] = [ContainerInterface::class, '2023-12-31']; // todo:deprecate
+        $this->deprecated[Services::class] = [ContainerInterface::class, '2023-12-22'];
     }
 
     /**
