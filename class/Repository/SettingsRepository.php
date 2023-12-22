@@ -34,7 +34,7 @@ class SettingsRepository extends Repository
         parent::__construct($type);
     }
 
-    protected function checkId($id)
+    protected function checkId(mixed $id): int|string
     {
         // On n'accepte que des chaines de caractères
         if (!is_string($id)) {
@@ -74,10 +74,11 @@ class SettingsRepository extends Repository
      */
     protected function key($id)
     {
+        $id = (string) $id;
         return substr($id, 0, 9) === 'docalist-' ? $id : "docalist-$id";
     }
 
-    public function has($id)
+    public function has(int|string $id): bool
     {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
@@ -86,7 +87,7 @@ class SettingsRepository extends Repository
         return false !== get_option($this->key($id));
     }
 
-    protected function loadData($id)
+    protected function loadData(int|string $id): mixed
     {
         // L'entité est stockée comme une option worpdress
         if (false === $data = get_option($this->key($id))) {
@@ -97,10 +98,12 @@ class SettingsRepository extends Repository
         return $data;
     }
 
-    protected function saveData($id, $data)
+    protected function saveData(int|string|null $id, mixed $data): int|string
     {
         // Alloue un ID si nécessaire
-        is_null($id) && $id = uniqid();
+        if (is_null($id)) {
+            $id = uniqid();
+        }
 
         // L'entité est stockée comme une option worpdress
         update_option($this->key($id), $data);
@@ -108,14 +111,14 @@ class SettingsRepository extends Repository
         return $id;
     }
 
-    protected function deleteData($id)
+    protected function deleteData(int|string $id): void
     {
         if (! delete_option($this->key($id))) {
             throw new EntityNotFoundException($id);
         }
     }
 
-    public function count()
+    public function count(): int
     {
         $wpdb = docalist('wordpress-database');
 
@@ -124,7 +127,7 @@ class SettingsRepository extends Repository
         return (int) $wpdb->get_var($sql);
     }
 
-    public function deleteAll()
+    public function deleteAll(): void
     {
         throw new Exception(__METHOD__ . " n'est pas encore implémenté.");
     }

@@ -73,7 +73,7 @@ class PostTypeRepository extends Repository
      *
      * @param string $postType Le nom du custom post type.
      *
-     * @param string $type Optionnel, le nom de classe complet des entités de
+     * @param class-string<Entity> $type Optionnel, le nom de classe complet des entités de
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      */
@@ -138,7 +138,7 @@ class PostTypeRepository extends Repository
         return false !== WP_Post::get_instance($id);
     }
 
-    protected function loadData($id)
+    protected function loadData(int|string $id): mixed
     {
         // Charge le post wordpress
         if (false === $post = WP_Post::get_instance($id)) {
@@ -149,7 +149,7 @@ class PostTypeRepository extends Repository
         return (array) $post;
     }
 
-    protected function saveData($id, $post)
+    protected function saveData(int|string|null $id, mixed $post): int|string
     {
         $wpdb = docalist('wordpress-database');
 
@@ -273,14 +273,14 @@ class PostTypeRepository extends Repository
         }
     }
 
-    protected function deleteData($id)
+    protected function deleteData(int|string $id): void
     {
         if (! wp_delete_post($id, true)) {
             throw new EntityNotFoundException($id);
         }
     }
 
-    public function count()
+    public function count(): int
     {
         $wpdb = docalist('wordpress-database');
 
@@ -310,7 +310,7 @@ class PostTypeRepository extends Repository
         }
     }
 
-    public function deleteAll()
+    public function deleteAll(): void
     {
         $wpdb = docalist('wordpress-database');
 
@@ -393,7 +393,7 @@ class PostTypeRepository extends Repository
      *
      * @return array<string,int|string> Un post wordpress sous la forme d'un tableau.
      */
-    protected function encode(array $data)
+    protected function encode(array $data): mixed
     {
         $post = [];
 
@@ -420,7 +420,7 @@ class PostTypeRepository extends Repository
      *
      * @return array<string,int|string> Les données de l'entité.
      */
-    protected function decode($post, $id)
+    protected function decode(mixed $post, int|string|null$id): array
     {
         // Si c'est un nouveau post, il se peut que post_excerpt soit vide
         if (empty($post['post_excerpt'])) {

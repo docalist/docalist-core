@@ -69,7 +69,7 @@ abstract class Repository
     protected function checkId(mixed $id): int|string
     {
         // L'implémentation par défaut accepte les entiers et les chaines
-        if (is_int($id) || is_string($id)) {
+        if (is_int($id) || (is_string($id) && $id !== '')) {
             return $id;
         }
 
@@ -201,7 +201,7 @@ abstract class Repository
      *
      * @throws RepositoryException Si une erreur survient durant la suppression.
      */
-    final public function delete($id)
+    final public function delete(int|string $id)
     {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
