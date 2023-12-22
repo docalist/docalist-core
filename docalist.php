@@ -14,39 +14,31 @@
 
 declare(strict_types=1);
 
-use Docalist\Autoloader;
-use Docalist\Services;
+use Docalist\Container\Exception\ServiceNotFoundException;
+use Docalist\Kernel\Kernel;
 
 /**
  * Retourne un service docalist.
  *
- * @param string $service L'identifiant du service à retourner
+ * @template TService of object
+ *
+ * @return TService
+ *
+ * @throws InvalidArgumentException Si le service indiqué n'existe pas.
  */
-function docalist(string $service): mixed
+/**
+ * Retourne un service.
+ *
+ * @template TService
+ *
+ * @param class-string<TService>|string $id L'identifiant du service à retourner.
+ *
+ * @return ($id is class-string<TService> ? TService : bool|int|float|string|array<mixed>)
+ *
+ * @throws InvalidArgumentException Si le kernel n'est pas démarré ou si le container n'est pas créé.
+ * @throws ServiceNotFoundException Si le service indiqué n'existe pas.
+ */
+function docalist(string $id): mixed
 {
-    /** @var ?Services $services */
-    static $services = null;
-
-    // Initialise le gestionnaire de services lors du premier appel
-    if (is_null($services)) {
-        // Initialise l'autoloader
-        require_once __DIR__.'/class/Autoloader.php';
-        $autoloader = new Autoloader();
-        $autoloader->add('Docalist', __DIR__.'/class');
-        $autoloader->add('Docalist\Tests', __DIR__.'/tests/Docalist');
-
-        // Initialise le gestionnaire de services
-        $services = new Services([
-            'autoloader' => $autoloader,
-        ]);
-
-        // Le gestionnaire de services est lui-même un service
-        $services->add('services', $services);
-    }
-
-    // Retourne le service demandé
-    return $services->get($service);
+    return Kernel::getInstance()->getContainer()->get($id);
 }
-
-// Garantit que le gestionnaire de services, l'autoloader, etc. sont chargés
-return docalist('services');
