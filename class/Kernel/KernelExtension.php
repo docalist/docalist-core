@@ -25,7 +25,7 @@ class KernelExtension implements KernelExtensionInterface
     /**
      * {@inheritDoc}
      */
-    final public function __construct()
+    public function __construct()
     {
     }
 
