@@ -49,7 +49,7 @@ class AdminNotices
     /**
      * Crée le service admin-notices.
      */
-    public function initialize()
+    public function initialize(): void
     {
         add_action('admin_notices', function () {
             $this->render();
