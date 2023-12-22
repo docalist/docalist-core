@@ -10,6 +10,7 @@
 declare(strict_types=1);
 
 namespace Docalist\Http;
+use Docalist\Views;
 
 /**
  * Une réponse dont le résultat est généré par une vue.
@@ -44,13 +45,13 @@ class ViewResponse extends HtmlResponse
 
     public function sendContent(): static
     {
-        docalist('views')->display($this->view, $this->data);
+        docalist(Views::class)->display($this->view, $this->data);
 
         return $this;
     }
 
     public function getContent(): string|false
     {
-        return docalist('views')->render($this->view, $this->data);
+        return docalist(Views::class)->render($this->view, $this->data);
     }
 }
