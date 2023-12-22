@@ -31,7 +31,7 @@ use Docalist\Table\TableManager;
  * @var string      $order      Ordre de tri en cours.
  */
 
-$tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
+$tableManager = docalist(TableManager::class);
 ?>
 <style>
     .fixed .column-readonly {width: 10%}
@@ -97,14 +97,14 @@ $tableManager = docalist('table-manager'); /** @var TableManager $tableManager *
                  *  --------------------------------------------------------------*/
                 ?>
                 <select name="readonly" onchange="this.form.submit()">
-                    <?php foreach ([null, '0', '1'] as $mode) : ?>
+                    <?php foreach (['' => null, '0' => false, '1' => true] as $label => $mode) : ?>
                         <?php
                             $count = count($tableManager->tables($type, $format, $mode));
                         if ($count === 0) {
                             continue;
                         }
                         ?>
-                        <option value="<?=$mode?>" <?php selected($readonly, $mode) ?>>
+                        <option value="<?=$label?>" <?= $mode === $readonly ? 'selected' : '' ?>>
                             <?=formatReadonly($mode) ?>
                             (<?= number_format_i18n($count) ?>)
                         </option>
@@ -275,13 +275,15 @@ function prepareSelect(&$array, $formatter)
         return $formatter === 'formatType' ? formatType($e) : formatFormat($e);
     }, $array));
     asort($array, SORT_NATURAL | SORT_FLAG_CASE);
-    array_unshift($array, $formatter === 'formatType' ? formatType(null) : formatFormat(null));
+    $array = [
+        '' => $formatter === 'formatType' ? formatType('') : formatFormat('')
+    ] + $array;
 }
 
 function formatFormat($format)
 {
     switch ($format) {
-        case null:
+        case '':
             return __('Tous les formats', 'docalist-core');
 
         case 'conversion':
@@ -311,7 +313,7 @@ function formatType($type)
         'title-type', 'topic-type', 'type-conversion'
     ];
 
-    if (is_null($type)) {
+    if ($type === '') {
         return __('Tous les contenus', 'docalist-core');
     }
 
