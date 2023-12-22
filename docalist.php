@@ -14,6 +14,7 @@
 
 declare(strict_types=1);
 
+use Docalist\Container\ContainerInterface;
 use Docalist\Container\Exception\ServiceNotFoundException;
 use Docalist\Kernel\Kernel;
 
@@ -38,7 +39,7 @@ use Docalist\Kernel\Kernel;
  * @throws InvalidArgumentException Si le kernel n'est pas démarré ou si le container n'est pas créé.
  * @throws ServiceNotFoundException Si le service indiqué n'existe pas.
  */
-function docalist(string $id): mixed
+function docalist(string $id = ContainerInterface::class): mixed
 {
     return Kernel::getInstance()->getContainer()->get($id);
 }
