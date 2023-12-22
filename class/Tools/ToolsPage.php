@@ -37,54 +37,23 @@ class ToolsPage extends AdminPage
     public const CAPABILITY = 'docalist_tools_page';
 
     /**
-     * La liste des outils disponibles.
-     *
-     * @var Tools
-     */
-    private $tools;
-
-    /**
-     * Crée la page "Outils Docalist" dans le menu WordPress.
-     */
-    public static function setup(): void
-    {
-        add_action('admin_menu', function () {
-            // Ajoute notre répertoire "views" au service "docalist-views"
-            add_filter('docalist_service_views', function (Views $views) {
-                return $views->addDirectory('docalist-tools', __DIR__ . '/views');
-            });
-
-            // C'est le filtre 'docalist-tools' qui fournit la liste des outils disponibles
-            $filter = function (): array {
-                return apply_filters('docalist-tools', []);
-            };
-
-            // L'objet ToolsList se charge exécutera notre fonction en cas de besoin
-            $tools = new ToolsList($filter);
-
-            // Crée la page "Outils Docalist"
-            new ToolsPage($tools);
-        });
-
-        // Accorde la capacité "docalist_tools_page" aux admins
-//         add_filter('user_has_cap', function(array $caps): array {
-//             if (empty($caps[self::CAPABILITY]) && !empty($caps['manage_options'])) {
-//                 $caps[self::CAPABILITY] = true;
-//             }
-
-//             return $caps;
-//         });
-    }
-
-    /**
      * Initialise la page.
      *
      * @param Tools $tools La liste des outils disponibles.
      */
-    private function __construct(Tools $tools)
+    public function __construct(private Tools $tools, private Views $views)
     {
-        $this->tools = $tools;
+        // Accorde la capacité "docalist_tools_page" aux admins
+        add_filter('user_has_cap', function(array $caps): array {
+            if (empty($caps[self::CAPABILITY]) && !empty($caps['manage_options'])) {
+                $caps[self::CAPABILITY] = true;
+            }
+
+            return $caps;
+        });
+
         parent::__construct('docalist-tools', 'tools.php', __('Outils Docalist', 'docalist-core'));
+
         $this->addCard();
     }
 
@@ -99,7 +68,7 @@ class ToolsPage extends AdminPage
     private function addCard(): void
     {
         add_action('tool_box', function () {
-            docalist('views')->display('docalist-tools:available-tool', ['this' => $this]);
+            $this->views->display('docalist-tools:available-tool', ['this' => $this]);
         });
     }
 
@@ -235,7 +204,7 @@ class ToolsPage extends AdminPage
         // On retourne une réponse de type "callback" qui affiche la vue qui exécute l'outil
         $response = new CallbackResponse(function () use ($tool) {
             $this->disableOutputBuffering();
-            docalist('views')->display('docalist-tools:run-tool', [
+            $this->views->display('docalist-tools:run-tool', [
                 'this' => $this,
                 'tool' => $tool,
                 'args' => wp_unslash($_REQUEST)
