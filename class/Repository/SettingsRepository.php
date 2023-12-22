@@ -15,6 +15,7 @@ use Docalist\Type\Entity;
 use Docalist\Repository\Exception\BadIdException;
 use Docalist\Repository\Exception\EntityNotFoundException;
 use Exception;
+use wpdb;
 
 /**
  * Un dépôt permettant de stocker des entités dans la table wp_options de
@@ -120,7 +121,7 @@ class SettingsRepository extends Repository
 
     public function count(): int
     {
-        $wpdb = docalist('wordpress-database');
+        $wpdb = docalist(wpdb::class);
 
         $sql = "SELECT count(option_name) FROM $wpdb->options WHERE option_name like 'docalist-%'";
 
