@@ -224,8 +224,8 @@ class Sequences
      * Exemple d'utilisation :
      *
      * <code>
-     *     if (empty($ref))) $ref = docalist('sequences')->increment('notice', 'ref');
-     *     else docalist('sequences')->setIfGreater($ref);
+     *     if (empty($ref))) $ref = $sequences->increment('notice', 'ref');
+     *     else $sequences->setIfGreater($ref);
      * </code>
      *
      * @param string $group    Nom du groupe.
