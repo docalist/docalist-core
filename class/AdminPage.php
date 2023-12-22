@@ -57,7 +57,7 @@ abstract class AdminPage extends Controller
     /**
      * {@inheritdoc}
      */
-    protected function register()
+    protected function register(): void
     {
         // On ne fait rien si l'utilisateur n'a pas les droits requis
         if (! $this->canRun()) {
@@ -218,7 +218,7 @@ abstract class AdminPage extends Controller
         });
     }
 
-    protected function view($view, array $viewArgs = [], $status = 200, $headers = [])
+    protected function view(string $view, array $viewArgs = [], int $status = 200, array $headers = []): ViewResponse
     {
         $response = parent::view($view, $viewArgs, $status, $headers);
         $response ->setIsAdminPage(true);
