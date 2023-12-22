@@ -29,6 +29,6 @@ class ConfigRepository extends DirectoryRepository
      */
     public function __construct($type = Entity::class)
     {
-        parent::__construct(docalist('config-dir'), $type);
+        parent::__construct(docalist()->string('config-dir'), $type);
     }
 }
