@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace Docalist\Core;
 
-use Docalist\Services;
-
 /**
  * Version du plugin.
  */
@@ -60,31 +58,11 @@ define('DOCALIST_CORE', DOCALIST_CORE_DIR.DIRECTORY_SEPARATOR.basename(__FILE__)
  */
 !defined('DOCALIST_CACHE_DIR') && define('DOCALIST_CACHE_DIR', '');
 
-/**
- * Définit la fonction principale de docalist.
- *
- * On passe par un fichier externe, inclus via un require_once, pour garantir
- * que la fonction n'est définie qu'une seule fois.
- *
- * La raison, c'est que lors de l'activation d'un plugin, WordPress exécute la
- * fonction plugin_sandbox_scrape qui fait des include du fichier plugin et
- * donc peut réinclure un fichier déjà inclus.
- */
-require_once __DIR__.'/docalist.php';
-
-/**
- * Fonctions docalist.
- */
-require_once __DIR__.'/docalist-functions.php';
-
 /*
  * Charge le plugin docalist-core en premier (priorité -PHP_INT_MAX).
  */
 add_action('plugins_loaded', function () {
-    /** @var Services $services */
-    $services = docalist('services');
-
-    $services->add('docalist-core', new Plugin($services));
+    docalist(DocalistCorePlugin::class)->initialize();
 }, -PHP_INT_MAX);
 
 /*
