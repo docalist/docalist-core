@@ -26,7 +26,7 @@ use InvalidArgumentException;
  *
  * Pour désigner les vues, le service 'views' utilise un système de noms symboliques de la forme "group:path".
  *
- * Par exemple : docalist('views')->display('docalist-core:info') affiche la vue "info" du groupe "docalist-core".
+ * Par exemple : $this->views->display('docalist-core:info') affiche la vue "info" du groupe "docalist-core".
  *
  * Le groupe est un identifiant quelconque (éventuellement vide) qui permet de regrouper différentes vues
  * ensembles : en général il s'agit du nom de code d'un plugin (par exemple "docalist-core" dans l'exemple précédent).
@@ -45,7 +45,7 @@ use InvalidArgumentException;
  * - Par défaut, un appel de la forme display('docalist-core:info') affichera le fichier qui se trouve dans le
  *   répertoire "docalist-core/views/info.php"
  * - Mais le thème ou un autre plugin peut ajouter un répertoire supplémentaire au groupe "docalist-core", par
- *   exemple docalist('views')->addDirectory('docalist-core', '/myplugin/views/override').
+ *   exemple $this->views->addDirectory('docalist-core', '/myplugin/views/override').
  * - Dans ce cas, c'est le fichier "/myplugin/views/override/info.php" qui sera exécuté s'il existe ou le fichier
  *   par défaut (dans docalist-core) sinon.
  *
@@ -185,7 +185,7 @@ class Views
      *
      * Dans une vue, $view est pratique pour le débogage mais aussi pour transmettre les données à une autre vue :
      *
-     * docalist('views')->display('autre:vue', $view['data']);
+     * $this->views->display('autre:vue', $view['data']);
      *
      * @return mixed La méthode retourne ce que retourne la vue (rien en général).
      *
