@@ -139,11 +139,23 @@ abstract class Choice extends Element
         }
 
         // Ouvre la table
-        $tableManager = docalist('table-manager'); /** @var TableManager $tableManager */
-        $table = $tableManager->get($source);
+        $table = $this->getTableManager()->get($source);
 
         // Charge la totalité des entrées de la table et retourne un tableau de la forme code => valeur
         return $table->search('code,label');
+    }
+
+    private static TableManager|null $tableManager = null;
+    public static function setTableManager(TableManager $tableManager): void
+    {
+        self::$tableManager = $tableManager;
+    }
+    public function getTableManager(): TableManager
+    {
+        if (is_null(self::$tableManager)) {
+            throw new \LogicException(sprintf('Dependency %s of %s has not been initialized', TableManager::class, Choice::class));
+        }
+        return self::$tableManager;
     }
 
     /**
