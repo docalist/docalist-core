@@ -49,7 +49,7 @@ interface Tool
     /**
      * Exécute l'outil.
      *
-     * @param array $args Paramètres.
+     * @param array<string,string> $args Paramètres.
      */
     public function run(array $args = []): void;
 }
