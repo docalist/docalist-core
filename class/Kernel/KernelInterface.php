@@ -73,4 +73,11 @@ interface KernelInterface
      * Retourne le container.
      */
     public function getContainer(): ContainerInterface;
+
+    /**
+     * Retourne le temps écoulé (en nanosecondes) depuis le démarrage du Kernel.
+     *
+     * @return int|float Retourne un entier sur les plateformes 64 bits, un float sur les plateformes 32 bits (cf. hrtime).
+     */
+    public function getElapsedTime(): int|float;
 }

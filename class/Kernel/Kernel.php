@@ -44,6 +44,11 @@ final class Kernel implements KernelInterface
     private int $state = self::STATE_STOPPED;
 
     /**
+     * "Date point" de démarrage du noyau, cf. getElapsedTime()
+     */
+    private int|float $startTime;
+
+    /**
      * Instance du container.
      */
     public ContainerInterface|null $container = null;
@@ -72,12 +77,18 @@ final class Kernel implements KernelInterface
      */
     public function __construct(private string $environment, private bool $debug)
     {
+        $this->startTime = hrtime(true);
+
         if (!is_null(self::$instance)) {
             throw new InvalidArgumentException('Another Kernel is already running');
         }
 
         if (empty($this->environment)) {
             throw new InvalidArgumentException('Environment cannot be empty');
+        }
+
+        if ($debug) {
+            self::registerExtension(KernelDebugExtension::class);
         }
 
         self::$instance = $this;
@@ -213,5 +224,13 @@ final class Kernel implements KernelInterface
         }
 
         return $this->container;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getElapsedTime(): int|float
+    {
+        return hrtime(true) - $this->startTime;
     }
 }
