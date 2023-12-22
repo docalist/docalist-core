@@ -28,7 +28,7 @@ use InvalidArgumentException;
  * @phpstan-type ServiceOrServiceFactory Service|ServiceFactory
  *
  * Un Listener est un callable qui est appellé lorsqu'un service est instancié.
- * @phpstan-type Listener callable(object, ContainerInterface, string): void
+ * @phpstan-type Listener callable(mixed, ContainerInterface, string): void
  *
  * Un ClassLoadListener est un callable qui est appellé lorsqu'une classe est chargée.
  * @phpstan-type ClassLoadListener callable(ContainerInterface $container, string $className): void
@@ -40,12 +40,13 @@ interface ContainerBuilderInterface
     /**
      * Valeur à passer à listen() pour écouter tous les services instanciés.
      */
-    public const LISTEN_ALL = 'all';
+    public const LISTEN_BEFORE_FACTORY_CALL = 'before';
+    public const LISTEN_AFTER_FACTORY_CALL = 'after';
 
     /**
      * Définit un service.
      *
-     * @param class-string            $id      Identifiant du service.
+     * @param string                  $id      Identifiant du service.
      * @param ServiceOrServiceFactory $service Service ou callable qui retourne le service.
      *
      * @throws InvalidArgumentException S'il existe déjà un service ou un paramètre avec le même identifiant.

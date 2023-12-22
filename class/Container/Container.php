@@ -72,6 +72,9 @@ class Container implements ContainerInterface
             return $this->services[$id];
         }
 
+        // Exécute les listeners "BEFORE_FACTORY_CALL" (KernelDebugExtension par exemple)
+        $this->callListeners($id, null, ContainerBuilderInterface::LISTEN_BEFORE_FACTORY_CALL);
+
         // Vérifie que le service a été défini
         if (!array_key_exists($id, $this->services)) {
             throw new ServiceNotFoundException(sprintf('Service "%s" not found', $id));
@@ -86,18 +89,24 @@ class Container implements ContainerInterface
         // Le service est chargé
         $this->isLoaded[$id] = true;
 
-        // Exécute les listeners
-        foreach ([$id, ContainerBuilderInterface::LISTEN_ALL] as $event) {
-            if (!isset($this->listeners[$event])) {
-                continue;
-            }
-            foreach ($this->listeners[$event] as $listener) {
-                $listener($service, $this, $id);
-            }
-        }
+        // Exécute les listeners "AFTER_FACTORY_CALL" (KernelDebugExtension par exemple)
+        $this->callListeners($id, $service, ContainerBuilderInterface::LISTEN_AFTER_FACTORY_CALL);
+
+        // Exécute les listeners spécifiques au service instancé
+        $this->callListeners($id, $service, $id);
 
         // @phpstan-ignore-next-line
         return $service;
+    }
+
+    private function callListeners(string $id, mixed $service, string $event): void
+    {
+        if (!isset($this->listeners[$event])) {
+            return;
+        }
+        foreach ($this->listeners[$event] as $listener) {
+            $listener($service, $this, $id);
+        }
     }
 
     /**
