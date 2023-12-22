@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace Docalist\Core;
 
 use Docalist\AdminPage;
+use Docalist\Http\Response;
 use Docalist\Table\TableInfo;
+use Docalist\Table\TableManager;
 use Exception;
 
 /**
@@ -26,7 +28,7 @@ class AdminTables extends AdminPage
         'default' => 'manage_options',
     ];
 
-    public function __construct()
+    public function __construct(Private TableManager $tableManager)
     {
         parent::__construct(
             'docalist-tables',                          // ID
@@ -49,37 +51,39 @@ class AdminTables extends AdminPage
      */
     protected function tableInfo($tableName)
     {
-        return docalist('table-manager')->table($tableName);
+        return $this->tableManager->table($tableName);
     }
 
     /**
      * Liste des tables d'autorité.
      */
-    public function actionTablesList()
+    public function actionTablesList(): Response
     {
         // Format en cours
-        $format = empty($_GET['format']) ? null : $_GET['format'];
+        // $format = empty($_GET['format']) ? null : $_GET['format'];
+        $format = $_GET['format'] ?? '';
 
         // Type en cours
-        $type = empty($_GET['type']) ? null : $_GET['type'];
+        // $type = empty($_GET['type']) ? null : $_GET['type'];
+        $type = $_GET['type'] ?? '';
 
         // Readonly ?
         $readonly = null;
-        isset($_GET['readonly']) && $_GET['readonly'] === '0' && $readonly = '0';
-        isset($_GET['readonly']) && $_GET['readonly'] === '1' && $readonly = '1';
+        isset($_GET['readonly']) && $_GET['readonly'] === '0' && $readonly = false;
+        isset($_GET['readonly']) && $_GET['readonly'] === '1' && $readonly = true;
 
         // Liste des formats disponibles
-        $formats = docalist('table-manager')->formats();
+        $formats = $this->tableManager->formats();
 
         // Liste des types disponibles
-        $types = docalist('table-manager')->types($format);
+        $types = $this->tableManager->types($format);
 
         // Tri en cours
         $sort = isset($_GET['sort']) ? $_GET['sort'] : 'label';
         $order = isset($_GET['order']) ? $_GET['order'] : 'asc';
 
         return $this->view('docalist-core:table/list', [
-            'tables' => docalist('table-manager')->tables($type, $format, $readonly, "$sort $order"),
+            'tables' => $this->tableManager->tables($type, $format, $readonly, "$sort $order"),
             'formats' => $formats,
             'types' => $types,
             'format' => $format,
@@ -93,13 +97,13 @@ class AdminTables extends AdminPage
     /**
      * Modifie le contenu d'une table d'autorité.
      */
-    public function actionTableEdit($tableName)
+    public function actionTableEdit(string $tableName): Response
     {
         // Vérifie que la table à modifier existe
         $tableInfo = $this->tableInfo($tableName);
 
         // Ouvre la table
-        $table = docalist('table-manager')->get($tableName);
+        $table = $this->tableManager->get($tableName);
 
         // Gère la sauvegarde
         if ($this->isPost()) {
@@ -112,6 +116,12 @@ class AdminTables extends AdminPage
             }
             $data = wp_unslash($_POST['data']);
             $data = json_decode($data);
+            if (!is_array($data)) {
+                return $this->json([
+                    'success' => false,
+                    'error' => __('Unable to json_decode data', 'docalist-core'),
+                ]);
+            }
 
             // Vérifie que le nombre d'entrées est correct
             if (! isset($_POST['count'])) {
@@ -120,8 +130,8 @@ class AdminTables extends AdminPage
                     'error' => __('count non transmis', 'docalist-core'),
                 ]);
             }
-            $count = $_POST['count'];
-            if ($count != count($data)) {
+            $count = (int) $_POST['count'];
+            if ($count !== count($data)) {
                 return $this->json([
                     'success' => false,
                     'error' => 'count error : reçu : ' . count($data) . ', attendu : ' . $count,
@@ -130,7 +140,7 @@ class AdminTables extends AdminPage
 
             // Enregistre les données de la table
             try {
-                docalist('table-manager')->update($tableName, null, null, $data);
+                $this->tableManager->update($tableName, null, null, $data);
             } catch (Exception $e) {
                 return $this->json([
                     'success' => false,
@@ -158,14 +168,14 @@ class AdminTables extends AdminPage
             'tableInfo' => $tableInfo,
             'fields' => $fields,
             'data' => $data,
-            'readonly' => $tableInfo->readonly(),
+            'readonly' => $tableInfo->readonly->getPhpValue(),
         ]);
     }
 
     /**
      * Copie une table.
      */
-    public function actionTableCopy($tableName)
+    public function actionTableCopy(string $tableName): Response
     {
         $tableInfo = $this->tableInfo($tableName);
 
@@ -179,7 +189,7 @@ class AdminTables extends AdminPage
             $nodata = (bool) $_POST['nodata'];
 
             try {
-                docalist('table-manager')->copy($tableName, $name, $label, $nodata);
+                $this->tableManager->copy($tableName, $name, $label, $nodata);
 
                 return $this->redirect($this->getUrl('TablesList'), 303);
             } catch (Exception $e) {
@@ -190,12 +200,12 @@ class AdminTables extends AdminPage
         // Suggère un nouveau nom pour la table
         for ($i = 2;; ++$i) {
             $name = "$tableName-$i";
-            if (! docalist('table-manager')->has($name)) {
+            if (! $this->tableManager->has($name)) {
                 break;
             }
         }
         $tableInfo->name->assign($name);
-        $tableInfo->label->assign(sprintf(__('Copie de %s', 'docalist-core'), $tableInfo->label()));
+        $tableInfo->label->assign(sprintf(__('Copie de %s', 'docalist-core'), $tableInfo->label->getPhpValue()));
 
         return $this->view('docalist-core:table/copy', [
             'tableName' => $tableName,
@@ -207,7 +217,7 @@ class AdminTables extends AdminPage
     /**
      * Modifie les propriétés d'une table d'autorité.
      */
-    public function actionTableProperties($tableName)
+    public function actionTableProperties(string $tableName): Response
     {
         $tableInfo = $this->tableInfo($tableName);
 
@@ -219,7 +229,7 @@ class AdminTables extends AdminPage
             $label = $_POST['label'];
 
             try {
-                docalist('table-manager')->update($tableName, $name, $label);
+                $this->tableManager->update($tableName, $name, $label);
 
                 return $this->redirect($this->getUrl('TablesList'), 303);
             } catch (Exception $e) {
@@ -239,7 +249,7 @@ class AdminTables extends AdminPage
     /**
      * Supprime une table d'autorité.
      */
-    public function actionTableDelete($tableName, $confirm = false)
+    public function actionTableDelete(string $tableName, bool $confirm = false): Response
     {
         // Vérifie que la table existe
         $this->tableInfo($tableName);
@@ -259,7 +269,7 @@ class AdminTables extends AdminPage
 
         // Essaie de supprimer la table
         try {
-            docalist('table-manager')->delete($tableName);
+            $this->tableManager->delete($tableName);
 
             return $this->redirect($this->getUrl('TablesList'), 303);
         } catch (Exception $e) {
