@@ -7,6 +7,7 @@ return (new PhpCsFixer\Config())
         'single_line_throw' => false,
         'phpdoc_annotation_without_dot' => false,
         'yoda_style' => false,
+        'static_lambda' => true,
         'global_namespace_import' => [
             'import_classes' => true,
             'import_constants' => true,
