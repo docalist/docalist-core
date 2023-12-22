@@ -43,8 +43,6 @@ final class AutoloadListener
                 return;
             }
 
-            error_log("Loading $className");
-
             $recurse = true;
             spl_autoload_call($className);
             $recurse = false;
