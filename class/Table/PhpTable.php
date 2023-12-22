@@ -26,8 +26,9 @@ class PhpTable extends SQLite
     protected function compile()
     {
         // Si la table est en cache et qu'elle est à jour, rien à compiler
-        $cache = docalist('file-cache'); /* @var FileCache $cache */
-        if ($cache->has($this->path, filemtime($this->path))) {
+        /** @var FileCache $cache */
+        $cache = docalist(FileCache::class);
+        if ($cache->has($this->path, (int) filemtime($this->path))) {
             return $cache->getPath($this->path);
         }
         $path = $cache->getPath($this->path);
