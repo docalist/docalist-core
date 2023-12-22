@@ -20,6 +20,7 @@
         "ext-pdo_sqlite": "*",
         "composer/installers": "^1.0 || ^2.0",
         "monolog/monolog": "^3.4",
+        "psr/container": "^2.0",
         "symfony/http-foundation": "^6.3"
     },
     "require-dev": {
@@ -33,13 +34,13 @@
     "autoload": {
         "psr-4": {
             "Docalist\\": "class/"
-        }
+        },
+        "files": ["bootstrap.php", "docalist.php", "docalist-functions.php"]
     },
     "autoload-dev" : {
         "psr-4" : {
             "Docalist\\Tests\\" : "tests/Docalist"
-        },
-        "files": ["docalist.php"]
+        }
     },
     "config" : {
         "sort-packages" : true,
