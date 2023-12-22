@@ -79,18 +79,6 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         return [];
     }
 
-    private static ?ObjectCache $cache = null;
-
-    public static function setObjectCache(?ObjectCache $cache): void
-    {
-        self::$cache = $cache;
-    }
-
-    public static function getObjectCache(): ?ObjectCache
-    {
-        return self::$cache;
-    }
-
     /**
      * Retourne le schéma par défaut de l'objet.
      *
@@ -99,21 +87,19 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      */
     final public static function getDefaultSchema(): Schema
     {
-        $key = static::class;
+        static $cache = false;
 
-        try {
-            /** @var ?ObjectCache */
-            $cache = docalist('cache');
-        } catch (Throwable $th) {
-            $cache = null;
+        // Initialise le cache des schémas au premier appel
+        if ($cache === false) {
+            $cache = docalist(ObjectCache::class);
         }
 
+        $key = static::class;
+
         // Si le schéma est déjà en cache, terminé
-        if (null !== $cache = self::getObjectCache()) {
-            $schema = $cache->get($key);
-            if ($schema instanceof Schema) {
-                return $schema;
-            }
+        $schema = $cache->get($key);
+        if ($schema instanceof Schema) {
+            return $schema;
         }
 
         // Charge le schéma
@@ -128,9 +114,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
         $schema = new Schema($data);
 
         // Stocke le schéma en cache
-        if (null !== $cache) {
-            $cache->set($key, $schema);
-        }
+        $cache->set($key, $schema);
 
         // Ok
         return $schema;
