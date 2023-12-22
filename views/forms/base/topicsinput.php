@@ -15,10 +15,10 @@ namespace Docalist\Views\Forms\Base;
 
 use Docalist\Forms\TopicsInput;
 use Docalist\Forms\Theme;
-use Docalist\Table\TableInterface;
 use Docalist\Forms\Hidden;
 use Docalist\Forms\EntryPicker;
 use Docalist\Forms\Tag;
+use Docalist\Table\TableManager;
 
 /**
  * @var TopicsInput $this  L'élément de formulaire à afficher.
@@ -43,7 +43,7 @@ $table = $this->getTable();
 list($type, $tableName) = explode(':', $table);
 
 // Ouvre la table
-$table = docalist('table-manager')->get($tableName); /** @var TableInterface $table */
+$table = docalist(TableManager::class)->get($tableName);
 
 $theme->start('table', ['class' => 'form-table']);
 $i = 0;
