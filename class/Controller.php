@@ -450,7 +450,7 @@ abstract class Controller
     }
 
     /**
-     * @param array<int,mixed> $args
+     * @param array<string,mixed> $args
      *
      * @return array<string,mixed>
      */
