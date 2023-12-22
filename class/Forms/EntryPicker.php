@@ -56,7 +56,7 @@ final class EntryPicker extends Select
 
         // Récupère le service qui gère les lookups de ce type
         /** @var LookupManager */
-        $lookupManager = docalist('lookup');
+        $lookupManager = docalist(LookupManager::class);
         $lookup = $lookupManager->getLookupService($type);
 
         // Convertit les données
