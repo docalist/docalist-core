@@ -19,7 +19,7 @@ use InvalidArgumentException;
  *
  * @phpstan-import-type Service                 from ContainerBuilderInterface
  * @phpstan-import-type ServiceFactory          from ContainerBuilderInterface
- * @phpstan-import-type ServiceOrServiceFactory from ContainerBuilderInterface
+ * @phpstan-import-type ParameterFactory        from ContainerBuilderInterface
  * @phpstan-import-type Listener                from ContainerBuilderInterface
  * @phpstan-import-type ClassLoadListener       from ContainerBuilderInterface
  *
@@ -30,7 +30,7 @@ class ContainerBuilder implements ContainerBuilderInterface
     /**
      * Liste des services.
      *
-     * @var array<class-string,ServiceOrServiceFactory>
+     * @var array<string,Service|ServiceFactory|ParameterFactory>
      */
     private array $services = [];
 
@@ -56,7 +56,7 @@ class ContainerBuilder implements ContainerBuilderInterface
     private array $listeners = [];
 
     /**
-     * Callback a appeller quand des classes sépcifiques sont chargées (autoload).
+     * Callback a appeller quand des classes spécifiques sont chargées (autoload).
      *
      * @var array<class-string, array<ClassLoadListener>>
      */
@@ -65,10 +65,14 @@ class ContainerBuilder implements ContainerBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function set(string $id, object|callable $service): static
+    public function set(string $id, object|callable|array $service = []): static
     {
         if (array_key_exists($id, $this->services)) {
             throw new InvalidArgumentException(sprintf('Service "%s" already exists', $id));
+        }
+
+        if (is_array($service)) {
+            $service = static fn (ContainerInterface $container) => new $id(...array_map(static fn (string $dependency) => $container->get($dependency), $service));
         }
 
         $this->services[$id] = $service;
@@ -76,10 +80,18 @@ class ContainerBuilder implements ContainerBuilderInterface
         return $this;
     }
 
+    // public function make(string $id, string ...$dependencies): static
+    // {
+    //     return $this->set(
+    //         $id,
+    //         fn (ContainerInterface $container) => new $id(...array_map(static fn (string $dependency) => $container->get($dependency), $dependencies))
+    //     );
+    // }
+
     /**
      * {@inheritDoc}
      */
-    public function replace(string $id, object|callable $service): static
+    public function replace(string $id, object|callable|array $service): static
     {
         // Pas d'alias : on remplace un vrai service, pas un alias
         if (isset($this->aliases[$id])) {
@@ -149,7 +161,7 @@ class ContainerBuilder implements ContainerBuilderInterface
         if (!isset($this->listeners[$id])) {
             $this->listeners[$id] = [];
         }
-        // @phpstan-ignore-next-line
+
         $this->listeners[$id][] = $listener;
 
         return $this;

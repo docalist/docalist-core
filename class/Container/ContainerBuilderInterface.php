@@ -17,15 +17,22 @@ use InvalidArgumentException;
 /**
  * Un ContainerBuilder permet de créer le container Docalist.
  *
- * Un Service est un objet.
- *
+ * Le container peut contenir des services (des objets) et des paramètres (des valeurs).
  * @phpstan-type Service object
+ * @phpstan-type Parameter bool|int|float|string|array<mixed>
+ * @phpstan-type ServiceOrParameter Service|Parameter
  *
- * Un ServiceFactory est un callable qui instancie un Service.
- * @phpstan-type ServiceFactory callable(ContainerInterface $container, string $id): object
+ * Un ServiceFactory est un callable qui instancie un service
+ * @phpstan-type ServiceFactory callable(ContainerInterface $container, class-string $id): Service
  *
- * Un service peut être définit en passant à set() un Service ou un ServiceFactory.
- * @phpstan-type ServiceOrServiceFactory Service|ServiceFactory
+ * Un ParameterFactory est un callable qui instancie un paramètre
+ * @phpstan-type ParameterFactory callable(ContainerInterface $container, string $id): Parameter
+ *
+ * Une liste de dépendances est un tableau qui liste le nom des services et des paramètres requis.
+ * @phpstan-type DependencyList array<int,string>
+ *
+ * Un service peut être définit en passant à set() un Service, un ServiceFactory ou une liste de dépendances.
+ * @phpstan-type ServiceDefinition Service|ServiceFactory|DependencyList
  *
  * Un Listener est un callable qui est appellé lorsqu'un service est instancié.
  * @phpstan-type Listener callable(mixed, ContainerInterface, string): void
@@ -35,23 +42,38 @@ use InvalidArgumentException;
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
+// class Z {
+//  /** @phpstan-param ServiceDefinition $x */
+//  function test($x):void {
+//     \PHPStan\dumpType($x);
+
+//  }
+
+// }
+
 interface ContainerBuilderInterface
 {
     /**
-     * Valeur à passer à listen() pour écouter tous les services instanciés.
+     * Id spécial à passer à listen() pour être appelé avant l'instanciation de n'importe quel service.
      */
-    public const LISTEN_BEFORE_FACTORY_CALL = 'before';
-    public const LISTEN_AFTER_FACTORY_CALL = 'after';
+    public const LISTEN_BEFORE_FACTORY_CALL = 'listen_before_instanciation';
+
+    /**
+     * Id spécial à passer à listen() pour être appelé après l'instanciation de n'importe quel service.
+     */
+    public const LISTEN_AFTER_FACTORY_CALL = 'listen_after_instanciation';
 
     /**
      * Définit un service.
      *
-     * @param string                  $id      Identifiant du service.
-     * @param ServiceOrServiceFactory $service Service ou callable qui retourne le service.
+     * @template T
      *
-     * @throws InvalidArgumentException S'il existe déjà un service ou un paramètre avec le même identifiant.
+     * @param class-string<T>|string                  $id      Identifiant du service.
+     * @param ($id is class-string<T> ? Service|ServiceFactory|DependencyList : ParameterFactory)       $service Définition du service.
+     *
+     * @throws InvalidArgumentException S'il existe déjà un service avec le même id.
      */
-    public function set(string $id, object|callable $service): static;
+    public function set(string $id, object|callable|array $service = []): static;
 
     /**
      * Remplace un service par un autre.
@@ -59,12 +81,14 @@ interface ContainerBuilderInterface
      * - le service à remplacer doit exister
      * - les alias ne sont pas autorisés, le remplacement doit porter sur un vrai service
      *
+     * @template T
+     *
      * @param string                  $id      Identifiant du service à remplacer.
-     * @param ServiceOrServiceFactory $service Nouveau service ou callable qui retourne le nouveau service.
+     * @param ($id is class-string<T> ? Service|ServiceFactory|DependencyList : ParameterFactory)       $service Définition du service.
      *
      * @throws InvalidArgumentException Si le service indiqué n'existe pas.
      */
-    public function replace(string $id, object|callable $service): static;
+    public function replace(string $id, object|callable|array $service): static;
 
     /**
      * Crée un alias pour un service ou un paramètre.

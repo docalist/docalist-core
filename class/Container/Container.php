@@ -19,7 +19,9 @@ use function Docalist\deprecated;
 /**
  * Gestionnaire de services Docalist.
  *
- * @phpstan-import-type ServiceOrServiceFactory from ContainerBuilderInterface
+ * @phpstan-import-type Service                 from ContainerBuilderInterface
+ * @phpstan-import-type ServiceFactory          from ContainerBuilderInterface
+ * @phpstan-import-type ParameterFactory        from ContainerBuilderInterface
  * @phpstan-import-type Listener                from ContainerBuilderInterface
  *
  * @author Daniel Ménard <daniel.menard@laposte.net>
@@ -27,7 +29,7 @@ use function Docalist\deprecated;
 class Container implements ContainerInterface
 {
     /**
-     * @param array<class-string,ServiceOrServiceFactory> $services   Liste des services.
+     * @param array<string,Service|ServiceFactory|ParameterFactory> $services   Liste des services.
      * @param array<string,string>                        $aliases    Liste des alias (alias => id)
      * @param array<string,array<int,string>>             $deprecated Liste des id dépréciés (old-id => [new-id, since])
      * @param array<string,array<int,Listener>>           $listeners  Liste des listeners.
@@ -95,7 +97,6 @@ class Container implements ContainerInterface
         // Exécute les listeners spécifiques au service instancé
         $this->callListeners($id, $service, $id);
 
-        // @phpstan-ignore-next-line
         return $service;
     }
 
