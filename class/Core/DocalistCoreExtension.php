@@ -102,7 +102,7 @@ final class DocalistCoreExtension extends KernelExtension
         ->deprecate('autoloader', Autoloader::class, '2023-11-27')
 
         // Variable globales de wordpress
-        // On les déclare comme container pour éviter d'avoir des "global $xxx" dans le code
+        // On les déclare comme services pour éviter d'avoir des "global $xxx" dans le code
         // et pour avoir la possibilité de créer des mocks dans les tests unitaires.
         ->set(wpdb::class, static fn () => $GLOBALS['wpdb'])
         ->alias('wordpress-database', wpdb::class) // todo: deprecate
@@ -118,7 +118,7 @@ final class DocalistCoreExtension extends KernelExtension
         ->deprecate('html', Html::class, '2023-11-27')
 
         // Gestion des Settings
-        ->set(SettingsRepository::class, static fn () => new SettingsRepository())
+        ->set(SettingsRepository::class)
         ->deprecate('settings-repository', SettingsRepository::class, '2023-11-27')
 
         // Gestion des vues
@@ -128,14 +128,11 @@ final class DocalistCoreExtension extends KernelExtension
         ->deprecate('views', Views::class, '2023-11-27')
 
         // Gestion des logs
-        ->set(LogManager::class, static fn () => new LogManager())
+        ->set(LogManager::class)
         ->deprecate('logs', LogManager::class, '2023-11-27')
 
         // Gestion du cache
-        ->set(FileCache::class, static fn (ContainerInterface $container) => new FileCache(
-            $container->string('root-dir'),
-            $container->string('cache-dir')
-        ))
+        ->set(FileCache::class, ['root-dir', 'cache-dir'])
         ->deprecate('file-cache', FileCache::class, '2023-11-27')
 
         // Cache des schémas
@@ -151,33 +148,27 @@ final class DocalistCoreExtension extends KernelExtension
         ->deprecate('table-manager', TableManager::class, '2023-11-27')
 
         // Gestion des séquences
-        ->set(Sequences::class, static fn (ContainerInterface $container) => new Sequences(
-            $container->get(wpdb::class)
-        ))
+        ->set(Sequences::class, [wpdb::class])
         ->deprecate('sequences', wpdb::class, '2023-11-27')
 
         // Gestion des lookups
-        ->set(LookupManager::class, static function (ContainerInterface $container) {
-            $lookupManager = new LookupManager();
-            $lookupManager->setLookupService('table', $container->get(TableLookup::class));
-            $lookupManager->setLookupService('thesaurus', $container->get(ThesaurusLookup::class));
-
-            return $lookupManager;
-        })
+        ->set(LookupManager::class)
         ->deprecate('lookup', LookupManager::class, '2023-11-27')
 
-        ->set(TableLookup::class, static fn (ContainerInterface $container) => new TableLookup(
-            $container->get(TableManager::class)
-        ))
+        ->set(TableLookup::class, [TableManager::class])
         ->deprecate('table-lookup', TableLookup::class, '2023-11-27')
+        ->listen(LookupManager::class, static function (LookupManager $lookupManager, ContainerInterface $container): void {
+            $lookupManager->setLookupService('table', $container->get(TableLookup::class));
+        })
 
-        ->set(ThesaurusLookup::class, static fn (ContainerInterface $container) => new ThesaurusLookup(
-            $container->get(TableManager::class)
-        ))
+        ->set(ThesaurusLookup::class, [TableManager::class])
         ->deprecate('thesaurus-lookup', ThesaurusLookup::class, '2023-11-27')
+        ->listen(LookupManager::class, static function (LookupManager $lookupManager, ContainerInterface $container): void {
+            $lookupManager->setLookupService('thesaurus', $container->get(ThesaurusLookup::class));
+        })
 
         // Admin Notices
-        ->set(AdminNotices::class, static fn () => new AdminNotices())
+        ->set(AdminNotices::class)
         ->deprecate('admin-notices', AdminNotices::class, '2023-11-27')
 
         // Plugin (ContainerAware)
@@ -193,10 +184,7 @@ final class DocalistCoreExtension extends KernelExtension
             static fn (): array => apply_filters('docalist-tools', [])
         ))
 
-        ->set(ToolsPage::class, static fn (ContainerInterface $container) => new ToolsPage(
-            $container->get(ToolsList::class),
-            $container->get(Views::class),
-        ))
+        ->set(ToolsPage::class, [ToolsList::class, Views::class])
 
         ;
     }
