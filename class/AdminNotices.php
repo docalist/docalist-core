@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of Docalist Core.
  *
@@ -41,7 +42,7 @@ class AdminNotices
      *
      * @var string
      */
-    const META = 'docalist-admin-notice';
+    public const META = 'docalist-admin-notice';
 
     // https://core.trac.wordpress.org/ticket/27418
     // https://core.trac.wordpress.org/ticket/31233
@@ -59,11 +60,11 @@ class AdminNotices
     /**
      * Enregistre une notice.
      *
-     * @param string        $type       Type de la notice : 'info', 'succcess', 'warning' ou 'error'.
-     * @param string        $content    Le contenu de la notice.
-     * @param string|null   $title      Optionnel, le titre de la notice.
+     * @param string      $type    Type de la notice : 'info', 'succcess', 'warning' ou 'error'.
+     * @param string      $content Le contenu de la notice.
+     * @param string|null $title   Optionnel, le titre de la notice.
      */
-    public function add(string $type, string $content, string $title = null): void
+    public function add(string $type, string $content, ?string $title = null): void
     {
         // Inutile de tester si on a un user, add_user_meta vérifie que l'id passé n'est pas vide
         add_user_meta(get_current_user_id(), self::META, [$type, $content, $title], false);
@@ -72,10 +73,10 @@ class AdminNotices
     /**
      * Enregistre une notice de type "info".
      *
-     * @param string        $content    Le contenu de la notice.
-     * @param string|null   $title      Optionnel, le titre de la notice.
+     * @param string      $content Le contenu de la notice.
+     * @param string|null $title   Optionnel, le titre de la notice.
      */
-    public function info(string $content, string $title = null): void
+    public function info(string $content, ?string $title = null): void
     {
         $this->add('info', $content, $title);
     }
@@ -83,10 +84,10 @@ class AdminNotices
     /**
      * Enregistre une notice de type "success".
      *
-     * @param string        $content    Le contenu de la notice.
-     * @param string|null   $title      Optionnel, le titre de la notice.
+     * @param string      $content Le contenu de la notice.
+     * @param string|null $title   Optionnel, le titre de la notice.
      */
-    public function success(string $content, string $title = null): void
+    public function success(string $content, ?string $title = null): void
     {
         $this->add('success', $content, $title);
     }
@@ -94,10 +95,10 @@ class AdminNotices
     /**
      * Enregistre une notice de type "warning".
      *
-     * @param string        $content    Le contenu de la notice.
-     * @param string|null   $title      Optionnel, le titre de la notice.
+     * @param string      $content Le contenu de la notice.
+     * @param string|null $title   Optionnel, le titre de la notice.
      */
-    public function warning(string $content, string $title = null): void
+    public function warning(string $content, ?string $title = null): void
     {
         $this->add('warning', $content, $title);
     }
@@ -105,10 +106,10 @@ class AdminNotices
     /**
      * Enregistre une notice de type "error".
      *
-     * @param string        $content    Le contenu de la notice.
-     * @param string|null   $title      Optionnel, le titre de la notice.
+     * @param string      $content Le contenu de la notice.
+     * @param string|null $title   Optionnel, le titre de la notice.
      */
-    public function error(string $content, string $title = null): void
+    public function error(string $content, ?string $title = null): void
     {
         $this->add('error', $content, $title);
     }
@@ -137,7 +138,7 @@ class AdminNotices
             printf(
                 '<div class="notice notice-%s is-dismissible">%s<p>%s</p></div>',
                 $type,
-                empty($title) ? '' : '<h3>' . $title . '</h3>',
+                empty($title) ? '' : '<h3>'.$title.'</h3>',
                 $content
             );
         }
