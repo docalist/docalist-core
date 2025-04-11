@@ -35,7 +35,9 @@ class DocalistCorePlugin
     public function initialize(): void
     {
         // Charge les fichiers de traduction du plugin
-        load_plugin_textdomain('docalist-core', false, 'docalist-core/languages');
+        add_action('init', function (): void {
+            load_plugin_textdomain('docalist-core', false, 'docalist-core/languages');
+        });
 
         if (is_admin()) {
             $this->container->get(AdminNotices::class)->initialize();
