@@ -19,15 +19,6 @@ use Docalist\Container\Exception\ServiceNotFoundException;
 use Docalist\Kernel\Kernel;
 
 /**
- * Retourne un service docalist.
- *
- * @template TService of object
- *
- * @return TService
- *
- * @throws InvalidArgumentException Si le service indiqué n'existe pas.
- */
-/**
  * Retourne un service.
  *
  * @template TService
