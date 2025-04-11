@@ -37,7 +37,7 @@ class AdminTables extends AdminPage
         );
     }
 
-    protected function getDefaultAction()
+    protected function getDefaultAction(): string
     {
         return 'TablesList';
     }
@@ -62,10 +62,12 @@ class AdminTables extends AdminPage
         // Format en cours
         // $format = empty($_GET['format']) ? null : $_GET['format'];
         $format = $_GET['format'] ?? '';
+        assert(is_string($format));
 
         // Type en cours
         // $type = empty($_GET['type']) ? null : $_GET['type'];
         $type = $_GET['type'] ?? '';
+        assert(is_string($type));
 
         // Readonly ?
         $readonly = null;
@@ -80,7 +82,9 @@ class AdminTables extends AdminPage
 
         // Tri en cours
         $sort = isset($_GET['sort']) ? $_GET['sort'] : 'label';
+        assert(is_string($sort));
         $order = isset($_GET['order']) ? $_GET['order'] : 'asc';
+        assert(is_string($order));
 
         return $this->view('docalist-core:table/list', [
             'tables' => $this->tableManager->tables($type, $format, $readonly, "$sort $order"),
@@ -115,6 +119,7 @@ class AdminTables extends AdminPage
                 ]);
             }
             $data = wp_unslash($_POST['data']);
+            assert(is_string($data));
             $data = json_decode($data);
             if (!is_array($data)) {
                 return $this->json([
@@ -139,6 +144,7 @@ class AdminTables extends AdminPage
             }
 
             // Enregistre les données de la table
+            /** @var array<array<int,int|string>> $data */
             try {
                 $this->tableManager->update($tableName, null, null, $data);
             } catch (Exception $e) {
@@ -184,8 +190,10 @@ class AdminTables extends AdminPage
         if ($this->isPost()) {
             $_POST = wp_unslash($_POST);
 
-            $name = $_POST['name'];
-            $label = $_POST['label'];
+            $name = $_POST['name'] ?? '';
+            assert(is_string($name));
+            $label = $_POST['label'] ?? '';
+            assert(is_string($label));
             $nodata = (bool) $_POST['nodata'];
 
             try {
@@ -225,8 +233,10 @@ class AdminTables extends AdminPage
         if ($this->isPost()) {
             $_POST = wp_unslash($_POST);
 
-            $name = $_POST['name'];
-            $label = $_POST['label'];
+            $name = $_POST['name'] ?? '';
+            assert(is_string($name));
+            $label = $_POST['label'] ?? '';
+            assert(is_string($label));
 
             try {
                 $this->tableManager->update($tableName, $name, $label);
@@ -235,8 +245,8 @@ class AdminTables extends AdminPage
             } catch (Exception $e) {
                 $error = $e->getMessage();
             }
-            $tableInfo->name = $name;
-            $tableInfo->label = $label;
+            $tableInfo->name->assign($name);
+            $tableInfo->label->assign($label);
         }
 
         return $this->view('docalist-core:table/properties', [

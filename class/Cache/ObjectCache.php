@@ -139,7 +139,9 @@ class ObjectCache
             $hits = $this->stats['hits'];
             $misses = $this->stats['misses'];
             $total = $hits + $misses;
-            $elapsed = round((microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']) * 1000);
+            $requestTimeFloat = $_SERVER['REQUEST_TIME_FLOAT'];
+            assert(is_float($requestTimeFloat));
+            $elapsed = round((microtime(true) - $requestTimeFloat) * 1000);
             $adminBar->add_node([
                 'id' => 'schema-cache-info',
                 'title' => "M:$misses H:$hits T:$total E:{$elapsed}ms",

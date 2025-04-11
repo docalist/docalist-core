@@ -11,13 +11,14 @@ declare(strict_types=1);
 
 namespace Docalist\Tools\Views;
 
-use Docalist\AdminPage;
+use Docalist\Tools\ToolsPage;
 
 /**
  * Indique à l'utilisateur qu'aucun outil n'est disponible.
  */
 
-/* @var AdminPage $this */  // La page parent
+/** @var ToolsPage $this La page parent */
+
 ?>
 <div class="wrap">
     <h1><?= $this->menuTitle() ?></h1>

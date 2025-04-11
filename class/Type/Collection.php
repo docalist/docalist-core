@@ -306,7 +306,7 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $ellipsis = $this->getOption('ellipsis', $options, '');
 
         // Les items à formatter
-        // $items = $this->phpValue;
+        /** @var  array<Item> */
         $items = $this->filter()->phpValue; // Supprime les entrées de type "internal" si on n'a pas les droits
 
         // Le résultat
@@ -320,14 +320,16 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
 
         // Cas 1. Option "vue éclatée" activée (explode)
         if ($explode) {
+            /** @var array<Item&Categorizable> $items */
+
             // Formatte tous les items en les classant par catégorie (libellé)
             foreach ($items as $item) {
-                /** @var Any<mixed>&Categorizable $item */
                 $category = $item->getCategoryLabel();
                 empty($category) && $category = $this->getOption('label', $options, '');
 
-                /* @var Any $item */
-                $result[$category][] = $prefix.$item->getFormattedValue($options).$suffix;
+                $formattedValue = $item->getFormattedValue($options);
+                assert(is_string($formattedValue)); // sur ?
+                $result[$category][] = $prefix.$formattedValue.$suffix;
             }
 
             // Formatte les items dans chacune des catégories
@@ -352,8 +354,10 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
         $truncate = $this->truncate($items, $limit);
 
         // Formatte chaque item
-        foreach ($items as $item) { /* @var Any $item */
-            $result[] = $prefix.$item->getFormattedValue($options).$suffix;
+        foreach ($items as $item) {
+            $formattedValue = $item->getFormattedValue($options);
+            assert(is_string($formattedValue)); // vue éclatée à off, obligatoirement yune chaine
+            $result[] = $prefix.$formattedValue.$suffix;
         }
 
         // Concatène les éléments avec le séparateur indiqué
@@ -369,7 +373,11 @@ class Collection extends Any implements ArrayAccess, Countable, IteratorAggregat
     /**
      * Tronque le tableau passé en paramètre.
      *
-     * @param array<Item> $items Le tableau à tronquer.
+     * @template T
+     *
+     * @param array<T> $items Le tableau à tronquer.
+     * @param-out array<T> $items
+     *
      * @param int         $limit Le nombre d'éléments à conserver :
      *
      * - 0 : pas de limite,

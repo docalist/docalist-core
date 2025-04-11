@@ -23,7 +23,7 @@ class ConfigRepository extends DirectoryRepository
     /**
      * Crée un nouveau dépôt.
      *
-     * @param string $type Optionnel, le nom de classe complet des entités de
+     * @param class-string<Entity> $type Optionnel, le nom de classe complet des entités de
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      */

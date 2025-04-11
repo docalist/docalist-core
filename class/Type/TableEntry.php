@@ -60,7 +60,10 @@ class TableEntry extends ListEntry
         // classe parent (ListEntry), par exemple lorsque l'éditeur est paramétré sur 'select'.
 
         // Recherche le code et le label de toutes les entrées, triées par label en ignorant la casse
-        return $this->getTable()->search('code,label', '', '_label');
+        $entries = $this->getTable()->search('code,label', '', '_label');
+
+        /** @var array<string,string> */
+        return $entries;
     }
 
     /**

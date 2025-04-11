@@ -34,7 +34,7 @@ use Docalist\Type\Any;
  * @method string   name()          Retourne le nom du champ, de la grille ou du schéma.
  * @method class-string<Any<mixed>>   type()          Pour un champ répétable, retourne le nom complet de la classe Collection.
  * @method string   capability()    Capacité requise pour voir ou éditer le champ.
- * @method class-string<Collection<Any>>   collection()    Retourne le type du champ, de la grille ou du schéma.
+ * @method class-string<Collection<Any<mixed>>>   collection()    Retourne le type du champ, de la grille ou du schéma.
  * @method string|true   key()           Pour un composite répétable, champ à utiliser comme clé dans la collection.
  * @method string   label()         Retourne le libellé du champ, de la grille ou du schéma.
  * @method string   description()   Retourne la description du champ, de la grille ou du schéma.
@@ -64,14 +64,14 @@ class Schema implements JsonSerializable
     /**
      * Liste des propriétés du schéma.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $properties;
 
     /**
      * Construit un nouveau schéma.
      *
-     * @param array $properties Propriétés du schéma.
+     * @param array<mixed> $properties Propriétés du schéma.
      *
      * @throws InvalidArgumentException Si le schéma contient des erreurs.
      */
@@ -89,7 +89,8 @@ class Schema implements JsonSerializable
 
         // Hack : Compile une première fois la liste des champs pour récupérer les propriétés héritées
         if (isset($properties['fields'])) {
-            foreach ($properties['fields'] as & $field) {
+            foreach ((array) $properties['fields'] as & $field) {
+                assert(is_array($field));
                 $field = new self($field);
                 $field = $field->getPhpValue(); // retransforme en array car on veut pouvoir faire un merge
             }
@@ -117,7 +118,7 @@ class Schema implements JsonSerializable
     /**
      * Valide et normalise les propriétés passées en paramètre.
      *
-     * @param array $properties
+     * @param array<mixed> $properties
      *
      * @return self
      */
@@ -131,7 +132,7 @@ class Schema implements JsonSerializable
     /**
      * Valide la propriété 'type'.
      *
-     * @param array $properties
+     * @param array<mixed> $properties
      *
      * @return self
      */
@@ -277,7 +278,7 @@ class Schema implements JsonSerializable
         }
 
         $type = $compat[$test];
-        false && printf(
+        printf(
             'COMPAT : Le champ "%s" utilise le type "%s" qui est remplacé par "%s"<br />',
             $name,
             $test,
@@ -290,7 +291,7 @@ class Schema implements JsonSerializable
     /**
      * Valide la propriété 'collection'.
      *
-     * @param array $properties
+     * @param array<mixed> $properties
      *
      * @return self
      */
@@ -319,7 +320,7 @@ class Schema implements JsonSerializable
     /**
      * Valide la liste de champs.
      *
-     * @param array $properties
+     * @param array<mixed> $properties
      *
      * @return self
      */
@@ -356,6 +357,8 @@ class Schema implements JsonSerializable
                 $field['name'] = $key;
             }
 
+            assert(is_array($field));
+
             // Valide les propriétés du champ
             $this->validate($field);
 
@@ -366,6 +369,7 @@ class Schema implements JsonSerializable
 
             // Vérifie que le nom du champ est unique
             $name = $field['name'];
+            assert(is_string($name));
             if (isset($fields[$name])) {
                 throw new InvalidArgumentException("Field $name defined twice");
             }
@@ -382,8 +386,8 @@ class Schema implements JsonSerializable
     /**
      * Fusionne les propriétés passées en paramètre ($data) avec les propriétés existantes ($properties).
      *
-     * @param array $properties Propriétés existantes.
-     * @param array $data       Nouveaux paramètres.
+     * @param array<mixed> $properties Propriétés existantes.
+     * @param array<mixed> $data       Nouveaux paramètres.
      *
      * @return array Propriétés mises à jour.
      *
@@ -470,9 +474,9 @@ class Schema implements JsonSerializable
      *
      * Cela simplifie notamment les comparaisons de grilles (pour voir ce qui a été changé).
      *
-     * @param array $properties
+     * @param array<mixed> $properties
      *
-     * @return array
+     * @return array<mixed>
      */
     protected function sortProperties(array $properties)
     {
@@ -515,7 +519,7 @@ class Schema implements JsonSerializable
     /**
      * Retourne la liste des propriétés du schéma.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getProperties()
     {
@@ -622,11 +626,11 @@ class Schema implements JsonSerializable
      * Permet d'accéder aux propriétés du schéma comme s'il sagissait de méthodes.
      *
      * @param string    $name       Nom de la propriété.
-     * @param array     $arguments  Paramètres éventuels.
+     * @param array<mixed>     $arguments  Paramètres éventuels.
      *
      * @throws InvalidArgumentException
      */
-    public function __call($name, array $arguments = [])
+    public function __call($name, array $arguments = []): mixed
     {
         if (!empty($arguments)) {
             throw new InvalidArgumentException('Schema::_call() called with arguments');
@@ -638,7 +642,7 @@ class Schema implements JsonSerializable
     /**
      * Convertit le schéma en tableau php.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function value()
     {
@@ -658,7 +662,7 @@ class Schema implements JsonSerializable
      * enregistre un type (repository appelle Schema->getPhpValue(), qui appelle Schema->call('getPhpValue')
      * qui retourne vide) et du coup on perd toutes les grilles.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getPhpValue()
     {
@@ -672,7 +676,7 @@ class Schema implements JsonSerializable
     /**
      * Retourne les données à prendre en compte lorsque ce type est sérialisé au format JSON.
      *
-     * @return array
+     * @return array<mixed>
      */
     final public function jsonSerialize(): mixed
     {

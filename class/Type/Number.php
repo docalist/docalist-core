@@ -41,6 +41,7 @@ class Number extends Scalar
         $int = (int) $value;
         $float = (float) $value;
 
+        // @phpstan-ignore assign.propertyType
         $this->phpValue = ($int == $float) ? $int : $float;
     }
 

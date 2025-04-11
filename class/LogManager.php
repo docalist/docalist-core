@@ -58,7 +58,9 @@ class LogManager
     protected function defaultHandler()
     {
         if (! isset($this->defaultHandler)) {
-            $path = docalist('log-dir') . '/docalist.log';
+            $logDir = docalist('log-dir');
+            assert(is_string($logDir));
+            $path = $logDir . '/docalist.log';
             $this->defaultHandler = new RotatingFileHandler($path, 10, MonologLogger::ERROR);
 
             $this->defaultHandler->pushProcessor(new PsrLogMessageProcessor());

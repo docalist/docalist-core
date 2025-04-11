@@ -373,7 +373,6 @@ class XmlReader
     {
         $this->nextMustRead && $this->xmlReader->next();
 
-        // @phpstan-ignore-next-line "return missing" (phpstan ne détecte pas la loop sans fin)
         for (;;) {
             switch ($this->xmlReader->nodeType) {
                 case self::EOF:         // Fin de fichier, on ne peut pas aller plus loin, retourne false
@@ -449,7 +448,6 @@ class XmlReader
         }
 
         // Recherche le prochain tag de fermeture
-        // @phpstan-ignore-next-line
         for (;;) {
             // Si on en trouve un et qu'il a le bon nom, c'est ok, sinon exception "tag mismatch"
             if ($this->xmlReader->nodeType === self::CLOSE_TAG) {

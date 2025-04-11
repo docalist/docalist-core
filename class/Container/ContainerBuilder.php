@@ -72,7 +72,12 @@ class ContainerBuilder implements ContainerBuilderInterface
         }
 
         if (is_array($service)) {
-            $service = static fn (ContainerInterface $container) => new $id(...array_map(static fn (string $dependency) => $container->get($dependency), $service));
+            $service = static fn (ContainerInterface $container) => new $id(...array_map(
+                static fn (mixed $dependency) => is_string($dependency)
+                ? $container->get($dependency)
+                : throw new InvalidArgumentException("Invalid dependency name for service $id"),
+                $service
+            ));
         }
 
         $this->services[$id] = $service;

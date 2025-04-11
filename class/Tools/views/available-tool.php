@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace Docalist\Tools\Views;
 
-use Docalist\AdminPage;
+use Docalist\Tools\ToolsPage;
 
 /**
  * Affiche une "carte" présentant les outils Docalist dans la page WordPress "Outils disponibles".
  */
 
-/* @var AdminPage $this */  // La page parent
+/** @var ToolsPage $this La page parent */
 ?>
 <div class="card">
     <h2 class="title"><?= $this->menuTitle() ?></h2>

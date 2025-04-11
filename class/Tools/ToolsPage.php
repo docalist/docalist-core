@@ -134,7 +134,7 @@ class ToolsPage extends AdminPage
     /**
      * {@inheritDoc}
      */
-    protected function getDefaultAction()
+    protected function getDefaultAction(): string
     {
         return 'ListTools';
     }

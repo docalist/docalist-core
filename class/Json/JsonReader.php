@@ -27,9 +27,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
  * génèrent une exception si ce n'est pas le cas) puis elles retournent la valeur en cours et passent au token
  * suivant.
  *
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- *
  * @author Daniel Ménard <daniel.menard@laposte.net>
  */
 class JsonReader
@@ -346,9 +343,6 @@ class JsonReader
      * @param string $text Le texte à tester.
      *
      * @return boolean Retourne true si le buffer (à la position en cours) commence par le texte indiqué.
-     *
-     * @SuppressWarnings(PHPMD.ShortMethodName) Par défaut, PHPMD génère un warning pour les méthodes dont le nom fait
-     * moins de trois caractères. Comme on veut vraiment que la méthode s'appelle "is", on masque ce warning.
      */
     public function is($text)
     {
@@ -452,10 +446,6 @@ class JsonReader
      * @return bool La valeur lue (true ou false).
      *
      * @throws JsonParseException Si le buffer contient autre chose que 'true' ou 'false'.
-     *
-     * @SuppressWarnings(PHPMD.BooleanGetMethodName) Par défaut, PHPMD considère que les méthodes qui retournent
-     * un booléen doivent être nommées isXXX() ou hasXXX(). Dans notre cas, on veut que le nom soit cohérent avec
-     * les autres méthodes (getString, getNumber...) donc on masque ce warning.
      */
     public function getBool()
     {
@@ -510,6 +500,7 @@ class JsonReader
         if (0 === preg_match(self::NUMBER_REGEXP, $this->buffer, $match, 0, $this->position)) { // \G ou /A requis
             throw $this->parseError('expected number');
         }
+        assert(isset($match[0]));
 
         // Consomme le nombre reconnu
         $length = strlen($match[0]);
@@ -573,6 +564,7 @@ class JsonReader
                 throw $this->parseError('invalid string: bad escape sequence or missing closing quote');
             }
         }
+        assert(isset($match[0]));
 
         // Consomme la chaine trouvée
         $length = strlen($match[0]);
@@ -612,7 +604,7 @@ class JsonReader
      *
      * En JSON, une valeur est une chaine, un nombre, un objet, un tableau, un booléen ou la valeur null.
      *
-     * @return string|int|float|object|array|bool|null La valeur lue.
+     * @return string|int|float|object|array<mixed>|bool|null La valeur lue.
      *
      * @throws JsonParseException Si le buffer contient autre chose qu'une valeur.
      */
@@ -652,7 +644,7 @@ class JsonReader
      *
      * @param bool|null $assoc True pour retourner un tableau associatif plutôt qu'un objet (false par défaut).
      *
-     * @return object|array L'objet lu ou un tableau associatif si vous passez true en paramètre.
+     * @return object|array<mixed> L'objet lu ou un tableau associatif si vous passez true en paramètre.
      *
      * @throws JsonParseException Si le buffer contient autre chose qu'un objet.
      */
@@ -700,7 +692,7 @@ class JsonReader
     /**
      * Vérifie que le buffer contient un tableau et passe au token suivant.
      *
-     * @return array Le tableau lu.
+     * @return array<mixed> Le tableau lu.
      *
      * @throws JsonParseException Si le buffer contient autre chose qu'un tableau.
      */

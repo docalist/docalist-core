@@ -111,18 +111,18 @@ abstract class Choice extends Element
      *                           obtenues via des requêtes ajax). Pour tous les autres types de Choice (RadioList, CheckList et Select), le
      *                           paramètre $selected est ignoré.
      *
-     * @return string[] un tableau de la forme code => valeur
+     * @return array<int|string,string>|array<int,array<int|string,string>> un tableau de la forme code => valeur
      */
     protected function loadOptions(array $selected = []): array
     {
-        // Si c'est un tableau, on le retourne tel quel
-        if (is_array($this->options)) {
-            return $this->options;
-        }
-
         // Si c'est un callback, on l'exécute
         if (is_callable($this->options)) {
             return ($this->options)($this);
+        }
+
+        // Si c'est un tableau, on le retourne tel quel
+        if (is_array($this->options)) {
+            return $this->options;
         }
 
         // Obligatoirement une chaine de lookup (cf. setOptions)
@@ -142,7 +142,10 @@ abstract class Choice extends Element
         $table = $this->getTableManager()->get($source);
 
         // Charge la totalité des entrées de la table et retourne un tableau de la forme code => valeur
-        return $table->search('code,label');
+        $entries = $table->search('code,label');
+
+        /** @var array<string,string> */
+        return $entries;
     }
 
     private static TableManager|null $tableManager = null;
@@ -202,7 +205,7 @@ abstract class Choice extends Element
             }
 
             // Génère le début du groupe
-            $this->startOptionGroup($value, $theme);
+            $this->startOptionGroup((string) $value, $theme);
 
             // Génère les options du groupe
             foreach ($label as $value => $label) {

@@ -237,7 +237,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
     /**
      * Retourne une chaine contenant la version sérialisée au format PHP de la valeur du type.
      */
-    final public function serialize(): ?string
+    final public function serialize(): string
     {
         return serialize($this->__serialize());
     }

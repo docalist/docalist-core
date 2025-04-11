@@ -15,6 +15,7 @@ use Docalist\Table\TableInterface;
 use Docalist\Tokenizer;
 use PDO;
 use Exception;
+use RuntimeException;
 
 /**
  * Classe de base pour les tables d'autorité.
@@ -57,9 +58,9 @@ class SQLite implements TableInterface
     /**
      * Tableau contenant les noms des champs de la table.
      *
-     * @var array(string)
+     * @var array<int,string>
      */
-    protected $fields = null;
+    protected $fields = [];
 
     public function type()
     {
@@ -114,7 +115,7 @@ class SQLite implements TableInterface
         $this->path = $path;
 
         // Compile la table
-        $path = $this->compile($path);
+        $path = $this->compile();
 
         // Si compile retourne false, c'est que la table a déjà été ouverte
         // Sinon elle retourne le path de la base sqlite à ouvrir
@@ -125,11 +126,16 @@ class SQLite implements TableInterface
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Démarre une transaction si la table est en read/write
-            !$this->readonly && $this->beginTransaction();
+            if (!$this->readonly) {
+                $this->beginTransaction();
+            }
 
             // Récupère le nom des champs de la table
-            $this->fields = $this->db->query('PRAGMA table_info(data)')
-                ->fetchAll(PDO::FETCH_NUM | PDO::FETCH_COLUMN, 1);
+            $statement = $this->db->query('PRAGMA table_info(data)');
+            if ($statement === false) {
+                throw new RuntimeException('SQL Error');
+            }
+            $this->fields = $statement->fetchAll(PDO::FETCH_NUM | PDO::FETCH_COLUMN, 1);
         }
     }
 
@@ -143,21 +149,17 @@ class SQLite implements TableInterface
         $this->commit();
 
         // Ferme la connexion
-        $this->db = null;
+        unset($this->db);
     }
 
     /**
      * Démarre une transaction si ce n'est pas déjà fait.
-     *
-     * @return self
      */
-    protected function beginTransaction()
+    protected function beginTransaction(): void
     {
         if (! $this->commit) {
             $this->commit = $this->db->beginTransaction();
         }
-
-        return true;
     }
 
     /**
@@ -382,7 +384,7 @@ class SQLite implements TableInterface
      * @param int $offset Offset des réponses.
      * @param int $fetchMode Une combinaison de constantes PDO:FETCH_XXX.
      *
-     * @return array La méthode retourne toujours un tableau (éventuellement
+     * @return array<mixed> La méthode retourne toujours un tableau (éventuellement
      * vide) contenant les réponses obtenues. Le format de chaque élément
      * dépend de $fetchMode (cf. doc de PDO).
      */
@@ -403,6 +405,9 @@ class SQLite implements TableInterface
 
         // Exécute la requête
         $statement = $this->db->query($sql);
+        if ($statement === false) {
+            throw new RuntimeException('SQL Error');
+        }
 
         // Récupère les réponses
         $result = $statement->fetchAll($fetchMode);

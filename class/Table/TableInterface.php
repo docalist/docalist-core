@@ -150,7 +150,7 @@ interface TableInterface
      *
      * @param int $offset Offset des réponses.
      *
-     * @return array La méthode retourne toujours un tableau (éventuellement
+     * @return array<mixed> La méthode retourne toujours un tableau (éventuellement
      * vide).
      */
     public function search($what = '*', $where = '', $order = '', $limit = null, $offset = null);
@@ -209,7 +209,7 @@ interface TableInterface
      *
      * @param int $limit Nombre maximum de réponses à retourner.
      *
-     * @return array Un tableau (éventuellement vide) contenant les réponses
+     * @return array<mixed> Un tableau (éventuellement vide) contenant les réponses
      * obtenues.
      *
      * Le format des entrées retournées dépend du nombre de champs demandés

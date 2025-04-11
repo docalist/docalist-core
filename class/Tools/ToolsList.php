@@ -25,14 +25,14 @@ class ToolsList implements Tools
     /**
      * La liste des outils disponibles.
      *
-     * @var array|callable
+     * @var array<Tool|callable|string>|callable
      */
     private $tools;
 
     /**
      * Initialise la liste des outils disponibles.
      *
-     * @param array|callable $tools Un tableau d'outils ou un callback qui retourne un tableau d'outils.
+     * @param array<Tool|callable|string>|callable $tools Un tableau d'outils ou un callback qui retourne un tableau d'outils.
      *
      * Chaque élément du tableau (fourni ou retourné par le callback) doit être de la forme id => factory. La clé est
      * un identifiant unique qui indique le nom de l'outil et la valeur associée indique comment instancier l'outil.

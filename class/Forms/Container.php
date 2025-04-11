@@ -217,8 +217,6 @@ class Container extends Element implements Countable, IteratorAggregate
      * Retourne une Closure permettant de comparer l'item passé en paramètre avec un autre item.
      *
      * @param Item|string $item
-     *
-     * @throws InvalidArgumentException
      */
     private function getComparator(string|Item $item): Closure
     {
@@ -281,7 +279,9 @@ class Container extends Element implements Countable, IteratorAggregate
                 // Si l'élément a un nom, fait le binding sur cet élément
                 $name = $item->getName();
                 if ('' !== $name) {
-                    $item->bindData($data[$name] ?? null);
+                    /** @var array<mixed>|bool|float|int|string|null */
+                    $value = $data[$name] ?? null;
+                    $item->bindData($value);
                     $result[$name] = $item->getData();
                     continue;
                 }

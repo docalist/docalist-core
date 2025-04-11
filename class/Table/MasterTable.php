@@ -15,6 +15,9 @@ use Docalist\LogManager;
 use Docalist\Tokenizer;
 use Psr\Log\LoggerInterface;
 use InvalidArgumentException;
+use RuntimeException;
+use Symfony\Component\HttpFoundation\File\Exception\CannotWriteFileException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * La master table.
@@ -81,9 +84,14 @@ class MasterTable extends CsvTable
 
         $header = $this->getFileHeader();
         $file = fopen($this->path, 'wt');
+        if ($file === false) {
+            throw new CannotWriteFileException($this->path);
+        }
+
         fwrite($file, $header);
         fputcsv($file, $fields, ';', '"');
 
+        /** @var  array<string,object> */
         $records = $this->search('rowid,' . implode(',', $fields), '', 'rowid');
         foreach ($records as $record) {
             fputcsv($file, (array) $record, ';', '"');
@@ -101,6 +109,10 @@ class MasterTable extends CsvTable
     protected function getFileHeader()
     {
         $lines = file($this->path, FILE_IGNORE_NEW_LINES);
+        if ($lines === false) {
+            throw new RuntimeException("Unable to read {$this->path}");
+        }
+
         $count = 0;
         foreach ($lines as $line) {
             $line = trim($line);
@@ -114,8 +126,10 @@ class MasterTable extends CsvTable
             $header = implode("\n", $header);
             $header && $header .= "\n";
 
-            return $header;
+            return $header ;
         }
+
+        return '';
     }
 
     /**
@@ -125,10 +139,14 @@ class MasterTable extends CsvTable
      *
      * @param string $path
      */
-    protected function createMasterTable($path)
+    protected function createMasterTable($path): void
     {
         $this->log && $this->log->notice('creating master table');
-        $template = file_get_contents(__DIR__ . '/master-template.txt');
+        $template = file_get_contents($path = __DIR__ . '/master-template.txt');
+        if ($template === false) {
+            throw new FileNotFoundException($path);
+        }
+
         $schema = TableInfo::getDefaultSchema();
         $template = strtr($template, [
             '{year}' => date('Y'),
@@ -157,7 +175,7 @@ class MasterTable extends CsvTable
      */
     protected function relativePath($path)
     {
-        $root = docalist('public-dir');
+        $root = docalist()->string('public-dir');
         if (0 !== strncmp($path, $root, strlen($root))) {
             throw new InvalidArgumentException('Table path does not start with site path');
         }
@@ -172,25 +190,27 @@ class MasterTable extends CsvTable
      * Prépare les données d'une structure TableInfo.
      *
      * @param TableInfo $table
-     * @return array
+     * @return array<string,string>
      *
      * @throws InvalidArgumentException
      */
     protected function prepare(TableInfo $table)
     {
-        $name = $table->name();
+        $name = $table->name->getPhpValue();
 
-        if (! file_exists($table->path())) {
-            throw new InvalidArgumentException("Invalid path for table $name: file {$table->path()} do not exists");
+        $path = $table->path->getPhpValue();
+        if (! file_exists($path)) {
+            throw new InvalidArgumentException("Invalid path for table $name: file {$path} do not exists");
         }
-        $table->path = $this->relativePath($table->path());
-        !isset($table->label) && $table->label = $name;
-        !isset($table->type) && $table->type = $name;
-        !isset($table->format) && $table->format = $name;
-        !isset($table->readonly) && $table->readonly = true;
-        !isset($table->creation) && $table->creation = date_i18n('Y-m-d H:i:s');
-        !isset($table->lastupdate) && $table->lastupdate = date_i18n('Y-m-d H:i:s');
+        $table->path->assign($this->relativePath($path));
+        !isset($table->label) && $table->label->assign($name);
+        !isset($table->type) && $table->type->assign($name);
+        !isset($table->format) && $table->format->assign($name);
+        !isset($table->readonly) && $table->readonly->assign(true);
+        !isset($table->creation) && $table->creation->assign(date_i18n('Y-m-d H:i:s'));
+        !isset($table->lastupdate) && $table->lastupdate->assign('Y-m-d H:i:s');
 
+        /** @var array<string,string> */
         $fields = $table->getPhpValue();
 
         $fields['readonly'] = $fields['readonly'] ? '1' : '0';
@@ -211,7 +231,7 @@ class MasterTable extends CsvTable
      *
      * @throws InvalidArgumentException
      */
-    public function checkName($name)
+    public function checkName($name): void
     {
         // Vérifie que le nom est correct
         if (! preg_match('~^[a-zA-Z0-9_-]+$~', $name)) {
@@ -236,10 +256,10 @@ class MasterTable extends CsvTable
      */
     public function register(TableInfo $table)
     {
-        $this->log && $this->log->notice("Register table '{$table->name()}'", ['table' => $table]);
+        $this->log && $this->log->notice("Register table '{$table->name->getPhpValue()}'", ['table' => $table]);
 
         // Si la table est déjà enregistrée (même nom), on met à jour
-        if ($id = $this->rowid($table->name())) {
+        if ($id = $this->rowid($table->name->getPhpValue())) {
             return $this->update($id, $table);
         }
 
@@ -339,8 +359,12 @@ class MasterTable extends CsvTable
     public function rowid($name)
     {
         $id = $this->find('rowid', 'name=' . $this->db->quote($name));
+        if ($id === false) {
+            return false;
+        }
 
-        return ($id === false) ? false : (int) $id;
+        assert(is_string($id)); // rowid sous forme de chaine
+        return (int) $id;
     }
 
     /**
@@ -373,8 +397,9 @@ class MasterTable extends CsvTable
         if ($table === false) {
             throw new InvalidArgumentException("Table $name does not exist");
         }
+        /** @var \stdClass $table */
 
-        $table->path = docalist('public-dir') . $table->path;
+        $table->path = docalist()->string('public-dir') . $table->path;
 
         return new TableInfo((array) $table);
     }
@@ -413,10 +438,11 @@ class MasterTable extends CsvTable
         $fields = 'ROWID,' . implode(',', $this->fields());
         $tables = $this->search($fields, $where, $sort);
 
-        foreach ($tables as & $table) {
-            $table = new TableInfo((array) $table);
+        $result = [];
+        foreach ($tables as $name => $table) {
+            $result[$name] = new TableInfo((array) $table);
         }
 
-        return $tables;
+        return $result;
     }
 }

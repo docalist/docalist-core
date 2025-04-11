@@ -12,11 +12,14 @@ declare(strict_types=1);
 namespace Docalist\Repository;
 
 use Docalist\Type\Entity;
+use InvalidArgumentException;
+use RuntimeException;
 use WP_Post;
 use Docalist\Repository\Exception\BadIdException;
 use Docalist\Repository\Exception\RepositoryException;
 use Docalist\Repository\Exception\EntityNotFoundException;
 
+use wpdb;
 use function Docalist\deprecated;
 
 /**
@@ -140,6 +143,9 @@ class PostTypeRepository extends Repository
 
     protected function loadData(int|string $id): mixed
     {
+        // Vérifie que l'ID est correct
+        $id = $this->checkId($id);
+
         // Charge le post wordpress
         if (false === $post = WP_Post::get_instance($id)) {
             throw new EntityNotFoundException($id);
@@ -151,13 +157,20 @@ class PostTypeRepository extends Repository
 
     protected function saveData(int|string|null $id, mixed $post): int|string
     {
-        $wpdb = docalist('wordpress-database');
+        $wpdb = docalist(wpdb::class);
+
+        if (! is_array($post)) {
+            throw new InvalidArgumentException('expected array');
+        }
 
         // Injecte les valeurs par défaut (uniquement celles qui sont indispensables)
         $this->postDefaults($post);
 
         // Insère ou met à jour le post si l'entité a déjà un ID
         if ($id) {
+            // Vérifie que l'ID est correct
+            $id = $this->checkId($id);
+
             $post['ID'] = $id;
             if (false === $wpdb->replace($wpdb->posts, $post)) {
                 throw new RepositoryException($wpdb->last_error);
@@ -177,6 +190,10 @@ class PostTypeRepository extends Repository
 
         // Exécute l'action transition_post_status pour permettre l'indexation docalist search
         $post = WP_Post::get_instance($id);
+        if (!$post instanceof WP_POST) {
+            throw new RuntimeException('WP_Post::get_instance() failed');
+        }
+
         wp_transition_post_status($post->post_status, 'unknown', $post);
 
         // Ok
@@ -190,9 +207,9 @@ class PostTypeRepository extends Repository
      * Cette méthode est appellée par saveData() juset avant que le post
      * wordpress ne soit enregistré.
      *
-     * @param array $post
+     * @param array<mixed> $post
      */
-    protected function postDefaults(array & $post)
+    protected function postDefaults(array & $post): void
     {
         /*
          * Remarques :
@@ -275,6 +292,9 @@ class PostTypeRepository extends Repository
 
     protected function deleteData(int|string $id): void
     {
+        // Vérifie que l'ID est correct
+        $id = $this->checkId($id);
+
         if (! wp_delete_post($id, true)) {
             throw new EntityNotFoundException($id);
         }
@@ -282,7 +302,7 @@ class PostTypeRepository extends Repository
 
     public function count(): int
     {
-        $wpdb = docalist('wordpress-database');
+        $wpdb = docalist(wpdb::class);
 
         $type = $this->getPostType();
         $sql = "SELECT count(*) FROM $wpdb->posts WHERE post_type='$type'";
@@ -296,9 +316,9 @@ class PostTypeRepository extends Repository
      * @param string $sql Requête sql à exécuter.
      * @param string $msg Message à afficher.
      */
-    private function sql($sql, $msg)
+    private function sql($sql, $msg): void
     {
-        $wpdb = docalist('wordpress-database');
+        $wpdb = docalist(wpdb::class);
 
         $wpdb->query($sql);
         if ($wpdb->last_error) {
@@ -312,7 +332,7 @@ class PostTypeRepository extends Repository
 
     public function deleteAll(): void
     {
-        $wpdb = docalist('wordpress-database');
+        $wpdb = docalist(wpdb::class);
 
         $type = $this->getPostType();
         $count = $this->count();
@@ -391,7 +411,7 @@ class PostTypeRepository extends Repository
      *
      * @param array<string,int|string> $data Les données de l'entité à convertir.
      *
-     * @return array<string,int|string> Un post wordpress sous la forme d'un tableau.
+     * @return array<mixed> Un post wordpress sous la forme d'un tableau.
      */
     protected function encode(array $data): mixed
     {

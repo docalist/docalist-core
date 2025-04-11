@@ -266,7 +266,10 @@ class Composite extends Any
     public function getEditorForm($options = null): Element
     {
         // TEMP : pour le moment on peut nous passer une grille ou un schéma, à terme, on ne passera que des array
-        $options && is_object($options) && $options = $options->value();
+        //$options && is_object($options) && $options = $options->value();
+        if ($options instanceof Schema) {
+            $options = $options->value();
+        }
 
         $editor = $this->getOption('editor', $options, $this->getDefaultEditor());
         switch ($editor) {

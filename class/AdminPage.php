@@ -15,6 +15,7 @@ use Docalist\Http\Response;
 use Docalist\Http\TextResponse;
 use Docalist\Http\CallbackResponse;
 use Docalist\Http\ViewResponse;
+use Exception;
 use ReflectionObject;
 use ReflectionMethod;
 use InvalidArgumentException;
@@ -49,7 +50,7 @@ abstract class AdminPage extends Controller
      *
      * @return string
      */
-    protected function menuTitle()
+    public function menuTitle()
     {
         return $this->menuTitle;
     }
@@ -86,11 +87,12 @@ abstract class AdminPage extends Controller
         $title = $this->menuTitle();
         $capability = $this->getCapability();
         if (empty($parent)) {
-            $page = add_menu_page($title, $title, $capability, $this->getID(), function () {
-            });
+            $page = add_menu_page($title, $title, $capability, $this->getID(), function () {});
         } else {
-            $page = add_submenu_page($parent, $title, $title, $capability, $this->getID(), function () {
-            });
+            $page = add_submenu_page($parent, $title, $title, $capability, $this->getID(), function () {});
+            if ($page === false) {
+                throw new Exception('add_submenu_page() failed');
+            }
         }
 
         /*
@@ -132,7 +134,7 @@ abstract class AdminPage extends Controller
             // dans notre cas il n'a pas encore été appellé. Ca pose
             // problème car dans ce cas, les vues qui appellent
             // screen_icon() ne récupèrent pas la bonne icone (wp 3.6).
-            get_current_screen()->set_parentage($this->getParentPage());
+            get_current_screen()?->set_parentage($this->getParentPage());
 
             // Exécute l'action, récupère la réponse générée et le garbage éventuel
             ob_start();
@@ -167,7 +169,7 @@ abstract class AdminPage extends Controller
                 // Permet à la vue de faire des "enqueue" et autres
                 ob_start();
                 $response->sendContent();
-                $body = ob_get_clean();
+                $body = (string) ob_get_clean();
 
                 // Récupère le titre (h1) de la page et le fournit à wp pour
                 // qu'on ait le bon titre dans la balise <title> de la page
@@ -282,7 +284,7 @@ abstract class AdminPage extends Controller
         );
     }
 
-    protected function getDefaultAction()
+    protected function getDefaultAction(): string
     {
         return 'Index';
     }
@@ -296,7 +298,7 @@ abstract class AdminPage extends Controller
      * "action", et qui peuvent être appellées sans paramètres (aucun
      * paramètre ou paramètres ayant une valeur par défaut).
      */
-    public function actionIndex()
+    public function actionIndex(): ViewResponse
     {
         return $this->view(
             'docalist-core:controller/actions-list',

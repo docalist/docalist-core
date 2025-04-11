@@ -11,16 +11,16 @@ declare(strict_types=1);
 
 namespace Docalist\Tools\Views;
 
-use Docalist\AdminPage;
+use Docalist\Tools\ToolsPage;
 use Docalist\Tools\Tool;
 
 /**
  * Affiche l'exécution d'un outil.
  */
 
-/* @var AdminPage   $this   */  // La page parent
-/* @var Tool        $tool   */  // L'outil à exécuter
-/* @var array       $args   */  // Paramètres
+/** @var ToolsPage              $this La page parent */
+/** @var Tool                   $tool L'outil à exécuter */
+/** @var array<string,string>   $args Paramètres */
 ?>
 <div class="wrap">
     <h1><?= $tool->getLabel() ?></h1><?php

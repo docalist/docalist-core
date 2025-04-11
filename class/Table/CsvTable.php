@@ -13,6 +13,7 @@ namespace Docalist\Table;
 
 use Docalist\Cache\FileCache;
 use Docalist\Tokenizer;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * Une table au format CSV.
@@ -36,11 +37,17 @@ class CsvTable extends SQLite
 
         // Ouvre le fichier texte
         $file = fopen($this->path, 'rb');
+        if ($file === false) {
+            throw new FileNotFoundException($this->path);
+        }
 
         // Charge les entêtes de colonne
         // On peut avoir des lignes de commentaires (#xxx) avant les entêtes
         for (;;) {
             $this->fields = fgetcsv($file, 1024, ';');
+            if ($this->fields === false) {
+                break;
+            }
             if (substr($this->fields[0], 0, 1) === '#') {
                 continue;
             }

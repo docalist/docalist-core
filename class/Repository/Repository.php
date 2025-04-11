@@ -66,10 +66,10 @@ abstract class Repository
      *
      * @throws BadIdException Si l'identifiant est invalide.
      */
-    protected function checkId(mixed $id): int|string
+    protected function checkId(int|string $id): int|string
     {
         // L'implémentation par défaut accepte les entiers et les chaines
-        if (is_int($id) || (is_string($id) && $id !== '')) {
+        if (is_int($id) || $id !== '') {
             return $id;
         }
 
@@ -111,7 +111,7 @@ abstract class Repository
      *
      * @param int|string $id L'identifiant de l'entité à charger.
      *
-     * @return array<string,int|string>  Les données l'entité.
+     * @return array<mixed>  Les données l'entité.
      *
      * @throws BadIdException Si l'identifiant indiqué est invalide (ID manquant
      * ou ayant un format invalide).
@@ -261,11 +261,11 @@ abstract class Repository
      *
      * L'implémentation par défaut attend des données encodées en JSON.
      *
-     * @return array<string,int|string>  Les données décodées de l'entité.
+     * @return array<mixed>  Les données décodées de l'entité.
      *
      * @throws RepositoryException Si les données ne peuvent pas être décodées.
      */
-    protected function decode(mixed $data, int|string|null$id): array
+    protected function decode(mixed $data, int|string|null $id): array
     {
         if (! is_string($data)) {
             $msg = __('Invalid JSON data in entity %s (%s)', 'docalist-core');

@@ -32,7 +32,7 @@ class BaseTool implements Tool
     /**
      * Le libellé et la description extraits du DocBlock de l'outil.
      *
-     * @var null|array Null initialement, un tableau contenant les clés 'label' et 'description' une fois que
+     * @var null|array<string,string> Null initialement, un tableau contenant les clés 'label' et 'description' une fois que
      * parseDocBlock() a été appellée.
      */
     private $doc;
@@ -48,15 +48,15 @@ class BaseTool implements Tool
         }
 
         // Récupère la doc
-        $doc = (new ReflectionObject($this))->getDocComment();
+        $doc = (string) (new ReflectionObject($this))->getDocComment();
 
         // Normalise les fins de ligne
         $doc = str_replace("\r\n", "\n", $doc);
 
         // Supprime les marques de commentaires
-        $doc = preg_replace('|^/\*\*[\r\n]+|', '', $doc);
-        $doc = preg_replace('|\n[\t ]*\*/$|', '', $doc);
-        $doc = preg_replace('|^[\t ]*\* ?|m', '', $doc);
+        $doc = (string) preg_replace('|^/\*\*[\r\n]+|', '', $doc);
+        $doc = (string) preg_replace('|\n[\t ]*\*/$|', '', $doc);
+        $doc = (string) preg_replace('|^[\t ]*\* ?|m', '', $doc);
 
         // Ignore les lignes vides (et les blancs) de début
         $doc = ltrim($doc);
@@ -92,7 +92,7 @@ class BaseTool implements Tool
     public function getLabel(): string
     {
         $this->parseDocBlock();
-        return $this->doc['label'];
+        return $this->doc['label'] ?? '';
     }
 
     /**
@@ -101,7 +101,7 @@ class BaseTool implements Tool
     public function getDescription(): string
     {
         $this->parseDocBlock();
-        return $this->doc['description'];
+        return $this->doc['description'] ?? '';
     }
 
     /**

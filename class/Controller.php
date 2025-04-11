@@ -190,7 +190,7 @@ abstract class Controller
      *
      * @return string
      */
-    abstract protected function getDefaultAction();
+    abstract protected function getDefaultAction(): string;
 
     /**
      * Retourne le nom de la méthode correspondant à l'action passée en paramètre ou à l'action en cours.
@@ -202,12 +202,14 @@ abstract class Controller
      *
      * @return string
      */
-    protected function getMethod($action = '')
+    protected function getMethod(string $action = '')
     {
-        if (empty($action)) {
+        if ($action === '') {
             $arg = $this->actionParameter;
+            $argValue = $_REQUEST[$arg] ?? '';
+            assert(is_string($argValue));
 
-            $action = empty($_REQUEST[$arg]) ? $this->getDefaultAction() : $_REQUEST[$arg];
+            $action = ($argValue === '') ? $this->getDefaultAction() : $argValue;
         }
 
         return self::ACTION_PREFIX . ucfirst($action);
@@ -405,7 +407,7 @@ abstract class Controller
      * - s'il y a trop de paramètres fournis ou des paramètres qui ne sont pas
      *   dans la signature de la méthode de l'action.
      */
-    protected function getUrl($action = '')
+    public function getUrl($action = '')
     {
         // Récupère le nom de la méthode à utiliser
         $name = $this->getMethod($action);

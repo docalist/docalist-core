@@ -39,14 +39,14 @@ class DirectoryRepository extends Repository
      * @param string $directory Le chemin complet du répertoire dans lequel
      * seront stockées les entités de ce dépôt.
      *
-     * @param string $type Optionnel, le nom de classe complet des entités de
+     * @param class-string<Entity> $type Optionnel, le nom de classe complet des entités de
      * ce dépôt. C'est le type qui sera utilisé par load() si aucun type
      * n'est indiqué lors de l'appel.
      *
      * @throws InvalidArgumentException Si le répertoire indiqué nest pas
      * valide.
      */
-    public function __construct($directory, $type = Entity::class)
+    public function __construct(string $directory, string $type = Entity::class)
     {
         // Initialise le dépôt
         parent::__construct($type);
@@ -80,7 +80,7 @@ class DirectoryRepository extends Repository
         return $this->directory;
     }
 
-    protected function checkId($id)
+    protected function checkId(int|string $id): string // parent returns int|string, nous que des string
     {
         // On n'accepte que des chaines de catactères
         if (!is_string($id)) {
@@ -116,7 +116,7 @@ class DirectoryRepository extends Repository
         return $this->directory . $id . '.json';
     }
 
-    public function has($id)
+    public function has(int|string $id): bool
     {
         // Vérifie que l'ID est correct
         $id = $this->checkId($id);
@@ -125,8 +125,11 @@ class DirectoryRepository extends Repository
         return file_exists($this->path($id));
     }
 
-    protected function loadData($id)
+    protected function loadData(int|string $id): mixed
     {
+        // Vérifie que l'ID est correct
+        $id = $this->checkId($id);
+
         // Vérifie que le fichier existe
         if (! file_exists($path = $this->path($id))) {
             throw new EntityNotFoundException($id);
@@ -135,17 +138,18 @@ class DirectoryRepository extends Repository
         // Charge les données de l'entité
         if (false === $data = file_get_contents($path)) {
             $error = error_get_last();
-            throw new RepositoryException($error['message']);
+            throw new RepositoryException($error['message'] ?? '');
         }
 
         // Ok
         return $data;
     }
 
-    protected function saveData($id, $data)
+    protected function saveData(int|string|null $id, mixed $data): string  // parent returns int|string, nous que des string
     {
-        // Alloue un ID si nécessaire
-        is_null($id) && $id = uniqid();
+        // Alloue un ID si nécessaire / vérifie que l'ID est correct
+        $id = ($id === null) ? uniqid() : $this->checkId($id);
+
 
         // Détermine le path du fichier
         $path = $this->path($id);
@@ -153,20 +157,23 @@ class DirectoryRepository extends Repository
         // L'entité est stockée dans un fichier
         if (! file_put_contents($path, $data, LOCK_EX)) { // false:failure, 0:rien écrit
             $error = error_get_last();
-            throw new RepositoryException($error['message']);
+            throw new RepositoryException($error['message'] ?? '');
         }
 
         if (! chmod($path, 0660)) {
             $error = error_get_last();
-            throw new RepositoryException($error['message']);
+            throw new RepositoryException($error['message'] ?? '');
         }
 
         // Ok
         return $id;
     }
 
-    protected function deleteData($id)
+    protected function deleteData(int|string $id): void
     {
+        // Vérifie que l'ID est correct
+        $id = $this->checkId($id);
+
         // Détermine le path du fichier
         $path = $this->path($id);
 
@@ -178,16 +185,16 @@ class DirectoryRepository extends Repository
         // Supprime le fichier
         if (! unlink($path)) {
             $error = error_get_last();
-            throw new RepositoryException($error['message']);
+            throw new RepositoryException($error['message'] ?? '');
         }
     }
 
-    public function count()
+    public function count(): int
     {
         throw new \Exception(__METHOD__ . " n'est pas encore implémenté.");
     }
 
-    public function deleteAll()
+    public function deleteAll(): void
     {
         throw new \Exception(__METHOD__ . " n'est pas encore implémenté.");
     }

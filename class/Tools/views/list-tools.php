@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 namespace Docalist\Tools\Views;
 
-use Docalist\AdminPage;
 use Docalist\Tools\Tool;
+use Docalist\Tools\ToolsPage;
 
 /**
  * Liste les outils disponibles.
  */
+/** @var ToolsPage $this La page parent */
+/** @var Tool[][]  $toolsByCategory  Une liste d'outils regroupés par catégorie : category => array(Tool) */
 
-/* @var AdminPage   $this               */  // La page parent.
-/* @var Tool[][]    $toolsByCategory    */  // Une liste d'outils regroupés par catégorie : category => array(Tool)
 ?>
 <div class="wrap">
     <h1><?= $this->menuTitle() ?></h1>

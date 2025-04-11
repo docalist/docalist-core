@@ -128,12 +128,15 @@ class LookupManager
             throw new InvalidArgumentException('type is required');
         }
         $type = $_GET['type'];
+        assert(is_string($type));
 
         // Récupère la source de données (optionnel)
         $source = $_GET['source'] ?? '';
+        assert(is_string($source));
 
         // Récupère la chaine recherchée (optionnel)
         $search = $_GET['search'] ?? '';
+        assert(is_string($search));
 
         // Exécute le lookup
         ob_start();
