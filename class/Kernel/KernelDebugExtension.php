@@ -30,11 +30,17 @@ final class KernelDebugExtension extends KernelExtension
     {
         error_log("===================================================================================================");
         $this->requestId = uniqid();
+
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
+        assert(is_string($requestMethod));
+        $requestUri = $_SERVER['REQUEST_URI'];
+        assert(is_string($requestUri));
+
         error_log(sprintf(
             '[%s] %s %s',
             $this->requestId,
-            $_SERVER['REQUEST_METHOD'],
-            $_SERVER['REQUEST_URI']
+            $requestMethod,
+            $requestUri
         ));
         $this->elapsed('Kernel loaded');
     }
