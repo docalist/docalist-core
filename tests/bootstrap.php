@@ -1,5 +1,13 @@
 <?php
+
+use Docalist\Kernel\Kernel;
+
 require_once __DIR__ . '/../vendor/autoload.php';
+
+define('DOCALIST_USE_WP_CACHE', false);
+
+// Boote Docalist
+(new Kernel('test', false))->boot();
 
 // // Environnement de test
 // $GLOBALS['wp_tests_options'] = array(
