@@ -40,7 +40,7 @@ use Traversable;
  */
 class Collection extends Any implements ArrayAccess, Countable, IteratorAggregate, Filterable
 {
-    final public function __construct($value = null, Schema $schema = null)
+    final public function __construct($value = null, Schema|null $schema = null)
     {
         // on rend le constructeur final pour que l'usage de "new static()" dans les méthodes
         // filter() et merge() soit "safe" (sinon phpstan signale une erreur)

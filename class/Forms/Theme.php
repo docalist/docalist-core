@@ -93,7 +93,7 @@ class Theme extends Html
      *
      * @throws InvalidArgumentException si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents
      */
-    public function display(Item $item, string $view = null, array $args = []): static
+    public function display(Item $item, string|null $view = null, array $args = []): static
     {
         static $level = 0;
 
@@ -169,7 +169,7 @@ class Theme extends Html
      *
      * @throws InvalidArgumentException si la vue demandée n'existe ni dans le thème, ni dans aucun de ses parents
      */
-    final public function render(Item $item, string $view = null): string
+    final public function render(Item $item, string|null $view = null): string
     {
         ob_start();
         try {

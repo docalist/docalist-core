@@ -61,7 +61,7 @@ class Any implements Stringable, Configurable, Formattable, Editable, Serializab
      *                            tableau.
      * @param Schema|null $schema optionnel, le schéma du type
      */
-    public function __construct($value = null, Schema $schema = null)
+    public function __construct($value = null, Schema|null $schema = null)
     {
         $this->schema = $schema ?: static::getDefaultSchema();
         $this->assign(is_null($value) ? $this->getDefaultValue() : $value);

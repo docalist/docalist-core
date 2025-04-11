@@ -55,10 +55,10 @@ class Settings extends Entity
     /**
      * Construit un nouvel objet Settings.
      *
-     * @param Repository $repository Le dépôt dans lequel sont stockés les paramètres.
-     * @param ?string    $id         L'identifiant du settings
+     * @param Repository  $repository Le dépôt dans lequel sont stockés les paramètres.
+     * @param string|null $id         L'identifiant du settings
      */
-    public function __construct(Repository $repository, string $id = null)
+    public function __construct(Repository $repository, string|null $id = null)
     {
         // Stocke le dépôt associé
         $this->repository = $repository;

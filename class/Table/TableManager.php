@@ -221,7 +221,7 @@ class TableManager
      *                   - s'il existe déjà une table $newName.txt dans le répertoire des table.
      *                   - si la table ne peut pas être renommée
      */
-    public function update(string $name, string $newName = null, string $label = null, array $data = null): static
+    public function update(string $name, string|null $newName = null, string|null $label = null, array|null $data = null): static
     {
         // Vérifie que la table à modifier existe
         $table = $this->table($name);
@@ -406,7 +406,7 @@ class TableManager
      *
      * @return array<int,TableInfo>
      */
-    public function tables(string $type = null, string $format = null, bool $readonly = null, string $sort = '_label'): array
+    public function tables(string|null $type = null, string|null $format = null, bool|null $readonly = null, string $sort = '_label'): array
     {
         return $this->master()->tables($type, $format, $readonly, $sort);
     }
@@ -418,7 +418,7 @@ class TableManager
      *
      * @return string[]
      */
-    public function types(string $format = null): array
+    public function types(string|null $format = null): array
     {
         $where = "type != 'master'";
         $format && $where .= ' AND format='.$this->master()->quote($format);
@@ -433,7 +433,7 @@ class TableManager
      *
      * @return string[]
      */
-    public function formats(string $type = null): array
+    public function formats(string|null $type = null): array
     {
         $where = "format != 'master'";
         $type && $where .= ' AND type='.$this->master()->quote($type);

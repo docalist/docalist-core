@@ -31,7 +31,7 @@ use stdClass;
  */
 class TableEntry extends ListEntry
 {
-    public function __construct($value = null, Schema $schema = null)
+    public function __construct($value = null, Schema|null $schema = null)
     {
         parent::__construct($value, $schema);
 

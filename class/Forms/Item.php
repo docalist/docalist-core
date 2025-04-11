@@ -70,7 +70,7 @@ abstract class Item
      * Si vous passez null en paramétre, l'item est supprimé de son container parent (s'il en avait un) et
      * devient un item autonome (sans parent).
      */
-    final public function setParent(Container $parent = null): static
+    final public function setParent(Container|null $parent = null): static
     {
         if (!is_null($this->parent)) {
             $this->parent->remove($this);

@@ -35,7 +35,7 @@ class Entity extends Composite
      * @param Schema|null       $schema Optionnel, le schéma de l'entité.
      * @param int|string|null   $id     Optionnel, l'ID de l'entité.
      */
-    public function __construct(array $value = null, Schema $schema = null, int|string $id = null)
+    public function __construct(array|null $value = null, Schema|null $schema = null, int|string|null $id = null)
     {
         parent::__construct($value, $schema);
         !is_null($id) && $this->setID($id);

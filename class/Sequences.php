@@ -194,11 +194,11 @@ class Sequences
      * n'est passé en paramètre.
      *
      * @param string $group    Nom du groupe.
-     * @param string $sequence Nom de la séquence.
+     * @param string|null $sequence Nom de la séquence.
      *
      * @return int Le nombre de séquences supprimées.
      */
-    public function clear(string $group, string $sequence = null): int
+    public function clear(string $group, string|null $sequence = null): int
     {
         $wpdb = $this->wpdb;
 

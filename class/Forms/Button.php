@@ -31,7 +31,7 @@ class Button extends Element
      * @param array<string,string|int|bool> $attributes optionnel, les attributs du bouton
      * @param Container|null                $parent     optionnel, le containeur parent du bouton
      */
-    public function __construct(string $label = '', string $name = '', array $attributes = [], Container $parent = null)
+    public function __construct(string $label = '', string $name = '', array $attributes = [], Container|null $parent = null)
     {
         parent::__construct($name, $attributes, $parent);
         if ('' !== $label) {
