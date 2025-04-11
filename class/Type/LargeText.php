@@ -118,7 +118,10 @@ class LargeText extends Text
      */
     private function wpEmbed(): WP_Embed
     {
-        return $GLOBALS['wp_embed'];
+        $wpEmbed = $GLOBALS['wp_embed'];
+        assert($wpEmbed instanceof WP_Embed);
+
+        return $wpEmbed;
     }
 
     /**
