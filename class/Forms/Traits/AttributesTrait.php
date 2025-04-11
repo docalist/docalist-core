@@ -170,7 +170,7 @@ trait AttributesTrait
      *
      * Si removeClass() est appellée sans paramètre, l'attribut 'class' est supprimé.
      */
-    final public function removeClass(string $class = null): static
+    final public function removeClass(string|null $class = null): static
     {
         // Si l'attribut class n'existe pas, il n'y a rien à supprimer
         if (!isset($this->attributes['class'])) {
