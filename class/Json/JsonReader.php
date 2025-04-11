@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Docalist\Json;
 
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+
 /**
  * Lecture de fichiers JSON par morceaux de 64 Ko sans avoir à le charger en entier en mémoire.
  *
@@ -161,7 +163,7 @@ class JsonReader
     /**
      * Handle du fichier en cours.
      *
-     * @var resource
+     * @var resource|null
      */
     protected $file;
 
@@ -244,7 +246,11 @@ class JsonReader
         $this->position = 0;
         $this->line = $this->col = 1;
 
-        $this->file = fopen($filename, 'rb');
+        $handle = fopen($filename, 'rb');
+        if ($handle === false) {
+            throw new FileNotFoundException($filename);
+        }
+        $this->file = $handle;
         $this->readChunk();
         $this->skipWhitespaces();
     }
@@ -300,7 +306,7 @@ class JsonReader
      *
      * En JSON, les espaces non significatifs sont les caractères : " ", "\t", "\n" et "\r" (RFC4627).
      */
-    protected function skipWhitespaces()
+    protected function skipWhitespaces(): void
     {
         // Liste des caractères blancs en JSON.
         $whitespaces = [
@@ -366,7 +372,7 @@ class JsonReader
      *
      * @throws JsonParseException Si le buffer ne commence pas par le texte indiqué.
      */
-    public function get($text)
+    public function get($text): void
     {
         // Génère une erreur si le buffer ne commence pas par le texte demandé
         if (!$this->is($text)) {
@@ -390,7 +396,7 @@ class JsonReader
      *
      * @throws JsonParseException Si le caractère en cours ne correspond pas au caractère indiqué.
      */
-    protected function getChar($char)
+    protected function getChar($char): void
     {
         // Génère une erreur si le buffer est vide ou ne commence pas par le caractère indiqué
         if (0 === $this->size || $this->buffer[$this->position] !== $char) {
@@ -515,7 +521,11 @@ class JsonReader
         $this->skipWhitespaces();
 
         // Laisse PHP convertir le texte lu en entier ou en float
-        return 0 + $match[0]; // cast: 0+"12"= int, 0+"1.2"= float (cf. https://stackoverflow.com/a/16606419)
+        // return 0 + $match[0]; // cast: 0+"12"= int, 0+"1.2"= float (cf. https://stackoverflow.com/a/16606419)
+        $int = (int) $match[0];
+        $float = (float) $match[0];
+
+        return ($int == $float) ? $int : $float; // deux signes "=", pas trois
     }
 
     /**
@@ -575,7 +585,8 @@ class JsonReader
 
         // On a une chaine JSON complète (avec guillemets, séquences d'échappement et séquences unicode)
         // On laisse PHP la décoder pour nous
-        if (null === $result = json_decode($match[0])) {
+        // if (null === $result = json_decode($match[0])) {
+        if (! is_string($result = json_decode($match[0]))) {
             throw $this->parseError('Invalid JSON string: ' . json_last_error_msg());
         }
 
