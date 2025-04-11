@@ -56,7 +56,7 @@ class Select extends Choice
             case is_string($firstOption):
                 $this->firstOption = ['' => $firstOption];
                 return $this;
-            case is_array($firstOption):
+            default: // case is_array($firstOption):
                 if (1 === count($firstOption)) {
                     $this->firstOption = $firstOption;
                     return $this;
