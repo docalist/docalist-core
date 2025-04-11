@@ -22,10 +22,27 @@ namespace Docalist;
  */
 function deprecated(string $deprecated, string $replacement = '', string $since = ''): void
 {
-    $message = sprintf('%s is deprecated', $deprecated);
+    $message = sprintf('[DEPRECATED   ] %s is deprecated', $deprecated);
     !empty($since) && $message .= sprintf(' since %s', $since);
     !empty($replacement) && $message .= sprintf(', use %s instead', $replacement);
-    $message .= '.';
 
-    trigger_error($message, E_USER_DEPRECATED);
+    $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+    // 0 = la fonction deprecated actuelle
+    // 1 = le container
+    // 2 = la méthode qui a appellé le container
+    $trace = $stack[2];
+
+    // @phpstan-ignore-next-line
+    $file = $trace['file'];
+    $root = dirname(__DIR__, 2);
+    if (str_starts_with($file, $root)) {
+        $file = substr($file, strlen($root) + 1);
+    }
+
+    // @phpstan-ignore-next-line
+    $line = $trace['line'];
+
+    $message .= sprintf(' in %s:%d', $file, $line);
+
+    error_log($message);
 }
