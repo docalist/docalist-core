@@ -157,7 +157,7 @@ class MasterTable extends CsvTable
      */
     protected function relativePath($path)
     {
-        $root = docalist('root-dir');
+        $root = docalist('public-dir');
         if (0 !== strncmp($path, $root, strlen($root))) {
             throw new InvalidArgumentException('Table path does not start with site path');
         }
