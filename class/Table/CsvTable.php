@@ -43,15 +43,21 @@ class CsvTable extends SQLite
 
         // Charge les entêtes de colonne
         // On peut avoir des lignes de commentaires (#xxx) avant les entêtes
+        $this->fields = [];
         for (;;) {
-            $this->fields = fgetcsv($file, 1024, ';');
-            if ($this->fields === false) {
+            $fields = fgetcsv($file, 1024, ';');
+            if (!is_array($fields)) { // ($fields === false) {
                 break;
             }
-            if (substr($this->fields[0], 0, 1) === '#') {
+            if ($fields === [null]) { // ligne vide
                 continue;
             }
-            $this->fields = array_map('trim', $this->fields);
+            if (substr((string) $fields[0], 0, 1) === '#') {
+                continue;
+            }
+            foreach($fields as $field) {
+                $this->fields[] = trim((string)$field);
+            }
             break;
         }
 
@@ -69,10 +75,13 @@ class CsvTable extends SQLite
 
         // Charge les données
         $index = array_flip($this->fields);
-        while (false !== $values = fgetcsv($file, 1024, ';')) {
+        while (false !== $cols = fgetcsv($file, 1024, ';')) {
             // Ignore les espaces
-            $values = array_map('trim', $values);
-
+            //$values = array_map('trim', $values);  // phpstan n'aime pas 'trim'
+            $values = [];
+            foreach($cols as & $col) {
+                $values[] = trim($col ?? '');
+            }
             // Les lignes qui commencent par "#" sont des commentaires
             if (substr($values[0], 0, 1) === '#') {
                 continue;
@@ -100,7 +109,7 @@ class CsvTable extends SQLite
 
         // Enregistre la base sqlite
         $this->commit();
-        $this->db = null;
+        unset($this->db);
 
         // Retourne le path de la base sqlite à ouvrir
         return $path;
