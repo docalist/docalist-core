@@ -64,7 +64,8 @@ class Schema implements JsonSerializable
     /**
      * Liste des propriétés du schéma.
      *
-     * @var array<mixed>
+     * var array<mixed>
+     * @var array{'type'?: string, 'collection'?:string, 'fields'?: array<string,Schema>}
      */
     protected $properties;
 
@@ -112,6 +113,7 @@ class Schema implements JsonSerializable
         unset($field);
 
         // Trie les propriétés
+        // @phpstan-ignore assign.propertyType
         $this->properties = $this->sortProperties($properties);
     }
 
@@ -389,7 +391,7 @@ class Schema implements JsonSerializable
      * @param array<mixed> $properties Propriétés existantes.
      * @param array<mixed> $data       Nouveaux paramètres.
      *
-     * @return array Propriétés mises à jour.
+     * @return array<mixed> Propriétés mises à jour.
      *
      * @throws InvalidArgumentException
      */
@@ -413,6 +415,7 @@ class Schema implements JsonSerializable
         }
 
         // Met à jour la liste des champs
+        /** @var array<string,array<string,mixed>> $fields */
         if ($fields) {
             $result = [];
             foreach ($fields as $name => $data) {
@@ -425,6 +428,7 @@ class Schema implements JsonSerializable
                 // remarque : ne peut arriver que lors de la sauvegarde d'une grille
                 // pour un schéma, validate() garantit déjà que les noms sont uniques
                 // $name = nouveau nom si renommage autorisé dans le formulaire, ancien sinon
+                /** @var string */
                 $name = isset($data['name']) ? $data['name'] : $name;
                 if (isset($result[$name])) {
                     throw new InvalidArgumentException("Field '$name' defined twice");
