@@ -298,7 +298,7 @@ abstract class AdminPage extends Controller
      * "action", et qui peuvent être appellées sans paramètres (aucun
      * paramètre ou paramètres ayant une valeur par défaut).
      */
-    public function actionIndex(): ViewResponse
+    public function actionIndex(): Response
     {
         return $this->view(
             'docalist-core:controller/actions-list',
