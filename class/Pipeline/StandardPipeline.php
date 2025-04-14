@@ -29,7 +29,7 @@ class StandardPipeline implements Pipeline
      */
     protected $operations = [];
 
-    public function appendOperation(callable $operation, int|string $key = null): void
+    public function appendOperation(callable $operation, int|string|null $key = null): void
     {
         if (is_null($key)) {
             $this->operations[] = $operation;
@@ -44,7 +44,7 @@ class StandardPipeline implements Pipeline
         $this->operations[$key] = $operation;
     }
 
-    public function prependOperation(callable $operation, int|string $key = null): void
+    public function prependOperation(callable $operation, int|string|null $key = null): void
     {
         $this->operations = array_reverse($this->operations, true);
         try {

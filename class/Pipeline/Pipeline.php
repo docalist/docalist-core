@@ -83,7 +83,7 @@ interface Pipeline
      *
      * @throws InvalidArgumentException si une clé a été indiquée et qu'il existe déjà une opération avec cette clé
      */
-    public function appendOperation(callable $operation, int|string $key = null): void;
+    public function appendOperation(callable $operation, int|string|null $key = null): void;
 
     /**
      * Ajoute une opération au début du pipeline.
@@ -94,7 +94,7 @@ interface Pipeline
      *
      * @throws InvalidArgumentException si une clé a été indiquée et qu'il existe déjà une opération avec cette clé
      */
-    public function prependOperation(callable $operation, int|string $key = null): void;
+    public function prependOperation(callable $operation, int|string|null $key = null): void;
 
     /**
      * Teste si le pipeline contient une opération ayant la clé indiquée.
