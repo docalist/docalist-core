@@ -184,12 +184,12 @@ class TableManager
             throw new Exception(sprintf('Unable to write table "%s"', $fileName));
         }
 
-        fputcsv($file, $fields, ';', '"');
+        fputcsv($file, $fields, ';', '"', '');
         if (!$nodata) {
             /** @var array<string,\stdClass> */
             $data = $source->search('ROWID,'.implode(',', $fields));
             foreach ($data as $entry) {
-                fputcsv($file, (array) $entry, ';', '"');
+                fputcsv($file, (array) $entry, ';', '"', '');
             }
         }
         fclose($file);
@@ -254,9 +254,9 @@ class TableManager
                 throw new Exception(sprintf('Unable to write table "%s"', $name));
             }
 
-            fputcsv($file, $fields, ';', '"');
+            fputcsv($file, $fields, ';', '"', '');
             foreach ($data as $entry) {
-                fputcsv($file, (array) $entry, ';', '"');
+                fputcsv($file, (array) $entry, ';', '"', '');
             }
             fclose($file);
         }

@@ -89,12 +89,12 @@ class MasterTable extends CsvTable
         }
 
         fwrite($file, $header);
-        fputcsv($file, $fields, ';', '"');
+        fputcsv($file, $fields, ';', '"', '');
 
         /** @var  array<string,object> */
         $records = $this->search('rowid,' . implode(',', $fields), '', 'rowid');
         foreach ($records as $record) {
-            fputcsv($file, (array) $record, ';', '"');
+            fputcsv($file, (array) $record, ';', '"', '');
         }
         fclose($file);
 

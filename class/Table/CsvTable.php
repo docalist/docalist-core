@@ -45,7 +45,7 @@ class CsvTable extends SQLite
         // On peut avoir des lignes de commentaires (#xxx) avant les entêtes
         $this->fields = [];
         for (;;) {
-            $fields = fgetcsv($file, 1024, ';');
+            $fields = fgetcsv($file, 1024, ';', '"', '');
             if (!is_array($fields)) { // ($fields === false) {
                 break;
             }
@@ -75,7 +75,7 @@ class CsvTable extends SQLite
 
         // Charge les données
         $index = array_flip($this->fields);
-        while (false !== $cols = fgetcsv($file, 1024, ';')) {
+        while (false !== $cols = fgetcsv($file, 1024, ';', '"', '')) {
             // Ignore les espaces
             //$values = array_map('trim', $values);  // phpstan n'aime pas 'trim'
             $values = [];
