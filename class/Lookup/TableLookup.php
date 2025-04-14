@@ -77,6 +77,7 @@ class TableLookup implements LookupInterface
         $table = $this->getTable($source);
 
         // Lance la recherche
+        /** @var array<string,stdClass> */
         $result = $table->search($this->getFields(), '', '_label', 100);
 
         // Traite et transforme les résultats obtenus
@@ -106,6 +107,7 @@ class TableLookup implements LookupInterface
         }
 
         // Lance la recherche
+        /** @var array<string,stdClass> */
         $result = $table->search($this->getFields(), sprintf($where, $table->quote($arg)), '_label', 100);
 
         // Traite et transforme les résultats obtenus
@@ -157,6 +159,7 @@ class TableLookup implements LookupInterface
         $where = 'code IN (' . implode(',', $codes) . ')';
 
         // Recherche toutes les entrées, on obtient un tableau de la forme 'code => label'
+        /** @var array<string,string> */
         $results = $table->search('code,label', $where);
 
         // Construit le tableau résultat, en respectant l'ordre initial des données
