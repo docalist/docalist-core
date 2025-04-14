@@ -186,6 +186,7 @@ class TableManager
 
         fputcsv($file, $fields, ';', '"');
         if (!$nodata) {
+            /** @var array<string,\stdClass> */
             $data = $source->search('ROWID,'.implode(',', $fields));
             foreach ($data as $entry) {
                 fputcsv($file, (array) $entry, ';', '"');
@@ -423,7 +424,10 @@ class TableManager
         $where = "type != 'master'";
         $format && $where .= ' AND format='.$this->master()->quote($format);
 
-        return $this->master()->search('DISTINCT type', $where, '_type');
+        /** @var array<int,string> */
+        $result = $this->master()->search('DISTINCT type', $where, '_type');
+
+        return $result;
     }
 
     /**
@@ -438,6 +442,9 @@ class TableManager
         $where = "format != 'master'";
         $type && $where .= ' AND type='.$this->master()->quote($type);
 
-        return $this->master()->search('DISTINCT format', $where, '_format');
+        /** @var array<int,string> */
+        $result = $this->master()->search('DISTINCT format', $where, '_format');
+
+        return $result;
     }
 }
