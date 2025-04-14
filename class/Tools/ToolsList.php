@@ -25,14 +25,20 @@ class ToolsList implements Tools
     /**
      * La liste des outils disponibles.
      *
-     * @var array<Tool|callable|string>|callable
+     * @var array<string,Tool|callable|string>
      */
-    private $tools;
+    private $tools = [];
+
+    /**
+     * Un loader chargé de retourner la liste des outils
+     * @var ?callable(): array<string,Tool|callable|string>
+     */
+    private $loader = null;
 
     /**
      * Initialise la liste des outils disponibles.
      *
-     * @param array<Tool|callable|string>|callable $tools Un tableau d'outils ou un callback qui retourne un tableau d'outils.
+     * @param array<string,Tool|callable|string>|callable $tools Un tableau d'outils ou un callback qui retourne un tableau d'outils.
      *
      * Chaque élément du tableau (fourni ou retourné par le callback) doit être de la forme id => factory. La clé est
      * un identifiant unique qui indique le nom de l'outil et la valeur associée indique comment instancier l'outil.
@@ -43,13 +49,15 @@ class ToolsList implements Tools
      * - string : le nom d'une classe PHP qui implemente l'interface Tool et dont le constructeur peut être appellé
      *   sans paramètres.
      */
-    public function __construct($tools)
+    public function __construct(array|callable $tools)
     {
-        if (!is_array($tools) && !is_callable($tools)) {
-            throw new InvalidArgumentException('Invalid tools, expected array or callable');
+        if (is_callable($tools)) {
+            $this->loader = $tools;
+            $this->tools = [];
+        } else { // callable
+            $this->loader = null;
+            $this->tools = $tools;
         }
-
-        $this->tools = $tools;
     }
 
     /**
@@ -62,15 +70,19 @@ class ToolsList implements Tools
     private function loadList(): void
     {
         // Terminé si on a déjà fait l'initialisation
-        if (is_array($this->tools)) {
+        if ($this->loader === null) {
             return;
         }
 
         // Exécute le callable et vérifie qu'il retourne un tableau
-        $this->tools = call_user_func($this->tools);
-        if (! is_array($this->tools)) {
-            throw new InvalidArgumentException('Tools callback must return an array, got ' . gettype($this->tools));
+        $tools = call_user_func($this->loader);
+        if (! is_array($tools)) {
+            throw new InvalidArgumentException('Tools callback must return an array, got ' . gettype($tools));
         }
+
+        // OK
+        $this->loader = null;
+        $this->tools = $tools;
     }
 
     /**
