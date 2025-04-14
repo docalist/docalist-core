@@ -294,7 +294,7 @@ class Composite extends Any
         $schema = $this->getSchema();
 
         /** @var string[] */
-        $fields = isset($options['fields']) ? array_keys($options['fields']) : $schema->getFieldNames();
+        $fields = isset($options['fields']) ? array_keys((array) $options['fields']) : $schema->getFieldNames();
 
         // Génère le formulaire de chaque sous-champ
         foreach ($fields as $name) {
